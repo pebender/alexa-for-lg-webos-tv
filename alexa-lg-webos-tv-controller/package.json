@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "The code behind the the LG webOS TV Controller Alexa Skill.",
   "main": "index.js",
-  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net>)",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",
   "alexa": {
     "applicationId": "amzn1.ask.skill.933ee8a1-2ae8-4a35-88b8-57281e0648e2"
@@ -27,6 +27,7 @@
     "certnames"
   ],
   "scripts": {
-    "pack": "npm-pack-zip"
+    "pack": "npm-pack-zip",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

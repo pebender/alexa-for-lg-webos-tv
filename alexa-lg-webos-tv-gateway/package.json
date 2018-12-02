@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A daemon/service to bridge/translate/aggregate the LG webOS TV websocket transport and the Alexa HTTPS transport",
   "main": "index.js",
-  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net>)",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",
   "files": [
     "lib",
@@ -38,5 +38,8 @@
     "persist-path",
     "wol",
     "xml2js"
-  ]
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
