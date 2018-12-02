@@ -1,0 +1,11 @@
+{
+  "name": "alexa-lg-webos-tv-core",
+  "version": "0.0.1",
+  "description": "Core files for alexa-lg-webos-tv-controller and alexa-lg-webos-tv-gateway",
+  "main": "index.js",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net>)",
+  "license": "ISC",
+  "files": [
+    "TODO.txt"
+  ]
+}

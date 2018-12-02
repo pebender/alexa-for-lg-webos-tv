@@ -1,0 +1,42 @@
+{
+  "name": "alexa-lg-webos-tv-gateway",
+  "version": "0.0.1",
+  "description": "A daemon/service to bridge/translate/aggregate the LG webOS TV websocket transport and the Alexa HTTPS transport",
+  "main": "index.js",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net>)",
+  "license": "ISC",
+  "files": [
+    "lib",
+    "TODO.txt"
+  ],
+  "dependencies": {
+    "alexa-lg-webos-tv-core": "../alexa-lg-webos-tv-core",
+    "axios": "^0.18.0",
+    "events": "^2.0.0",
+    "express": "^4.16.3",
+    "express-basic-auth": "^1.1.4",
+    "fs-extra": "^5.0.0",
+    "lgtv2": "^1.4.1",
+    "nedb": "^1.8.0",
+    "node-arp": "^1.0.6",
+    "node-ssdp": "^3.2.5",
+    "persist-path": "^1.0.2",
+    "wol": "^1.0.3",
+    "xml2js": "^0.4.19"
+  },
+  "bundledDependencies": [
+    "alexa-lg-webos-tv-core",
+    "axios",
+    "events",
+    "express",
+    "express-basic-auth",
+    "fs-extra",
+    "lgtv2",
+    "nedb",
+    "node-arp",
+    "node-ssdp",
+    "persist-path",
+    "wol",
+    "xml2js"
+  ]
+}

@@ -1,0 +1,3 @@
++ Make it work.
++ Migrate to alexa-sdk to latest alexa-sdk 2.*.*.
++ Migrate to the sync/await support in node.js 8.*.*.
