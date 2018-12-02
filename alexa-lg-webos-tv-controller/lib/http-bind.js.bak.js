@@ -1,7 +1,7 @@
 const tls = require('tls');
 const crypto = require('crypto');
 const certnames = require('certnames');
-const constants = require('alexa-lg-web-os-tv-core').constants;
+const constants = require('alexa-lg-webos-tv-core').constants;
 const httpPost = require('./http-post.js');
 
 const handlers = {
