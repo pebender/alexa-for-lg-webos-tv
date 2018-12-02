@@ -13,9 +13,9 @@ const fs = require('fs-extra');
 const Datastore = require('nedb');
 const ppath = require('persist-path');
 const constants = require('alexa-lg-webos-tv-core').constants;
-const HTTPAuthorization = require('./http-authorization.js');
-const LGTVControl = require('./lgtv-control.js');
-const LGTVSearch = require('./lgtv-search.js');
+const HTTPAuthorization = require('./lib/http-authorization.js');
+const LGTVControl = require('./lib/lgtv-control.js');
+const LGTVSearch = require('./lib/lgtv-search.js');
 
 // I keep long term information needed to connect to each TV in a database.
 // The long term information is the TV's unique device name (udn), friendly name
