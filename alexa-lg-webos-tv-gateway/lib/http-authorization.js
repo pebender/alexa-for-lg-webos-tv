@@ -1,5 +1,3 @@
-'use strict';
-
 class HTTPAuthorization {
     constructor(db, callback) {
         this.private = {};
@@ -22,22 +20,25 @@ class HTTPAuthorization {
             (err, doc) => {
                 if (err) {
                     callback(err);
-                    return;
-                }
-                else if (doc === null) {
-                    this.private.db.insert(this.private.dbRecord, (err, doc) => {
-                        if (err) {
-                            callback(err);
-                            return;
+                    return null;
+                } else if (doc === null) {
+                    // eslint-disable-next-line no-unused-vars
+                    this.private.db.insert(this.private.dbRecord, (error, _doc) => {
+                        if (error) {
+                            callback(error);
+                            return null;
                         }
+                        return null;
                     });
-                }
-                else {
+                } else {
                     this.private.dbRecord.username = doc.username;
                     this.private.dbRecord.password = doc.password;
                     this.private.dbRecord.hostname = doc.hostname;
+                    return null;
                 }
-            });
+                return null;
+            }
+        );
     }
 
     get username() {
@@ -51,26 +52,19 @@ class HTTPAuthorization {
     set password(value) {
         if (typeof value === 'undefined') {
             this.private.dbRecord.password = null;
-        }
-        else if (value === null) {
+        } else if (value === null) {
             this.private.dbRecord.password = null;
-        }
-        else if (value === '') {
+        } else if (value === '') {
             this.private.dbRecord.password = null;
-        }
-        else if (typeof value === 'string') {
+        } else if (typeof value === 'string') {
             this.private.dbRecord.password = value;
-        }
-        else if (typeof value.toString() === 'undefined') {
+        } else if (typeof value.toString() === 'undefined') {
             this.private.dbRecord.password = null;
-        }
-        else if (value.toString() === null) {
+        } else if (value.toString() === null) {
             this.private.dbRecord.password = null;
-        }
-        else if (value.toString() === '') {
+        } else if (value.toString() === '') {
             this.private.dbRecord.password = null;
-        }
-        else {
+        } else {
             this.private.dbRecord.password = value.toString();
         }
         this.private.db.update(
@@ -86,26 +80,19 @@ class HTTPAuthorization {
     set hostname(value) {
         if (typeof value === 'undefined') {
             this.private.dbRecord.hostname = null;
-        }
-        else if (value === null) {
+        } else if (value === null) {
             this.private.dbRecord.hostname = null;
-        }
-        else if (value === '') {
+        } else if (value === '') {
             this.private.dbRecord.hostname = null;
-        }
-        else if (typeof value === 'string') {
+        } else if (typeof value === 'string') {
             this.private.dbRecord.hostname = value;
-        }
-        else if (typeof value.toString() === 'undefined') {
+        } else if (typeof value.toString() === 'undefined') {
             this.private.dbRecord.hostname = null;
-        }
-        else if (value.toString() === null) {
+        } else if (value.toString() === null) {
             this.private.dbRecord.hostname = null;
-        }
-        else if (value.toString() === '') {
+        } else if (value.toString() === '') {
             this.private.dbRecord.hostname = null;
-        }
-        else {
+        } else {
             this.private.dbRecord.hostname = value.toString();
         }
         this.private.db.update(

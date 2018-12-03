@@ -8,7 +8,7 @@ const handlers = {
     },
     'AMAZON.StopIntent': function () {
         const command = {'name': 'powerOff'};
-        runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+        runLGTVCommand(this.attributes, this.events, command, (error) => {
             if (error) {
                 this.emit(':tell', error.message);
             } else {
@@ -22,7 +22,7 @@ const handlers = {
     'PowerOffIntent': function () {
         if (checkSlotStatusCode(this.event.request.intent.slots.PowerOff)) {
             const command = {'name': 'powerOff'};
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -36,7 +36,7 @@ const handlers = {
     'PowerOnIntent': function () {
         if (checkSlotStatusCode(this.event.request.intent.slots.PowerOn)) {
             const command = {'name': 'powerOn'};
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -50,7 +50,7 @@ const handlers = {
     'VolumeDownIntent': function () {
         if (checkSlotStatusCode(this.event.request.intent.slots.VolumeDown)) {
             const command = {'name': 'volumeDown'};
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -64,7 +64,7 @@ const handlers = {
     'VolumeUpIntent': function () {
         if (checkSlotStatusCode(this.event.request.intent.slots.VolumeUp)) {
             const command = {'name': 'volumeUp'};
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -83,7 +83,7 @@ const handlers = {
                     'name': 'volumeSet',
                     'value': volume
                 };
-                runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+                runLGTVCommand(this.attributes, this.events, command, (error) => {
                     if (error) {
                         this.emit(':tell', error.message);
                     } else {
@@ -103,7 +103,7 @@ const handlers = {
                 'name': 'muteSet',
                 'value': 'on'
             };
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -120,7 +120,7 @@ const handlers = {
                 'name': 'muteSet',
                 'value': 'off'
             };
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -142,7 +142,7 @@ const handlers = {
                         'name': 'inputSet',
                         'value': inputId
                     };
-                    runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+                    runLGTVCommand(this.attributes, this.events, command, (error) => {
                         if (error) {
                             this.emit(':tell', error.message);
                         } else {
@@ -155,7 +155,7 @@ const handlers = {
                         'name': 'applicationLaunch',
                         'value': applicationId
                     };
-                    runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+                    runLGTVCommand(this.attributes, this.events, command, (error) => {
                         if (error) {
                             this.emit(':tell', error.message);
                         } else {
@@ -179,7 +179,7 @@ const handlers = {
                 'name': 'messageShow',
                 'value': message
             };
-            runLGTVCommand(this.attributes, this.events, command, (error, response) => {
+            runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
                     this.emit(':tell', error.message);
                 } else {
@@ -247,17 +247,17 @@ function getSlotId(slot) {
 function runLGTVCommand(attributes, event, command, callback) {
     if (!Reflect.has(attributes, 'hostname')) {
         const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
-        callback(error, null);
+        callback(error);
         return;
     }
     if (!Reflect.has(attributes, 'password')) {
         const error = new Error('You have not configured the password of your L.G. web O.S. T.V. bridge.');
-        callback(error, null);
+        callback(error);
         return;
     }
     if (!Reflect.has(attributes, 'tvmap') || !Reflect.has(attributes.tvmap, event.context.System.device.deviceId)) {
         const error = new Error('You have not configured this Alexa to control an L.G. web O.S. T.V..');
-        callback(error, null);
+        callback(error);
         return;
     }
     const options = {
@@ -270,5 +270,6 @@ function runLGTVCommand(attributes, event, command, callback) {
         'television': attributes[event.context.System.device.deviceId],
         'command': command
     };
-    httpPost.post(options, request, callback);
+    /* eslint-disable-next-line no-unused-vars */
+    httpPost.post(options, request, (error, response) => callback(error));
 }
