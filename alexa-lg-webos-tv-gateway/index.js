@@ -134,7 +134,7 @@ internal.get('/HTTP/form', (request, response) => {
 internal.get('/', (request, response) => {
     let hostname = '';
     if (httpAuthorization.hostname !== null) {
-        (hostname = httpAuthorization);
+        ({hostname} = httpAuthorization);
     }
     const page = `<!DOCTYPE html>
         <html>
