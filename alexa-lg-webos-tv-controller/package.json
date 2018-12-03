@@ -14,11 +14,11 @@
   ],
   "dependencies": {
     "alexa-lg-webos-tv-core": "../alexa-lg-webos-tv-core",
-    "alexa-sdk": "^1.0.25",
-    "certnames": "^1.0.4"
+    "alexa-sdk": "1.0.25",
+    "certnames": "1.0.4"
   },
   "devDependencies": {
-    "eslint": "",
+    "eslint": "5.9.0",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
