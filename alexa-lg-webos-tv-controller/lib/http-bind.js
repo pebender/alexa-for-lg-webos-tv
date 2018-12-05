@@ -53,15 +53,13 @@ const handlers = {
                 const request = {'command': {'name': 'hostnameGet'}};
                 httpPost.post(options, request, (error, response) => {
                     if (error) {
-                        const outputSpeech = error.message;
-                        this.emit(':tell', outputSpeech);
+                        this.response.speak(error.message);
+                        this.emit(':responseReady');
                     } else if (response && Reflect.has(response, 'error')) {
-                        const outputSpeech = response.error.message;
-                        this.emit(':tell', outputSpeech);
+                        this.response.speak(response.error.message);
+                        this.emit(':responseReady');
                     } else {
-                        this.attributes.tmp.hostname = response.hostname;
-                        const speechOutput = `Is your hostname ${this.attributes.tmp.hostname}?`;
-                        this.emit(':confirmIntent', speechOutput);
+                        this.emit(':confirmIntent', `Is your hostname ${this.attributes.tmp.hostname}?`);
                     }
                 });
             } else {
@@ -70,11 +68,13 @@ const handlers = {
         } else if (this.event.request.dialogState === 'COMPLETED') {
             if (this.event.request.intent.confirmationStatus === 'DENIED') {
                 Reflect.deleteProperty(this.attributes, 'tmp');
-                this.emit(':tell', 'We failed.');
+                this.response.speak('We failed.');
+                this.emit(':responseReady');
             } else if (this.event.request.intent.confirmationStatus === 'CONFIRMED') {
                 this.attributes.hostname = this.attributes.tmp.hostname;
                 Reflect.deleteProperty(this.attributes, 'tmp');
-                this.emit(':tell', 'We succeeded.');
+                this.response.speak('We succeeded.');
+                this.emit(':responseReady');
             }
         }
     },
@@ -83,7 +83,8 @@ const handlers = {
         this.emit(':saveState');
         const password = crypto.randomBytes(64).toString('hex');
         if (!Reflect.has(this.attributes, 'hostname')) {
-            this.emit(':tell', 'You need to set your L.G. web O.S. T.V. bridge hostname before you can set its password.');
+            this.response.speak('You need to set your L.G. web O.S. T.V. bridge hostname before you can set its password.');
+            this.emit(':responseReady');
         }
         const options = {
             'hostname': this.attributes.hostname,
@@ -100,17 +101,18 @@ const handlers = {
         };
         httpPost.post(options, request, (error, response) => {
             if (error) {
-                const outputSpeech = error.message;
                 this.emit(':saveState');
-                this.emit(':tell', outputSpeech);
+                this.response.speak(error.message);
+                this.emit(':responseReady');
             } else if (response && Reflect.has(response, 'error')) {
-                const outputSpeech = response.error.message;
                 this.emit(':saveState');
-                this.emit(':tell', outputSpeech);
+                this.response.speak(response.error.message);
+                this.emit(':responseReady');
             } else {
                 this.attributes.password = password;
                 this.emit(':saveState');
-                this.emit(':tell', 'Your password has been set.');
+                this.response.speak('Your password has been set.');
+                this.emit(':responseReady');
             }
         });
     },
@@ -124,10 +126,12 @@ const handlers = {
                 this.attributes.tvmap = [];
             }
             if (!Reflect.has(this.attributes, 'hostname')) {
-                this.emit(':tell', 'You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+                this.response.speak('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+                this.emit(':responseReady');
             }
             if (!Reflect.has(this.attributes, 'password')) {
-                this.emit(':tell', 'You have not configured the password of your L.G. web O.S. T.V. bridge.');
+                this.response.speak('You have not configured the password of your L.G. web O.S. T.V. bridge.');
+                this.emit(':responseReady');
             }
             const options = {
                 'hostname': this.attributes.hostname,
@@ -138,19 +142,19 @@ const handlers = {
             const request = {'command': {'name': 'udnsGet'}};
             httpPost.post(options, request, (error, response) => {
                 if (error) {
-                    const outputSpeech = error.message;
-                    this.emit(':tell', outputSpeech);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else if (response && Reflect.has(response, 'error')) {
-                    const outputSpeech = response.error.message;
-                    this.emit(':tell', outputSpeech);
+                    this.response.speak(response.error.message);
+                    this.emit(':responseReady');
                 } else {
                     if (!Reflect.has(response, 'udns')) {
-                        const outputSpeech = 'I could not find an L.G. web O.S. T.V.';
-                        this.emit(':tell', outputSpeech);
+                        this.response.speak('I could not find an L.G. web O.S. T.V.');
+                        this.emit(':responseReady');
                     }
                     if (response.udns.length === 0) {
-                        const outputSpeech = 'I could not find an L.G. web O.S. T.V.';
-                        this.emit(':tell', outputSpeech);
+                        this.response.speak('I could not find an L.G. web O.S. T.V.');
+                        this.emit(':responseReady');
                     }
                     let index = 0;
                     this.attributes.tmp.udns = [];
@@ -175,8 +179,8 @@ const handlers = {
                     this.emit(':confirmIntent', speechOutput);
                 } else {
                     Reflect.deleteProperty(this.attributes, 'tmp');
-                    const speechOutput = 'That was the last L.G. web O.S. T.V. I found.';
-                    this.emit(':tell', speechOutput);
+                    this.response.speak('That was the last L.G. web O.S. T.V. I found.');
+                    this.emit(':responseReady');
                 }
             } else if (
                 this.attributes.tmp.udn.confirmationStatus === 'NONE' &&
@@ -197,11 +201,13 @@ const handlers = {
             if (this.event.request.intent.confirmationStatus === 'DENIED') {
                 Reflect.deleteProperty(this.attributes.tvmap, this.event.context.System.device.deviceId);
                 Reflect.deleteProperty(this.attributes, 'tmp');
-                this.emit(':tell', 'We failed.');
+                this.response.speak('We failed.');
+                this.emit(':responseReady');
             } else if (this.event.request.intent.confirmationStatus === 'CONFIRMED') {
                 this.attributes.tvmap[this.event.context.System.device.deviceId] = this.attributes.tmp.udn.value;
                 Reflect.deleteProperty(this.attributes, 'tmp');
-                this.emit(':tell', 'We succeeded.');
+                this.response.speak('We succeeded.');
+                this.emit(':responseReady');
             }
         }
     }

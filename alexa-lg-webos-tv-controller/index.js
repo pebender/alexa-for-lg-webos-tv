@@ -4,33 +4,40 @@ const httpPost = require('./lib/http-post.js');
 
 const handlers = {
     'AMAZON.HelpIntent': function () {
-        this.emit(':tell', 'I cannot help you yet.');
+        this.response.speak('I cannot help you yet.')
+        this.emit(':responseReady');
     },
     'AMAZON.StopIntent': function () {
         const command = {'name': 'powerOff'};
         runLGTVCommand(this.attributes, this.events, command, (error) => {
             if (error) {
-                this.emit(':tell', error.message);
+                this.response.speak(error.message);
+                this.emit(':responseReady');
             } else {
-                this.emit(':tell', 'You asked me to turn off idiot box.');
+                this.response.speak('You asked me to turn off idiot box.');
+                this.emit(':responseReady');
             }
         });
     },
     'AMAZON.CancelIntent': function () {
-        this.emit(':tell', 'idiot box cannot cancel a command once it has started.');
+        this.response.speak('idiot box cannot cancel a command once it has started.');
+        this.emit(':responseReady');
     },
     'PowerOffIntent': function () {
         if (checkSlotStatusCode(this.event.request.intent.slots.PowerOff)) {
             const command = {'name': 'powerOff'};
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to turn off idiot box.');
+                    this.response.speak('You asked me to turn off idiot box.');
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Off)?');
+            this.response.speak('You asked me to do what (Off)?');
+            this.emit(':responseReady');
         }
     },
     'PowerOnIntent': function () {
@@ -38,13 +45,16 @@ const handlers = {
             const command = {'name': 'powerOn'};
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to turn on idiot box.');
+                    this.emit(':responseReady');
+                    this.response.speak('You asked me to turn on idiot box.');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (On)?');
+            this.response.speak('You asked me to do what (On)?');
+            this.emit(':responseReady');
         }
     },
     'VolumeDownIntent': function () {
@@ -52,13 +62,16 @@ const handlers = {
             const command = {'name': 'volumeDown'};
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to decrease the volume of idiot box.');
+                    this.response.speak('You asked me to decrease the volume of idiot box.');
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Decrease)?');
+            this.response.speak('You asked me to do what (Volume Decrease)?');
+            this.emit(':responseReady');
         }
     },
     'VolumeUpIntent': function () {
@@ -66,13 +79,16 @@ const handlers = {
             const command = {'name': 'volumeUp'};
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to increase the volume of idiot box.');
+                    this.response.speak('You asked me to increase the volume of idiot box.');
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Increase)?');
+            this.response.speak('You asked me to do what (Volume Increase)?');
+            this.emit(':responseReady');
         }
     },
     'VolumeSetIntent': function () {
@@ -85,16 +101,20 @@ const handlers = {
                 };
                 runLGTVCommand(this.attributes, this.events, command, (error) => {
                     if (error) {
-                        this.emit(':tell', error.message);
+                        this.response.speak(error.message);
+                        this.emit(':responseReady');
                     } else {
-                        this.emit(':tell', `You asked me to set the volume to ${volume}.`);
+                        this.response.speak(`You asked me to set the volume to ${volume}.`);
+                        this.emit(':responseReady');
                     }
                 });
             } else {
-                this.emit(':tell', 'You asked me to set the volume to what?');
+                this.response.speak('You asked me to set the volume to what?');
+                this.emit(':responseReady');
             }
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Set)?');
+            this.response.speak('You asked me to do what (Volume Set)?');
+            this.emit(':responseReady');
         }
     },
     'VolumeMuteIntent': function () {
@@ -105,13 +125,16 @@ const handlers = {
             };
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to mute the volume of idiot box.');
+                    this.response.speak('You asked me to mute the volume of idiot box.');
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Mute)?');
+            this.response.speak('You asked me to do what (Volume Mute)?');
+            this.emit(':responseReady');
         }
     },
     'VolumeUnmuteIntent': function () {
@@ -122,13 +145,16 @@ const handlers = {
             };
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', 'You asked me to unmute the volume of idiot box.');
+                    this.response.speak('You asked me to unmute the volume of idiot box.');
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Unmute)?');
+            this.response.speak('You asked me to do what (Volume Unmute)?');
+            this.emit(':responseReady');
         }
     },
     'InputSetIntent': function () {
@@ -144,9 +170,11 @@ const handlers = {
                     };
                     runLGTVCommand(this.attributes, this.events, command, (error) => {
                         if (error) {
-                            this.emit(':tell', error.message);
+                            this.response.speak(error.message);
+                            this.emit(':responseReady');
                         } else {
-                            this.emit(':tell', `You asked me to set the input to ${inputName}.`);
+                            this.response.speak(`You asked me to set the input to ${inputName}.`);
+                            this.emit(':responseReady');
                         }
                     });
                 } else if (inputId.startsWith('APP_')) {
@@ -157,19 +185,24 @@ const handlers = {
                     };
                     runLGTVCommand(this.attributes, this.events, command, (error) => {
                         if (error) {
-                            this.emit(':tell', error.message);
+                            this.response.speak(error.message);
+                            this.emit(':responseReady');
                         } else {
-                            this.emit(':tell', `You asked me to set the input to ${inputName}.`);
+                            this.response.speak(`You asked me to set the input to ${inputName}.`);
+                            this.emit(':responseReady');
                         }
                     });
                 } else {
-                    this.emit(':tell', 'Oh dear. I should not be here. You asked me for a valid input type I know nothing about.');
+                    this.response.speak('Oh dear. I should not be here. You asked me for a valid input type I know nothing about.');
+                    this.emit(':responseReady');
                 }
             } else {
-                this.emit(':tell', 'You asked me to set the input to what?');
+                this.response.speak('You asked me to set the input to what?');
+                this.emit(':responseReady');
             }
         } else {
-            this.emit(':tell', 'You asked me to do what (Input Set)?');
+            this.response.speak('You asked me to do what (Input Set)?');
+            this.emit(':responseReady');
         }
     },
     'MessageShowIntent': function () {
@@ -181,21 +214,26 @@ const handlers = {
             };
             runLGTVCommand(this.attributes, this.events, command, (error) => {
                 if (error) {
-                    this.emit(':tell', error.message);
+                    this.response.speak(error.message);
+                    this.emit(':responseReady');
                 } else {
-                    this.emit(':tell', `You asked me to show the message ${message}.`);
+                    this.response.speak(`You asked me to show the message ${message}.`);
+                    this.emit(':responseReady');
                 }
             });
         } else {
-            this.emit(':tell', 'You asked me to do what (Volume Set)?');
+            this.response.speak('You asked me to do what (Volume Set)?');
+            this.emit(':responseReady');
         }
     },
     'Unhandled': function () {
         if (this.handler.state === '') {
-            this.emit(':tell', 'Now the idiot box really feels like an idiot.');
+            this.response.speak('Now the idiot box really feels like an idiot.');
+            this.emit(':responseReady');
         } else {
             this.handler.state = '';
             this.emit(this.event.request.intent.name);
+            this.emit(':responseReady');
         }
     }
 };
