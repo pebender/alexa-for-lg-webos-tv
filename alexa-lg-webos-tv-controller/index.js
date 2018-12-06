@@ -284,12 +284,12 @@ function getSlotId(slot) {
 
 function runLGTVCommand(attributes, event, command, callback) {
     if (!Reflect.has(attributes, 'hostname')) {
-        const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+        const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. gateway.');
         callback(error);
         return;
     }
     if (!Reflect.has(attributes, 'password')) {
-        const error = new Error('You have not configured the password of your L.G. web O.S. T.V. bridge.');
+        const error = new Error('You have not configured the password of your L.G. web O.S. T.V. gateway.');
         callback(error);
         return;
     }

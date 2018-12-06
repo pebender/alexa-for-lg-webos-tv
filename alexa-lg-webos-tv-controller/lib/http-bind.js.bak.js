@@ -142,7 +142,7 @@ const handlers = {
     'HTTPPasswordSetIntent': function () {
         const password = crypto.randomBytes(64).toString('hex');
         if (!Reflect.has(this.attributes, 'http') || !Reflect.has(this.attributes.http, 'hostname')) {
-            this.emit(':tell', 'You need to set your L.G. web O.S. T.V. bridge hostname before you can set its password.');
+            this.emit(':tell', 'You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.');
         }
         const options = {
             'hostname': this.attributes.http.hostname,
@@ -180,10 +180,10 @@ const handlers = {
                 this.attributes.tvmap = [];
             }
             if (!Reflect.has(this.attributes, 'hostname')) {
-                this.emit(':tell', 'You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+                this.emit(':tell', 'You have not configured the hostname of your L.G. web O.S. T.V. gateway.');
             }
             if (!Reflect.has(this.attributes, 'password')) {
-                this.emit(':tell', 'You have not configured the password of your L.G. web O.S. T.V. bridge.');
+                this.emit(':tell', 'You have not configured the password of your L.G. web O.S. T.V. gateway.');
             }
             const options = {
                 'hostname': this.attributes.hostname,

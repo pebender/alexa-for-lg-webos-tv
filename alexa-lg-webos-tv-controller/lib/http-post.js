@@ -35,13 +35,13 @@ function HTTPPost(postOptions, postBody, callback) {
         });
         response.on('end', () => {
             if (response.statusCode !== 200) {
-                const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. bridge.' +
+                const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. gateway.' +
                     ` It returned the web server status ${response.statusCode}.`;
                 if (callback && typeof callback === 'function') {
                     return callback(new Error(outputSpeech), null);
                 }
             } else if (!(/^application\/json/).test(response.headers['content-type'])) {
-                const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. bridge.' +
+                const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. gateway.' +
                     ' It returned the wrong content type.';
                 if (callback && typeof callback === 'function') {
                     return callback(new Error(outputSpeech), null);
@@ -50,7 +50,7 @@ function HTTPPost(postOptions, postBody, callback) {
                 try {
                     body = JSON.parse(data);
                 } catch (error) {
-                    const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. bridge.' +
+                    const outputSpeech = 'Something appears to be wrong with your L.G. web O.S. T.V. gateway.' +
                         'It returned a poorly formatted response.';
                     if (callback && typeof callback === 'function') {
                         return callback(new Error(outputSpeech), null);
@@ -63,7 +63,7 @@ function HTTPPost(postOptions, postBody, callback) {
             return null;
         });
         response.on('error', (error) => {
-            const outputSpeech = 'Something whent wrong while talking with your L.G. web O.S. T.V. bridge.' +
+            const outputSpeech = 'Something whent wrong while talking with your L.G. web O.S. T.V. gateway.' +
                 ' Here is the error message' +
                 ` ${error.message}`;
             if (callback && typeof callback === 'function') {
@@ -73,7 +73,7 @@ function HTTPPost(postOptions, postBody, callback) {
         });
     });
     request.on('error', (error) => {
-        const outputSpeech = 'Something whent wrong while talking with your L.G. web O.S. T.V. bridge.' +
+        const outputSpeech = 'Something whent wrong while talking with your L.G. web O.S. T.V. gateway.' +
             ' Here is the error message' +
             ` ${error.message}`;
         if (callback && typeof callback === 'function') {

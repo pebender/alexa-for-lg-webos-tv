@@ -83,7 +83,7 @@ const handlers = {
         this.emit(':saveState');
         const password = crypto.randomBytes(64).toString('hex');
         if (!Reflect.has(this.attributes, 'hostname')) {
-            this.response.speak('You need to set your L.G. web O.S. T.V. bridge hostname before you can set its password.');
+            this.response.speak('You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.');
             this.emit(':responseReady');
         }
         const options = {
@@ -126,11 +126,11 @@ const handlers = {
                 this.attributes.tvmap = [];
             }
             if (!Reflect.has(this.attributes, 'hostname')) {
-                this.response.speak('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+                this.response.speak('You have not configured the hostname of your L.G. web O.S. T.V. gateway.');
                 this.emit(':responseReady');
             }
             if (!Reflect.has(this.attributes, 'password')) {
-                this.response.speak('You have not configured the password of your L.G. web O.S. T.V. bridge.');
+                this.response.speak('You have not configured the password of your L.G. web O.S. T.V. gateway.');
                 this.emit(':responseReady');
             }
             const options = {

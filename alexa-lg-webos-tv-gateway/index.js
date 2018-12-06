@@ -104,23 +104,23 @@ internal.get('/HTTP/form', (request, response) => {
         httpAuthorization.password = null;
     }
     const {hostname, password} = httpAuthorization;
-    let hostnameHTML = '<p>The LG webOS TV bridge has no hostname.</p>';
+    let hostnameHTML = '<p>The LG webOS TV gateway has no hostname.</p>';
     if (hostname !== null) {
-        hostnameHTML = `<p>The LG webOS TV bridge hostname is ${hostname}.`;
+        hostnameHTML = `<p>The LG webOS TV gateway hostname is ${hostname}.`;
     }
-    let passwordHTML = '<p>The LG webOS TV bridge has no password.</p>';
+    let passwordHTML = '<p>The LG webOS TV gateway has no password.</p>';
     if (password !== null) {
-        passwordHTML = '<p>The LG webOS TV bridge has a password.</p>';
+        passwordHTML = '<p>The LG webOS TV gateway has a password.</p>';
     }
     const page = `<!DOCTYPE html>
         <html>
             <head>
                 <title>
-                    LG webOS TV bridge
+                    LG webOS TV gateway
                 </title>
             </head>
             <body>
-                <H1>LG webOS TV bridge</H1>
+                <H1>LG webOS TV gateway</H1>
                 ${hostnameHTML}
                 ${passwordHTML}
             </body>
@@ -140,18 +140,18 @@ internal.get('/', (request, response) => {
         <html>
             <head>
                 <title>
-                    LG webOS TV bridge
+                    LG webOS TV gateway
                 </title>
             </head>
             <body>
-                <H1>LG webOS TV bridge</H1>
+                <H1>LG webOS TV gateway</H1>
                     <form action="/HTTP/form" enctype="url-encoded" method="get">
                         <div>
-                            <label for="hostname_label">LG webOS TV bridge hostname:</label>
+                            <label for="hostname_label">LG webOS TV gateway hostname:</label>
                             <input type="text" id="hostname_id" name="hostname" value="${hostname}">
                         </div>
                         <div>
-                            <label for="hostname_label">LG webOS TV bridge password delete:</label>
+                            <label for="hostname_label">LG webOS TV gateway password delete:</label>
                             <input type="checkbox" id="passwordDelete_id" name="passwordDelete">
                         </div>
                         <div class="button">
@@ -182,7 +182,7 @@ external.post('/HTTP', (request, response) => {
         if (httpAuthorization.hostname === null) {
             const body = {
                 'error': {
-                    'message': 'Your L.G. web O.S. T.V. bridge does not have a hostname set.'
+                    'message': 'Your L.G. web O.S. T.V. gateway does not have a hostname set.'
                 }
             };
             response.type('json').
@@ -209,7 +209,7 @@ external.post('/HTTP', (request, response) => {
         } else {
             const body = {
                 'error': {
-                    'message': 'Your L.G. web O.S. T.V. bridge password is already set.'
+                    'message': 'Your L.G. web O.S. T.V. gateway password is already set.'
                 }
             };
             response.
