@@ -1,11 +1,5 @@
 const https = require('https');
 
-/*
- *  @param postOptions = { hostname, path, username, password }
- *  @param postBody = { ... }
- *  @param callback(error, body)
- *  @return null
- */
 function HTTPPost(postOptions, postBody, callback) {
     const authorization = Buffer.from(`${postOptions.username}:${postOptions.password}`).toString('base64');
     const content = JSON.stringify(postBody);

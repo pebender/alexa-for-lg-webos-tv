@@ -1,250 +1,327 @@
-const Alexa = require('alexa-sdk');
 const httpBind = require('./lib/http-bind.js');
 const httpPost = require('./lib/http-post.js');
 
-const handlers = {
-    'AMAZON.HelpIntent': function () {
-        this.response.speak('I cannot help you yet.')
-        this.emit(':responseReady');
+const Alexa = require('ask-sdk');
+const {DynamoDbPersistenceAdapter} = require('ask-sdk-dynamodb-persistence-adapter');
+const persistenceAdapter = new DynamoDbPersistenceAdapter({
+  'tableName': 'LGwebOSTVController',
+  'createTable': true
+});
+
+const HelpIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
     },
-    'AMAZON.StopIntent': function () {
-        const command = {'name': 'powerOff'};
-        runLGTVCommand(this.attributes, this.events, command, (error) => {
-            if (error) {
-                this.response.speak(error.message);
-                this.emit(':responseReady');
-            } else {
-                this.response.speak('You asked me to turn off idiot box.');
-                this.emit(':responseReady');
+    handle(handlerInput) {
+        const speechText = 'There is a manual around here somewhere.';
+        return handlerInput.responseBuilder.speak(speechText).getResponse();
+    }
+};
+const CancelAndStopIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent' ||
+             handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
+    },
+    handle(handlerInput) {
+        const speechText = 'There is a switch around here somewhere.';
+        return handlerInput.responseBuilder.speak(speechText).getResponse();
+    }
+};
+const PowerOffIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'PowerOffIntent';
+    },
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.PowerOff)) {
+            try {
+                const command = {'name': 'powerOff'};
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to power off the television.';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
             }
-        });
-    },
-    'AMAZON.CancelIntent': function () {
-        this.response.speak('idiot box cannot cancel a command once it has started.');
-        this.emit(':responseReady');
-    },
-    'PowerOffIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.PowerOff)) {
-            const command = {'name': 'powerOff'};
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak('You asked me to turn off idiot box.');
-                    this.emit(':responseReady');
-                }
-            });
         } else {
-            this.response.speak('You asked me to do what (Off)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to power off the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const PowerOnIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'PowerOnIntent';
     },
-    'PowerOnIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.PowerOn)) {
-            const command = {'name': 'powerOn'};
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.emit(':responseReady');
-                    this.response.speak('You asked me to turn on idiot box.');
-                }
-            });
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.PowerOn)) {
+            try {
+                const command = {'name': 'powerOn'};
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to power on the television.';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (On)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to power on the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const VolumeDownIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'VolumeDownIntent';
     },
-    'VolumeDownIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.VolumeDown)) {
-            const command = {'name': 'volumeDown'};
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak('You asked me to decrease the volume of idiot box.');
-                    this.emit(':responseReady');
-                }
-            });
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.VolumeDown)) {
+            try {
+                const command = {'name': 'volumeDown'};
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to decrease the volume of the television';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (Volume Decrease)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to decrease the volume of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const VolumeUpIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'VolumeUpIntent';
     },
-    'VolumeUpIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.VolumeUp)) {
-            const command = {'name': 'volumeUp'};
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak('You asked me to increase the volume of idiot box.');
-                    this.emit(':responseReady');
-                }
-            });
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.VolumeUp)) {
+            try {
+                const command = {'name': 'volumeUp'};
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to increase the volume of the television';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (Volume Increase)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to increase the volume of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const VolumeSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'VolumeSetIntent';
     },
-    'VolumeSetIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.VolumeSet)) {
-            const volume = this.event.request.intent.slots.Volume.value;
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.VolumeSet)) {
+            const volume = handlerInput.requestEnvelope.request.intent.slots.VolumeSet.value;
             if (volume && volume >= 0) {
-                const command = {
-                    'name': 'volumeSet',
-                    'value': volume
-                };
-                runLGTVCommand(this.attributes, this.events, command, (error) => {
-                    if (error) {
-                        this.response.speak(error.message);
-                        this.emit(':responseReady');
-                    } else {
-                        this.response.speak(`You asked me to set the volume to ${volume}.`);
-                        this.emit(':responseReady');
-                    }
-                });
+                try {
+                    const command = {
+                        'name': 'volumeSet',
+                        'value': volume
+                    };
+                    await runLGTVCommand(handlerInput, command);
+                    const speechText = `You asked me to set the volume to ${volume}.`;
+                    return handlerInput.responseBuilder.speak(speechText).getResponse();
+                } catch (error) {
+                    const speechText = error.message;
+                    return handlerInput.responseBuilder.speak(speechText).getResponse();
+                }
             } else {
-                this.response.speak('You asked me to set the volume to what?');
-                this.emit(':responseReady');
+                const speechText = 'I did not understand. You asked me to set the volume to what?';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
             }
         } else {
-            this.response.speak('You asked me to do what (Volume Set)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to set the volume of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const VolumeMuteIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'VolumeMuteIntent';
     },
-    'VolumeMuteIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.VolumeMute)) {
-            const command = {
-                'name': 'muteSet',
-                'value': 'on'
-            };
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak('You asked me to mute the volume of idiot box.');
-                    this.emit(':responseReady');
-                }
-            });
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.VolumeMute)) {
+            try {
+                const command = {
+                    'name': 'muteSet',
+                    'value': 'on'
+                };
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to mute the volume of the television.';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (Volume Mute)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to mute the volume of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const VolumeUnmuteIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'VolumeUnmuteIntent';
     },
-    'VolumeUnmuteIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.VolumeUnmute)) {
-            const command = {
-                'name': 'muteSet',
-                'value': 'off'
-            };
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak('You asked me to unmute the volume of idiot box.');
-                    this.emit(':responseReady');
-                }
-            });
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.VolumeUnmute)) {
+            try {
+                const command = {
+                    'name': 'muteSet',
+                    'value': 'off'
+                };
+                await runLGTVCommand(handlerInput, command);
+                const speechText = 'You asked me to unmute the volume of the television.';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (Volume Unmute)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to unmute the volume of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const InputSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'InputSetIntent';
     },
-    'InputSetIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.InputSet) &&
-            checkSlotStatusCode(this.event.request.intent.slots.Input)) {
-            const inputName = getSlotName(this.event.request.intent.slots.Input);
-            const inputId = getSlotId(this.event.request.intent.slots.Input);
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.InputSet) &&
+            checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.Input)) {
+            const inputName = getSlotName(handlerInput.requestEnvelope.request.intent.slots.Input);
+            const inputId = getSlotId(handlerInput.requestEnvelope.request.intent.slots.Input);
             if (inputName && inputId) {
                 if (inputId.startsWith('HDMI_')) {
-                    const command = {
-                        'name': 'inputSet',
-                        'value': inputId
-                    };
-                    runLGTVCommand(this.attributes, this.events, command, (error) => {
-                        if (error) {
-                            this.response.speak(error.message);
-                            this.emit(':responseReady');
-                        } else {
-                            this.response.speak(`You asked me to set the input to ${inputName}.`);
-                            this.emit(':responseReady');
-                        }
-                    });
+                    try {
+                        const command = {
+                            'name': 'inputSet',
+                            'value': inputId
+                        };
+                        await runLGTVCommand(handlerInput, command);
+                        const speechText = `You asked me to set the input to ${inputName}.`;
+                        return handlerInput.responseBuilder.speak(speechText).getResponse();
+                    } catch (error) {
+                        const speechText = error.message;
+                        return handlerInput.responseBuilder.speak(speechText).getResponse();
+                    }
                 } else if (inputId.startsWith('APP_')) {
                     const applicationId = inputId.substr(4);
                     const command = {
                         'name': 'applicationLaunch',
                         'value': applicationId
                     };
-                    runLGTVCommand(this.attributes, this.events, command, (error) => {
-                        if (error) {
-                            this.response.speak(error.message);
-                            this.emit(':responseReady');
-                        } else {
-                            this.response.speak(`You asked me to set the input to ${inputName}.`);
-                            this.emit(':responseReady');
-                        }
-                    });
+                    try {
+                        await runLGTVCommand(handlerInput, command);
+                        const speechText = `You asked me to set the input to ${inputName}.`;
+                        return handlerInput.responseBuilder.speak(speechText).getResponse();
+                    } catch (error) {
+                        const speechText = error.message;
+                        return handlerInput.responseBuilder.speak(speechText).getResponse();
+                    }
                 } else {
-                    this.response.speak('Oh dear. I should not be here. You asked me for a valid input type I know nothing about.');
-                    this.emit(':responseReady');
+                    const speechText = 'Oh dear. I should not be here. You asked me for a valid input type I know nothing about.';
+                    return handlerInput.responseBuilder.speak(speechText).getResponse();
                 }
             } else {
-                this.response.speak('You asked me to set the input to what?');
-                this.emit(':responseReady');
+                const speechText = 'You asked me to set the input to what?';
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
             }
         } else {
-            this.response.speak('You asked me to do what (Input Set)?');
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to set the input of the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
+    }
+};
+const MessageShowIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'MessageShowIntent';
     },
-    'MessageShowIntent': function () {
-        if (checkSlotStatusCode(this.event.request.intent.slots.MessageShow)) {
-            const message = this.event.request.intent.slots.Message.value;
+    async handle(handlerInput) {
+        if (checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.MessageShow)) {
+            const message = handlerInput.requestEnvelope.request.intent.slots.Message.value;
             const command = {
                 'name': 'messageShow',
                 'value': message
             };
-            runLGTVCommand(this.attributes, this.events, command, (error) => {
-                if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
-                } else {
-                    this.response.speak(`You asked me to show the message ${message}.`);
-                    this.emit(':responseReady');
-                }
-            });
+            try {
+                await runLGTVCommand(handlerInput, command);
+                const speechText = `You asked me to show the message ${message}.`;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            } catch (error) {
+                const speechText = error.message;
+                return handlerInput.responseBuilder.speak(speechText).getResponse();
+            }
         } else {
-            this.response.speak('You asked me to do what (Volume Set)?');
-            this.emit(':responseReady');
-        }
-    },
-    'Unhandled': function () {
-        if (this.handler.state === '') {
-            this.response.speak('Now the idiot box really feels like an idiot.');
-            this.emit(':responseReady');
-        } else {
-            this.handler.state = '';
-            this.emit(this.event.request.intent.name);
-            this.emit(':responseReady');
+            const speechText = 'I did not understand. Maybe you wanted me to show a message on the television';
+            return handlerInput.responseBuilder.speak(speechText).getResponse();
         }
     }
 };
-
-exports.handler = function (event, context, callback) {
-    const alexa = Alexa.handler(event, context, callback);
-    alexa.appId = 'amzn1.ask.skill.933ee8a1-2ae8-4a35-88b8-57281e0648e2';
-    alexa.dynamoDBTableName = 'LGwebOSTVController';
-    alexa.registerHandlers(handlers, httpBind.handlers);
-    alexa.execute();
+const SessionEndedRequestHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
+    },
+    async handle(handlerInput) {
+        try {
+            await handlerInput.attributesManager.savePersistentAttributes();
+        } catch (error) {
+            throw error;
+        }
+        return handlerInput.responseBuilder.getResponse();
+    }
 };
+const handlers = [
+    HelpIntentHandler,
+    CancelAndStopIntentHandler,
+    PowerOffIntentHandler,
+    PowerOnIntentHandler,
+    VolumeDownIntentHandler,
+    VolumeUpIntentHandler,
+    VolumeSetIntentHandler,
+    VolumeMuteIntentHandler,
+    VolumeUnmuteIntentHandler,
+    InputSetIntentHandler,
+    MessageShowIntentHandler,
+    SessionEndedRequestHandler
+];
+
+const ErrorHandler = {
+    canHandle() {
+      return true;
+    },
+    // eslint-disable-next-line no-unused-vars
+    handle(handlerInput, _error) {
+        return handlerInput.responseBuilder.
+            speak('Sorry, I can\'t understand the command. Please say again.').
+            reprompt('Sorry, I can\'t understand the command. Please say again.').
+            getResponse();
+    }
+};
+
+exports.handler = Alexa.SkillBuilders.custom().
+    addRequestHandlers(...httpBind.handlers, ...handlers).
+    addErrorHandlers(ErrorHandler).
+    withPersistenceAdapter(persistenceAdapter).
+    lambda();
 
 function checkSlotStatusCode(slot) {
     const match =
@@ -282,21 +359,25 @@ function getSlotId(slot) {
     return id;
 }
 
-function runLGTVCommand(attributes, event, command, callback) {
+async function runLGTVCommand(handlerInput, command) {
+    let attributes = {};
+    try {
+        attributes = await handlerInput.attributesManager.getPersistentAttributes();
+    } catch (error) {
+        throw error;
+    }
     if (!Reflect.has(attributes, 'hostname')) {
-        const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. gateway.');
-        callback(error);
-        return;
+        const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
+        throw error;
     }
     if (!Reflect.has(attributes, 'password')) {
-        const error = new Error('You have not configured the password of your L.G. web O.S. T.V. gateway.');
-        callback(error);
-        return;
+        const error = new Error('You have not configured the password of your L.G. web O.S. T.V. bridge.');
+        throw error;
+
     }
-    if (!Reflect.has(attributes, 'tvmap') || !Reflect.has(attributes.tvmap, event.context.System.device.deviceId)) {
+    if (!Reflect.has(attributes, 'tvmap') || !Reflect.has(attributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId)) {
         const error = new Error('You have not configured this Alexa to control an L.G. web O.S. T.V..');
-        callback(error);
-        return;
+        throw error;
     }
     const options = {
         'hostname': attributes.hostname,
@@ -305,9 +386,12 @@ function runLGTVCommand(attributes, event, command, callback) {
         'password': attributes.password
     };
     const request = {
-        'television': attributes[event.context.System.device.deviceId],
+        'television': attributes[handlerInput.requestEnvelope.context.System.device.deviceId],
         'command': command
     };
-    /* eslint-disable-next-line no-unused-vars */
-    httpPost.post(options, request, (error, response) => callback(error));
+    try {
+        httpPost.post(options, request);
+    } catch (error) {
+        throw (error);
+    }
 }

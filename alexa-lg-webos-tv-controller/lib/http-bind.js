@@ -2,47 +2,81 @@ const crypto = require('crypto');
 const {constants} = require('alexa-lg-webos-tv-core');
 const httpPost = require('./http-post.js');
 
-const handlers = {
-    'HTTPHostnameSetIntent': function () {
-        if (this.event.request.dialogState === 'STARTED') {
-            Reflect.deleteProperty(this.attributes, 'tmp');
-            Reflect.deleteProperty(this.attributes, 'hostname');
-            this.attributes.tmp = {};
-            this.emit(':delegate');
-        } else if (this.event.request.dialogState === 'IN_PROGRESS') {
-            const ipAddressA = this.event.request.intent.slots.ipAddressA.value;
-            const ipAddressB = this.event.request.intent.slots.ipAddressB.value;
-            const ipAddressC = this.event.request.intent.slots.ipAddressC.value;
-            const ipAddressD = this.event.request.intent.slots.ipAddressD.value;
+const HTTPHostnameSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+               handlerInput.requestEnvelope.request.intent.name === 'HTTPHostnameSetIntent';
+    },
+    async handle(handlerInput) {
+        let persistentAttributes = {};
+        try {
+            persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
+        } catch (error) {
+            throw error;
+        }
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+
+        if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
+            persistentAttributes.hostname = '';
+            persistentAttributes.password = '';
+            persistentAttributes.tvmap = [];
+            try {
+                await handlerInput.attributesManager.savePersistentAttributes();
+            } catch (error) {
+                throw error;
+            }
+            handlerInput.responseBuilder.
+                addDelegateDirective().
+                getResponse();
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {
+            const ipAddressA = handlerInput.requestEnvelope.request.intent.slots.ipAddressA.value;
+            const ipAddressB = handlerInput.requestEnvelope.request.intent.slots.ipAddressB.value;
+            const ipAddressC = handlerInput.requestEnvelope.request.intent.slots.ipAddressC.value;
+            const ipAddressD = handlerInput.requestEnvelope.request.intent.slots.ipAddressD.value;
             if (!ipAddressA) {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else if (ipAddressA && (ipAddressA < 0 || ipAddressA > 255)) {
-                const speechOutput = 'I think I misheard you.' +
-                    ' I.P. v four address numbers need to be betwen 0 and 255.' +
-                    ' Could you tell me the first number again?';
-                this.emit(':elicitSlot', 'ipAddressA', speechOutput);
+                handlerInput.responseBuilder.
+                    speak('I think I misheard you.' +
+                        ' I.P. v four address numbers need to be betwen 0 and 255.' +
+                        ' Could you tell me the first number again?').
+                    addElicitSlotDirective('ipAddressA').
+                    getResponse();
             } else if (!ipAddressB) {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else if (ipAddressB && (ipAddressB < 0 || ipAddressB > 255)) {
-                const speechOutput = 'I think I misheard you.' +
-                    ' I.P. v four address numbers need to be betwen 0 and 255.' +
-                    ' Could you tell me the second number again?';
-                this.emit(':elicitSlot', 'ipAddressB', speechOutput);
+                handlerInput.responseBuilder.
+                    speak('I think I misheard you.' +
+                        ' I.P. v four address numbers need to be betwen 0 and 255.' +
+                        ' Could you tell me the second number again?').
+                    addElicitSlotDirective('ipAddressB').
+                    getResponse();
             } else if (!ipAddressC) {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else if (ipAddressC && (ipAddressC < 0 || ipAddressC > 255)) {
-                const speechOutput = 'I think I misheard you.' +
-                    ' I.P. v four address numbers need to be betwen 0 and 255.' +
-                    ' Could you tell me the third number again?';
-                this.emit(':elicitSlot', 'ipAddressC', speechOutput);
+                handlerInput.responseBuilder.
+                    speak('I think I misheard you.' +
+                        ' I.P. v four address numbers need to be betwen 0 and 255.' +
+                        ' Could you tell me the third number again?').
+                    addElicitSlotDirective('ipAddressC').
+                    getResponse();
             } else if (!ipAddressD) {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else if (ipAddressD && (ipAddressD < 0 || ipAddressD > 255)) {
-                const speechOutput = 'I think I misheard you.' +
-                    ' I.P. v four address numbers need to be betwen 0 and 255.' +
-                    ' Could you tell me the fourth number again?';
-                this.emit(':elicitSlot', 'ipAddressD', speechOutput);
-            } else if (this.event.request.intent.confirmationStatus === 'NONE') {
+                handlerInput.responseBuilder.
+                    speak('I think I misheard you.' +
+                        ' I.P. v four address numbers need to be betwen 0 and 255.' +
+                        ' Could you tell me the fourth number again?').
+                    addElicitSlotDirective('ipAddressD');
+            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'NONE') {
                 const options = {
                     'hostname': `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`,
                     'path': '/HTTP',
@@ -53,41 +87,61 @@ const handlers = {
                 const request = {'command': {'name': 'hostnameGet'}};
                 httpPost.post(options, request, (error, response) => {
                     if (error) {
-                        this.response.speak(error.message);
-                        this.emit(':responseReady');
+                        handlerInput.responseBuilder.
+                            speak(error.message).
+                            getResponse();
                     } else if (response && Reflect.has(response, 'error')) {
-                        this.response.speak(response.error.message);
-                        this.emit(':responseReady');
+                        handlerInput.responseBuilder.
+                            speak(response.error.message).
+                            getResponse();
                     } else {
-                        this.emit(':confirmIntent', `Is your hostname ${this.attributes.tmp.hostname}?`);
+                        const {hostname} = response;
+                        handlerInput.responseBuilder.
+                            speak(`Is your hostname ${hostname}?`).
+                            addConfirmIntentDirective().
+                            getResponse();
                     }
                 });
             } else {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             }
-        } else if (this.event.request.dialogState === 'COMPLETED') {
-            if (this.event.request.intent.confirmationStatus === 'DENIED') {
-                Reflect.deleteProperty(this.attributes, 'tmp');
-                this.response.speak('We failed.');
-                this.emit(':responseReady');
-            } else if (this.event.request.intent.confirmationStatus === 'CONFIRMED') {
-                this.attributes.hostname = this.attributes.tmp.hostname;
-                Reflect.deleteProperty(this.attributes, 'tmp');
-                this.response.speak('We succeeded.');
-                this.emit(':responseReady');
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
+            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
+                handlerInput.responseBuilder.
+                    speak('We failed.').
+                    getResponse();
+            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
+                persistentAttributes.hostname = sessionAttributes.hostname;
+                handlerInput.responseBuilder.
+                    speak('We succeeded.').
+                    getResponse();
             }
         }
+    }
+};
+const HTTPPasswordSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'HTTPPasswordSetIntent';
     },
-    'HTTPPasswordSetIntent': function () {
-        Reflect.deleteProperty(this.attributes, 'password');
-        this.emit(':saveState');
+    async handle(handlerInput) {
+        let persistentAttributes = {};
+        try {
+            persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
+        } catch (error) {
+            throw error;
+        }
+
         const password = crypto.randomBytes(64).toString('hex');
-        if (!Reflect.has(this.attributes, 'hostname')) {
-            this.response.speak('You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.');
-            this.emit(':responseReady');
+        if (!Reflect.has(persistentAttributes, 'hostname')) {
+            handlerInput.responseBuilder.
+                speak('You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.').
+                getResponse();
         }
         const options = {
-            'hostname': this.attributes.hostname,
+            'hostname': persistentAttributes.hostname,
             'path': '/HTTP',
             'username': 'HTTP',
             'password': constants.password
@@ -96,121 +150,164 @@ const handlers = {
             'command': {
                 'name': 'passwordSet',
                 'password': password,
-                'deviceId': this.event.context.System.device.deviceId
+                'deviceId': handlerInput.requestEnvelope.context.System.device.deviceId
             }
         };
         httpPost.post(options, request, (error, response) => {
             if (error) {
-                this.emit(':saveState');
-                this.response.speak(error.message);
-                this.emit(':responseReady');
+                handlerInput.responseBuilder.
+                    speak(error.message).
+                    getResponse();
             } else if (response && Reflect.has(response, 'error')) {
-                this.emit(':saveState');
-                this.response.speak(response.error.message);
-                this.emit(':responseReady');
+                handlerInput.responseBuilder.
+                    speak(response.error.message).
+                    getResponse();
             } else {
-                this.attributes.password = password;
-                this.emit(':saveState');
-                this.response.speak('Your password has been set.');
-                this.emit(':responseReady');
+                persistentAttributes.password = password;
+                handlerInput.responseBuilder.
+                    speak('Your password has been set.').
+                    getResponse();
             }
         });
+    }
+};
+const LGTVBindHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'LGTVBind';
     },
-    'LGTVBindHandler': function () {
-        if (this.event.request.dialogState === 'STARTED') {
-            Reflect.deleteProperty(this.attributes, 'tmp');
-            this.attributes.tmp = {};
-            this.attributes.tmp.udn = {};
-            this.attributes.tmp.udn.confirmationStatus = 'NONE';
-            if (!Reflect.has(this.attributes, 'tvmap')) {
-                this.attributes.tvmap = [];
+
+    async handle(handlerInput) {
+        let persistentAttributes = {};
+        try {
+            persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
+        } catch (error) {
+            throw error;
+        }
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+
+        if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
+            if (Reflect.has(sessionAttributes, 'udn')) {
+                Reflect.deleteProperty(sessionAttributes, 'udn');
             }
-            if (!Reflect.has(this.attributes, 'hostname')) {
-                this.response.speak('You have not configured the hostname of your L.G. web O.S. T.V. gateway.');
-                this.emit(':responseReady');
+            sessionAttributes.udn = {};
+            sessionAttributes.udn.configurationStatus = 'NONE';
+
+            if (!Reflect.has(persistentAttributes, 'tvmap')) {
+                persistentAttributes.tvmap = [];
+                handlerInput.attributesManager.setPersistentAttributes(persistentAttributes);
             }
-            if (!Reflect.has(this.attributes, 'password')) {
-                this.response.speak('You have not configured the password of your L.G. web O.S. T.V. gateway.');
-                this.emit(':responseReady');
+            if (!Reflect.has(persistentAttributes, 'hostname')) {
+                handlerInput.responseBuilder.
+                    speak('You have not configured the hostname of your L.G. web O.S. T.V. gateway.').
+                    getResponse();
+            }
+            if (!Reflect.has(persistentAttributes, 'password')) {
+                handlerInput.responseBuilder.
+                    speak('You have not configured the password of your L.G. web O.S. T.V. gateway.').
+                    getResponse();
             }
             const options = {
-                'hostname': this.attributes.hostname,
+                'hostname': persistentAttributes.hostname,
                 'path': '/LGTV/MAP',
                 'username': 'LGTV',
-                'password': this.attributes.password
+                'password': persistentAttributes.password
             };
             const request = {'command': {'name': 'udnsGet'}};
             httpPost.post(options, request, (error, response) => {
                 if (error) {
-                    this.response.speak(error.message);
-                    this.emit(':responseReady');
+                    handlerInput.responseBuilder.
+                        speak(error.message).
+                        getResponse();
                 } else if (response && Reflect.has(response, 'error')) {
-                    this.response.speak(response.error.message);
-                    this.emit(':responseReady');
+                    handlerInput.responseBuilder.
+                        speak(response.error.message).
+                        getResponse();
                 } else {
                     if (!Reflect.has(response, 'udns')) {
-                        this.response.speak('I could not find an L.G. web O.S. T.V.');
-                        this.emit(':responseReady');
+                        handlerInput.responseBuilder.
+                            speak('I could not find an L.G. web O.S. T.V.').
+                            getResponse();
                     }
                     if (response.udns.length === 0) {
-                        this.response.speak('I could not find an L.G. web O.S. T.V.');
-                        this.emit(':responseReady');
+                        handlerInput.responseBuilder.
+                            speak('That was the last L.G. web O.S. T.V. I found.').
+                            getResponse();
                     }
                     let index = 0;
-                    this.attributes.tmp.udns = [];
+                    sessionAttributes.udns = [];
                     for (index = 0; index < response.udns.length; index += 1) {
-                        this.attributes.tmp.udns.push(response.udns[index]);
+                        sessionAttributes.udns.push(response.udns[index]);
                     }
-                    this.event.request.intent.confirmationStatus = 'DENIED';
-                    const updatedIntent = this.event.request.intent;
-                    this.emit(':delegate', updatedIntent);
+                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
+                    const updatedIntent = handlerInput.requestEnvelope.request.intent;
+                    handlerInput.responseBuilder.
+                        addDelegateDirective(updatedIntent).
+                        getResponse();
                 }
             });
-        } else if (this.event.request.dialogState === 'IN_PROGRESS') {
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {
             if (
-                this.attributes.tmp.udn.confirmationStatus === 'NONE' &&
-                this.event.request.intent.confirmationStatus === 'DENIED'
+                sessionAttributes.udn.confirmationStatus === 'NONE' &&
+                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED'
             ) {
-                if (this.attributes.tmp.udns.length > 0) {
-                    this.attributes.tmp.udn.confirmationStatus = 'NONE';
-                    this.event.request.intent.confirmationStatus = 'DENIED';
-                    this.attributes.tmp.udn.value = this.attributes.tmp.udns.shift();
-                    const speechOutput = 'Did you see the message on your T.V. screen?';
-                    this.emit(':confirmIntent', speechOutput);
+                if (sessionAttributes.udns.length > 0) {
+                    sessionAttributes.udn.confirmationStatus = 'NONE';
+                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
+                    sessionAttributes.udn.value = sessionAttributes.udns.shift();
+                    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                    handlerInput.responseBuilder.
+                        speak('Did you see the message on your T.V. screen?').
+                        addConfirmIntentDirective().
+                        getResponse();
                 } else {
-                    Reflect.deleteProperty(this.attributes, 'tmp');
-                    this.response.speak('That was the last L.G. web O.S. T.V. I found.');
-                    this.emit(':responseReady');
+                    handlerInput.responseBuilder.
+                        speak('That was the last L.G. web O.S. T.V. I found.').
+                        getResponse();
                 }
             } else if (
-                this.attributes.tmp.udn.confirmationStatus === 'NONE' &&
-                this.event.request.intent.confirmationStatus === 'DENIED'
+                sessionAttributes.udn.confirmationStatus === 'NONE' &&
+                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED'
             ) {
-                this.attributes.tmp.udn.confirmationStatus = 'DENIED';
-                this.emit(':delegate');
+                sessionAttributes.udn.confirmationStatus = 'DENIED';
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else if (
-                this.attributes.tmp.udn.confirmationStatus === 'NONE' &&
-                this.event.request.intent.confirmationStatus === 'CONFIRMED'
+                sessionAttributes.udn.confirmationStatus === 'NONE' &&
+                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED'
             ) {
-                this.attributes.tmp.udn.confirmationStatus = 'CONFIRMED';
-                this.emit(':delegate');
+                sessionAttributes.udn.confirmationStatus = 'CONFIRMED';
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             } else {
-                this.emit(':delegate');
+                handlerInput.responseBuilder.
+                    addDelegateDirective().
+                    getResponse();
             }
-        } else if (this.event.request.dialogState === 'COMPLETED') {
-            if (this.event.request.intent.confirmationStatus === 'DENIED') {
-                Reflect.deleteProperty(this.attributes.tvmap, this.event.context.System.device.deviceId);
-                Reflect.deleteProperty(this.attributes, 'tmp');
-                this.response.speak('We failed.');
-                this.emit(':responseReady');
-            } else if (this.event.request.intent.confirmationStatus === 'CONFIRMED') {
-                this.attributes.tvmap[this.event.context.System.device.deviceId] = this.attributes.tmp.udn.value;
-                Reflect.deleteProperty(this.attributes, 'tmp');
-                this.response.speak('We succeeded.');
-                this.emit(':responseReady');
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
+            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
+                Reflect.deleteProperty(persistentAttributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId);
+                handlerInput.attributesManager.setSessionAttributes();
+                handlerInput.responseBuilder.
+                    speak('We failed.').
+                    getResponse();
+            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
+                persistentAttributes.tvmap[handlerInput.requestEnvelope.context.System.device.deviceId] = sessionAttributes.udn.value;
+                handlerInput.attributesManager.setSessionAttributes();
+                handlerInput.responseBuilder.
+                    speak('We succeeded.').
+                    getResponse();
             }
         }
     }
 };
-
+const handlers = [
+    HTTPHostnameSetIntentHandler,
+    HTTPPasswordSetIntentHandler,
+    LGTVBindHandler
+];
 module.exports = {'handlers': handlers};

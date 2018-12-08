@@ -14,16 +14,19 @@
   ],
   "dependencies": {
     "alexa-lg-webos-tv-core": "../alexa-lg-webos-tv-core",
-    "alexa-sdk": "1.0.25",
+    "ask-sdk": "2.3.0",
+    "ask-sdk-dynamodb-persistence-adapter": "2.3.0",
     "certnames": "1.0.4"
   },
   "devDependencies": {
+    "@types/node": "10.12.12",
     "eslint": "5.9.0",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
     "alexa-lg-webos-tv-core",
-    "alexa-sdk",
+    "ask-sdk",
+    "ask-sdk-dynamodb-persistence-adapter",
     "certnames"
   ],
   "scripts": {

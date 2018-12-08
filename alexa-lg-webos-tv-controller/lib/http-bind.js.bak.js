@@ -4,10 +4,14 @@ const certnames = require('certnames');
 const {constants} = require('alexa-lg-webos-tv-core');
 const httpPost = require('./http-post.js');
 
-const handlers = {
-    'HTTPHostnameSetIntent': function () {
-        const intentObject = this.event.request.intent;
-        if (this.event.request.dialogState === 'STARTED') {
+const HTTPHostnameSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'HTTPHostnameSetIntent';
+    },
+    handle(handlerInput) {
+        const intentObject = handlerInput.requestEnvelope.request.intent;
+        if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
             Reflect.deleteProperty(this.attributes, 'tmp');
             Reflect.deleteProperty(this.attributes, 'hostname');
             this.attributes.tmp = {};
@@ -17,7 +21,7 @@ const handlers = {
             this.attributes.tmp.hostname.confirmationStatus = 'NONE';
             const updatedIntent = intentObject;
             this.emit(':delegate', updatedIntent);
-        } else if (this.event.request.dialogState !== 'COMPLETED') {
+        } else if (handlerInput.requestEnvelope.request.dialogState !== 'COMPLETED') {
             if (!intentObject.slots.IPAddressA.value) {
                 const speechOutput = 'What\'s the first number of your I.P. v five address?';
                 const updatedIntent = intentObject;
@@ -125,8 +129,8 @@ const handlers = {
             } else {
                 this.emit(':delegate');
             }
-        } else if (this.event.request.dialogState === 'COMPLETED') {
-            if (this.event.request.intent.confirmationStatus === 'DENIED') {
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
+            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
                 this.attributes.hostname = this.attributes.tmp.hostname.value;
                 Reflect.deleteProperty(this.attributes, 'tmp');
                 this.emit(':saveState');
@@ -138,8 +142,14 @@ const handlers = {
                 this.emit(':tell', 'We succeeded.');
             }
         }
+    }
+};
+const HTTPPasswordSetIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'HTTPPasswordSetIntent';
     },
-    'HTTPPasswordSetIntent': function () {
+    handle(handlerInput) {
         const password = crypto.randomBytes(64).toString('hex');
         if (!Reflect.has(this.attributes, 'http') || !Reflect.has(this.attributes.http, 'hostname')) {
             this.emit(':tell', 'You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.');
@@ -154,7 +164,7 @@ const handlers = {
             'command': {
                 'name': 'passwordSet',
                 'password': password,
-                'deviceId': this.event.context.System.device.deviceId
+                'deviceId': handlerInput.requestEnvelope.context.System.device.deviceId
             }
         };
         httpPost.post(options, request, (error, response) => {
@@ -169,9 +179,15 @@ const handlers = {
                 this.emit(':tell', 'Your password has been set.');
             }
         });
+    }
+};
+const LGTVBindHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+            handlerInput.requestEnvelope.request.intent.name === 'LGTVBind';
     },
-    'LGTVBindHandler': function () {
-        if (this.event.request.dialogState === 'STARTED') {
+    handle(handlerInput) {
+        if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
             Reflect.deleteProperty(this.attributes, 'tmp');
             this.attributes.tmp = {};
             this.attributes.tmp.udn = {};
@@ -213,16 +229,16 @@ const handlers = {
                     for (index = 0; index < response.udns.length; index += 1) {
                         this.attributes.tmp.udns.push(response.udns[index]);
                     }
-                    this.event.request.intent.confirmationStatus = 'DENIED';
-                    const updatedIntent = this.event.request.intent;
+                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
+                    const updatedIntent = handlerInput.requestEnvelope.request.intent;
                     this.emit(':delegate', updatedIntent);
                 }
             });
-        } else if (this.event.request.dialogState === 'IN_PROGRESS') {
-            if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && this.event.request.intent.confirmationStatus === 'DENIED') {
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {
+            if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
                 if (this.attributes.tmp.udns.length > 0) {
                     this.attributes.tmp.udn.confirmationStatus = 'NONE';
-                    this.event.request.intent.confirmationStatus = 'DENIED';
+                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
                     this.attributes.tmp.udn.value = this.attributes.tmp.udns.shift();
                     const speechOutput = 'Did you see the message on your T.V. screen?';
                     this.emit(':confirmIntent', speechOutput);
@@ -231,23 +247,23 @@ const handlers = {
                     const speechOutput = 'That was the last L.G. web O.S. T.V. I found.';
                     this.emit(':tell', speechOutput);
                 }
-            } else if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && this.event.request.intent.confirmationStatus === 'DENIED') {
+            } else if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
                 this.attributes.udn.confirmationStatus = 'DENIED';
                 this.emit(':delegate');
-            } else if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && this.event.request.intent.confirmationStatus === 'CONFIRMED') {
+            } else if (this.attributes.tmp.udn.confirmationStatus === 'NONE' && handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
                 this.attributes.udn.confirmationStatus = 'CONFIRMED';
                 this.emit(':delegate');
             } else {
                 this.emit(':delegate');
             }
-        } else if (this.event.request.dialogState === 'COMPLETED') {
-            if (this.event.request.intent.confirmationStatus === 'DENIED') {
-                Reflect.deleteProperty(this.attributes.tvmap, this.event.context.System.device.deviceId);
+        } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
+            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
+                Reflect.deleteProperty(this.attributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId);
                 Reflect.deleteProperty(this.attributes, 'tmp');
                 this.emit(':saveState');
                 this.emit(':tell', 'We failed.');
-            } else if (this.event.request.intent.confirmationStatus === 'CONFIRMED') {
-                this.attributes.tvmap[this.event.context.System.device.deviceId] = this.attributes.tmp.udn.value;
+            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
+                this.attributes.tvmap[handlerInput.requestEnvelope.context.System.device.deviceId] = this.attributes.tmp.udn.value;
                 Reflect.deleteProperty(this.attributes, 'tmp');
                 this.emit(':saveState');
                 this.emit(':tell', 'We succeeded.');
@@ -255,5 +271,9 @@ const handlers = {
         }
     }
 };
-
+const handlers = {
+    HTTPHostnameSetIntentHandler,
+    HTTPPasswordSetIntentHandler,
+    LGTVBindHandler
+};
 module.exports = {'handlers': handlers};
