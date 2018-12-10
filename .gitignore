@@ -1,3 +1,4 @@
+@eaDir/
 .DS_Store
 node_modules/
 alexa-lg-webos-tv-*/alexa-lg-webos-tv-*.tgz
