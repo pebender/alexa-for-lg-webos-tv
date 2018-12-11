@@ -225,7 +225,17 @@ external.post('/LGTV/RUN', (request, response) => {
         request.body.command,
         (err, res) => {
             if (err) {
-                response.status(500).end();
+                const body = {
+                    'error': {
+                        'name': err.name,
+                        'message': err.message
+                    }
+                };
+                response.
+                    type('json').
+                    status(200).
+                    json(body).
+                    end();
             } else {
                 response.
                     type('json').

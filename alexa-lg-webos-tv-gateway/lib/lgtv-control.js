@@ -24,13 +24,11 @@ class LGTVControl extends EventEmitter {
                 that.emit('error', error);
                 return;
             }
-            if (docs !== []) {
-                let index = 0;
-                for (index = 0; index < docs.length; index += 1) {
-                    if (docs[index].udn in that.private.controls) {
-                        that.private.controls[docs[index].udn] = new LGTVControlOne(that.private.db, docs[index]);
-                        eventsAdd(docs[index].udn);
-                    }
+            let index = 0;
+            for (index = 0; index < docs.length; index += 1) {
+                if (!(docs[index].udn in that.private.controls)) {
+                    that.private.controls[docs[index].udn] = new LGTVControlOne(that.private.db, docs[index]);
+                    eventsAdd(docs[index].udn);
                 }
             }
         });
@@ -96,7 +94,7 @@ class LGTVControl extends EventEmitter {
                 return null;
             });
         } else {
-            callback(new Error(''), null);
+            callback(new Error('Requested TV not found.'), null);
             return null;
         }
         return null;
@@ -123,9 +121,9 @@ class LGTVControlOne extends EventEmitter {
                 {'udn': this.private.tv.udn},
                 {'$set': {'key': key}},
                 // eslint-disable-next-line no-unused-vars
-                (error, _num, _upsert) => {
-                    if (error) {
-                        callback(error);
+                (err, _numAffected, _affectedDocuments, _upsert) => {
+                    if (err) {
+                        callback(err);
                         return null;
                     }
                     return null;

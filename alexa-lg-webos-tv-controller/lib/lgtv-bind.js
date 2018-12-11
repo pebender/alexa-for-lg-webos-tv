@@ -10,8 +10,24 @@ const LGTVBindHandler = {
         try {
             persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
         } catch (error) {
-            throw error;
+            return handlerInput.responseBuilder.
+            speak('I had a problem and we will have to start over.' +
+                ' A card in the Alexa app shows more.').
+            withSimpleCard('Error', `${error.name}: ${error.message}`).
+            getResponse();
         }
+
+        if (!Reflect.has(persistentAttributes, 'hostname')) {
+            return handlerInput.responseBuilder.
+                speak('I need to know your gateway\'s hostname before I can find any televisions.').
+                getResponse();
+        }
+        if (!Reflect.has(persistentAttributes, 'password')) {
+            return handlerInput.responseBuilder.
+                speak('I need to know your gateway\'s hostname before I can find any televisions.').
+                getResponse();
+        }
+
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
         if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
@@ -22,19 +38,9 @@ const LGTVBindHandler = {
             sessionAttributes.udn.configurationStatus = 'NONE';
 
             if (!Reflect.has(persistentAttributes, 'tvmap')) {
-                persistentAttributes.tvmap = [];
-                handlerInput.attributesManager.setPersistentAttributes(persistentAttributes);
+                Reflect.deleteProperty(persistentAttributes, 'tvmap');
             }
-            if (!Reflect.has(persistentAttributes, 'hostname')) {
-                return handlerInput.responseBuilder.
-                    speak('I need to know your gateway\'s hostname before I can find any televisions.').
-                    getResponse();
-            }
-            if (!Reflect.has(persistentAttributes, 'password')) {
-                return handlerInput.responseBuilder.
-                    speak('I need to know your gateway\'s hostname before I can find any televisions.').
-                    getResponse();
-            }
+
             try {
                 const options = {
                     'hostname': persistentAttributes.hostname,
@@ -44,17 +50,6 @@ const LGTVBindHandler = {
                 };
                 const request = {'command': {'name': 'udnsGet'}};
                 const response = await httpPost.post(options, request);
-                if (!response) {
-                    return handlerInput.responseBuilder.
-                    speak('I had a problem talking to the gateway. It didn\'t respond.').
-                    getResponse();
-                }
-                if (Reflect.has(response, 'error')) {
-                    return handlerInput.responseBuilder.
-                        speak('I had a problem talking to the gateway. The Alexa App will show you more.').
-                        withSimpleCard('LG webOS TV Gateway Communication Error', `${response.error.message}`).
-                        getResponse();
-                }
                 if (!Reflect.has(response, 'udns')) {
                     return handlerInput.responseBuilder.
                         speak('I could not find an L.G. web O.S. T.V.').
@@ -78,7 +73,7 @@ const LGTVBindHandler = {
             } catch (error) {
                 return handlerInput.responseBuilder.
                     speak('I had a problem talking to the gateway. The Alexa App will show you more.').
-                    withSimpleCard('LG webOS TV Gateway Communication Error', `${error.message}`).
+                    withSimpleCard('LG webOS TV Gateway Communication Error', `${error.name}: ${error.message}`).
                     getResponse();
             }
         } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {

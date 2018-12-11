@@ -387,6 +387,8 @@ async function runLGTVCommand(handlerInput, command) {
         };
         const request = {
 //            'television': attributes[handlerInput.requestEnvelope.context.System.device.deviceId],
+// Hack until I get LGTV binding to work. This is the UDN specific to my television.
+            'television': 'uuid:261b0bf7-1437-ed2d-5eaf-ab701fd699e3',
             'command': command
         };
         return await httpPost.post(options, request);

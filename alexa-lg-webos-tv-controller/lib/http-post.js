@@ -32,12 +32,12 @@ function HTTPPost(postOptions, postBody) {
             response.on('end', () => {
                 if (response.statusCode !== 200) {
                     if (!Reflect.has(httpStatusMessages, response.statusCode)) {
-                        const message = 'The gateway returned server code' +
+                        const message = 'The gateway returned HTTP/1.1 status code' +
                             ` '${response.statusCode}'.`;
                         return reject(new HTTPPostError(message));
                     }
-                    const message = 'The gateway returned server message' +
-                        ` '${httpStatusMessages[response.statusCode]}'.`;
+                    const message = 'The gateway returned HTTP/1.1 status message' +
+                        ` '${httpStatusMessages[response.statusCode]} (${response.statusCode})'.`;
                     return reject(new HTTPPostError(message));
                 }
                 if (!(/^application\/json/).test(response.headers['content-type'])) {
@@ -47,20 +47,29 @@ function HTTPPost(postOptions, postBody) {
                 try {
                     body = JSON.parse(data);
                 } catch (error) {
-                    const message = 'The gateway returned the corrupted content.';
+                    const message = 'The gateway returned corrupted content.';
+                    return reject(new HTTPPostError(message));
+                }
+                if (Reflect.has(body, 'error')) {
+                    let message = 'The gateway returned the error';
+                    if (Reflect.has(body.error, 'name')) {
+                        message += ` [${body.error.name}: ${body.error.message}]`;
+                    } else {
+                        message += ` ${body.error.message}`;
+                    }
                     return reject(new HTTPPostError(message));
                 }
                 return resolve(body);
             });
             response.on('error', (error) => {
                 const message = 'There was a problem talking to the gateway.' +
-                    ` The error was '${error.message}'.`;
+                    ` The error was [${error.name}: ${error.message}].`;
                 return reject(new HTTPPostError(message));
             });
         });
         request.on('error', (error) => {
             const message = 'There was a problem talking to the gateway.' +
-                ` The error was '${error.message}'.`;
+                ` The error was [${error.name}: ${error.message}].`;
             return reject(new HTTPPostError(message));
         });
     });
