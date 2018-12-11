@@ -1,5 +1,7 @@
+const tls = require('tls');
 const crypto = require('crypto');
-const {constants} = require('alexa-lg-webos-tv-core');
+const certnames = require('certnames');
+const constants = require('alexa-lg-webos-tv-core');
 const httpPost = require('./http-post.js');
 
 const HTTPHostnameSetIntentHandler = {
@@ -8,116 +10,179 @@ const HTTPHostnameSetIntentHandler = {
                handlerInput.requestEnvelope.request.intent.name === 'HTTPHostnameSetIntent';
     },
     async handle(handlerInput) {
-        let persistentAttributes = {};
-        try {
-            persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
-        } catch (error) {
-            throw error;
-        }
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-
+        const {slots} = handlerInput.requestEnvelope.request.intent;
         if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
-            persistentAttributes.hostname = '';
-            persistentAttributes.password = '';
-            persistentAttributes.tvmap = [];
-            try {
-                await handlerInput.attributesManager.savePersistentAttributes();
-            } catch (error) {
-                throw error;
-            }
-            handlerInput.responseBuilder.
+            Reflect.deleteProperty(sessionAttributes, 'ipAddress');
+            Reflect.deleteProperty(sessionAttributes, 'hostnames');
+            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+
+            return handlerInput.responseBuilder.
                 addDelegateDirective().
                 getResponse();
         } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {
-            const ipAddressA = handlerInput.requestEnvelope.request.intent.slots.ipAddressA.value;
-            const ipAddressB = handlerInput.requestEnvelope.request.intent.slots.ipAddressB.value;
-            const ipAddressC = handlerInput.requestEnvelope.request.intent.slots.ipAddressC.value;
-            const ipAddressD = handlerInput.requestEnvelope.request.intent.slots.ipAddressD.value;
-            if (!ipAddressA) {
-                handlerInput.responseBuilder.
+            if (!Reflect.has(slots.ipAddressA, 'value')) {
+                return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (ipAddressA && (ipAddressA < 0 || ipAddressA > 255)) {
-                handlerInput.responseBuilder.
+            } else if (slots.ipAddressA.value < 0 || slots.ipAddressA.value > 255) {
+                return handlerInput.responseBuilder.
                     speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be betwen 0 and 255.' +
                         ' Could you tell me the first number again?').
                     addElicitSlotDirective('ipAddressA').
                     getResponse();
-            } else if (!ipAddressB) {
-                handlerInput.responseBuilder.
+            } else if (!Reflect.has(slots.ipAddressB, 'value')) {
+                return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (ipAddressB && (ipAddressB < 0 || ipAddressB > 255)) {
-                handlerInput.responseBuilder.
+            } else if (slots.ipAddressB.value < 0 || slots.ipAddressB.value > 255) {
+                return handlerInput.responseBuilder.
                     speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be betwen 0 and 255.' +
                         ' Could you tell me the second number again?').
                     addElicitSlotDirective('ipAddressB').
                     getResponse();
-            } else if (!ipAddressC) {
-                handlerInput.responseBuilder.
+            } else if (!Reflect.has(slots.ipAddressC, 'value')) {
+                return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (ipAddressC && (ipAddressC < 0 || ipAddressC > 255)) {
-                handlerInput.responseBuilder.
+            } else if (slots.ipAddressC.value < 0 || slots.ipAddressC.value > 255) {
+                return handlerInput.responseBuilder.
                     speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be betwen 0 and 255.' +
                         ' Could you tell me the third number again?').
                     addElicitSlotDirective('ipAddressC').
                     getResponse();
-            } else if (!ipAddressD) {
-                handlerInput.responseBuilder.
+            } else if (!Reflect.has(slots.ipAddressD, 'value')) {
+                return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (ipAddressD && (ipAddressD < 0 || ipAddressD > 255)) {
-                handlerInput.responseBuilder.
+            } else if (slots.ipAddressD.value < 0 || slots.ipAddressD.value > 255) {
+                return handlerInput.responseBuilder.
                     speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be betwen 0 and 255.' +
                         ' Could you tell me the fourth number again?').
-                    addElicitSlotDirective('ipAddressD');
+                    addElicitSlotDirective('ipAddressD').
+                    getResponse();
+            } else if (!Reflect.has(slots.hostnameIndex, 'value')) {
+                sessionAttributes.ipAddress =
+                    `${slots.ipAddressA.value}.` +
+                    `${slots.ipAddressB.value}.` +
+                    `${slots.ipAddressC.value}.` +
+                    `${slots.ipAddressD.value}`;
+                Reflect.deleteProperty(sessionAttributes, 'hostnames');
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                try {
+                    sessionAttributes.hostnames = await getHostnames(sessionAttributes.ipAddress, 25392);
+                } catch (error) {
+                    return handlerInput.responseBuilder.
+                        speak('I had a problem connecting to the I.P. address.' +
+                            ' A card in the Alexa App shows more.').
+                        withSimpleCard('LG webOS TV Controller Error', `${error.name}: ${error.message}`).
+                        getResponse();
+                }
+                const cardTitle = 'Gateway Hostname Configuration';
+                let cardContent = '';
+                let index = 0;
+                while (index < sessionAttributes.hostnames.length) {
+                    cardContent += `${index}: ${sessionAttributes.hostnames[index]}\n`;
+                    index += 1;
+                }
+                cardContent += `\n${index}: My gateway is not in the list of hostnames.`;
+                index += 1;
+                cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`;
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                return handlerInput.responseBuilder.
+                    speak('Thank you.' +
+                        ' Now, could you look at the card in your Alexa app and' +
+                        ' tell me the number next to your gateway\'s hostname?').
+                    withSimpleCard(cardTitle, cardContent).
+                    addElicitSlotDirective('hostnameIndex').
+                    getResponse();
+            } else if ((slots.hostnameIndex.value >= sessionAttributes.hostnames.length + 2) ||
+                       (slots.hostnameIndex.value < 0)) {
+                return handlerInput.responseBuilder.
+                    speak('I think I misheard you.' +
+                        ` I heard ${slots.hostnameIndex.value}, which is not an index on the card.` +
+                        ' Could you repeat your index?').
+                    addElicitSlotDirective('hostnameIndex').
+                    getResponse();
+            } else if (slots.hostnameIndex.value === sessionAttributes.hostnames.length + 1) {
+                return handlerInput.responseBuilder.
+                    speak('I\'m sorry I misheard your gateway\'s I.P. address.' +
+                        'Maybe we could try again.').
+                    getResponse();
+            } else if (slots.hostnameIndex.value === sessionAttributes.hostnames.length) {
+                return handlerInput.responseBuilder.
+                    speak('I\'m sorry I could not discover your gateway\'s hostname.').
+                    getResponse();
             } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'NONE') {
-                const options = {
-                    'hostname': `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`,
-                    'path': '/HTTP',
-                    'username': 'HTTP',
-                    'password': constants.password,
-                    'rejectUnauthorized': false
-                };
-                const request = {'command': {'name': 'hostnameGet'}};
-                httpPost.post(options, request, (error, response) => {
-                    if (error) {
-                        handlerInput.responseBuilder.
-                            speak(error.message).
-                            getResponse();
-                    } else if (response && Reflect.has(response, 'error')) {
-                        handlerInput.responseBuilder.
-                            speak(response.error.message).
-                            getResponse();
-                    } else {
-                        const {hostname} = response;
-                        handlerInput.responseBuilder.
-                            speak(`Is your hostname ${hostname}?`).
-                            addConfirmIntentDirective().
-                            getResponse();
-                    }
-                });
-            } else {
-                handlerInput.responseBuilder.
-                    addDelegateDirective().
+                return handlerInput.responseBuilder.
+                    speak(`Is your hostname ${sessionAttributes.hostnames[slots.hostnameIndex.value]}?`).
+                    addConfirmIntentDirective().
                     getResponse();
             }
         } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
-            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
-                handlerInput.responseBuilder.
-                    speak('We failed.').
+            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
+                let persistentAttributes = {};
+                try {
+                    persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
+                } catch (error) {
+                    return handlerInput.responseBuilder.
+                        speak('I had a problem and we will have to start over.' +
+                            ' A card in the Alexa app shows more.').
+                        withSimpleCard('Error', `${error.name}: ${error.message}`).
+                        getResponse();
+                }
+                Reflect.deleteProperty(persistentAttributes, 'hostname');
+                Reflect.deleteProperty(persistentAttributes, 'password');
+                Reflect.deleteProperty(persistentAttributes, 'tvmap');
+                persistentAttributes.hostname = sessionAttributes.hostnames[slots.hostnameIndex.value];
+                try {
+                    await handlerInput.attributesManager.savePersistentAttributes();
+                } catch (error) {
+                    return handlerInput.responseBuilder.
+                        speak('I had a problem and we will have to start over.' +
+                            ' A card in the Alexa app shows more.').
+                        withSimpleCard('Error', `${error.name}: ${error.message}`).
+                        getResponse();
+                }
+                Reflect.deleteProperty(sessionAttributes, 'ipAddress');
+                Reflect.deleteProperty(sessionAttributes, 'hostnames');
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                return handlerInput.responseBuilder.
+                    speak('Your gateway\'s hostname has been set.').
                     getResponse();
-            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
-                persistentAttributes.hostname = sessionAttributes.hostname;
-                handlerInput.responseBuilder.
-                    speak('We succeeded.').
+            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
+                Reflect.deleteProperty(sessionAttributes, 'ipAddress');
+                Reflect.deleteProperty(sessionAttributes, 'hostnames');
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                return handlerInput.responseBuilder.
+                    speak('Your gateway\'s hostname has not been set.').
                     getResponse();
             }
+            return handlerInput.responseBuilder.
+                addDelegateDirective().
+                getResponse();
+        }
+        return handlerInput.responseBuilder.
+            addDelegateDirective().
+            getResponse();
+
+        function getHostnames(ipAddress, ipPort) {
+            return new Promise((resolve, reject) => {
+                const sock = tls.connect(ipPort, ipAddress, {'rejectUnauthorized': false});
+                sock.on('secureConnect', () => {
+                    const cert = sock.getPeerCertificate().raw;
+                    sock.on('close', () => {
+                        const hostnames = certnames.getCommonNames(cert);
+                        return resolve(hostnames);
+                    });
+                    sock.end();
+                });
+                sock.on('error', (error) => reject(error));
+            });
         }
     }
 };
@@ -133,181 +198,59 @@ const HTTPPasswordSetIntentHandler = {
         } catch (error) {
             throw error;
         }
-
-        const password = crypto.randomBytes(64).toString('hex');
         if (!Reflect.has(persistentAttributes, 'hostname')) {
-            handlerInput.responseBuilder.
-                speak('You need to set your L.G. web O.S. T.V. gateway hostname before you can set its password.').
+            return handlerInput.responseBuilder.
+                speak('You need to set your gateway\'s hostname before you can set its password.').
                 getResponse();
         }
-        const options = {
-            'hostname': persistentAttributes.hostname,
-            'path': '/HTTP',
-            'username': 'HTTP',
-            'password': constants.password
-        };
-        const request = {
-            'command': {
-                'name': 'passwordSet',
-                'password': password,
-                'deviceId': handlerInput.requestEnvelope.context.System.device.deviceId
-            }
-        };
-        httpPost.post(options, request, (error, response) => {
-            if (error) {
-                handlerInput.responseBuilder.
-                    speak(error.message).
-                    getResponse();
-            } else if (response && Reflect.has(response, 'error')) {
-                handlerInput.responseBuilder.
-                    speak(response.error.message).
-                    getResponse();
-            } else {
-                persistentAttributes.password = password;
-                handlerInput.responseBuilder.
-                    speak('Your password has been set.').
-                    getResponse();
-            }
-        });
-    }
-};
-const LGTVBindHandler = {
-    canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'LGTVBind';
-    },
-
-    async handle(handlerInput) {
-        let persistentAttributes = {};
+        const password = crypto.randomBytes(64).toString('hex');
         try {
-            persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
+            try {
+                const options = {
+                    'hostname': persistentAttributes.hostname,
+                    'path': '/HTTP',
+                    'username': 'HTTP',
+                    'password': constants.password
+                };
+                const request = {
+                    'command': {
+                        'name': 'passwordSet',
+                        'value': password
+                    }
+                };
+                await httpPost.post(options, request);
+            } catch (error) {
+                return handlerInput.responseBuilder.
+                    speak('I had a problem talking with the gateway. The Alexa app will show you more.').
+                    withSimpleCard('Gateway Communication Error', `${error.name}; ${error.message}`).
+                    getResponse();
+            }
+            persistentAttributes.password = password;
+            Reflect.deleteProperty(persistentAttributes, 'tvmap');
+            handlerInput.attributesManager.setPersistentAttributes(persistentAttributes);
+            try {
+                await handlerInput.attributesManager.savePersistentAttributes();
+            } catch (error) {
+                return handlerInput.responseBuilder.
+                    speak('I had a problem and we will have to start over.' +
+                        ' A card in the Alexa App shows more.').
+                    withSimpleCard('Error', `${error.name}: ${error.message}`).
+                    getResponse();
+            }
+            return handlerInput.responseBuilder.
+                speak('Your password has been set.').
+                getResponse();
         } catch (error) {
-            throw error;
-        }
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-
-        if (handlerInput.requestEnvelope.request.dialogState === 'STARTED') {
-            if (Reflect.has(sessionAttributes, 'udn')) {
-                Reflect.deleteProperty(sessionAttributes, 'udn');
-            }
-            sessionAttributes.udn = {};
-            sessionAttributes.udn.configurationStatus = 'NONE';
-
-            if (!Reflect.has(persistentAttributes, 'tvmap')) {
-                persistentAttributes.tvmap = [];
-                handlerInput.attributesManager.setPersistentAttributes(persistentAttributes);
-            }
-            if (!Reflect.has(persistentAttributes, 'hostname')) {
-                handlerInput.responseBuilder.
-                    speak('You have not configured the hostname of your L.G. web O.S. T.V. gateway.').
-                    getResponse();
-            }
-            if (!Reflect.has(persistentAttributes, 'password')) {
-                handlerInput.responseBuilder.
-                    speak('You have not configured the password of your L.G. web O.S. T.V. gateway.').
-                    getResponse();
-            }
-            const options = {
-                'hostname': persistentAttributes.hostname,
-                'path': '/LGTV/MAP',
-                'username': 'LGTV',
-                'password': persistentAttributes.password
-            };
-            const request = {'command': {'name': 'udnsGet'}};
-            httpPost.post(options, request, (error, response) => {
-                if (error) {
-                    handlerInput.responseBuilder.
-                        speak(error.message).
-                        getResponse();
-                } else if (response && Reflect.has(response, 'error')) {
-                    handlerInput.responseBuilder.
-                        speak(response.error.message).
-                        getResponse();
-                } else {
-                    if (!Reflect.has(response, 'udns')) {
-                        handlerInput.responseBuilder.
-                            speak('I could not find an L.G. web O.S. T.V.').
-                            getResponse();
-                    }
-                    if (response.udns.length === 0) {
-                        handlerInput.responseBuilder.
-                            speak('That was the last L.G. web O.S. T.V. I found.').
-                            getResponse();
-                    }
-                    let index = 0;
-                    sessionAttributes.udns = [];
-                    for (index = 0; index < response.udns.length; index += 1) {
-                        sessionAttributes.udns.push(response.udns[index]);
-                    }
-                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
-                    const updatedIntent = handlerInput.requestEnvelope.request.intent;
-                    handlerInput.responseBuilder.
-                        addDelegateDirective(updatedIntent).
-                        getResponse();
-                }
-            });
-        } else if (handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS') {
-            if (
-                sessionAttributes.udn.confirmationStatus === 'NONE' &&
-                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED'
-            ) {
-                if (sessionAttributes.udns.length > 0) {
-                    sessionAttributes.udn.confirmationStatus = 'NONE';
-                    handlerInput.requestEnvelope.request.intent.confirmationStatus = 'DENIED';
-                    sessionAttributes.udn.value = sessionAttributes.udns.shift();
-                    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-                    handlerInput.responseBuilder.
-                        speak('Did you see the message on your T.V. screen?').
-                        addConfirmIntentDirective().
-                        getResponse();
-                } else {
-                    handlerInput.responseBuilder.
-                        speak('That was the last L.G. web O.S. T.V. I found.').
-                        getResponse();
-                }
-            } else if (
-                sessionAttributes.udn.confirmationStatus === 'NONE' &&
-                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED'
-            ) {
-                sessionAttributes.udn.confirmationStatus = 'DENIED';
-                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-                handlerInput.responseBuilder.
-                    addDelegateDirective().
-                    getResponse();
-            } else if (
-                sessionAttributes.udn.confirmationStatus === 'NONE' &&
-                handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED'
-            ) {
-                sessionAttributes.udn.confirmationStatus = 'CONFIRMED';
-                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-                handlerInput.responseBuilder.
-                    addDelegateDirective().
-                    getResponse();
-            } else {
-                handlerInput.responseBuilder.
-                    addDelegateDirective().
-                    getResponse();
-            }
-        } else if (handlerInput.requestEnvelope.request.dialogState === 'COMPLETED') {
-            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'DENIED') {
-                Reflect.deleteProperty(persistentAttributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId);
-                handlerInput.attributesManager.setSessionAttributes();
-                handlerInput.responseBuilder.
-                    speak('We failed.').
-                    getResponse();
-            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === 'CONFIRMED') {
-                persistentAttributes.tvmap[handlerInput.requestEnvelope.context.System.device.deviceId] = sessionAttributes.udn.value;
-                handlerInput.attributesManager.setSessionAttributes();
-                handlerInput.responseBuilder.
-                    speak('We succeeded.').
-                    getResponse();
-            }
+            return handlerInput.responseBuilder.
+                speak('I had a problem talking to the gateway. The Alexa App will show you more.').
+                withSimpleCard('Error', `${error.name}: ${error.message}`).
+                getResponse();
         }
     }
 };
+
 const handlers = [
     HTTPHostnameSetIntentHandler,
-    HTTPPasswordSetIntentHandler,
-    LGTVBindHandler
+    HTTPPasswordSetIntentHandler
 ];
 module.exports = {'handlers': handlers};

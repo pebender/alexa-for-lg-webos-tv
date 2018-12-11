@@ -1,5 +1,7 @@
 const httpBind = require('./lib/http-bind.js');
 const httpPost = require('./lib/http-post.js');
+const lgtvBind = require('./lib/lgtv-bind.js');
+
 
 const Alexa = require('ask-sdk');
 const {DynamoDbPersistenceAdapter} = require('ask-sdk-dynamodb-persistence-adapter');
@@ -318,7 +320,7 @@ const ErrorHandler = {
 };
 
 exports.handler = Alexa.SkillBuilders.custom().
-    addRequestHandlers(...httpBind.handlers, ...handlers).
+    addRequestHandlers(...lgtvBind.handlers, ...httpBind.handlers, ...handlers).
     addErrorHandlers(ErrorHandler).
     withPersistenceAdapter(persistenceAdapter).
     lambda();
@@ -367,30 +369,27 @@ async function runLGTVCommand(handlerInput, command) {
         throw error;
     }
     if (!Reflect.has(attributes, 'hostname')) {
-        const error = new Error('You have not configured the hostname of your L.G. web O.S. T.V. bridge.');
-        throw error;
+        throw new Error('I need to know your gateway\'s hostname before I can control any televisions.');
     }
     if (!Reflect.has(attributes, 'password')) {
-        const error = new Error('You have not configured the password of your L.G. web O.S. T.V. bridge.');
-        throw error;
-
+        throw new Error('I need to know your gateway\'s password before I can control any televisions.');
     }
-    if (!Reflect.has(attributes, 'tvmap') || !Reflect.has(attributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId)) {
-        const error = new Error('You have not configured this Alexa to control an L.G. web O.S. T.V..');
-        throw error;
-    }
-    const options = {
-        'hostname': attributes.hostname,
-        'path': '/LGTV/RUN',
-        'username': 'LGTV',
-        'password': attributes.password
-    };
-    const request = {
-        'television': attributes[handlerInput.requestEnvelope.context.System.device.deviceId],
-        'command': command
-    };
+//   if (!Reflect.has(attributes, 'tvmap') || !Reflect.has(attributes.tvmap, handlerInput.requestEnvelope.context.System.device.deviceId)) {
+//        const error = new Error('You have not configured this Alexa to control an L.G. web O.S. T.V..');
+//        throw error;
+//    }
     try {
-        httpPost.post(options, request);
+        const options = {
+            'hostname': attributes.hostname,
+            'path': '/LGTV/RUN',
+            'username': 'LGTV',
+            'password': attributes.password
+        };
+        const request = {
+//            'television': attributes[handlerInput.requestEnvelope.context.System.device.deviceId],
+            'command': command
+        };
+        return await httpPost.post(options, request);
     } catch (error) {
         throw (error);
     }

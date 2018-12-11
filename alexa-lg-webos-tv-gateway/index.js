@@ -12,7 +12,7 @@ const basicAuth = require('express-basic-auth');
 const fs = require('fs-extra');
 const Datastore = require('nedb');
 const ppath = require('persist-path');
-const {constants} = require('alexa-lg-webos-tv-core');
+const constants = require('alexa-lg-webos-tv-core');
 const HTTPAuthorization = require('./lib/http-authorization.js');
 const LGTVControl = require('./lib/lgtv-control.js');
 const LGTVSearch = require('./lib/lgtv-search.js');
@@ -23,7 +23,7 @@ const LGTVSearch = require('./lib/lgtv-search.js');
  * (name), Internet Protocol address (ip), media access control address (mac)
  * and client key (key).
  */
-const configurationDir = ppath('LGwebOSTVBridge');
+const configurationDir = ppath('LGwebOSTVGateway');
 try {
 
     /*
@@ -73,7 +73,7 @@ const httpAuthorization = new HTTPAuthorization(httpDb, (error) => {
     }
 });
 
-// I keep the list of all LG webOS TV
+// I keep the list of all LG webOS TVs.
 const lgtvControl = new LGTVControl(lgtvDb, (error) => {
     if (error) {
         throw error;
@@ -178,27 +178,7 @@ function requestAuthorizeHTTP(username, password) {
     return false;
 }
 external.post('/HTTP', (request, response) => {
-    if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, 'command') && request.body.command.name === 'hostnameGet') {
-        if (httpAuthorization.hostname === null) {
-            const body = {
-                'error': {
-                    'message': 'Your L.G. web O.S. T.V. gateway does not have a hostname set.'
-                }
-            };
-            response.type('json').
-                status(200).
-                json(body).
-                end();
-        } else {
-            const body = {
-                'hostname': httpAuthorization.hostname
-            };
-            response.type('json').
-                status(200).
-                json(body).
-                end();
-        }
-    } else if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, 'command') && request.body.command.name === 'passwordSet') {
+    if (Reflect.has(request.body, 'command') && request.body.command.name === 'passwordSet') {
         if (httpAuthorization.password === null) {
             httpAuthorization.password = request.body.command.value;
             response.
@@ -209,7 +189,7 @@ external.post('/HTTP', (request, response) => {
         } else {
             const body = {
                 'error': {
-                    'message': 'Your L.G. web O.S. T.V. gateway password is already set.'
+                    'message': 'Gateway\'s password is already set.'
                 }
             };
             response.
