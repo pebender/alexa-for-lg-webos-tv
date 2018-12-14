@@ -1,7 +1,7 @@
 {
-  "name": "alexa-lg-webos-tv-core",
+  "name": "alexa-lg-webos-tv-common",
   "version": "0.0.1",
-  "description": "Core files for alexa-lg-webos-tv-controller and alexa-lg-webos-tv-gateway",
+  "description": "Common files for alexa-lg-webos-tv-* packages",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",

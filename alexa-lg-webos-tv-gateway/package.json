@@ -10,7 +10,7 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "alexa-lg-webos-tv-core": "../alexa-lg-webos-tv-core",
+    "alexa-lg-webos-tv-common": "../alexa-lg-webos-tv-common",
     "axios": "0.18.0",
     "express": "4.16.4",
     "express-basic-auth": "1.1.6",
@@ -24,7 +24,7 @@
     "xml2js": "0.4.19"
   },
   "bundledDependencies": [
-    "alexa-lg-webos-tv-core",
+    "alexa-lg-webos-tv-common",
     "axios",
     "express",
     "express-basic-auth",

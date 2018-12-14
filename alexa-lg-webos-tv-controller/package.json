@@ -13,7 +13,7 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "alexa-lg-webos-tv-core": "../alexa-lg-webos-tv-core",
+    "alexa-lg-webos-tv-common": "../alexa-lg-webos-tv-common",
     "ask-sdk": "2.3.0",
     "ask-sdk-dynamodb-persistence-adapter": "2.3.0",
     "certnames": "1.0.4"
@@ -24,7 +24,7 @@
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
-    "alexa-lg-webos-tv-core",
+    "alexa-lg-webos-tv-common",
     "ask-sdk",
     "ask-sdk-dynamodb-persistence-adapter",
     "certnames"
