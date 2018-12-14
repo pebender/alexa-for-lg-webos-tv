@@ -2,7 +2,7 @@ const smartHomeSkill = require('./lib/smart-home/index.js');
 const customSkill = require('./lib/custom/index.js');
 
 function skilllHandler(event, context, callback) {
-    const smartHomeSkillHandler = smartHomeSkill.handlerLookUp(event);
+    const smartHomeSkillHandler = smartHomeSkill.getHandler(event, context);
     if (typeof smartHomeSkillHandler === 'function') {
         return smartHomeSkillHandler(event, context, callback);
     }
