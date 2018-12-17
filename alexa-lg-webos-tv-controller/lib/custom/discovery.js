@@ -1,4 +1,4 @@
-const httpPost = require('../common/http-post.js');
+const httpPost = require('../gateway-api/index.js');
 
 const RequestHandler = {
     canHandle(handlerInput) {
