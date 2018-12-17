@@ -1,7 +1,7 @@
 const https = require('https');
 const httpStatusMessages = require('./http-status-messages.js');
 
-function HTTPPost(postOptions, postBody) {
+function send(postOptions, postBody) {
     return new Promise((resolve, reject) => {
         const authorization = Buffer.from(`${postOptions.username}:${postOptions.password}`).toString('base64');
         const content = JSON.stringify(postBody);
@@ -34,21 +34,21 @@ function HTTPPost(postOptions, postBody) {
                     if (!Reflect.has(httpStatusMessages, response.statusCode)) {
                         const message = 'The gateway returned HTTP/1.1 status code' +
                             ` '${response.statusCode}'.`;
-                        return reject(new HTTPPostError(message));
+                        return reject(new GatewayAPIError(message));
                     }
                     const message = 'The gateway returned HTTP/1.1 status message' +
                         ` '${httpStatusMessages[response.statusCode]} (${response.statusCode})'.`;
-                    return reject(new HTTPPostError(message));
+                    return reject(new GatewayAPIError(message));
                 }
                 if (!(/^application\/json/).test(response.headers['content-type'])) {
                     const message = 'The gateway returned the wrong content type.';
-                    return reject(new HTTPPostError(message));
+                    return reject(new GatewayAPIError(message));
                 }
                 try {
                     body = JSON.parse(data);
                 } catch (error) {
                     const message = 'The gateway returned corrupted content.';
-                    return reject(new HTTPPostError(message));
+                    return reject(new GatewayAPIError(message));
                 }
                 if (Reflect.has(body, 'error')) {
                     let message = 'The gateway returned the error';
@@ -57,29 +57,29 @@ function HTTPPost(postOptions, postBody) {
                     } else {
                         message += ` ${body.error.message}`;
                     }
-                    return reject(new HTTPPostError(message));
+                    return reject(new GatewayAPIError(message));
                 }
                 return resolve(body);
             });
             response.on('error', (error) => {
                 const message = 'There was a problem talking to the gateway.' +
                     ` The error was [${error.name}: ${error.message}].`;
-                return reject(new HTTPPostError(message));
+                return reject(new GatewayAPIError(message));
             });
         });
         request.on('error', (error) => {
             const message = 'There was a problem talking to the gateway.' +
                 ` The error was [${error.name}: ${error.message}].`;
-            return reject(new HTTPPostError(message));
+            return reject(new GatewayAPIError(message));
         });
     });
 }
-class HTTPPostError extends Error {
+class GatewayAPIError extends Error {
     constructor(message, ...args) {
         super(message, ...args);
-        this.name = 'HTTPPost';
+        this.name = 'GatewayAPI_Error';
         this.message = message;
     }
 }
 
-module.exports = {'post': HTTPPost};
+module.exports = {'send': send};

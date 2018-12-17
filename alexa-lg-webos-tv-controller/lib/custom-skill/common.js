@@ -1,4 +1,4 @@
-const httpPost = require('../gateway-api/index.js');
+const gateway = require('../gateway-api/index.js');
 
 async function runLGTVCommand(handlerInput, command) {
     let attributes = {};
@@ -37,7 +37,7 @@ async function runLGTVCommand(handlerInput, command) {
             'television': 'uuid:261b0bf7-1437-ed2d-5eaf-ab701fd699e3',
             'command': command
         };
-        return await httpPost.post(options, request);
+        return await gateway.send(options, request);
     } catch (error) {
         throw (error);
     }

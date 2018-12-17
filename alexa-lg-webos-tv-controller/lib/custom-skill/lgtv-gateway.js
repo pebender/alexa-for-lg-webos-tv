@@ -2,7 +2,7 @@ const tls = require('tls');
 const crypto = require('crypto');
 const certnames = require('certnames');
 const constants = require('alexa-lg-webos-tv-common');
-const httpPost = require('../gateway-api/index.js');
+const gateway = require('../gateway-api/index.js');
 
 const SetHostnameIntentHandler = {
     canHandle(handlerInput) {
@@ -218,7 +218,7 @@ const SetPasswordIntentHandler = {
                         'value': password
                     }
                 };
-                await httpPost.post(options, request);
+                await gateway.send(options, request);
             } catch (error) {
                 return handlerInput.responseBuilder.
                     speak('I had a problem talking with the gateway. The Alexa app will show you more.').

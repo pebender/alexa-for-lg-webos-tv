@@ -1,4 +1,4 @@
-const httpPost = require('../gateway-api/index.js');
+const gateway = require('../gateway-api/index.js');
 
 const RequestHandler = {
     canHandle(handlerInput) {
@@ -49,7 +49,7 @@ const RequestHandler = {
                     'password': persistentAttributes.password
                 };
                 const request = {'command': {'name': 'udnsGet'}};
-                const response = await httpPost.post(options, request);
+                const response = await gateway.send(options, request);
                 if (!Reflect.has(response, 'udns')) {
                     return handlerInput.responseBuilder.
                         speak('I could not find an L.G. web O.S. T.V.').
