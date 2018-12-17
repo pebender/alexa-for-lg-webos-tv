@@ -1,9 +1,9 @@
-const httpPost = require('./http-post.js');
+const httpPost = require('../common/http-post.js');
 
-const LGTVBindHandler = {
+const RequestHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'LGTVBind';
+            handlerInput.requestEnvelope.request.intent.name === 'Request';
     },
     async handle(handlerInput) {
         let persistentAttributes = {};
@@ -137,5 +137,6 @@ const LGTVBindHandler = {
     }
 };
 
-const handlers = [LGTVBindHandler];
+const handlers = [RequestHandler];
+
 module.exports = {'handlers': handlers};

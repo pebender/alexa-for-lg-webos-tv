@@ -1,6 +1,6 @@
 const Alexa = require('ask-sdk');
 const lgtvGateway = require('./lgtv-gateway.js');
-const lgtvBind = require('../common/lgtv-bind.js');
+const discovery = require('./discovery.js');
 const powerController = require('./power-controller.js');
 const speaker = require('./speaker.js');
 const inputController = require('./input-controller.js');
@@ -52,6 +52,7 @@ const handlers = [
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     ...lgtvGateway.handlers,
+    ...discovery.handlers,
     ...powerController.handlers,
     ...speaker.handlers,
     ...inputController.handlers,
@@ -75,7 +76,7 @@ const ErrorHandler = {
 
 // Function has three arguments skillHandler(event, context, callback).
 const skillHandler = Alexa.SkillBuilders.custom().
-    addRequestHandlers(...lgtvBind.handlers, ...handlers).
+    addRequestHandlers(handlers).
     addErrorHandlers(ErrorHandler).
     withPersistenceAdapter(persistenceAdapter).
     lambda();
