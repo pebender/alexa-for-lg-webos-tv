@@ -2,12 +2,12 @@ const tls = require('tls');
 const crypto = require('crypto');
 const certnames = require('certnames');
 const constants = require('alexa-lg-webos-tv-common');
-const httpPost = require('./http-post.js');
+const httpPost = require('../common/http-post.js');
 
-const HTTPHostnameSetIntentHandler = {
+const SetHostnameIntentHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-               handlerInput.requestEnvelope.request.intent.name === 'HTTPHostnameSetIntent';
+               handlerInput.requestEnvelope.request.intent.name === 'LGTVGateway_SetHostnameIntent';
     },
     async handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
@@ -186,10 +186,10 @@ const HTTPHostnameSetIntentHandler = {
         }
     }
 };
-const HTTPPasswordSetIntentHandler = {
+const SetPasswordIntentHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'HTTPPasswordSetIntent';
+            handlerInput.requestEnvelope.request.intent.name === 'LGTVGateway_SetPasswordIntent';
     },
     async handle(handlerInput) {
         let persistentAttributes = {};
@@ -250,7 +250,8 @@ const HTTPPasswordSetIntentHandler = {
 };
 
 const handlers = [
-    HTTPHostnameSetIntentHandler,
-    HTTPPasswordSetIntentHandler
+    SetHostnameIntentHandler,
+    SetPasswordIntentHandler
 ];
+
 module.exports = {'handlers': handlers};
