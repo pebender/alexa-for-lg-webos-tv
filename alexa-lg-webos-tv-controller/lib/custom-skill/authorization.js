@@ -7,7 +7,7 @@ const gateway = require('../gateway-api/index.js');
 const SetHostnameIntentHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-               handlerInput.requestEnvelope.request.intent.name === 'LGTVGateway_SetHostnameIntent';
+               handlerInput.requestEnvelope.request.intent.name === 'Authorization_SetHostnameIntent';
     },
     async handle(handlerInput) {
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
@@ -189,7 +189,7 @@ const SetHostnameIntentHandler = {
 const SetPasswordIntentHandler = {
     canHandle(handlerInput) {
         return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'LGTVGateway_SetPasswordIntent';
+            handlerInput.requestEnvelope.request.intent.name === 'Authorization_SetPasswordIntent';
     },
     async handle(handlerInput) {
         let persistentAttributes = {};

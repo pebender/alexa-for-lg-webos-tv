@@ -1,5 +1,5 @@
 const Alexa = require('ask-sdk');
-const lgtvGateway = require('./lgtv-gateway.js');
+const authorization = require('./authorization.js');
 const discovery = require('./discovery.js');
 const powerController = require('./power-controller.js');
 const speaker = require('./speaker.js');
@@ -51,7 +51,7 @@ const SessionEndedRequestHandler = {
 const handlers = [
     HelpIntentHandler,
     CancelAndStopIntentHandler,
-    ...lgtvGateway.handlers,
+    ...authorization.handlers,
     ...discovery.handlers,
     ...powerController.handlers,
     ...speaker.handlers,
