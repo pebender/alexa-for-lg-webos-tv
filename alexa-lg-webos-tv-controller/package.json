@@ -19,7 +19,7 @@
     "certnames": "1.0.4"
   },
   "devDependencies": {
-    "@types/node": "10.12.12",
+    "@types/node": "10.12.15",
     "eslint": "5.9.0",
     "npm-pack-zip": "1.2.7"
   },
