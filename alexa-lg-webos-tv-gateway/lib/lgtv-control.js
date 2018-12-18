@@ -53,12 +53,19 @@ class LGTVControl extends EventEmitter {
                 return;
             }
             if (doc === null) {
-                if (tv.udn in that.private.controls) {
+                if (Reflect.has(that.private.controls, tv.udn)) {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
                 that.private.db.update(
                     {'udn': tv.udn},
-                    tv,
+                    {
+                        'udn': tv.udn,
+                        'name': tv.name,
+                        'ip': tv.ip,
+                        'url': tv.url,
+                        'mac': tv.mac,
+                        'key': ''
+                    },
                     {'upsert': true},
                     // eslint-disable-next-line no-unused-vars
                     (err, _numAffectedDocs, _affectedDocs, _upsert) => {
@@ -66,7 +73,7 @@ class LGTVControl extends EventEmitter {
                             that.emit('error', err, tv.udn);
                             return;
                         }
-                        if (tv.udn in that.private.controls) {
+                        if (!Reflect.has(that.private.controls, tv.udn)) {
                             that.private.controls[tv.udn] = new LGTVControlOne(that.private.db, tv);
                             eventsAdd(tv.udn);
                         }
@@ -74,8 +81,8 @@ class LGTVControl extends EventEmitter {
                 );
             } else {
                 // eslint-disable-next-line no-lonely-if
-                if (doc.udn in that.private.controls) {
-                    that.private.controls[doc.udn] = new LGTVControlOne(that.private.db, tv);
+                if (!Reflect.has(that.private.controls, doc.udn)) {
+                    that.private.controls[doc.udn] = new LGTVControlOne(that.private.db, doc);
                     eventsAdd(doc.udn);
                 }
             }
@@ -159,7 +166,7 @@ class LGTVControlOne extends EventEmitter {
         this.private.ssdp.start();
         // eslint-disable-next-line no-unused-vars
         this.private.ssdp.on('advertise-alive', (headers, _rinfo) => {
-            if (headers.USN.startsWith(`${this.private.udn}::`) &&
+            if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
                 headers.NT === 'urn:lge-com:service:webos-second-screen:1') {
                 if (this.private.connecting === false) {
                     this.private.connection.connect(this.private.tv.url);
