@@ -76,7 +76,7 @@ const ErrorHandler = {
 
 // Function has three arguments skillHandler(event, context, callback).
 const skillHandler = Alexa.SkillBuilders.custom().
-    addRequestHandlers(handlers).
+    addRequestHandlers(...handlers).
     addErrorHandlers(ErrorHandler).
     withPersistenceAdapter(persistenceAdapter).
     lambda();
