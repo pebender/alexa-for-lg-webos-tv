@@ -49,8 +49,6 @@ const SessionEndedRequestHandler = {
     }
 };
 const handlers = [
-    HelpIntentHandler,
-    CancelAndStopIntentHandler,
     ...authorization.handlers,
     ...discovery.handlers,
     ...powerController.handlers,

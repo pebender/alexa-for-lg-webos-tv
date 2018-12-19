@@ -30,7 +30,7 @@ const TurnOnIntentHandler = {
     async handle(handlerInput) {
         if (common.checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.powerController_turnOn)) {
             try {
-                const command = {'name': 'powerOn'};
+                const command = {'name': 'turnOn'};
                 await common.runLGTVCommand(handlerInput, command);
                 const speechText = 'You asked me to turn on the television.';
                 return handlerInput.responseBuilder.speak(speechText).getResponse();

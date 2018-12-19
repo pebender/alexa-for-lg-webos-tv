@@ -9,30 +9,30 @@
 class LGTVMessage {
     static translate(controllerMessage) {
         const lgtvMessage = {
-            'powerOn': false,
+            'wol': false,
             'uri': null,
             'payload': null
         };
         switch (controllerMessage.name) {
-        case 'powerOn':
-            lgtvMessage.powerOn = true;
+        case 'wol':
+            lgtvMessage.wol = true;
             break;
-        case 'powerOff':
+        case 'turnOff':
             lgtvMessage.uri = 'ssap://system/turnOff';
             break;
-        case 'volumeDown':
+        case 'decreaseVolume':
             lgtvMessage.uri = 'ssap://audio/volumeDown';
             break;
-        case 'volumeUp':
+        case 'increaseVolume':
             lgtvMessage.uri = 'ssap://audio/volumeUp';
             break;
-        case 'volumeSet':
+        case 'setVolume':
             if (controllerMessage.value >= 0 && controllerMessage.value <= 99) {
                 lgtvMessage.uri = 'ssap://audio/setVolume';
                 lgtvMessage.payload = {'volume': controllerMessage.value};
             }
             break;
-        case 'muteSet':
+        case 'setMute':
             lgtvMessage.uri = 'ssap://audio/setMute';
             switch (controllerMessage.value) {
             case 'on':
@@ -46,8 +46,8 @@ class LGTVMessage {
                 break;
             }
             break;
-        case 'inputSet':
-            lgtvMessage.powerOn = true;
+        case 'selectInput':
+            lgtvMessage.wol = true;
             lgtvMessage.uri = 'ssap://tv/switchInput';
             switch (controllerMessage.value) {
             case 'TV':
@@ -66,13 +66,13 @@ class LGTVMessage {
                 lgtvMessage.payload = {'inputId': 'HDMI_4'};
                 break;
             default:
-                lgtvMessage.powerOn = false;
+                lgtvMessage.wol = false;
                 lgtvMessage.uri = null;
                 break;
             }
             break;
-        case 'applicationLaunch':
-            lgtvMessage.powerOn = true;
+        case 'launchApplication':
+            lgtvMessage.wol = true;
             lgtvMessage.uri = 'ssap://system.launcher/launch';
             switch (controllerMessage.value) {
             case 'amazon':
@@ -88,12 +88,12 @@ class LGTVMessage {
             lgtvMessage.payload = {'id': 'youtube.leanback.v4'};
                 break;
             default:
-            lgtvMessage.powerOn = false;
+            lgtvMessage.wol = false;
             lgtvMessage.uri = null;
                 break;
             }
             break;
-        case 'closeApp':
+        case 'closeApplication':
             lgtvMessage.uri = 'ssap://system.launcher/close';
             switch (controllerMessage.value) {
             case 'amazon':
@@ -109,12 +109,12 @@ class LGTVMessage {
                 lgtvMessage.payload = {'id': 'youtube.leanback.v4'};
                 break;
             default:
-                lgtvMessage.powerOn = false;
+                lgtvMessage.wol = false;
                 lgtvMessage.uri = null;
                 break;
             }
             break;
-        case 'messageShow':
+        case 'showMessage':
             lgtvMessage.uri = 'ssap://system.notifications/createToast';
             lgtvMessage.payload = {'message': controllerMessage.value};
             break;

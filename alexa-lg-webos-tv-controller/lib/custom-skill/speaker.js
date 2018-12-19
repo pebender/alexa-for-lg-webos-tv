@@ -8,7 +8,7 @@ const DecreaseVolumeIntentHandler = {
     async handle(handlerInput) {
         if (common.checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.speaker_decreaseVolume)) {
             try {
-                const command = {'name': 'volumeDown'};
+                const command = {'name': 'decreaseVolume'};
                 await common.runLGTVCommand(handlerInput, command);
                 const speechText = 'You asked me to decrease the volume of the television';
                 return handlerInput.responseBuilder.speak(speechText).getResponse();
@@ -30,7 +30,7 @@ const IncreaseVolumeIntentHandler = {
     async handle(handlerInput) {
         if (common.checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.speaker_increaseVolume)) {
             try {
-                const command = {'name': 'volumeUp'};
+                const command = {'name': 'increaseVolume'};
                 await common.runLGTVCommand(handlerInput, command);
                 const speechText = 'You asked me to increase the volume of the television';
                 return handlerInput.responseBuilder.speak(speechText).getResponse();
@@ -84,7 +84,7 @@ const MuteIntentHandler = {
         if (common.checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.speaker_mute)) {
             try {
                 const command = {
-                    'name': 'muteSet',
+                    'name': 'setMute',
                     'value': 'on'
                 };
                 await common.runLGTVCommand(handlerInput, command);
@@ -109,7 +109,7 @@ const UnmuteIntentHandler = {
         if (common.checkSlotStatusCode(handlerInput.requestEnvelope.request.intent.slots.speaker_unmute)) {
             try {
                 const command = {
-                    'name': 'muteSet',
+                    'name': 'setMute',
                     'value': 'off'
                 };
                 await common.runLGTVCommand(handlerInput, command);

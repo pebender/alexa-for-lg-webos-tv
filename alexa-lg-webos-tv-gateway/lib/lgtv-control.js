@@ -184,37 +184,23 @@ class LGTVControlOne extends EventEmitter {
 
     command(command, callback) {
         const translation = LGTVMessage.translate(command);
-        if (translation.powerOn === true) {
-            // eslint-disable-next-line no-unused-vars
-            wol.wake(this.tv.mac, (error, _response) => {
-                if (error) {
-                    callback(error, null);
-                    return error;
-                }
-                if (translation.uri === null) {
-                    callback(null, null);
-                    return null;
-                }
-                return null;
-            });
-        }
-        if (translation.uri !== null) {
+        if (translation.uri === null) {
+            if (translation.wol === true) {
+                // eslint-disable-next-line no-unused-vars
+                wol.wake(this.private.tv.mac, (error, _response) => callback(error, null));
+            }
+        } else {
+            // eslint-disable-next-line no-lonely-if
             if (translation.payload === null) {
                 this.private.connection.request(
                     translation.uri,
-                    (error, response) => {
-                        callback(error, response);
-                        return error;
-                    }
+                    (error, response) => callback(error, response)
                 );
             } else {
                 this.private.connection.request(
                     translation.uri,
                     translation.payload,
-                    (error, response) => {
-                        callback(error, response);
-                        return null;
-                    }
+                    (error, response) => callback(error, response)
                 );
             }
         }

@@ -14,7 +14,7 @@ const SelectInputIntentHandler = {
                 if (inputId.startsWith('HDMI_')) {
                     try {
                         const command = {
-                            'name': 'inputSet',
+                            'name': 'selectInput',
                             'value': inputId
                         };
                         await common.runLGTVCommand(handlerInput, command);
@@ -27,7 +27,7 @@ const SelectInputIntentHandler = {
                 } else if (inputId.startsWith('APP_')) {
                     const applicationId = inputId.substr(4);
                     const command = {
-                        'name': 'applicationLaunch',
+                        'name': 'launchApplication',
                         'value': applicationId
                     };
                     try {
