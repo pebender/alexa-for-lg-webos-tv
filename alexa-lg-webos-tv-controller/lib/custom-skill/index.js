@@ -1,43 +1,47 @@
-const Alexa = require('ask-sdk');
-const authorization = require('./authorization.js');
-const discovery = require('./discovery.js');
-const powerController = require('./power-controller.js');
-const speaker = require('./speaker.js');
-const inputController = require('./input-controller.js');
-const channelController = require('./channel-controller.js');
-const playbackController = require('./playback-controller.js');
+const Alexa = require("ask-sdk");
+const authorization = require("./authorization.js");
 
-const {DynamoDbPersistenceAdapter} = require('ask-sdk-dynamodb-persistence-adapter');
+const {DynamoDbPersistenceAdapter} = require("ask-sdk-dynamodb-persistence-adapter");
 const persistenceAdapter = new DynamoDbPersistenceAdapter({
-  'tableName': 'LGwebOSTVController',
-  'createTable': true
+  "tableName": "LGwebOSTVController",
+  "createTable": true
 });
 
 const HelpIntentHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
+        return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+            handlerInput.requestEnvelope.request.intent.name === "AMAZON.HelpIntent";
     },
     handle(handlerInput) {
-        const speechText = 'There is a manual around here somewhere.';
+        const speechText = "There is a manual around here somewhere.";
         return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
 };
-const CancelAndStopIntentHandler = {
+const CancelIntentHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent' ||
-             handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
+        return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+            handlerInput.requestEnvelope.request.intent.name === "AMAZON.CancelIntent";
     },
     handle(handlerInput) {
-        const speechText = 'There is a switch around here somewhere.';
+        const speechText = "There is a big red button around here somewhere.";
+        return handlerInput.responseBuilder.speak(speechText).getResponse();
+    }
+};
+
+const StopIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+            handlerInput.requestEnvelope.request.intent.name === "AMAZON.StopIntent";
+    },
+    handle(handlerInput) {
+        const speechText = "But I don't want to stop.";
         return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
 };
 
 const SessionEndedRequestHandler = {
     canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
+        return handlerInput.requestEnvelope.request.type === "SessionEndedRequest";
     },
     async handle(handlerInput) {
         try {
@@ -48,14 +52,12 @@ const SessionEndedRequestHandler = {
         return handlerInput.responseBuilder.getResponse();
     }
 };
+
 const handlers = [
     ...authorization.handlers,
-    ...discovery.handlers,
-    ...powerController.handlers,
-    ...speaker.handlers,
-    ...inputController.handlers,
-    ...channelController.handlers,
-    ...playbackController.handlers,
+    HelpIntentHandler,
+    CancelIntentHandler,
+    StopIntentHandler,
     SessionEndedRequestHandler
 ];
 
@@ -66,8 +68,8 @@ const ErrorHandler = {
     // eslint-disable-next-line no-unused-vars
     handle(handlerInput, _error) {
         return handlerInput.responseBuilder.
-            speak('Sorry, I can\'t understand the command. Please say again.').
-            reprompt('Sorry, I can\'t understand the command. Please say again.').
+            speak("Sorry, I can't understand the command. Please say again.").
+            reprompt("Sorry, I can't understand the command. Please say again.").
             getResponse();
     }
 };
@@ -79,4 +81,4 @@ const skillHandler = Alexa.SkillBuilders.custom().
     withPersistenceAdapter(persistenceAdapter).
     lambda();
 
-module.exports = {'handler': skillHandler};
+module.exports = {"handler": skillHandler};

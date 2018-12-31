@@ -14,11 +14,11 @@
  *******************************************************************************
  */
 
-const http = require('axios');
-const EventEmitter = require('events');
-const arp = require('node-arp');
-const SSDPClient = require('node-ssdp').Client;
-const xml2js = require('xml2js').parseString;
+const http = require("axios");
+const EventEmitter = require("events");
+const arp = require("node-arp");
+const SSDPClient = require("node-ssdp").Client;
+const xml2js = require("xml2js").parseString;
 
 class LGTVSearch extends EventEmitter {
     constructor() {
@@ -27,48 +27,48 @@ class LGTVSearch extends EventEmitter {
 
         const that = this;
 
-        this.ssdpNotify = new SSDPClient({'sourcePort': '1900'});
+        this.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
         this.ssdpResponse = new SSDPClient();
         this.ssdpNotify.start();
-        this.ssdpNotify.on('advertise-alive', (headers, rinfo) => {
-            ssdpProcess('advertise-alive', headers, rinfo, (error, tv) => {
+        this.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+            ssdpProcess("advertise-alive", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit('error', error);
+                    this.emit("error", error);
                     return error;
                 }
                 if (!tv) {
                     return null;
                 }
-                this.emit('found', tv);
+                this.emit("found", tv);
                 return null;
             });
         });
-        this.ssdpNotify.on('advertise-bye', (headers, rinfo) => {
-            ssdpProcess('advertise-bye', headers, rinfo, (error, tv) => {
+        this.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
+            ssdpProcess("advertise-bye", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit('error', error);
+                    this.emit("error", error);
                     return error;
                 }
                 if (!tv) {
                     return null;
                 }
-                this.emit('found', tv);
+                this.emit("found", tv);
                 return null;
             });
         });
-        this.ssdpResponse.on('response', (headers, statusCode, rinfo) => {
-            if (statusCode !== '200') {
+        this.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+            if (statusCode !== "200") {
                 return;
             }
-            ssdpProcess('response', headers, rinfo, (error, tv) => {
+            ssdpProcess("response", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit('error', error);
+                    this.emit("error", error);
                     return error;
                 }
                 if (!tv) {
                     return null;
                 }
-                this.emit('found', tv);
+                this.emit("found", tv);
                 return null;
             });
         });
@@ -77,35 +77,35 @@ class LGTVSearch extends EventEmitter {
         // Periodicly scan for TVs.
         function periodic() {
             // Search every 1800s as that is the UPnP recommended time.
-            that.ssdpResponse.search('urn:lge-com:service:webos-second-screen:1');
+            that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
             setTimeout(periodic, 1800000);
         }
 
         function ssdpProcess(type, headers, rinfo, callback) {
             const tv = {};
             const typeMap = {
-                'advertise-alive': 'NT',
-                'advertise-bye': 'NT',
-                'response': 'ST'
+                "advertise-alive": "NT",
+                "advertise-bye": "NT",
+                "response": "ST"
             };
             if (!(type in typeMap)) {
                 callback(null, null);
                 return;
             }
             // Make sure it is webOS and UPnP 1.0 or 1.1.
-            if (!('SERVER' in headers) ||
+            if (!("SERVER" in headers) ||
                 !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
                 callback(null, null);
                 return;
             }
             // Make sure it is the webOS second screen service.
             if (!(typeMap[type] in headers) ||
-                headers[typeMap[type]] !== 'urn:lge-com:service:webos-second-screen:1') {
+                headers[typeMap[type]] !== "urn:lge-com:service:webos-second-screen:1") {
                 callback(null, null);
                 return;
             }
             // Get the IP address associated with the TV.
-            if (!('address' in rinfo)) {
+            if (!("address" in rinfo)) {
                 callback(null, null);
                 return;
             }
@@ -117,7 +117,7 @@ class LGTVSearch extends EventEmitter {
              * LG Electronics webOS TV as well as to obtain the TV's friendly name
              * and Unique Device Name (UDN).
              */
-            if (!('LOCATION' in headers)) {
+            if (!("LOCATION" in headers)) {
                 callback(null);
                 return;
             }
@@ -136,14 +136,14 @@ class LGTVSearch extends EventEmitter {
                      * These properties are required by the UPnP specification but
                      * check anyway.
                      */
-                    if (!('root' in description) ||
-                        !('device' in description.root) ||
+                    if (!("root" in description) ||
+                        !("device" in description.root) ||
                         description.root.device.length !== 1 ||
-                        !('manufacturer' in description.root.device[0]) ||
+                        !("manufacturer" in description.root.device[0]) ||
                         description.root.device[0].manufacturer.length !== 1 ||
-                        !('friendlyName' in description.root.device[0]) ||
+                        !("friendlyName" in description.root.device[0]) ||
                         description.root.device[0].friendlyName.length !== 1 ||
-                        !('UDN' in description.root.device[0]) ||
+                        !("UDN" in description.root.device[0]) ||
                         description.root.device[0].UDN.length !== 1) {
                         callback(null, null);
                         return null;
@@ -154,8 +154,8 @@ class LGTVSearch extends EventEmitter {
                      * name and a UDN.
                      */
                     if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
-                        description.root.device[0].friendlyName[0] === '' ||
-                        description.root.device[0].UDN[0] === '') {
+                        description.root.device[0].friendlyName[0] === "" ||
+                        description.root.device[0].UDN[0] === "") {
                         callback(null, null);
                         return null;
                     }
@@ -182,7 +182,7 @@ class LGTVSearch extends EventEmitter {
     }
 
     now() {
-        this.ssdpResponse.search('urn:lge-com:service:webos-second-screen:1');
+        this.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }
 

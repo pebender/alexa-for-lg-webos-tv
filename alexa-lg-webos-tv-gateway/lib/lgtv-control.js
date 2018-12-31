@@ -1,8 +1,9 @@
-const LGTV = require('lgtv2');
-const LGTVMessage = require('./lgtv-message.js');
-const SSDPClient = require('node-ssdp').Client;
-const wol = require('wol');
-const EventEmitter = require('events');
+const LGTV = require("lgtv2");
+const LGTVMessage = require("./lgtv-message.js");
+const SSDPClient = require("node-ssdp").Client;
+const wol = require("wol");
+const EventEmitter = require("events");
+const smartHomeSkill = require("./smart-home/index.js");
 
 class LGTVControl extends EventEmitter {
     constructor (db) {
@@ -11,17 +12,21 @@ class LGTVControl extends EventEmitter {
 
         this.private = {};
         this.private.controls = [];
-        if (typeof db === 'undefined' || db === null) {
+        if (typeof db === "undefined" || db === null) {
             return;
         }
         this.private.db = db;
+    }
+
+    getDb() {
+        return this.private.db;
     }
 
     dbLoad() {
         const that = this;
         this.private.db.find({}, (error, docs) => {
             if (error) {
-                that.emit('error', error);
+                that.emit("error", error);
                 return;
             }
             let index = 0;
@@ -33,23 +38,23 @@ class LGTVControl extends EventEmitter {
             }
         });
         function eventsAdd(udn) {
-            that.private.controls[udn].on('error', (error) => {
-                that.emit('error', error, udn);
+            that.private.controls[udn].on("error", (error) => {
+                that.emit("error", error, udn);
             });
         }
     }
 
     tvUpsert(tv) {
         const that = this;
-        that.private.db.findOne({'$and': [
-            {'udn': tv.udn},
-            {'name': tv.name},
-            {'ip': tv.ip},
-            {'url': tv.url},
-            {'mac': tv.mac}
+        that.private.db.findOne({"$and": [
+            {"udn": tv.udn},
+            {"name": tv.name},
+            {"ip": tv.ip},
+            {"url": tv.url},
+            {"mac": tv.mac}
         ]}, (error, doc) => {
             if (error) {
-                that.emit('error', error, tv.udn);
+                that.emit("error", error, tv.udn);
                 return;
             }
             if (doc === null) {
@@ -57,20 +62,20 @@ class LGTVControl extends EventEmitter {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
                 that.private.db.update(
-                    {'udn': tv.udn},
+                    {"udn": tv.udn},
                     {
-                        'udn': tv.udn,
-                        'name': tv.name,
-                        'ip': tv.ip,
-                        'url': tv.url,
-                        'mac': tv.mac,
-                        'key': ''
+                        "udn": tv.udn,
+                        "name": tv.name,
+                        "ip": tv.ip,
+                        "url": tv.url,
+                        "mac": tv.mac,
+                        "key": ""
                     },
-                    {'upsert': true},
+                    {"upsert": true},
                     // eslint-disable-next-line no-unused-vars
                     (err, _numAffectedDocs, _affectedDocs, _upsert) => {
                         if (err) {
-                            that.emit('error', err, tv.udn);
+                            that.emit("error", err, tv.udn);
                             return;
                         }
                         if (!Reflect.has(that.private.controls, tv.udn)) {
@@ -88,20 +93,64 @@ class LGTVControl extends EventEmitter {
             }
         });
         function eventsAdd(udn) {
-            that.private.controls[udn].on('error', (error) => {
-                that.emit('error', error, udn);
+            that.private.controls[udn].on("error", (error) => {
+                that.emit("error", error, udn);
             });
         }
     }
 
-    tvCommand(udn, command, callback) {
+    skillCommand(event, callback) {
+        smartHomeSkill.handler(this, event, (error, response) => callback(error, response));
+    }
+
+    turnOff(udn, callback) {
         if (udn in this.private.controls) {
-            this.private.controls[udn].command(command, (error, response) => {
+            this.private.controls[udn].turnOff((error, response) => {
                 callback(error, response);
                 return null;
             });
         } else {
-            callback(new Error('Requested TV not found.'), null);
+            callback(new Error("Requested TV not found."), null);
+            return null;
+        }
+        return null;
+    }
+
+    turnOn(udn, callback) {
+        if (udn in this.private.controls) {
+            this.private.controls[udn].turnOn((error, response) => {
+                callback(error, response);
+                return null;
+            });
+        } else {
+            callback(new Error("Requested TV not found."), null);
+            return null;
+        }
+        return null;
+    }
+
+    tvCommand(udn, command, callback) {
+        if (udn in this.private.controls) {
+            const translation = LGTVMessage.translate(command);
+            this.private.controls[udn].lgtvCommand(translation, (error, response) => {
+                callback(error, response);
+                return null;
+            });
+        } else {
+            callback(new Error("Requested TV not found."), null);
+            return null;
+        }
+        return null;
+    }
+
+    lgtvCommand(udn, command, callback) {
+        if (udn in this.private.controls) {
+            this.private.controls[udn].lgtvCommand(command, (error, response) => {
+                callback(error, response);
+                return null;
+            });
+        } else {
+            callback(new Error("Requested TV not found."), null);
             return null;
         }
         return null;
@@ -116,6 +165,7 @@ class LGTVControlOne extends EventEmitter {
         this.private = {};
         this.private.db = db;
         this.private.connecting = false;
+        this.private.powerOn = false;
         this.private.tv = {};
         this.private.tv.udn = tv.udn;
         this.private.tv.name = tv.name;
@@ -125,8 +175,8 @@ class LGTVControlOne extends EventEmitter {
 
         const saveKey = (key, callback) => {
             this.private.db.update(
-                {'udn': this.private.tv.udn},
-                {'$set': {'key': key}},
+                {"udn": this.private.tv.udn},
+                {"$set": {"key": key}},
                 // eslint-disable-next-line no-unused-vars
                 (err, _numAffected, _affectedDocuments, _upsert) => {
                     if (err) {
@@ -138,71 +188,80 @@ class LGTVControlOne extends EventEmitter {
             );
         };
         this.private.connection = new LGTV({
-            'url': this.private.tv.url,
-            'timeout': 10000,
-            'reconnect': 0,
-            'clientKey': tv.key,
-            'saveKey': saveKey
+            "url": this.private.tv.url,
+            "timeout": 10000,
+            "reconnect": 0,
+            "clientKey": tv.key,
+            "saveKey": saveKey
         });
-        this.private.connection.on('error', (error) => {
+        this.private.connection.on("error", (error) => {
             this.private.connecting = false;
             if (error) {
-                if (error.code !== 'EHOSTUNREACH') {
-                    this.emit('error', error);
+                if (error.code !== "EHOSTUNREACH") {
+                    this.emit("error", error);
                 }
             }
         });
         // eslint-disable-next-line no-unused-vars
-        this.private.connection.on('connecting', (_host) => {
+        this.private.connection.on("connecting", (_host) => {
             this.private.connecting = true;
         });
-        this.private.connection.on('connect', () => {
+        this.private.connection.on("connect", () => {
+            this.private.connecting = false;
+            this.private.powerOn = true;
+        });
+        this.private.connection.on("close", () => {
             this.private.connecting = false;
         });
-        this.private.connection.on('close', () => {
-            this.private.connecting = false;
-        });
-        this.private.ssdp = new SSDPClient({'sourcePort': '1900'});
+        this.private.ssdp = new SSDPClient({"sourcePort": "1900"});
         this.private.ssdp.start();
         // eslint-disable-next-line no-unused-vars
-        this.private.ssdp.on('advertise-alive', (headers, _rinfo) => {
+        this.private.ssdp.on("advertise-alive", (headers, _rinfo) => {
             if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
-                headers.NT === 'urn:lge-com:service:webos-second-screen:1') {
+                headers.NT === "urn:lge-com:service:webos-second-screen:1") {
+                this.private.powerOn = true;
                 if (this.private.connecting === false) {
                     this.private.connection.connect(this.private.tv.url);
                 }
             }
         });
         // eslint-disable-next-line no-unused-vars
-        this.private.ssdp.on('advertise-bye', (headers, _rinfo) => {
+        this.private.ssdp.on("advertise-bye", (headers, _rinfo) => {
+            this.private.powerOn = false;
             if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
-                headers.NT === 'urn:lge-com:service:webos-second-screen:1') {
+                headers.NT === "urn:lge-com:service:webos-second-screen:1") {
                 this.private.connection.disconnect();
             }
         });
     }
 
-    command(command, callback) {
-        const translation = LGTVMessage.translate(command);
-        if (translation.uri === null) {
-            if (translation.wol === true) {
+    turnOff(callback) {
+        const command = {
+            "uri": "ssap://system/turnOff"
+        };
+        this.private.connection.request(
+            command.uri,
+            (error, response) => callback(error, response)
+        );
+    }
+
+    turnOn(callback) {
                 // eslint-disable-next-line no-unused-vars
                 wol.wake(this.private.tv.mac, (error, _response) => callback(error, null));
-            }
+    }
+
+    lgtvCommand(command, callback) {
+        if (command.payload === null) {
+            this.private.connection.request(
+                command.uri,
+                (error, response) => callback(error, response)
+            );
         } else {
-            // eslint-disable-next-line no-lonely-if
-            if (translation.payload === null) {
-                this.private.connection.request(
-                    translation.uri,
-                    (error, response) => callback(error, response)
-                );
-            } else {
-                this.private.connection.request(
-                    translation.uri,
-                    translation.payload,
-                    (error, response) => callback(error, response)
-                );
-            }
+            this.private.connection.request(
+                command.uri,
+                command.payload,
+                (error, response) => callback(error, response)
+            );
         }
     }
 }

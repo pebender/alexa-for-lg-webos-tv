@@ -2,21 +2,21 @@ class HTTPAuthorization {
     constructor(db, callback) {
         this.private = {};
         this.private.dbRecord = {};
-        this.private.dbRecord.username = 'LGTV';
+        this.private.dbRecord.username = "LGTV";
         this.private.dbRecord.password = null;
         this.private.dbRecord.hostname = null;
-        if (typeof callback === 'undefined' || db === null) {
+        if (typeof callback === "undefined" || db === null) {
             return;
         }
-        if (typeof db === 'function') {
+        if (typeof db === "function") {
             return;
         }
-        if (typeof db === 'undefined' || db === null) {
+        if (typeof db === "undefined" || db === null) {
             return;
         }
         this.private.db = db;
         this.private.db.findOne(
-            {'username': this.private.dbRecord.username},
+            {"username": this.private.dbRecord.username},
             (err, doc) => {
                 if (err) {
                     callback(err);
@@ -50,26 +50,26 @@ class HTTPAuthorization {
     }
 
     set password(value) {
-        if (typeof value === 'undefined') {
+        if (typeof value === "undefined") {
             this.private.dbRecord.password = null;
         } else if (value === null) {
             this.private.dbRecord.password = null;
-        } else if (value === '') {
+        } else if (value === "") {
             this.private.dbRecord.password = null;
-        } else if (typeof value === 'string') {
+        } else if (typeof value === "string") {
             this.private.dbRecord.password = value;
-        } else if (typeof value.toString() === 'undefined') {
+        } else if (typeof value.toString() === "undefined") {
             this.private.dbRecord.password = null;
         } else if (value.toString() === null) {
             this.private.dbRecord.password = null;
-        } else if (value.toString() === '') {
+        } else if (value.toString() === "") {
             this.private.dbRecord.password = null;
         } else {
             this.private.dbRecord.password = value.toString();
         }
         this.private.db.update(
-            {'username': this.private.dbRecord.username},
-            {'$set': {'password': this.private.dbRecord.password}}
+            {"username": this.private.dbRecord.username},
+            {"$set": {"password": this.private.dbRecord.password}}
         );
     }
 
@@ -78,26 +78,26 @@ class HTTPAuthorization {
     }
 
     set hostname(value) {
-        if (typeof value === 'undefined') {
+        if (typeof value === "undefined") {
             this.private.dbRecord.hostname = null;
         } else if (value === null) {
             this.private.dbRecord.hostname = null;
-        } else if (value === '') {
+        } else if (value === "") {
             this.private.dbRecord.hostname = null;
-        } else if (typeof value === 'string') {
+        } else if (typeof value === "string") {
             this.private.dbRecord.hostname = value;
-        } else if (typeof value.toString() === 'undefined') {
+        } else if (typeof value.toString() === "undefined") {
             this.private.dbRecord.hostname = null;
         } else if (value.toString() === null) {
             this.private.dbRecord.hostname = null;
-        } else if (value.toString() === '') {
+        } else if (value.toString() === "") {
             this.private.dbRecord.hostname = null;
         } else {
             this.private.dbRecord.hostname = value.toString();
         }
         this.private.db.update(
-            {'username': this.private.dbRecord.username},
-            {'$set': {'hostname': this.private.dbRecord.hostname}}
+            {"username": this.private.dbRecord.username},
+            {"$set": {"hostname": this.private.dbRecord.hostname}}
         );
     }
 }
