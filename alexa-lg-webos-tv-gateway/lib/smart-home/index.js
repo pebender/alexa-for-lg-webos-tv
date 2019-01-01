@@ -16,8 +16,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "Missing key: directive."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     if (!Reflect.has(event.directive, "header")) {
@@ -29,8 +28,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "Missing key: directive.header."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     if (!Reflect.has(event.directive.header, "payloadVersion")) {
@@ -42,8 +40,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "Missing key: directive.header.payloadVersion."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     if (event.directive.header.payloadVersion !== "3") {
@@ -55,8 +52,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "This skill only supports Smart Home API version three."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     if (!Reflect.has(event.directive.header, "namespace")) {
@@ -68,8 +64,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "Missing key: directive.header.namespace."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     if (!Reflect.has(event.directive.header, "name")) {
@@ -81,8 +76,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "Missing key: directive.header.name."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.namespace) {
@@ -101,7 +95,7 @@ function handler(lgtvControl, event, callback) {
                     callback(error, response);
                     return;
                 }
-                speaker.state(lgtvControl, response, (err, res) => {
+                speaker.state(lgtvControl, event, (err, res) => {
                     if (err) {
                         callback(error, response);
                         return;
@@ -133,8 +127,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
             "message": `I do not know the Directive ${event.directive.header.namespace}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {"handler": handler};

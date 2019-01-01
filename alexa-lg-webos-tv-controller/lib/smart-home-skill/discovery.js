@@ -13,8 +13,7 @@ function handler(event, callback) {
                 "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
 
@@ -27,8 +26,7 @@ function handler(event, callback) {
             });
             const LGTVGatewayEndpoint = gatewayEndpoint(event);
             alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         if (response.event.header.namespace === "Alexa.Discovery") {
@@ -41,8 +39,7 @@ function handler(event, callback) {
         }
         const LGTVGatewayEndpoint = gatewayEndpoint(event);
         alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
     });
 }
 

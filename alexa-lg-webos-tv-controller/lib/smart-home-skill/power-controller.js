@@ -21,8 +21,7 @@ function handler(event, callback) {
                 "message": "You were sent to Power Controller processing in error."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.name) {
@@ -54,8 +53,7 @@ function unknownDirectiveError(event, callback) {
             "message": `I do not know the Power Controller directive ${event.directive.header.name}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {

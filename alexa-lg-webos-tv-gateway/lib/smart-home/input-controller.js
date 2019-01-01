@@ -19,8 +19,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "You were sent to Input Controller processing in error."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.name) {
@@ -48,8 +47,7 @@ function selectInputHandler(lgtvControl, event, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         if (!Reflect.has(response, "devices")) {
@@ -61,8 +59,7 @@ function selectInputHandler(lgtvControl, event, callback) {
                     "message": "The T.V. did not return a list of it's external inputs."
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
 
@@ -94,8 +91,7 @@ function selectInputHandler(lgtvControl, event, callback) {
                     "message": `I do not recognize input ${input}`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
 
@@ -114,16 +110,14 @@ function selectInputHandler(lgtvControl, event, callback) {
                         "message": `${err.name}: ${err.message}.`
                     }
                 });
-                const alexaEvent = {"event": alexaResponse.get().event};
-                callback(null, alexaEvent);
+                callback(null, alexaResponse.get());
                 return;
             }
 
             const alexaResponse = new AlexaResponse({
                 "request": event
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
         });
     });
 }
@@ -137,8 +131,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
             "message": `I do not know the Input Controller directive ${event.directive.header.name}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {

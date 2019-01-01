@@ -15,8 +15,7 @@ function handler(lgtvControl, event, callback) {
                 "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
 
@@ -36,8 +35,7 @@ function handler(lgtvControl, event, callback) {
                         "message": `${err.name}: ${err.message}`
                     }
                 });
-                const alexaEvent = {"event": alexaResponse.get().event};
-                callback(null, alexaEvent);
+                callback(null, alexaResponse.get());
                 return;
             }
 
@@ -72,8 +70,7 @@ function handler(lgtvControl, event, callback) {
                     ]
                 });
             }
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
         }
     );
 }

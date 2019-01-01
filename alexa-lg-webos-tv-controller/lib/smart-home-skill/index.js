@@ -51,7 +51,7 @@ function remoteResponse(event, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            callback(null, {"event": alexaResponse.get().event});
+            callback(null, alexaResponse.get());
             return;
         }
         callback(null, response);
@@ -67,8 +67,7 @@ function unknownDirectiveError(event, callback) {
             "message": `I do not know the directive ${event.directive.header.namespace}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {"handler": skillHandler};

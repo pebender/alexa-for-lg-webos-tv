@@ -20,8 +20,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "You were sent to Channel Controller processing in error."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.name) {
@@ -86,8 +85,7 @@ function changeChannelHandler(lgtvControl, event, callback) {
                         "message": `${error.name}: ${error.message}.`
                     }
                 });
-                const alexaEvent = {"event": alexaResponse.get().event};
-                callback(null, alexaEvent);
+                callback(null, alexaResponse.get());
                 return;
             }
 
@@ -105,7 +103,7 @@ function changeChannelHandler(lgtvControl, event, callback) {
                         "affiliateCallSign": "callsign2"
                     }
                 });
-                callback(null, alexaResponse);
+                callback(null, alexaResponse.get());
                 return;
             } else {
             }

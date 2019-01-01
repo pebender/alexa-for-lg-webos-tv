@@ -26,8 +26,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "You were sent to Playback Controller processing in error."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.name) {
@@ -87,15 +86,13 @@ function genericHandler(lgtvControl, event, commandURI, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         const alexaResponse = new AlexaResponse({
             "request": event
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
     });
 }
 
@@ -108,8 +105,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
             "message": `I do not know the Playback Controller directive ${event.directive.header.name}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {

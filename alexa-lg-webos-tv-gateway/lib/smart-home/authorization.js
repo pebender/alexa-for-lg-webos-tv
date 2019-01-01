@@ -9,8 +9,7 @@ function handler(lgtvControl, event, callback) {
             "message": ""
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {

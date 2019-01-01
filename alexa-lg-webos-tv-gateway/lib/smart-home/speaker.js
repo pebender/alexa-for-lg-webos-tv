@@ -17,27 +17,23 @@ function state(lgtvControl, event, callback) {
     // eslint-disable-next-line no-unused-vars
     lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
         if (error) {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `${error.name}: ${error.message}.`
-                }
-            });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(error, null);
             return;
         }
-console.log(JSON.stringify(response, null, 2));
-callback(null, response);
-return;
-
-        const alexaResponse = new AlexaResponse({
-            "request": event
+        const volumeState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.Speaker",
+            "name": "volume",
+            "value": response.volume
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        const mutedState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.Speaker",
+            "name": "muted",
+            "value": response.muted
+        });
+        callback(null, [
+            volumeState,
+            mutedState
+        ]);
     });
 }
 
@@ -51,8 +47,7 @@ function handler(lgtvControl, event, callback) {
                 "message": "You were sent to Speaker processing in error."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     switch (event.directive.header.name) {
@@ -83,8 +78,7 @@ function setVolumeHandler(lgtvControl, event, callback) {
                 "message": "volume must be between 0 and 100 inclusive."
             }
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
         return;
     }
     const command = {
@@ -102,15 +96,13 @@ function setVolumeHandler(lgtvControl, event, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         const alexaResponse = new AlexaResponse({
             "request": event
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
     });
 }
 
@@ -130,8 +122,7 @@ function adjustVolumeHandler(lgtvControl, event, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         if (!Reflect.has(response, "volume")) {
@@ -142,8 +133,7 @@ function adjustVolumeHandler(lgtvControl, event, callback) {
                     "message": "The T.V. did not return it's volume."
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
         let {volume} = response;
@@ -171,15 +161,13 @@ function adjustVolumeHandler(lgtvControl, event, callback) {
                         "message": `${err.name}: ${err.message}.`
                     }
                 });
-                const alexaEvent = {"event": alexaResponse.get().event};
-                callback(null, alexaEvent);
+                callback(null, alexaResponse.get());
                 return;
             }
             const alexaResponse = new AlexaResponse({
                 "request": event
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
         });
     });
 }
@@ -202,16 +190,14 @@ function setMuteHandler(lgtvControl, event, callback) {
                     "message": `${error.name}: ${error.message}.`
                 }
             });
-            const alexaEvent = {"event": alexaResponse.get().event};
-            callback(null, alexaEvent);
+            callback(null, alexaResponse.get());
             return;
         }
 
         const alexaResponse = new AlexaResponse({
             "request": event
         });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        callback(null, alexaEvent);
+        callback(null, alexaResponse.get());
     });
 }
 
@@ -224,8 +210,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
             "message": `I do not know the Speaker directive ${event.directive.header.name}`
         }
     });
-    const alexaEvent = {"event": alexaResponse.get().event};
-    callback(null, alexaEvent);
+    callback(null, alexaResponse.get());
 }
 
 module.exports = {
