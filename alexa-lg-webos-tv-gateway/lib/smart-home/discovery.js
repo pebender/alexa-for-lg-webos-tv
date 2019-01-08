@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const alexa = require("./alexa.js");
 const powerController = require("./power-controller.js");
 const speaker = require("./speaker.js");
 const channelController = require("./channel-controller.js");
@@ -49,7 +50,7 @@ function handler(lgtvControl, event, callback) {
             for (index = 0; index < docs.length; index += 1) {
                 const [udn] = docs[index].udn;
                 const [name] = docs[index].name;
-                const capabilityAlexa = AlexaResponse.createPayloadEndpointCapability();
+                const capabilityAlexa = alexa.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaPowerController = powerController.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaSpeaker = speaker.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaChannelController = channelController.capabilities(lgtvControl, event, udn);

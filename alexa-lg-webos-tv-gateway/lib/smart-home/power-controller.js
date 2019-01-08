@@ -13,7 +13,7 @@ function capabilities(lgtvControl, event, udn) {
                 }
             ],
             "proactivelyReported": false,
-            "retrievable": false
+            "retrievable": true
         }
     };
 }

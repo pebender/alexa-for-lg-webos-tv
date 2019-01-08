@@ -39,7 +39,7 @@ const lgtvToAlexa = {
     "netflix": {
         "identifier": "amzn1.alexa-ask-target.app.36377",
         "name": "Netflix"
-    }, 
+    },
     "cdp-30": {
         "identifier": "amzn1.alexa-ask-target.app.78079",
         "name": "Plex"
@@ -59,7 +59,19 @@ function capabilities(_lgtvControl, _event, _udn) {
     return {
         "type": "AlexaInterface",
         "interface": "Alexa.Launcher",
-        "version": "3"
+        "version": "3",
+        "properties": {
+            "supported": [
+                {
+                    "name": "identifier"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": true
+        }
     };
 }
 
@@ -139,6 +151,7 @@ function launchTargetHandler(lgtvControl, event, callback) {
         callback(null, alexaResponse.get());
         return;
     }
+    // eslint-disable-next-line no-unused-vars
     lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
         if (error) {
             const alexaResponse = new AlexaResponse({
@@ -152,7 +165,6 @@ function launchTargetHandler(lgtvControl, event, callback) {
             callback(null, alexaResponse.get());
             return;
         }
-console.log(JSON.stringify(response, null, 2));
         const alexaResponse = new AlexaResponse({
             "request": event
         });

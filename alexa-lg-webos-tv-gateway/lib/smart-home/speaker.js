@@ -16,7 +16,7 @@ function capabilities(_lgtvControl, _event, _udn) {
                 }
             ],
             "proactivelyReported": false,
-            "retrievable": false
+            "retrievable": true
         }
     };
 }

@@ -11,7 +11,7 @@ function capabilities(_lgtvControl, _event, _udn) {
 }
 
 function states(lgtvControl, udn, callback) {
-    callback(null, null);
+    callback(null, []);
 }
 
 function handler(lgtvControl, event, callback) {
