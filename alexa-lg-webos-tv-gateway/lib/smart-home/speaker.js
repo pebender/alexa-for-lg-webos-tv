@@ -5,17 +5,32 @@ function capabilities(_lgtvControl, _event, _udn) {
     return {
         "type": "AlexaInterface",
         "interface": "Alexa.Speaker",
-        "version": "3"
+        "version": "3",
+        "properties": {
+            "supported": [
+                {
+                    "name": "volume"
+                },
+                {
+                    "name": "muted"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": false
+        }
     };
 }
 
-function state(lgtvControl, event, callback) {
-    const {endpointId} = event.directive.endpoint;
+function states(lgtvControl, udn, callback) {
+    if (lgtvControl.getPowerState(udn) === "OFF") {
+        callback(null, []);
+        return;
+    }
+
     const command = {
         "uri": "ssap://audio/getVolume"
     };
-    // eslint-disable-next-line no-unused-vars
-    lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
+    lgtvControl.lgtvCommand(udn, command, (error, response) => {
         if (error) {
             callback(error, null);
             return;
@@ -137,15 +152,22 @@ function adjustVolumeHandler(lgtvControl, event, callback) {
             return;
         }
         let {volume} = response;
-        volume += event.directive.payload.volumeDefault
-            ? 1
-            : event.directive.payload.volume;
-        volume = volume < 0
-            ? 0
-            : volume;
-        volume = volume > 100
-            ? 100
-            : volume;
+        if (event.directive.payload.volumeDefault === true) {
+            if (event.directive.payload.volume < 0) {
+                volume -= 3;
+            } else if (event.directive.payload.volume > 0) {
+                volume += 3;
+            }
+        } else {
+            volume += event.directive.payload.volume;
+        }
+        if (volume < 0) {
+            volume = 0;
+        }
+        if (volume > 100) {
+            volume = 100;
+        }
+
         const setVolume = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
@@ -214,7 +236,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
 }
 
 module.exports = {
-    "state": state,
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

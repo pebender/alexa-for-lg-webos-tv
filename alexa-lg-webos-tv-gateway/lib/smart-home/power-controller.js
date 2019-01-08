@@ -1,12 +1,30 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvControl, _event, _udn) {
+function capabilities(lgtvControl, event, udn) {
     return {
         "type": "AlexaInterface",
         "interface": "Alexa.PowerController",
-        "version": "3"
+        "version": "3",
+        "properties": {
+            "supported": [
+                {
+                    "name": "powerState"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": false
+        }
     };
+}
+
+function states(lgtvControl, udn, callback) {
+    const powerStateState = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.PowerController",
+        "name": "powerState",
+        "value": lgtvControl.getPowerState(udn)
+    });
+    callback(null, [powerStateState]);
 }
 
 function handler(lgtvControl, event, callback) {
@@ -98,5 +116,6 @@ function unknownDirectiveError(lgtvControl, event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

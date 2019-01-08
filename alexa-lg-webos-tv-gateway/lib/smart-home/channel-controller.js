@@ -10,6 +10,10 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
+function states(lgtvControl, udn, callback) {
+    callback(null, null);
+}
+
 function handler(lgtvControl, event, callback) {
     if (event.directive.header.namespace !== "Alexa.ChannelController") {
         const alexaResponse = new AlexaResponse({
@@ -144,5 +148,6 @@ function unknownChannelError(lgtvControl, event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

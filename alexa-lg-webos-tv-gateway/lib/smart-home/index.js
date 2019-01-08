@@ -5,6 +5,7 @@ const powerController = require("./power-controller.js");
 const speaker = require("./speaker.js");
 const channelController = require("./channel-controller.js");
 const inputController = require("./input-controller.js");
+const launcher = require("./launcher.js");
 const playbackController = require("./playback-controller.js");
 
 function handler(lgtvControl, event, callback) {
@@ -79,6 +80,7 @@ function handler(lgtvControl, event, callback) {
         callback(null, alexaResponse.get());
         return;
     }
+    const udn = event.directive.endpoint.endpointId;
     switch (event.directive.header.namespace) {
         case "Alexa.Authorization":
             authorization.handler(lgtvControl, event, (error, response) => callback(error, response));
@@ -87,35 +89,110 @@ function handler(lgtvControl, event, callback) {
             discovery.handler(lgtvControl, event, (error, response) => callback(error, response));
             return;
         case "Alexa.PowerController":
-            powerController.handler(lgtvControl, event, (error, response) => callback(error, response));
+            powerController.handler(lgtvControl, event, (error, response) => {
+                if (error) {
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
+                }
+            });
             return;
         case "Alexa.Speaker":
             speaker.handler(lgtvControl, event, (error, response) => {
                 if (error) {
-                    callback(error, response);
-                    return;
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
-                speaker.state(lgtvControl, event, (err, res) => {
-                    if (err) {
-                        callback(error, response);
-                        return;
-                    }
-                    callback(error, response);
-                });
             });
             return;
         case "Alexa.ChannelController":
-            channelController.handler(lgtvControl, event, (error, response) => callback(error, response));
-            return;
+            channelController.handler(lgtvControl, event, (error, response) => {
+                if (error) {
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
+                }
+            });
+        return;
         case "Alexa.InputController":
-            inputController.handler(lgtvControl, event, (error, response) => callback(error, response));
+            inputController.handler(lgtvControl, event, (error, response) => {
+                if (error) {
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
+                }
+            });
+            return;
+        case "Alexa.Launcher":
+            launcher.handler(lgtvControl, event, (error, response) => {
+                if (error) {
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
+                }
+            });
             return;
         case "Alexa.PlaybackController":
-            playbackController.handler(lgtvControl, event, (error, response) => callback(error, response));
+            playbackController.handler(lgtvControl, event, (error, response) => {
+                if (error) {
+                    errorToErrorResponse(error, event);
+                } else {
+                    stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
+                }
+            });
             return;
         default:
-            unknownDirectiveError(lgtvControl, event, (error, response) => callback(error, response));
+            unknownDirectiveError(lgtvControl, event, (err, res) => callback(err, res));
     }
+}
+
+function stateHandler(lgtvControl, udn, response, callback) {
+    const alexaResponse = new AlexaResponse(response);
+    let index = 0;
+    powerController.states(lgtvControl, udn, (powerControllerError, powerControllerResponses) => {
+        if (!powerControllerError && powerControllerResponses && powerControllerResponses.length > 0) {
+            for (index = 0; index < powerControllerResponses.length; index += 1) {
+                alexaResponse.addContextProperty(powerControllerResponses[index]);
+            }
+        }
+        speaker.states(lgtvControl, udn, (speakerError, speakerResponses) => {
+            if (!speakerError && speakerResponses && speakerResponses.length > 0) {
+                for (index = 0; index < speakerResponses.length; index += 1) {
+                    alexaResponse.addContextProperty(speakerResponses[index]);
+                }
+            }
+            channelController.states(lgtvControl, udn, (channelControllerError, channelControllerResponses) => {
+                if (!channelControllerError && channelControllerResponses && channelControllerResponses.length > 0) {
+                    for (index = 0; index < channelControllerResponses.length; index += 1) {
+                        alexaResponse.addContextProperty(channelControllerResponses[index]);
+                    }
+                }
+                inputController.states(lgtvControl, udn, (inputControllerError, inputControllerResponses) => {
+                    if (!inputControllerError && inputControllerResponses && inputControllerResponses.length > 0) {
+                        for (index = 0; index < inputControllerResponses.length; index += 1) {
+                            alexaResponse.addContextProperty(inputControllerResponses[index]);
+                        }
+                    }
+                    launcher.states(lgtvControl, udn, (launcherError, launcherResponses) => {
+                        if (!launcherError && launcherResponses && launcherResponses.length > 0) {
+                            for (index = 0; index < launcherResponses.length; index += 1) {
+                                alexaResponse.addContextProperty(launcherResponses[index]);
+                            }
+                        }
+                        playbackController.states(lgtvControl, udn, (playbackControllerError, playbackControllerResponses) => {
+                            if (!playbackControllerError && playbackControllerResponses && playbackControllerResponses.length > 0) {
+                                for (index = 0; index < playbackControllerResponses.length; index += 1) {
+                                    alexaResponse.addContextProperty(playbackControllerResponses[index]);
+                                }
+                            }
+                            callback(null, alexaResponse.get());
+                        });
+                    });
+                });
+            });
+        });
+    });
 }
 
 function unknownDirectiveError(lgtvControl, event, callback) {
@@ -128,6 +205,18 @@ function unknownDirectiveError(lgtvControl, event, callback) {
         }
     });
     callback(null, alexaResponse.get());
+}
+
+function errorToErrorResponse(error, event) {
+    const alexaResponse = new AlexaResponse({
+        "request": event,
+        "name": "ErrorResponse",
+        "payload": {
+            "type": "INTERNAL_ERROR",
+            "message": `${error.name}: ${error.message}.`
+        }
+    });
+    return alexaResponse.get();
 }
 
 module.exports = {"handler": handler};

@@ -263,12 +263,11 @@ console.log(JSON.stringify(request.body, null, 2));
                         "message": `${err.name}: ${err.message}`
                     }
                 });
-                const alexaEvent = {"event": alexaResponse.get().event};
-console.log(JSON.stringify(alexaEvent, null, 2));
+console.log(JSON.stringify(alexaResponse, null, 2));
                 response.
                     type("json").
                     status(200).
-                    json(alexaEvent).
+                    json(alexaResponse).
                     end();
             } else {
 console.log(JSON.stringify(res, null, 2));

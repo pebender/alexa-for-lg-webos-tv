@@ -16,6 +16,10 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
+function states(lgtvControl, udn, callback) {
+    callback(null, null);
+}
+
 function handler(lgtvControl, event, callback) {
     if (event.directive.header.namespace !== "Alexa.PlaybackController") {
         const alexaResponse = new AlexaResponse({
@@ -110,5 +114,6 @@ function unknownDirectiveError(lgtvControl, event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

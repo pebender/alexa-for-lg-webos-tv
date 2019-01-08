@@ -3,6 +3,7 @@ const powerController = require("./power-controller.js");
 const speaker = require("./speaker.js");
 const channelController = require("./channel-controller.js");
 const inputController = require("./input-controller.js");
+const launcher = require("./launcher.js");
 const playbackController = require("./playback-controller.js");
 
 function handler(lgtvControl, event, callback) {
@@ -53,6 +54,7 @@ function handler(lgtvControl, event, callback) {
                 const capabilityAlexaSpeaker = speaker.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaChannelController = channelController.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaInputController = inputController.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaLauncher = launcher.capabilities(lgtvControl, event, udn);
                 const capabilityAlexaPlaybackController = playbackController.capabilities(lgtvControl, event, udn);
                 alexaResponse.addPayloadEndpoint({
                     "endpointId": udn,
@@ -66,6 +68,7 @@ function handler(lgtvControl, event, callback) {
                         capabilityAlexaSpeaker,
                         capabilityAlexaChannelController,
                         capabilityAlexaInputController,
+                        capabilityAlexaLauncher,
                         capabilityAlexaPlaybackController
                     ]
                 });

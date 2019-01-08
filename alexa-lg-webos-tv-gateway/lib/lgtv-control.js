@@ -104,56 +104,43 @@ class LGTVControl extends EventEmitter {
     }
 
     turnOff(udn, callback) {
-        if (udn in this.private.controls) {
-            this.private.controls[udn].turnOff((error, response) => {
-                callback(error, response);
-                return null;
-            });
-        } else {
+        if (!Reflect.has(this.private.controls, udn)) {
             callback(new Error("Requested TV not found."), null);
-            return null;
+            return;
         }
-        return null;
+        this.private.controls[udn].turnOff((error, response) => callback(error, response));
     }
 
     turnOn(udn, callback) {
-        if (udn in this.private.controls) {
-            this.private.controls[udn].turnOn((error, response) => {
-                callback(error, response);
-                return null;
-            });
-        } else {
+        if (!Reflect.has(this.private.controls, udn)) {
             callback(new Error("Requested TV not found."), null);
-            return null;
+            return;
         }
-        return null;
+        this.private.controls[udn].turnOn((error, response) => callback(error, response));
+    }
+
+    getPowerState(udn) {
+        if (!Reflect.has(this.private.controls, udn)) {
+            throw new Error("Requested TV not found.");
+        }
+        return this.private.controls[udn].getPowerState(udn);
     }
 
     tvCommand(udn, command, callback) {
-        if (udn in this.private.controls) {
-            const translation = LGTVMessage.translate(command);
-            this.private.controls[udn].lgtvCommand(translation, (error, response) => {
-                callback(error, response);
-                return null;
-            });
-        } else {
+        if (!Reflect.has(this.private.controls, udn)) {
             callback(new Error("Requested TV not found."), null);
-            return null;
+            return;
         }
-        return null;
+        const translation = LGTVMessage.translate(command);
+        this.private.controls[udn].lgtvCommand(translation, (error, response) => callback(error, response));
     }
 
     lgtvCommand(udn, command, callback) {
-        if (udn in this.private.controls) {
-            this.private.controls[udn].lgtvCommand(command, (error, response) => {
-                callback(error, response);
-                return null;
-            });
-        } else {
+        if (!Reflect.has(this.private.controls, udn)) {
             callback(new Error("Requested TV not found."), null);
-            return null;
+            return;
         }
-        return null;
+        this.private.controls[udn].lgtvCommand(command, (error, response) => callback(error, response));
     }
 }
 
@@ -227,9 +214,9 @@ class LGTVControlOne extends EventEmitter {
         });
         // eslint-disable-next-line no-unused-vars
         this.private.ssdp.on("advertise-bye", (headers, _rinfo) => {
-            this.private.powerOn = false;
             if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
                 headers.NT === "urn:lge-com:service:webos-second-screen:1") {
+                this.private.powerOn = false;
                 this.private.connection.disconnect();
             }
         });
@@ -239,15 +226,64 @@ class LGTVControlOne extends EventEmitter {
         const command = {
             "uri": "ssap://system/turnOff"
         };
-        this.private.connection.request(
-            command.uri,
-            (error, response) => callback(error, response)
-        );
+        // eslint-disable-next-line no-unused-vars
+        this.private.connection.request(command.uri);
+        this.private.powerOn = false;
+        callback(null, null);
     }
 
     turnOn(callback) {
-                // eslint-disable-next-line no-unused-vars
-                wol.wake(this.private.tv.mac, (error, _response) => callback(error, null));
+        let done = false;
+        let callbackCalled = false;
+
+        const {mac} = this.private.tv;
+
+        function wolHandler() {
+            // eslint-disable-next-line no-unused-vars
+            wol.wake(mac, (error, response) => {
+                if (done === false) {
+                    setTimeout(wolHandler, 250);
+                }
+            });
+        }
+        setImmediate(wolHandler);
+
+        // eslint-disable-next-line no-unused-vars
+
+        let ssdp = new SSDPClient();
+        // eslint-disable-next-line no-unused-vars
+        ssdp.on("response", (headers, rinfo) => {
+            if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
+                headers.ST === "urn:lge-com:service:webos-second-screen:1") {
+                this.private.powerOn = true;
+                if (callbackCalled === false) {
+                    callbackCalled = true;
+                    // eslint-disable-next-line callback-return
+                    callback(null, {});
+                }
+            }
+        });
+        ssdp.search("urn:lge-com:service:webos-second-screen:1");
+
+        function cleanup() {
+            done = true;
+            if (ssdp) {
+                ssdp.removeAllListeners();
+                ssdp = null;
+            }
+            if (callbackCalled === false) {
+                callbackCalled = true;
+                // eslint-disable-next-line callback-return
+                callback(null, {});
+            }
+        }
+        setTimeout(cleanup, 5000);
+    }
+
+    getPowerState() {
+        return this.private.powerOn
+            ? "ON"
+            : "OFF";
     }
 
     lgtvCommand(command, callback) {

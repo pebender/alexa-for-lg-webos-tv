@@ -7,6 +7,11 @@ const rangeController = require("./range-controller.js");
 
 // eslint-disable-next-line no-unused-vars
 function skillHandler(event, _context, callback) {
+
+    remoteResponse(event, (error, response) => callback(error, response));
+    return;
+
+    // eslint-disable-next-line no-unreachable
     if (Reflect.has(event, "directive") &&
         Reflect.has(event.directive, "endpoint") &&
         Reflect.has(event.directive.endpoint, "endpointId")) {
