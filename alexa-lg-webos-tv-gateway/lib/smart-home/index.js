@@ -1,13 +1,13 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const authorization = require("./authorization.js");
-const discovery = require("./discovery.js");
+const alexaAuthorization = require("./authorization.js");
+const alexaDiscovery = require("./discovery.js");
 const alexa = require("./alexa.js");
-const powerController = require("./power-controller.js");
-const speaker = require("./speaker.js");
-const channelController = require("./channel-controller.js");
-const inputController = require("./input-controller.js");
-const launcher = require("./launcher.js");
-const playbackController = require("./playback-controller.js");
+const alexaPowerController = require("./power-controller.js");
+const alexaSpeaker = require("./speaker.js");
+const alexaChannelController = require("./channel-controller.js");
+const alexaInputController = require("./input-controller.js");
+const alexaLauncher = require("./launcher.js");
+const alexaPlaybackController = require("./playback-controller.js");
 
 function handler(lgtvControl, event, callback) {
     if (!Reflect.has(event, "directive")) {
@@ -84,10 +84,10 @@ function handler(lgtvControl, event, callback) {
     const udn = event.directive.endpoint.endpointId;
     switch (event.directive.header.namespace) {
         case "Alexa.Authorization":
-            authorization.handler(lgtvControl, event, (error, response) => callback(error, response));
+            alexaAuthorization.handler(lgtvControl, event, (error, response) => callback(error, response));
             return;
         case "Alexa.Discovery":
-            discovery.handler(lgtvControl, event, (error, response) => callback(error, response));
+            alexaDiscovery.handler(lgtvControl, event, (error, response) => callback(error, response));
             return;
         case "Alexa":
             alexa.handler(lgtvControl, event, (error, response) => {
@@ -99,7 +99,7 @@ function handler(lgtvControl, event, callback) {
             });
             return;
         case "Alexa.PowerController":
-            powerController.handler(lgtvControl, event, (error, response) => {
+            alexaPowerController.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -108,7 +108,7 @@ function handler(lgtvControl, event, callback) {
             });
             return;
         case "Alexa.Speaker":
-            speaker.handler(lgtvControl, event, (error, response) => {
+            alexaSpeaker.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -117,7 +117,7 @@ function handler(lgtvControl, event, callback) {
             });
             return;
         case "Alexa.ChannelController":
-            channelController.handler(lgtvControl, event, (error, response) => {
+            alexaChannelController.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -126,7 +126,7 @@ function handler(lgtvControl, event, callback) {
             });
         return;
         case "Alexa.InputController":
-            inputController.handler(lgtvControl, event, (error, response) => {
+            alexaInputController.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -135,7 +135,7 @@ function handler(lgtvControl, event, callback) {
             });
             return;
         case "Alexa.Launcher":
-            launcher.handler(lgtvControl, event, (error, response) => {
+            alexaLauncher.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -144,7 +144,7 @@ function handler(lgtvControl, event, callback) {
             });
             return;
         case "Alexa.PlaybackController":
-            playbackController.handler(lgtvControl, event, (error, response) => {
+            alexaPlaybackController.handler(lgtvControl, event, (error, response) => {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
@@ -159,56 +159,38 @@ function handler(lgtvControl, event, callback) {
 
 function stateHandler(lgtvControl, udn, response, callback) {
     const alexaResponse = new AlexaResponse(response);
-    let index = 0;
-    alexa.states(lgtvControl, udn, (alexaError, alexaResponses) => {
-        if (!alexaError && alexaResponses && alexaResponses.length > 0) {
-            for (index = 0; index < alexaResponses.length; index += 1) {
-                alexaResponse.addContextProperty(alexaResponses[index]);
+    const startTime = new Date();
+    Promise.all([
+        alexa.states(lgtvControl, udn),
+        alexaPowerController.states(lgtvControl, udn),
+        alexaSpeaker.states(lgtvControl, udn),
+        alexaChannelController.states(lgtvControl, udn),
+        alexaInputController.states(lgtvControl, udn),
+        alexaLauncher.states(lgtvControl, udn),
+        alexaPlaybackController.states(lgtvControl, udn)
+    ]).then((values) => {
+        const endTime = new Date();
+        const timeOfSample = endTime.toISOString();
+        const uncertaintyInMilliseconds = endTime.getMilliseconds() - startTime.getMilliseconds();
+        const contextProperties = [];
+        let index = 0;
+        for (index = 0; index < values.length; index += 1) {
+            if (values && values[index].length > 0) {
+                contextProperties.push(...values[index]);
             }
         }
-        powerController.states(lgtvControl, udn, (powerControllerError, powerControllerResponses) => {
-            if (!powerControllerError && powerControllerResponses && powerControllerResponses.length > 0) {
-                for (index = 0; index < powerControllerResponses.length; index += 1) {
-                    alexaResponse.addContextProperty(powerControllerResponses[index]);
-                }
+        if (contextProperties.length > 0) {
+            for (index = 0; index < contextProperties.length; index += 1) {
+                contextProperties[index].timeOfSample = timeOfSample;
+                contextProperties[index].uncertaintyInMilliseconds = uncertaintyInMilliseconds;
+                alexaResponse.addContextProperty(contextProperties[index]);
             }
-            speaker.states(lgtvControl, udn, (speakerError, speakerResponses) => {
-                if (!speakerError && speakerResponses && speakerResponses.length > 0) {
-                    for (index = 0; index < speakerResponses.length; index += 1) {
-                        alexaResponse.addContextProperty(speakerResponses[index]);
-                    }
-                }
-                channelController.states(lgtvControl, udn, (channelControllerError, channelControllerResponses) => {
-                    if (!channelControllerError && channelControllerResponses && channelControllerResponses.length > 0) {
-                        for (index = 0; index < channelControllerResponses.length; index += 1) {
-                            alexaResponse.addContextProperty(channelControllerResponses[index]);
-                        }
-                    }
-                    inputController.states(lgtvControl, udn, (inputControllerError, inputControllerResponses) => {
-                        if (!inputControllerError && inputControllerResponses && inputControllerResponses.length > 0) {
-                            for (index = 0; index < inputControllerResponses.length; index += 1) {
-                                alexaResponse.addContextProperty(inputControllerResponses[index]);
-                            }
-                        }
-                        launcher.states(lgtvControl, udn, (launcherError, launcherResponses) => {
-                            if (!launcherError && launcherResponses && launcherResponses.length > 0) {
-                                for (index = 0; index < launcherResponses.length; index += 1) {
-                                    alexaResponse.addContextProperty(launcherResponses[index]);
-                                }
-                            }
-                            playbackController.states(lgtvControl, udn, (playbackControllerError, playbackControllerResponses) => {
-                                if (!playbackControllerError && playbackControllerResponses && playbackControllerResponses.length > 0) {
-                                    for (index = 0; index < playbackControllerResponses.length; index += 1) {
-                                        alexaResponse.addContextProperty(playbackControllerResponses[index]);
-                                    }
-                                }
-                                callback(null, alexaResponse.get());
-                            });
-                        });
-                    });
-                });
-            });
-        });
+        }
+        callback(null, alexaResponse.get());
+    }).
+    // eslint-disable-next-line no-unused-vars
+    catch((error) => {
+        callback(null, alexaResponse.get());
     });
 }
 

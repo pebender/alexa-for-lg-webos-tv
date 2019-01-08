@@ -75,31 +75,31 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
-function states(lgtvControl, udn, callback) {
-    if (lgtvControl.getPowerState(udn) === "OFF") {
-        callback(null, []);
-        return;
-    }
+function states(lgtvControl, udn) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        if (lgtvControl.getPowerState(udn) === "OFF") {
+            resolve([]);
+        }
 
-    const command = {
-        "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
-    };
-    lgtvControl.lgtvCommand(udn, command, (error, response) => {
-        if (error) {
-            callback(error, null);
-            return;
-        }
-        if (Reflect.has(lgtvToAlexa, response.appId)) {
-            const target = lgtvToAlexa[response.appId];
-            const targetState = AlexaResponse.createContextProperty({
-                "namespace": "Alexa.Launcher",
-                "name": "target",
-                "value": target
-            });
-            callback(null, [targetState]);
-            return;
-        }
-        callback(null, []);
+        const command = {
+            "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
+        };
+        lgtvControl.lgtvCommand(udn, command, (error, response) => {
+            if (error) {
+                resolve([]);
+            }
+            if (Reflect.has(lgtvToAlexa, response.appId)) {
+                const target = lgtvToAlexa[response.appId];
+                const targetState = AlexaResponse.createContextProperty({
+                    "namespace": "Alexa.Launcher",
+                    "name": "target",
+                    "value": target
+                });
+                resolve([targetState]);
+            }
+            resolve([]);
+        });
     });
 }
 

@@ -21,34 +21,35 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
-function states(lgtvControl, udn, callback) {
-    if (lgtvControl.getPowerState(udn) === "OFF") {
-        callback(null, []);
-        return;
-    }
-
-    const command = {
-        "uri": "ssap://audio/getVolume"
-    };
-    lgtvControl.lgtvCommand(udn, command, (error, response) => {
-        if (error) {
-            callback(error, null);
-            return;
+function states(lgtvControl, udn) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        if (lgtvControl.getPowerState(udn) === "OFF") {
+            resolve([]);
         }
-        const volumeState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.Speaker",
-            "name": "volume",
-            "value": response.volume
+
+        const command = {
+            "uri": "ssap://audio/getVolume"
+        };
+        lgtvControl.lgtvCommand(udn, command, (error, response) => {
+            if (error) {
+                resolve([]);
+            }
+            const volumeState = AlexaResponse.createContextProperty({
+                "namespace": "Alexa.Speaker",
+                "name": "volume",
+                "value": response.volume
+            });
+            const mutedState = AlexaResponse.createContextProperty({
+                "namespace": "Alexa.Speaker",
+                "name": "muted",
+                "value": response.muted
+            });
+            resolve([
+                volumeState,
+                mutedState
+            ]);
         });
-        const mutedState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.Speaker",
-            "name": "muted",
-            "value": response.muted
-        });
-        callback(null, [
-            volumeState,
-            mutedState
-        ]);
     });
 }
 

@@ -18,13 +18,16 @@ function capabilities(lgtvControl, event, udn) {
     };
 }
 
-function states(lgtvControl, udn, callback) {
-    const powerStateState = AlexaResponse.createContextProperty({
-        "namespace": "Alexa.PowerController",
-        "name": "powerState",
-        "value": lgtvControl.getPowerState(udn)
+function states(lgtvControl, udn) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        const powerStateState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.PowerController",
+            "name": "powerState",
+            "value": lgtvControl.getPowerState(udn)
+        });
+        resolve([powerStateState]);
     });
-    callback(null, [powerStateState]);
 }
 
 function handler(lgtvControl, event, callback) {

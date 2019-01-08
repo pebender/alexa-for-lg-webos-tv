@@ -60,52 +60,51 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
-function states(lgtvControl, udn, callback) {
-    if (lgtvControl.getPowerState(udn) === "OFF") {
-        callback(null, []);
-        return;
-    }
-
-    const getExternalInputList = {
-        "uri": "ssap://tv/getExternalInputList"
-    };
-    lgtvControl.lgtvCommand(udn, getExternalInputList, (error, response) => {
-        if (error) {
-            callback(null, []);
-            return;
+function states(lgtvControl, udn) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        if (lgtvControl.getPowerState(udn) === "OFF") {
+            resolve([]);
         }
-        const inputs = response.devices;
-        const getForegroundAppInfo = {
-            "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
+
+        const getExternalInputList = {
+            "uri": "ssap://tv/getExternalInputList"
         };
-        lgtvControl.lgtvCommand(udn, getForegroundAppInfo, (err, res) => {
-            if (err) {
-                callback(null, []);
-                return;
+        lgtvControl.lgtvCommand(udn, getExternalInputList, (error, response) => {
+            if (error) {
+                resolve([]);
             }
-            const {appId} = res;
-            let input = null;
-            let index = 0;
-            for (index = 0; index < inputs.length; index += 1) {
-                if (inputs[index].appId === appId) {
-                    input = inputs[index].id;
-                    if (Reflect.has(lgtvToAlexa, input)) {
-                        input = lgtvToAlexa[input];
-                    } else {
-                        input = inputs.replace("_", " ");
+            const inputs = response.devices;
+            const getForegroundAppInfo = {
+                "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
+            };
+            lgtvControl.lgtvCommand(udn, getForegroundAppInfo, (err, res) => {
+                if (err) {
+                    resolve([]);
+                }
+                const {appId} = res;
+                let input = null;
+                let index = 0;
+                for (index = 0; index < inputs.length; index += 1) {
+                    if (inputs[index].appId === appId) {
+                        input = inputs[index].id;
+                        if (Reflect.has(lgtvToAlexa, input)) {
+                            input = lgtvToAlexa[input];
+                        } else {
+                            input = inputs.replace("_", " ");
+                        }
                     }
                 }
-            }
-            if (input === null) {
-                callback(null, []);
-                return;
-            }
-            const inputState = AlexaResponse.createContextProperty({
-                "namespace": "Alexa.InputController",
-                "name": "input",
-                "value": input
+                if (input === null) {
+                    resolve([]);
+                }
+                const inputState = AlexaResponse.createContextProperty({
+                    "namespace": "Alexa.InputController",
+                    "name": "input",
+                    "value": input
+                });
+                resolve([inputState]);
             });
-            callback(null, [inputState]);
         });
     });
 }

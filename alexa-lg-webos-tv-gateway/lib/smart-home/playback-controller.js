@@ -16,8 +16,12 @@ function capabilities(_lgtvControl, _event, _udn) {
     };
 }
 
-function states(lgtvControl, udn, callback) {
-    callback(null, []);
+// eslint-disable-next-line no-unused-vars
+function states(lgtvControl, udn) {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        resolve([]);
+    });
 }
 
 function handler(lgtvControl, event, callback) {
