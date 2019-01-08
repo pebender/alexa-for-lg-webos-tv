@@ -37,11 +37,17 @@ function handler(event, callback) {
 }
 
 function turnOffHandler(event, callback) {
-    callback(null, null);
+    const alexaResponse = new AlexaResponse({
+        "request": event
+    });
+    callback(null, alexaResponse.get());
 }
 
 function turnOnHandler(event, callback) {
-    callback(null, null);
+    const alexaResponse = new AlexaResponse({
+        "request": event
+    });
+    callback(null, alexaResponse.get());
 }
 
 function unknownDirectiveError(event, callback) {
