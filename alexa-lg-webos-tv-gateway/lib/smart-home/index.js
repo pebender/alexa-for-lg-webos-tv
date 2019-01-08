@@ -171,7 +171,7 @@ function stateHandler(lgtvControl, udn, response, callback) {
     ]).then((values) => {
         const endTime = new Date();
         const timeOfSample = endTime.toISOString();
-        const uncertaintyInMilliseconds = endTime.getMilliseconds() - startTime.getMilliseconds();
+        const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
         const contextProperties = [];
         let index = 0;
         for (index = 0; index < values.length; index += 1) {
