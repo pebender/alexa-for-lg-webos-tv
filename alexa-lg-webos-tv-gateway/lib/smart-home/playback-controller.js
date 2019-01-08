@@ -31,7 +31,7 @@ function handler(lgtvControl, event, callback) {
             "name": "ErrorResponse",
             "payload": {
                 "type": "INTERNAL_ERROR",
-                "message": "You were sent to Playback Controller processing in error."
+                "message": "You were sent to Alexa Playback Controller processing in error."
             }
         });
         callback(null, alexaResponse.get());

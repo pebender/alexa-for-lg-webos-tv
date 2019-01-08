@@ -1,11 +1,11 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const alexa = require("./alexa.js");
-const powerController = require("./power-controller.js");
-const speaker = require("./speaker.js");
-const channelController = require("./channel-controller.js");
-const inputController = require("./input-controller.js");
-const launcher = require("./launcher.js");
-const playbackController = require("./playback-controller.js");
+const alexaPowerController = require("./power-controller.js");
+const alexaSpeaker = require("./speaker.js");
+const alexaChannelController = require("./channel-controller.js");
+const alexaInputController = require("./input-controller.js");
+const alexaLauncher = require("./launcher.js");
+const alexaPlaybackController = require("./playback-controller.js");
 
 function handler(lgtvControl, event, callback) {
     if (event.directive.header.namespace !== "Alexa.Discovery") {
@@ -51,12 +51,12 @@ function handler(lgtvControl, event, callback) {
                 const [udn] = docs[index].udn;
                 const [name] = docs[index].name;
                 const capabilityAlexa = alexa.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaPowerController = powerController.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaSpeaker = speaker.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaChannelController = channelController.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaInputController = inputController.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaLauncher = launcher.capabilities(lgtvControl, event, udn);
-                const capabilityAlexaPlaybackController = playbackController.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaPowerController = alexaPowerController.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaSpeaker = alexaSpeaker.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaChannelController = alexaChannelController.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaInputController = alexaInputController.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaLauncher = alexaLauncher.capabilities(lgtvControl, event, udn);
+                const capabilityAlexaPlaybackController = alexaPlaybackController.capabilities(lgtvControl, event, udn);
                 alexaResponse.addPayloadEndpoint({
                     "endpointId": udn,
                     "friendlyName": name,

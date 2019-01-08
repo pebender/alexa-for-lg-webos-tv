@@ -130,7 +130,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
         "name": "ErrorResponse",
         "payload": {
             "type": "INTERNAL_ERROR",
-            "message": `I do not know the Channel Controller directive ${event.directive.header.name}`
+            "message": `I do not know the Alexa Channel Controller directive ${event.directive.header.name}`
         }
     });
     const alexaEvent = {"event": alexaResponse.get().event};

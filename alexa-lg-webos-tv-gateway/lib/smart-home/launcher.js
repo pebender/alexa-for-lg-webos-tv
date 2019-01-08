@@ -178,7 +178,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
         "name": "ErrorResponse",
         "payload": {
             "type": "INTERNAL_ERROR",
-            "message": `I do not know the Launcher directive ${event.directive.header.name}`
+            "message": `I do not know the Alexa Launcher directive ${event.directive.header.name}`
         }
     });
     callback(null, alexaResponse.get());

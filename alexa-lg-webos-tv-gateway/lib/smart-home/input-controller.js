@@ -231,7 +231,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
         "name": "ErrorResponse",
         "payload": {
             "type": "INTERNAL_ERROR",
-            "message": `I do not know the Input Controller directive ${event.directive.header.name}`
+            "message": `I do not know the Alexa Input Controller directive ${event.directive.header.name}`
         }
     });
     callback(null, alexaResponse.get());

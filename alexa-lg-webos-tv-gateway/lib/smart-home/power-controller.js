@@ -111,7 +111,7 @@ function unknownDirectiveError(lgtvControl, event, callback) {
         "name": "ErrorResponse",
         "payload": {
             "type": "INTERNAL_ERROR",
-            "message": `I do not know the Power Controller directive ${event.directive.header.name}`
+            "message": `I do not know the Alexa Power Controller directive ${event.directive.header.name}`
         }
     });
     callback(null, alexaResponse.get());
