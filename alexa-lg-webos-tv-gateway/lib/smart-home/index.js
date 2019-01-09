@@ -81,7 +81,6 @@ function handler(lgtvControl, event, callback) {
         callback(null, alexaResponse.get());
         return;
     }
-    const udn = event.directive.endpoint.endpointId;
     switch (event.directive.header.namespace) {
         case "Alexa.Authorization":
             alexaAuthorization.handler(lgtvControl, event, (error, response) => callback(error, response));
@@ -94,6 +93,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -103,6 +103,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -112,6 +113,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -121,6 +123,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -130,6 +133,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -139,6 +143,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
@@ -148,6 +153,7 @@ function handler(lgtvControl, event, callback) {
                 if (error) {
                     errorToErrorResponse(error, event);
                 } else {
+                    const udn = event.directive.endpoint.endpointId;
                     stateHandler(lgtvControl, udn, response, (err, res) => callback(err, res));
                 }
             });
