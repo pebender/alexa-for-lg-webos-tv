@@ -51,7 +51,7 @@ function gatewayEndpoint(event) {
 
     const alexaEndpoint = AlexaResponse.createPayloadEndpoint({
         "endpointId": "lg-webos-tv-gateway",
-        "friendlyName": "LG webOS TV Gateway",
+        "friendlyName": "LGTV Gateway",
         "description": "LG webOS TV Gateway",
         "manufacturerName": "Paul Bender",
         "displayCategories": ["OTHER"],

@@ -1,3 +1,4 @@
+const {unknownDirectiveError} = require("./common.js");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
@@ -155,18 +156,6 @@ function unknownInstanceError(event, callback) {
         "payload": {
             "type": "INTERNAL_ERROR",
             "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
-        }
-    });
-    callback(null, alexaResponse.get());
-}
-
-function unknownDirectiveError(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `I do not know the Range Controller directive ${event.directive.header.name}`
         }
     });
     callback(null, alexaResponse.get());

@@ -1,3 +1,4 @@
+const {unknownDirectiveError} = require("./common.js");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
@@ -46,18 +47,6 @@ function turnOffHandler(event, callback) {
 function turnOnHandler(event, callback) {
     const alexaResponse = new AlexaResponse({
         "request": event
-    });
-    callback(null, alexaResponse.get());
-}
-
-function unknownDirectiveError(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `I do not know the Power Controller directive ${event.directive.header.name}`
-        }
     });
     callback(null, alexaResponse.get());
 }

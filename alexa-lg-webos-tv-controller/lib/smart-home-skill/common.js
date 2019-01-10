@@ -1,3 +1,4 @@
+const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const gateway = require("../gateway-api/index.js");
 
 function sendSkillRequest(request, callback) {
@@ -17,6 +18,19 @@ function sendSkillRequest(request, callback) {
     );
 }
 
+function unknownDirectiveError(event, callback) {
+    const alexaResponse = new AlexaResponse({
+        "request": event,
+        "name": "ErrorResponse",
+        "payload": {
+            "type": "INTERNAL_ERROR",
+            "message": `I do not know the Range Controller directive ${event.directive.header.name}`
+        }
+    });
+    callback(null, alexaResponse.get());
+}
+
 module.exports = {
-    "sendSkillRequest": sendSkillRequest
+    "sendSkillRequest": sendSkillRequest,
+    "unknownDirectiveError": unknownDirectiveError
 };
