@@ -1,5 +1,6 @@
-const {sendSkillRequest} = require("./common.js");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const Gateway = require("../gateway-api/index.js");
+const endpointHealth = require("./endpoint-health.js");
 const powerController = require("./power-controller.js");
 const rangeController = require("./range-controller.js");
 
@@ -17,36 +18,45 @@ function handler(event, callback) {
         return;
     }
 
-    let alexaResponse = null;
-    sendSkillRequest(event, (error, response) => {
-        if (error) {
-            alexaResponse = new AlexaResponse({
+    const gateway = new Gateway("x");
+    const LGTVGatewayEndpoint = gatewayEndpoint(event);
+    gateway.sendSkillDirective(event).then(
+        (response) => {
+console.log("hello");
+            if (response.event.header.namespace === "Alexa.Discovery" &&
+                response.event.header.name === "Discover.Response") {
+console.log("hello again");
+                const alexaResponse = new AlexaResponse(response);
+                alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
+                callback(null, alexaResponse.get());
+                return;
+            }
+            const alexaResponse = new AlexaResponse({
                 "namespace": "Alexa.Discovery",
                 "name": "Discover.Response"
             });
-            const LGTVGatewayEndpoint = gatewayEndpoint(event);
             alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
             callback(null, alexaResponse.get());
-            return;
-        }
-        if (response.event.header.namespace === "Alexa.Discovery") {
-            alexaResponse = new AlexaResponse(response);
-        } else {
-            alexaResponse = new AlexaResponse({
+        },
+        // eslint-disable-next-line no-unused-vars
+        (error) => {
+console.log("goodbye");
+console.log(error);
+            const alexaResponse = new AlexaResponse({
                 "namespace": "Alexa.Discovery",
                 "name": "Discover.Response"
             });
+            alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
+            callback(null, alexaResponse.get());
         }
-        const LGTVGatewayEndpoint = gatewayEndpoint(event);
-        alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-        callback(null, alexaResponse.get());
-    });
+    );
 }
 
 // eslint-disable-next-line no-unused-vars
 function gatewayEndpoint(event) {
     const capabilitiesAlexa = [AlexaResponse.createPayloadEndpointCapability()];
     const capabilitiesAlexaPowerController = powerController.capabilities(event);
+    const capabilitiesAlexaEndpointHealth = endpointHealth.capabilities(event);
     const capabilitiesAlexaRangeController = rangeController.capabilities(event);
 
     const alexaEndpoint = AlexaResponse.createPayloadEndpoint({
@@ -57,11 +67,36 @@ function gatewayEndpoint(event) {
         "displayCategories": ["OTHER"],
         "capabilities": [
             ...capabilitiesAlexa,
+            ...capabilitiesAlexaEndpointHealth,
             ...capabilitiesAlexaPowerController,
             ...capabilitiesAlexaRangeController
         ]
     });
     return alexaEndpoint;
 }
+
+const request = {
+    "directive": {
+        "header": {
+            "namespace": "Alexa.Discovery",
+            "name": "Discover",
+            "payloadVersion": "3",
+            "messageId": "abc-123-def-456"
+        },
+        "payload": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "access-token-from-skill"
+            }
+        }
+    }
+};
+handler(request, (error, response) => {
+    if (error) {
+        console.log(error);
+        return;
+    }
+    console.log(JSON.stringify(response, null, 2));
+});
 
 module.exports = {"handler": handler};

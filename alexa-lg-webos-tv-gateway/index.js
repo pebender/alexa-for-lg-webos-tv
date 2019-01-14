@@ -249,7 +249,6 @@ external.post("/LGTV/RUN", (request, response) => {
         }
     );
 });
-
 external.post("/LGTV/SKILL", (request, response) => {
 console.log(JSON.stringify(request.body, null, 2));
     lgtvControl.skillCommand(
@@ -279,6 +278,12 @@ console.log(JSON.stringify(res, null, 2));
             }
         }
     );
+});
+external.get("/LGTV/PING", (request, response) => {
+console.log(`hello ${request.originalUrl}`);
+    response.
+        status(200).
+        end();
 });
 external.post("/", (request, response) => {
     response.status(401).end();
