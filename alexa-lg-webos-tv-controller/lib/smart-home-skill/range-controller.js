@@ -71,6 +71,42 @@ function ipAddressOctetCapability(octet) {
     };
 }
 
+function states() {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        const rangeValueStateA = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.RangeController",
+            "instance": "A",
+            "name": "rangeValue",
+            "value": "0"
+        });
+        const rangeValueStateB = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.RangeController",
+            "instance": "B",
+            "name": "rangeValue",
+            "value": "0"
+        });
+        const rangeValueStateC = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.RangeController",
+            "instance": "C",
+            "name": "rangeValue",
+            "value": "0"
+        });
+        const rangeValueStateD = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.RangeController",
+            "instance": "D",
+            "name": "rangeValue",
+            "value": "0"
+        });
+        resolve([
+            rangeValueStateA,
+            rangeValueStateB,
+            rangeValueStateC,
+            rangeValueStateD
+        ]);
+    });
+}
+
 function handler(event, callback) {
     if (event.directive.header.namespace !== "Alexa.RangeController") {
         const alexaResponse = new AlexaResponse({
@@ -163,5 +199,6 @@ function unknownInstanceError(event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

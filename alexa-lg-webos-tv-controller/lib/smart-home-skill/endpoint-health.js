@@ -1,4 +1,5 @@
 const {unknownDirectiveError} = require("./common.js");
+const Gateway = require("../gateway-api");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
@@ -24,13 +25,27 @@ function capabilities(event) {
 function states() {
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
-        
-        const powerStateState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.EndpointHealth",
-            "name": "connectivity",
-            "value": lgtvControl.getPowerState(udn)
-        });
-        resolve([powerStateState]);
+        const gateway = new Gateway("x");
+        gateway.ping().then(
+            // eslint-disable-next-line no-unused-vars
+            (response) => {
+                const connectivityState = AlexaResponse.createContextProperty({
+                    "namespace": "Alexa.EndpointHealth",
+                    "name": "connectivity",
+                    "value": "OK"
+                });
+                resolve([connectivityState]);
+            },
+            // eslint-disable-next-line no-unused-vars
+            (error) => {
+                const connectivityState = AlexaResponse.createContextProperty({
+                    "namespace": "Alexa.EndpointHealth",
+                    "name": "connectivity",
+                    "value": "UNREACHABLE"
+                });
+                resolve([connectivityState]);
+            }
+        );
     });
 }
 
@@ -55,5 +70,6 @@ function handler(event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };

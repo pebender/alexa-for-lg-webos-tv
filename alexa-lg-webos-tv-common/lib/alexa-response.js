@@ -102,6 +102,9 @@ class AlexaResponse {
             if (Reflect.has(opts, "correlationToken")) {
                 this.event.header.correlationToken = opts.correlationToken;
             }
+            if (Reflect.has(opts, "instance")) {
+                this.event.header.instance = opts.instance;
+            }
         }
 
         // No endpoint in an AcceptGrant or Discover request
@@ -162,6 +165,9 @@ class AlexaResponse {
         property.namespace = Reflect.has(opts, "namespace") && opts.namespace !== ""
             ? opts.namespace
             : "Alexa.EndpointHealth";
+        if (Reflect.has(opts, "instance")) {
+            property.instance = opts.instance;
+        }
         property.name = Reflect.has(opts, "name") && opts.name !== ""
             ? opts.name
             : "connectivity";

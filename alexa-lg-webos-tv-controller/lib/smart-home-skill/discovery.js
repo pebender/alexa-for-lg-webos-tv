@@ -75,28 +75,4 @@ function gatewayEndpoint(event) {
     return alexaEndpoint;
 }
 
-const request = {
-    "directive": {
-        "header": {
-            "namespace": "Alexa.Discovery",
-            "name": "Discover",
-            "payloadVersion": "3",
-            "messageId": "abc-123-def-456"
-        },
-        "payload": {
-            "scope": {
-                "type": "BearerToken",
-                "token": "access-token-from-skill"
-            }
-        }
-    }
-};
-handler(request, (error, response) => {
-    if (error) {
-        console.log(error);
-        return;
-    }
-    console.log(JSON.stringify(response, null, 2));
-});
-
 module.exports = {"handler": handler};

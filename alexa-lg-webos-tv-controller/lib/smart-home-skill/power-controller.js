@@ -7,9 +7,30 @@ function capabilities(_event) {
         {
             "type": "AlexaInterface",
             "interface": "Alexa.PowerController",
-            "version": "3"
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "powerState"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
         }
     ];
+}
+
+function states() {
+    // eslint-disable-next-line no-unused-vars
+    return new Promise((resolve, reject) => {
+        const powerStateState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.PowerController",
+            "name": "powerState",
+            "value": "OFF"
+        });
+        resolve([powerStateState]);
+    });
 }
 
 function handler(event, callback) {
@@ -53,5 +74,6 @@ function turnOnHandler(event, callback) {
 
 module.exports = {
     "capabilities": capabilities,
+    "states": states,
     "handler": handler
 };
