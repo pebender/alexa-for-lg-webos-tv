@@ -2,25 +2,26 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(lgtvControl, event, udn) {
-    return {
-        "type": "AlexaInterface",
-        "interface": "Alexa.PowerController",
-        "version": "3",
-        "properties": {
-            "supported": [
-                {
-                    "name": "powerState"
-                }
-            ],
-            "proactivelyReported": false,
-            "retrievable": true
-        }
-    };
+    return new Promise((resolve) => {
+         resolve({
+            "type": "AlexaInterface",
+            "interface": "Alexa.PowerController",
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "powerState"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
+        });
+    });
 }
 
 function states(lgtvControl, udn) {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const powerStateState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.PowerController",
             "name": "powerState",
@@ -30,91 +31,100 @@ function states(lgtvControl, udn) {
     });
 }
 
-function handler(lgtvControl, event, callback) {
-    if (event.directive.header.namespace !== "Alexa.PowerController") {
+function handler(lgtvControl, event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa.PowerController") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": "You were sent to Power Controller processing in error."
+                }
+            });
+            resolve(alexaResponse.get());
+            return;
+        }
+        switch (event.directive.header.name) {
+            case "TurnOff":
+                resolve(turnOffHandler(lgtvControl, event));
+                break;
+            case "TurnOn":
+                resolve(turnOnHandler(lgtvControl, event));
+                break;
+            default:
+                resolve(unknownDirectiveError(lgtvControl, event));
+                break;
+        }
+    });
+}
+
+function turnOffHandler(lgtvControl, event) {
+    return new Promise((resolve) => {
+        const {endpointId} = event.directive.endpoint;
+
+        // eslint-disable-next-line no-unused-vars
+        lgtvControl.turnOff(endpointId, (error, _response) => {
+            if (error) {
+                const alexaResponse = new AlexaResponse({
+                    "request": event,
+                    "name": "ErrorResponse",
+                    "payload": {
+                        "type": "INTERNAL_ERROR",
+                        "message": `${error.name}: ${error.message}.`
+                    }
+                });
+                resolve(alexaResponse.get());
+                return;
+            }
+
+            const alexaResponse = new AlexaResponse({
+                "request": event
+            });
+            resolve(alexaResponse.get());
+        });
+    });
+}
+
+function turnOnHandler(lgtvControl, event) {
+    return new Promise((resolve) => {
+        const {endpointId} = event.directive.endpoint;
+
+        // eslint-disable-next-line no-unused-vars
+        lgtvControl.turnOn(endpointId, (error, _response) => {
+            if (error) {
+                const alexaResponse = new AlexaResponse({
+                    "request": event,
+                    "name": "ErrorResponse",
+                    "payload": {
+                        "type": "INTERNAL_ERROR",
+                        "message": `${error.name}: ${error.message}.`
+                    }
+                });
+                resolve(alexaResponse.get());
+                return;
+            }
+
+            const alexaResponse = new AlexaResponse({
+                "request": event
+            });
+            resolve(alexaResponse.get());
+        });
+    });
+}
+
+function unknownDirectiveError(lgtvControl, event) {
+    return new Promise((resolve) => {
         const alexaResponse = new AlexaResponse({
             "request": event,
             "name": "ErrorResponse",
             "payload": {
                 "type": "INTERNAL_ERROR",
-                "message": "You were sent to Power Controller processing in error."
+                "message": `I do not know the Alexa Power Controller directive ${event.directive.header.name}`
             }
         });
-        callback(null, alexaResponse.get());
-        return;
-    }
-    switch (event.directive.header.name) {
-        case "TurnOff":
-            turnOffHandler(lgtvControl, event, (error, response) => callback(error, response));
-            return;
-        case "TurnOn":
-            turnOnHandler(lgtvControl, event, (error, response) => callback(error, response));
-            return;
-        default:
-            unknownDirectiveError(lgtvControl, event, (error, response) => callback(error, response));
-    }
-}
-
-function turnOffHandler(lgtvControl, event, callback) {
-    const {endpointId} = event.directive.endpoint;
-
-    // eslint-disable-next-line no-unused-vars
-    lgtvControl.turnOff(endpointId, (error, _response) => {
-        if (error) {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `${error.name}: ${error.message}.`
-                }
-            });
-            callback(null, alexaResponse.get());
-            return;
-        }
-
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        callback(null, alexaResponse.get());
+        resolve(alexaResponse.get());
     });
-}
-
-function turnOnHandler(lgtvControl, event, callback) {
-    const {endpointId} = event.directive.endpoint;
-
-    // eslint-disable-next-line no-unused-vars
-    lgtvControl.turnOn(endpointId, (error, _response) => {
-        if (error) {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `${error.name}: ${error.message}.`
-                }
-            });
-            callback(null, alexaResponse.get());
-            return;
-        }
-
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        callback(null, alexaResponse.get());
-    });
-}
-
-function unknownDirectiveError(lgtvControl, event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `I do not know the Alexa Power Controller directive ${event.directive.header.name}`
-        }
-    });
-    callback(null, alexaResponse.get());
 }
 
 module.exports = {

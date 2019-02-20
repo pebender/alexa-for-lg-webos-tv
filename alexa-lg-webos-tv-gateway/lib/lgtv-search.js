@@ -159,8 +159,8 @@ class LGTVSearch extends EventEmitter {
                         callback(null, null);
                         return null;
                     }
-                    tv.name = description.root.device[0].friendlyName;
-                    tv.udn = description.root.device[0].UDN;
+                    [tv.name] = description.root.device[0].friendlyName;
+                    [tv.udn] = description.root.device[0].UDN;
 
                     /*
                      * Get the mac address needed to turn on the TV using wake on

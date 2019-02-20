@@ -100,7 +100,11 @@ class LGTVControl extends EventEmitter {
     }
 
     skillCommand(event, callback) {
-        smartHomeSkill.handler(this, event, (error, response) => callback(error, response));
+        smartHomeSkill.handler(this, event).
+            then(
+                (response) => callback(null, response),
+                (error) => callback(error, null)
+            );
     }
 
     turnOff(udn, callback) {

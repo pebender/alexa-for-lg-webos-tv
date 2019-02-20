@@ -56,28 +56,29 @@ const lgtvToAlexa = {
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtvControl, _event, _udn) {
-    return {
-        "type": "AlexaInterface",
-        "interface": "Alexa.Launcher",
-        "version": "3",
-        "properties": {
-            "supported": [
-                {
-                    "name": "identifier"
-                },
-                {
-                    "name": "name"
-                }
-            ],
-            "proactivelyReported": false,
-            "retrievable": true
-        }
-    };
+    return new Promise((resolve) => {
+        resolve({
+            "type": "AlexaInterface",
+            "interface": "Alexa.Launcher",
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "identifier"
+                    },
+                    {
+                        "name": "name"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
+        });
+    });
 }
 
 function states(lgtvControl, udn) {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (lgtvControl.getPowerState(udn) === "OFF") {
             resolve([]);
         }
@@ -103,26 +104,29 @@ function states(lgtvControl, udn) {
     });
 }
 
-function handler(lgtvControl, event, callback) {
-    if (event.directive.header.namespace !== "Alexa.Launcher") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Launcher processing in error."
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
-    switch (event.directive.header.name) {
-        case "LaunchTarget":
-            launchTargetHandler(lgtvControl, event, (error, response) => callback(error, response));
+function handler(lgtvControl, event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa.Launcher") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": "You were sent to Launcher processing in error."
+                }
+            });
+            resolve(alexaResponse.get());
             return;
-        default:
-            unknownDirectiveError(lgtvControl, event, (error, response) => callback(error, response));
-    }
+        }
+        switch (event.directive.header.name) {
+            case "LaunchTarget":
+                resolve(launchTargetHandler(lgtvControl, event));
+                break;
+            default:
+                resolve(unknownDirectiveError(lgtvControl, event));
+                break;
+        }
+    });
 }
 
 /*
@@ -131,57 +135,61 @@ function handler(lgtvControl, event, callback) {
  * A list of LG webOS TV target ids can be found bet issuing the command
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
-function launchTargetHandler(lgtvControl, event, callback) {
-    const {endpointId} = event.directive.endpoint;
+function launchTargetHandler(lgtvControl, event) {
+    return new Promise((resolve) => {
+        const {endpointId} = event.directive.endpoint;
 
-    const command = {
-        "uri": "ssap://system.launcher/launch"
-    };
-    if (Reflect.has(alexaToLGTV, event.directive.payload.identifier)) {
-        command.payload = alexaToLGTV[event.directive.payload.identifier];
-    } else {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Launcher target ${event.directive.payload.identifier}`
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
-    // eslint-disable-next-line no-unused-vars
-    lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
-        if (error) {
+        const command = {
+            "uri": "ssap://system.launcher/launch"
+        };
+        if (Reflect.has(alexaToLGTV, event.directive.payload.identifier)) {
+            command.payload = alexaToLGTV[event.directive.payload.identifier];
+        } else {
             const alexaResponse = new AlexaResponse({
                 "request": event,
                 "name": "ErrorResponse",
                 "payload": {
                     "type": "INTERNAL_ERROR",
-                    "message": `${error.name}: ${error.message}.`
+                    "message": `I do not know the Launcher target ${event.directive.payload.identifier}`
                 }
             });
-            callback(null, alexaResponse.get());
+            resolve(alexaResponse.get());
             return;
         }
-        const alexaResponse = new AlexaResponse({
-            "request": event
+        // eslint-disable-next-line no-unused-vars
+        lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
+            if (error) {
+                const alexaResponse = new AlexaResponse({
+                    "request": event,
+                    "name": "ErrorResponse",
+                    "payload": {
+                        "type": "INTERNAL_ERROR",
+                        "message": `${error.name}: ${error.message}.`
+                    }
+                });
+                resolve(alexaResponse.get());
+                return;
+            }
+            const alexaResponse = new AlexaResponse({
+                "request": event
+            });
+            resolve(alexaResponse.get());
         });
-        callback(null, alexaResponse.get());
     });
 }
 
-function unknownDirectiveError(lgtvControl, event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `I do not know the Alexa Launcher directive ${event.directive.header.name}`
-        }
+function unknownDirectiveError(lgtvControl, event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event,
+            "name": "ErrorResponse",
+            "payload": {
+                "type": "INTERNAL_ERROR",
+                "message": `I do not know the Alexa Launcher directive ${event.directive.header.name}`
+            }
+        });
+        resolve(alexaResponse.get());
     });
-    callback(null, alexaResponse.get());
 }
 
 module.exports = {
