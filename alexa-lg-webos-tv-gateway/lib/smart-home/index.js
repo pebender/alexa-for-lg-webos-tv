@@ -8,7 +8,7 @@ const alexaChannelController = require("./channel-controller.js");
 const alexaInputController = require("./input-controller.js");
 const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
-const {errorResponse} = require("../common-new");
+const {errorResponse} = require("../common");
 
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
@@ -24,7 +24,14 @@ function handler(lgtvControl, event) {
             resolve(missingKeyError(event, "directive.header.payloadVersion"));
             return;
         }
-
+        if (!(event.directive.header.payloadVersion === "3")) {
+            resolve(errorResponse(
+                event,
+                "INTERNAL_ERROR",
+                "This skill only supports Smart Home API version three."
+            ));
+            return;
+        }
         if (!Reflect.has(event.directive.header, "namespace")) {
             resolve(missingKeyError(event, "directive.header.namespace"));
             return;
@@ -57,7 +64,7 @@ function handler(lgtvControl, event) {
                 resolve(fn(lgtvControl, event));
                 }
         } else {
-            resolve(unknownDirectiveError(lgtvControl, event));
+            resolve(unknownNamespaceError(lgtvControl, event));
         }
     });
 }
@@ -98,7 +105,7 @@ function stateHandler(lgtvControl, udn, response) {
         catch((error) => alexaResponse.get()));
     });
 }
-function unknownDirectiveError(lgtvControl, event) {
+function unknownNamespaceError(lgtvControl, event) {
     return errorResponse(
         event,
         "INTERNAL_ERROR",

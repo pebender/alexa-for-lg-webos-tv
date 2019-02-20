@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtvControl, _event, _udn) {
@@ -27,6 +28,7 @@ function states(lgtvControl, udn) {
     return new Promise((resolve) => {
         if (lgtvControl.getPowerState(udn) === "OFF") {
             resolve([]);
+            return;
         }
 
         const command = {
@@ -35,6 +37,7 @@ function states(lgtvControl, udn) {
         lgtvControl.lgtvCommand(udn, command, (error, response) => {
             if (error) {
                 resolve([]);
+                return;
             }
             const volumeState = AlexaResponse.createContextProperty({
                 "namespace": "Alexa.Speaker",
@@ -58,6 +61,7 @@ function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.Speaker") {
             resolve(namespaceErrorResponse(event, "Alexa.Speaker"));
+            return;
         }
         switch (event.directive.header.name) {
             case "SetVolume":
@@ -70,7 +74,7 @@ function handler(lgtvControl, event) {
                 resolve(setMuteHandler(lgtvControl, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvControl, event));
                 break;
         }
     });
@@ -82,16 +86,11 @@ function setVolumeHandler(lgtvControl, event) {
 
         const {volume} = event.directive.payload;
         if ((volume < 0) || (volume > 100)) {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "VALUE_OUT_OF_RANGE",
-                    "message": "volume must be between 0 and 100 inclusive."
-                }
-            });
-            resolve(alexaResponse.get());
-            return;
+            resolve(errorResponse(
+                event,
+                "VALUE_OUT_OF_RANGE",
+                "volume must be between 0 and 100 inclusive."
+            ));
         }
         const command = {
             "uri": "ssap://audio/setVolume",
@@ -100,15 +99,7 @@ function setVolumeHandler(lgtvControl, event) {
         // eslint-disable-next-line no-unused-vars
         lgtvControl.lgtvCommand(endpointId, command, (error, _response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
             const alexaResponse = new AlexaResponse({
@@ -128,26 +119,15 @@ function adjustVolumeHandler(lgtvControl, event) {
         };
         lgtvControl.lgtvCommand(endpointId, getVolume, (error, response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
             if (!Reflect.has(response, "volume")) {
-                const alexaResponse = new AlexaResponse({
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": "The T.V. did not return it's volume."
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorResponse(
+                    event,
+                    "INTERNAL_ERROR",
+                    "The T.V. did not return it's volume."
+                ));
                 return;
             }
             let {volume} = response;
@@ -174,15 +154,7 @@ function adjustVolumeHandler(lgtvControl, event) {
             // eslint-disable-next-line no-unused-vars
             lgtvControl.lgtvCommand(endpointId, setVolume, (err, _res) => {
                 if (err) {
-                    const alexaResponse = new AlexaResponse({
-                        "request": event,
-                        "name": "ErrorResponse",
-                        "payload": {
-                            "type": "INTERNAL_ERROR",
-                            "message": `${err.name}: ${err.message}.`
-                        }
-                    });
-                    resolve(alexaResponse.get());
+                    resolve(errorToErrorResponse(event, err));
                     return;
                 }
                 const alexaResponse = new AlexaResponse({
@@ -205,15 +177,7 @@ function setMuteHandler(lgtvControl, event) {
         // eslint-disable-next-line no-unused-vars
         lgtvControl.lgtvCommand(endpointId, command, (error, _response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
 
@@ -222,36 +186,6 @@ function setMuteHandler(lgtvControl, event) {
             });
             resolve(alexaResponse.get());
         });
-    });
-}
-
-function unknownDirectiveError(_lgtvControl, event) {
-    return errorResponse(
-        event,
-        "INTERNAL_ERROR",
-        `I do not know the Alexa Speaker directive ${event.directive.header.name}`
-    );
-}
-
-function namespaceErrorResponse(event, namespace) {
-    return errorResponse(
-        event,
-        "INTERNAL_ERROR",
-        `You were sent to ${namespace} processing in error.`
-    );
-}
-
-function errorResponse(event, type, message) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": type,
-                "message": message
-            }
-        });
-        resolve(alexaResponse.get());
     });
 }
 

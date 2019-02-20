@@ -1,5 +1,6 @@
 const isNumeric = require("isnumeric");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtvControl, _event, _udn) {
@@ -23,15 +24,7 @@ function states(lgtvControl, udn) {
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.ChannelController") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Channel Controller processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
+            resolve(namespaceErrorResponse(event, "Alexa.ChannelController"));
             return;
         }
         switch (event.directive.header.name) {
@@ -42,7 +35,7 @@ function handler(lgtvControl, event) {
                 resolve(skipChannelsHandler(lgtvControl, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvControl, event));
                 break;
         }
     });
@@ -91,15 +84,7 @@ function changeChannelHandler(lgtvControl, event) {
             const {endpointId} = event.directive.endpoint;
             lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
                 if (error) {
-                    const alexaResponse = new AlexaResponse({
-                        "request": event,
-                        "name": "ErrorResponse",
-                        "payload": {
-                            "type": "INTERNAL_ERROR",
-                            "message": `${error.name}: ${error.message}.`
-                        }
-                    });
-                    resolve(alexaResponse.get());
+                    resolve(errorToErrorResponse(event, error));
                     return;
                 }
 
@@ -131,35 +116,8 @@ function skipChannelsHandler(_lgtvControl, _event) {
     });
 }
 
-// eslint-disable-next-line no-unused-vars
-function unknownDirectiveError(lgtvControl, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Alexa Channel Controller directive ${event.directive.header.name}`
-            }
-        });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        resolve(alexaEvent);
-    });
-}
-
 function unknownChannelError(lgtvControl, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INVALID_VALUE",
-                "message": "The gateway doesn't recognize channel."
-            }
-        });
-        const alexaEvent = {"event": alexaResponse.get().event};
-        resolve(alexaEvent);
-    });
+    return errorResponse(event, "INVALID_VALUE", "The gateway doesn't recognize channel.");
 }
 
 module.exports = {

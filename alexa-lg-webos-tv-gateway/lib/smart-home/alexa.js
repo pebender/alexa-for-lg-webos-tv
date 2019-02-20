@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(lgtvControl, event, udn) {
@@ -22,15 +23,7 @@ function states(lgtvControl, udn) {
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Alexa processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
+            resolve(namespaceErrorResponse(event, "Alexa"));
             return;
         }
 
@@ -58,15 +51,7 @@ function reportStateHandler(lgtvControl, event) {
 
 function unknownDirectiveError(lgtvControl, event) {
     return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Alexa directive ${event.directive.header.name}`
-            }
-        });
-        resolve(alexaResponse.get());
+        resolve(directiveErrorResponse(event, "Alexa"));
     });
 }
 

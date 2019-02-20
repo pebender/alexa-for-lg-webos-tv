@@ -1,16 +1,8 @@
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorResponse} = require("../common");
 
 function handler(lgtvControl, udn, event) {
     return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": ""
-            }
-        });
-        resolve(alexaResponse.get());
+        resolve(errorResponse(event, "INTERNAL_ERROR", ""));
     });
 }
 

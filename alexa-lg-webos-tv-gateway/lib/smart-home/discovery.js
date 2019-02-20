@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, namespaceErrorResponse} = require("../common");
 const alexa = require("./alexa.js");
 const alexaPowerController = require("./power-controller.js");
 const alexaSpeaker = require("./speaker.js");
@@ -10,15 +11,7 @@ const alexaPlaybackController = require("./playback-controller.js");
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
-                }
-            });
-            resolve(alexaResponse.get());
+            namespaceErrorResponse(event, "Alexa.Discovery");
             return;
         }
 
@@ -26,15 +19,7 @@ function handler(lgtvControl, event) {
             {},
             (err, docs) => {
                 if (err) {
-                    const alexaResponse = new AlexaResponse({
-                        "request": event,
-                        "name": "ErrorResponse",
-                        "payload": {
-                            "type": "INTERNAL_ERROR",
-                            "message": `${err.name}: ${err.message}`
-                        }
-                    });
-                    resolve(alexaResponse.get());
+                    resolve(errorToErrorResponse(event, err));
                     return;
                 }
 

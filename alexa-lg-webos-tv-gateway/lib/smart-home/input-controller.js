@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 const alexaToLGTV = {
     "HDMI 1": "HDMI_1",
@@ -66,6 +67,7 @@ function states(lgtvControl, udn) {
     return new Promise((resolve, reject) => {
         if (lgtvControl.getPowerState(udn) === "OFF") {
             resolve([]);
+            return;
         }
 
         const getExternalInputList = {
@@ -74,6 +76,7 @@ function states(lgtvControl, udn) {
         lgtvControl.lgtvCommand(udn, getExternalInputList, (error, response) => {
             if (error) {
                 resolve([]);
+                return;
             }
             const inputs = response.devices;
             const getForegroundAppInfo = {
@@ -82,6 +85,7 @@ function states(lgtvControl, udn) {
             lgtvControl.lgtvCommand(udn, getForegroundAppInfo, (err, res) => {
                 if (err) {
                     resolve([]);
+                    return;
                 }
                 const {appId} = res;
                 let input = null;
@@ -98,6 +102,7 @@ function states(lgtvControl, udn) {
                 }
                 if (input === null) {
                     resolve([]);
+                    return;
                 }
                 const inputState = AlexaResponse.createContextProperty({
                     "namespace": "Alexa.InputController",
@@ -113,15 +118,7 @@ function states(lgtvControl, udn) {
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.InputController") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Input Controller processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
+            resolve(namespaceErrorResponse(event, "Alexa.InputController"));
             return;
         }
         switch (event.directive.header.name) {
@@ -129,7 +126,7 @@ function handler(lgtvControl, event) {
                 resolve(selectInputHandler(lgtvControl, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvControl, event));
                 break;
         }
     });
@@ -144,27 +141,15 @@ function selectInputHandler(lgtvControl, event) {
         };
         lgtvControl.lgtvCommand(endpointId, getExternalInputList, (error, response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
             if (!Reflect.has(response, "devices")) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": "The T.V. did not return a list of it's external inputs."
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorResponse(
+                    event,
+                    "INTERNAL_ERROR",
+                    "The T.V. did not return a list of it's external inputs."
+                ));
                 return;
             }
 
@@ -191,15 +176,11 @@ function selectInputHandler(lgtvControl, event) {
                 }
             }
             if (device === null) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `I do not recognize input ${input}`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorResponse(
+                    event,
+                    "INTERNAL_ERROR",
+                    `I do not recognize input ${input}`
+                ));
                 return;
             }
 
@@ -210,15 +191,7 @@ function selectInputHandler(lgtvControl, event) {
             // eslint-disable-next-line no-unused-vars
             lgtvControl.lgtvCommand(endpointId, setExternalInputList, (err, _res) => {
                 if (err) {
-                    const alexaResponse = new AlexaResponse({
-                        "request": event,
-                        "name": "ErrorResponse",
-                        "payload": {
-                            "type": "INTERNAL_ERROR",
-                            "message": `${err.name}: ${err.message}.`
-                        }
-                    });
-                    resolve(alexaResponse.get());
+                    resolve(errorToErrorResponse(event, err));
                     return;
                 }
 
@@ -228,20 +201,6 @@ function selectInputHandler(lgtvControl, event) {
                 resolve(alexaResponse.get());
             });
         });
-    });
-}
-
-function unknownDirectiveError(lgtvControl, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Alexa Input Controller directive ${event.directive.header.name}`
-            }
-        });
-        resolve(alexaResponse.get());
     });
 }
 

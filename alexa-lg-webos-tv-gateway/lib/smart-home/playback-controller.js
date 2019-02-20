@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtvControl, _event, _udn) {
@@ -29,15 +30,7 @@ function states(lgtvControl, udn) {
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.PlaybackController") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Alexa Playback Controller processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
+            resolve(namespaceErrorResponse("Alexa.PlaybackController"));
             return;
         }
         switch (event.directive.header.name) {
@@ -57,7 +50,7 @@ function handler(lgtvControl, event) {
                 resolve(fastForwardHandler(lgtvControl, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvControl, event));
                 break;
         }
     });
@@ -92,15 +85,7 @@ function genericHandler(lgtvControl, event, commandURI) {
         // eslint-disable-next-line no-unused-vars
         lgtvControl.lgtvCommand(endpointId, command, (error, _response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
             const alexaResponse = new AlexaResponse({
@@ -108,20 +93,6 @@ function genericHandler(lgtvControl, event, commandURI) {
             });
             resolve(alexaResponse.get());
         });
-    });
-}
-
-function unknownDirectiveError(lgtvControl, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Playback Controller directive ${event.directive.header.name}`
-            }
-        });
-        resolve(alexaResponse.get());
     });
 }
 

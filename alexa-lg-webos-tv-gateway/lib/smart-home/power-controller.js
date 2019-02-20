@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(lgtvControl, event, udn) {
@@ -34,16 +35,7 @@ function states(lgtvControl, udn) {
 function handler(lgtvControl, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.PowerController") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Power Controller processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
-            return;
+            resolve(namespaceErrorResponse(event, "Alexa.PowerController"));
         }
         switch (event.directive.header.name) {
             case "TurnOff":
@@ -53,7 +45,7 @@ function handler(lgtvControl, event) {
                 resolve(turnOnHandler(lgtvControl, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvControl, event));
                 break;
         }
     });
@@ -66,15 +58,7 @@ function turnOffHandler(lgtvControl, event) {
         // eslint-disable-next-line no-unused-vars
         lgtvControl.turnOff(endpointId, (error, _response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
 
@@ -93,15 +77,7 @@ function turnOnHandler(lgtvControl, event) {
         // eslint-disable-next-line no-unused-vars
         lgtvControl.turnOn(endpointId, (error, _response) => {
             if (error) {
-                const alexaResponse = new AlexaResponse({
-                    "request": event,
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${error.name}: ${error.message}.`
-                    }
-                });
-                resolve(alexaResponse.get());
+                resolve(errorToErrorResponse(event, error));
                 return;
             }
 
@@ -110,20 +86,6 @@ function turnOnHandler(lgtvControl, event) {
             });
             resolve(alexaResponse.get());
         });
-    });
-}
-
-function unknownDirectiveError(lgtvControl, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Alexa Power Controller directive ${event.directive.header.name}`
-            }
-        });
-        resolve(alexaResponse.get());
     });
 }
 
