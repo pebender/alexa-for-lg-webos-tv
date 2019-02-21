@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
+const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 const alexaToLGTV = {
     "HDMI 1": "HDMI_1",
@@ -63,56 +63,85 @@ function capabilities(_lgtvControl, _event, _udn) {
 }
 
 function states(lgtvControl, udn) {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        if (lgtvControl.getPowerState(udn) === "OFF") {
-            resolve([]);
-            return;
-        }
+    return Promise.all([
+            getExternalInputList(),
+            getInput()
+        ]).
+        then(mapInput).
+        then(buildStates);
 
-        const getExternalInputList = {
-            "uri": "ssap://tv/getExternalInputList"
-        };
-        lgtvControl.lgtvCommand(udn, getExternalInputList, (error, response) => {
-            if (error) {
+    function getExternalInputList() {
+        return new Promise((resolve) => {
+            if (lgtvControl.getPowerState(udn) === "OFF") {
                 resolve([]);
                 return;
             }
-            const inputs = response.devices;
-            const getForegroundAppInfo = {
+
+            const command = {
+                "uri": "ssap://tv/getExternalInputList"
+            };
+            resolve(lgtvControl.lgtvCommand(udn, command).
+                then((response) => {
+                    if (!Reflect.has(response, "devices")) {
+                        return [];
+                    }
+                    return response.devices;
+                }));
+        });
+    }
+
+    function getInput() {
+        return new Promise((resolve) => {
+            if (lgtvControl.getPowerState(udn) === "OFF") {
+                resolve(null);
+                return;
+            }
+
+            const command = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            lgtvControl.lgtvCommand(udn, getForegroundAppInfo, (err, res) => {
-                if (err) {
-                    resolve([]);
-                    return;
-                }
-                const {appId} = res;
-                let input = null;
+            resolve(lgtvControl.lgtvCommand(udn, command).
+                then((response) => response.appId));
+            });
+    }
+
+    function mapInput(args) {
+        return new Promise((resolve) => {
+            // eslint-disable-next-line array-element-newline
+            const [inputList, appId] = args;
+
+            let input = null;
+            if (appId !== null) {
                 let index = 0;
-                for (index = 0; index < inputs.length; index += 1) {
-                    if (inputs[index].appId === appId) {
-                        input = inputs[index].id;
+                for (index = 0; index < inputList.length; index += 1) {
+                    if (inputList[index].appId === appId) {
+                        input = inputList[index].id;
                         if (Reflect.has(lgtvToAlexa, input)) {
                             input = lgtvToAlexa[input];
                         } else {
-                            input = inputs.replace("_", " ");
+                            input = input.replace("_", " ");
                         }
                     }
                 }
-                if (input === null) {
-                    resolve([]);
-                    return;
-                }
-                const inputState = AlexaResponse.createContextProperty({
-                    "namespace": "Alexa.InputController",
-                    "name": "input",
-                    "value": input
-                });
-                resolve([inputState]);
-            });
+            }
+            resolve(input);
         });
-    });
+    }
+
+    function buildStates(input) {
+        return new Promise((resolve) => {
+            if (input === null) {
+                resolve([]);
+                return;
+            }
+            const inputState = AlexaResponse.createContextProperty({
+                "namespace": "Alexa.InputController",
+                "name": "input",
+                "value": input
+            });
+            resolve([inputState]);
+        });
+    }
 }
 
 function handler(lgtvControl, event) {
@@ -133,35 +162,53 @@ function handler(lgtvControl, event) {
 }
 
 function selectInputHandler(lgtvControl, event) {
-    return new Promise((resolve) => {
+    return Promise.all(
+            getExternalInputList,
+            getInput
+        ).
+        then(mapInput).
+        then(setExternalInput);
+
+    function getExternalInputList() {
         const {endpointId} = event.directive.endpoint;
-
-        const getExternalInputList = {
-            "uri": "ssap://tv/getExternalInputList"
-        };
-        lgtvControl.lgtvCommand(endpointId, getExternalInputList, (error, response) => {
-            if (error) {
-                resolve(errorToErrorResponse(event, error));
-                return;
-            }
-            if (!Reflect.has(response, "devices")) {
-                resolve(errorResponse(
-                    event,
-                    "INTERNAL_ERROR",
-                    "The T.V. did not return a list of it's external inputs."
-                ));
+        return new Promise((resolve) => {
+            if (lgtvControl.getPowerState(endpointId) === "OFF") {
+                resolve([]);
                 return;
             }
 
-            let input = event.directive.payload.input.toUpperCase();
+            const command = {
+                "uri": "ssap://tv/getExternalInputList"
+            };
+            resolve(lgtvControl.lgtvCommand(endpointId, command).
+                then((response) => {
+                    if (!Reflect.has(response, "devices")) {
+                        return [];
+                    }
+                    return response.devices;
+                }));
+        });
+    }
+
+    function getInput() {
+        return new Promise((resolve) => {
+            resolve(event.directive.payload.input.toUpperCase());
+        });
+    }
+
+    function mapInput(responses) {
+        return new Promise((resolve) => {
+            const [inputList] = responses;
+            let [, input] = responses;
+
             if (Reflect.has(alexaToLGTV, input)) {
                 input = alexaToLGTV[input];
             }
             let device = null;
             let index = 0;
-            for (index = 0; index < response.devices.length; index += 1) {
-                const id = response.devices[index].id.toUpperCase();
-                const label = response.devices[index].label.toUpperCase();
+            for (index = 0; index < inputList.length; index += 1) {
+                const id = inputList[index].id.toUpperCase();
+                const label = inputList[index].label.toUpperCase();
                 if (id === input) {
                     device = id;
                 }
@@ -175,33 +222,41 @@ function selectInputHandler(lgtvControl, event) {
                     device = id;
                 }
             }
-            if (device === null) {
+            resolve(device);
+        });
+    }
+
+    function setExternalInput(input) {
+        return new Promise((resolve) => {
+            if (lgtvControl.getPowerState(endpointId) === "OFF") {
+                resolve([]);
+                return;
+            }
+
+            if (input === null) {
                 resolve(errorResponse(
                     event,
                     "INTERNAL_ERROR",
-                    `I do not recognize input ${input}`
+                    "I do not recognize the input."
                 ));
                 return;
             }
 
-            const setExternalInputList = {
+            const {endpointId} = event.directive.endpoint;
+            const command = {
                 "uri": "ssap://tv/switchInput",
-                "payload": {"inputId": device}
+                "payload": {"inputId": input}
             };
             // eslint-disable-next-line no-unused-vars
-            lgtvControl.lgtvCommand(endpointId, setExternalInputList, (err, _res) => {
-                if (err) {
-                    resolve(errorToErrorResponse(event, err));
-                    return;
-                }
-
-                const alexaResponse = new AlexaResponse({
-                    "request": event
-                });
-                resolve(alexaResponse.get());
-            });
+            resolve(lgtvControl.lgtvCommand(endpointId, command).
+                then(() => {
+                    const alexaResponse = new AlexaResponse({
+                        "request": event
+                    });
+                    return alexaResponse.get();
+                }));
         });
-    });
+    }
 }
 
 module.exports = {

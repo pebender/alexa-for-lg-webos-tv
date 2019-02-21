@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse} = require("../common");
+const {directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(lgtvControl, event, udn) {
@@ -52,13 +52,13 @@ function handler(lgtvControl, event) {
 }
 
 function turnOffHandler(lgtvControl, event) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const {endpointId} = event.directive.endpoint;
 
         // eslint-disable-next-line no-unused-vars
         lgtvControl.turnOff(endpointId, (error, _response) => {
             if (error) {
-                resolve(errorToErrorResponse(event, error));
+                reject(error);
                 return;
             }
 
@@ -71,13 +71,13 @@ function turnOffHandler(lgtvControl, event) {
 }
 
 function turnOnHandler(lgtvControl, event) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const {endpointId} = event.directive.endpoint;
 
         // eslint-disable-next-line no-unused-vars
         lgtvControl.turnOn(endpointId, (error, _response) => {
             if (error) {
-                resolve(errorToErrorResponse(event, error));
+                reject(error);
                 return;
             }
 

@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {errorToErrorResponse, directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
+const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 const alexaToLGTV = {
     // Amazon Video
@@ -79,33 +79,48 @@ function capabilities(_lgtvControl, _event, _udn) {
 }
 
 function states(lgtvControl, udn) {
-    return new Promise((resolve) => {
-        if (lgtvControl.getPowerState(udn) === "OFF") {
-            resolve([]);
-            return;
-        }
+    return getInput().
+        then(mapInput).
+        then(buildStates);
 
-        const command = {
-            "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
-        };
-        lgtvControl.lgtvCommand(udn, command, (error, response) => {
-            if (error) {
+    function getInput() {
+        return new Promise((resolve) => {
+            if (lgtvControl.getPowerState(udn) === "OFF") {
+                resolve(null);
+                return;
+            }
+
+            const command = {
+                "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
+            };
+            resolve(lgtvControl.lgtvCommand(udn, command));
+        });
+    }
+
+    function mapInput(response) {
+        return new Promise((resolve) => {
+            if (Reflect.has(lgtvToAlexa, response.appId)) {
+                resolve(lgtvToAlexa[response.appId]);
+                return;
+            }
+            resolve(null);
+        });
+    }
+
+    function buildStates(target) {
+        return new Promise((resolve) => {
+            if (target === null) {
                 resolve([]);
                 return;
             }
-            if (Reflect.has(lgtvToAlexa, response.appId)) {
-                const target = lgtvToAlexa[response.appId];
-                const targetState = AlexaResponse.createContextProperty({
-                    "namespace": "Alexa.Launcher",
-                    "name": "target",
-                    "value": target
-                });
-                resolve([targetState]);
-                return;
-            }
-            resolve([]);
+            const targetState = AlexaResponse.createContextProperty({
+                "namespace": "Alexa.Launcher",
+                "name": "target",
+                "value": target
+            });
+            resolve([targetState]);
         });
-    });
+    }
 }
 
 function handler(lgtvControl, event) {
@@ -147,16 +162,13 @@ function launchTargetHandler(lgtvControl, event) {
             "payload": alexaToLGTV[event.directive.payload.identifier]
         };
         // eslint-disable-next-line no-unused-vars
-        lgtvControl.lgtvCommand(endpointId, command, (error, response) => {
-            if (error) {
-                resolve(errorToErrorResponse(event, error));
-                return;
-            }
-            const alexaResponse = new AlexaResponse({
-                "request": event
-            });
-            resolve(alexaResponse.get());
-        });
+        resolve(lgtvControl.lgtvCommand(endpointId, command).
+            then(() => {
+                const alexaResponse = new AlexaResponse({
+                    "request": event
+                });
+                return alexaResponse.get();
+            }));
     });
 }
 

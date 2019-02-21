@@ -62,7 +62,7 @@ function handler(lgtvControl, event) {
                     then((response) => stateHandler(lgtvControl, endpointId, response)));
             } else {
                 resolve(fn(lgtvControl, event));
-                }
+            }
         } else {
             resolve(unknownNamespaceError(lgtvControl, event));
         }
@@ -74,37 +74,38 @@ function stateHandler(lgtvControl, udn, response) {
         const alexaResponse = new AlexaResponse(response);
         const startTime = new Date();
         resolve(Promise.all([
-            alexa.states(lgtvControl, udn),
-            alexaPowerController.states(lgtvControl, udn),
-            alexaSpeaker.states(lgtvControl, udn),
-            alexaChannelController.states(lgtvControl, udn),
-            alexaInputController.states(lgtvControl, udn),
-            alexaLauncher.states(lgtvControl, udn),
-            alexaPlaybackController.states(lgtvControl, udn)
-        ]).then((values) => {
-            const endTime = new Date();
-            const timeOfSample = endTime.toISOString();
-            const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-            const contextProperties = [];
-            let index = 0;
-            for (index = 0; index < values.length; index += 1) {
-                if (values && values[index].length > 0) {
-                    contextProperties.push(...values[index]);
+                alexa.states(lgtvControl, udn),
+                alexaPowerController.states(lgtvControl, udn),
+                alexaSpeaker.states(lgtvControl, udn),
+                alexaChannelController.states(lgtvControl, udn),
+                alexaInputController.states(lgtvControl, udn),
+                alexaLauncher.states(lgtvControl, udn),
+                alexaPlaybackController.states(lgtvControl, udn)
+            ]).
+            then((values) => {
+                const endTime = new Date();
+                const timeOfSample = endTime.toISOString();
+                const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
+                const contextProperties = [];
+                let index = 0;
+                for (index = 0; index < values.length; index += 1) {
+                    if (values && values[index].length > 0) {
+                        contextProperties.push(...values[index]);
+                    }
                 }
-            }
-            if (contextProperties.length > 0) {
-                for (index = 0; index < contextProperties.length; index += 1) {
-                    contextProperties[index].timeOfSample = timeOfSample;
-                    contextProperties[index].uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-                    alexaResponse.addContextProperty(contextProperties[index]);
+                if (contextProperties.length > 0) {
+                    for (index = 0; index < contextProperties.length; index += 1) {
+                        contextProperties[index].timeOfSample = timeOfSample;
+                        contextProperties[index].uncertaintyInMilliseconds = uncertaintyInMilliseconds;
+                        alexaResponse.addContextProperty(contextProperties[index]);
+                    }
                 }
-            }
-            return alexaResponse.get();
-        }).
-        // eslint-disable-next-line no-unused-vars
-        catch((error) => alexaResponse.get()));
+                return alexaResponse.get();
+            }).
+            catch(() => alexaResponse.get()));
     });
 }
+
 function unknownNamespaceError(lgtvControl, event) {
     return errorResponse(
         event,
@@ -113,11 +114,11 @@ function unknownNamespaceError(lgtvControl, event) {
     );
 }
 
-function missingKeyError(event, key, cb) {
+function missingKeyError(event, key) {
     return errorResponse(
         event,
         "INVALID_DIRECTIVE",
-        `Missing key: ${key}.`, cb
+        `Missing key: ${key}.`
     );
 }
 

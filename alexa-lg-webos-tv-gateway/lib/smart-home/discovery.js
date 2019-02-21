@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {errorToErrorResponse, namespaceErrorResponse} = require("../common");
+const {namespaceErrorResponse} = require("../common");
 const alexa = require("./alexa.js");
 const alexaPowerController = require("./power-controller.js");
 const alexaSpeaker = require("./speaker.js");
@@ -9,7 +9,7 @@ const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
 
 function handler(lgtvControl, event) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
             namespaceErrorResponse(event, "Alexa.Discovery");
             return;
@@ -19,7 +19,7 @@ function handler(lgtvControl, event) {
             {},
             (err, docs) => {
                 if (err) {
-                    resolve(errorToErrorResponse(event, err));
+                    reject(err);
                     return;
                 }
 

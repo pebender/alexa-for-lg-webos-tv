@@ -223,61 +223,56 @@ external.post("/LGTV/MAP", (request, response) => {
     }
 });
 external.post("/LGTV/RUN", (request, response) => {
-    lgtvControl.tvCommand(
-        request.body.television,
-        request.body.command,
-        (err, res) => {
-            if (err) {
-                const body = {
-                    "error": {
-                        "name": err.name,
-                        "message": err.message
-                    }
-                };
-                response.
-                    type("json").
-                    status(200).
-                    json(body).
-                    end();
-            } else {
-                response.
-                    type("json").
-                    status(200).
-                    json(res).
-                    end();
-            }
-        }
-    );
+    lgtvControl.tvCommand(request.body.television, request.body.command).
+        then((res) => {
+            response.
+            type("json").
+            status(200).
+            json(res).
+            end();
+        }).
+        catch((err) => {
+            const body = {
+                "error": {
+                    "name": err.name,
+                    "message": err.message
+                }
+            };
+            response.
+                type("json").
+                status(200).
+                json(body).
+                end();
+    });
 });
 external.post("/LGTV/SKILL", (request, response) => {
+console.log("abc");
 console.log(JSON.stringify(request.body, null, 2));
-    lgtvControl.skillCommand(
-        request.body,
-        (err, res) => {
-            if (err) {
-                const alexaResponse = new AlexaResponse({
-                    "name": "ErrorResponse",
-                    "payload": {
-                        "type": "INTERNAL_ERROR",
-                        "message": `${err.name}: ${err.message}`
-                    }
-                });
-console.log(JSON.stringify(alexaResponse, null, 2));
-                response.
-                    type("json").
-                    status(200).
-                    json(alexaResponse).
-                    end();
-            } else {
+console.log("qrs");
+    lgtvControl.skillCommand(request.body).
+        then((res) => {
+            response.
+                type("json").
+                status(200).
+                json(res).
+                end();
+console.log("xyz");
 console.log(JSON.stringify(res, null, 2));
-                response.
-                    type("json").
-                    status(200).
-                    json(res).
-                    end();
-            }
-        }
-    );
+            }).
+        catch((err) => {
+            const alexaResponse = new AlexaResponse({
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": `${err.name}: ${err.message}`
+                }
+            });
+            response.
+                type("json").
+                status(200).
+                json(alexaResponse.get()).
+                end();
+        });
 });
 external.get("/LGTV/PING", (request, response) => {
 console.log(`hello ${request.originalUrl}`);

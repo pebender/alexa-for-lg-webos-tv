@@ -3,6 +3,7 @@ const LGTVMessage = require("./lgtv-message.js");
 const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
+const {callbackToPromise} = require("./common");
 const smartHomeSkill = require("./smart-home/index.js");
 
 class LGTVControl extends EventEmitter {
@@ -99,28 +100,28 @@ class LGTVControl extends EventEmitter {
         }
     }
 
-    skillCommand(event, callback) {
-        smartHomeSkill.handler(this, event).
-            then(
-                (response) => callback(null, response),
-                (error) => callback(error, null)
-            );
+    skillCommand(event) {
+        return smartHomeSkill.handler(this, event);
     }
 
-    turnOff(udn, callback) {
-        if (!Reflect.has(this.private.controls, udn)) {
-            callback(new Error("Requested TV not found."), null);
-            return;
-        }
-        this.private.controls[udn].turnOff((error, response) => callback(error, response));
+    turnOff(udn) {
+        return new Promise((resolve, reject) => {
+            if (!Reflect.has(this.private.controls, udn)) {
+                reject(new Error("Requested TV not found."));
+                return;
+            }
+            resolve(this.private.controls[udn].turnOff());
+        });
     }
 
-    turnOn(udn, callback) {
-        if (!Reflect.has(this.private.controls, udn)) {
-            callback(new Error("Requested TV not found."), null);
-            return;
-        }
-        this.private.controls[udn].turnOn((error, response) => callback(error, response));
+    turnOn(udn) {
+        return new Promise((resolve, reject) => {
+            if (!Reflect.has(this.private.controls, udn)) {
+                reject(new Error("Requested TV not found."));
+                return;
+            }
+            resolve(this.private.controls[udn].turnOn());
+        });
     }
 
     getPowerState(udn) {
@@ -130,21 +131,25 @@ class LGTVControl extends EventEmitter {
         return this.private.controls[udn].getPowerState(udn);
     }
 
-    tvCommand(udn, command, callback) {
-        if (!Reflect.has(this.private.controls, udn)) {
-            callback(new Error("Requested TV not found."), null);
-            return;
-        }
-        const translation = LGTVMessage.translate(command);
-        this.private.controls[udn].lgtvCommand(translation, (error, response) => callback(error, response));
+    tvCommand(udn, command) {
+        return new Promise((resolve) => {
+            if (!Reflect.has(this.private.controls, udn)) {
+                resolve(new Error("Requested TV not found."));
+                return;
+            }
+            const translation = LGTVMessage.translate(command);
+            resolve(this.private.controls[udn].lgtvCommand(translation));
+        });
     }
 
-    lgtvCommand(udn, command, callback) {
-        if (!Reflect.has(this.private.controls, udn)) {
-            callback(new Error("Requested TV not found."), null);
-            return;
-        }
-        this.private.controls[udn].lgtvCommand(command, (error, response) => callback(error, response));
+    lgtvCommand(udn, command) {
+        return new Promise((resolve, reject) => {
+            if (!Reflect.has(this.private.controls, udn)) {
+                reject(new Error("Requested TV not found."), null);
+                return;
+            }
+            resolve(this.private.controls[udn].lgtvCommand(command));
+        });
     }
 }
 
@@ -226,62 +231,63 @@ class LGTVControlOne extends EventEmitter {
         });
     }
 
-    turnOff(callback) {
-        const command = {
-            "uri": "ssap://system/turnOff"
-        };
-        // eslint-disable-next-line no-unused-vars
-        this.private.connection.request(command.uri);
-        this.private.powerOn = false;
-        callback(null, null);
+    turnOff() {
+        return new Promise((resolve) => {
+            const command = {
+                "uri": "ssap://system/turnOff"
+            };
+            // eslint-disable-next-line no-unused-vars
+            this.private.connection.request(command.uri);
+            this.private.powerOn = false;
+            resolve();
+        });
     }
 
-    turnOn(callback) {
-        let done = false;
-        let callbackCalled = false;
+    turnOn() {
+        return new Promise((resolve) => {
 
-        const {mac} = this.private.tv;
+            let done = false;
+            let resolved = false;
 
-        function wolHandler() {
+            const {mac} = this.private.tv;
+
+            function wolHandler() {
+                // eslint-disable-next-line no-unused-vars
+                wol.wake(mac, (error, response) => {
+                    if (done === false) {
+                        setTimeout(wolHandler, 250);
+                    }
+                });
+            }
+            setImmediate(wolHandler);
+
             // eslint-disable-next-line no-unused-vars
-            wol.wake(mac, (error, response) => {
-                if (done === false) {
-                    setTimeout(wolHandler, 250);
+
+            let ssdp = new SSDPClient();
+            // eslint-disable-next-line no-unused-vars
+            ssdp.on("response", (headers, rinfo) => {
+                if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
+                    headers.ST === "urn:lge-com:service:webos-second-screen:1") {
+                    this.private.powerOn = true;
+                    if (resolved === false) {
+                        resolved = true;
+                        resolve({});
+                    }
                 }
             });
-        }
-        setImmediate(wolHandler);
-
-        // eslint-disable-next-line no-unused-vars
-
-        let ssdp = new SSDPClient();
-        // eslint-disable-next-line no-unused-vars
-        ssdp.on("response", (headers, rinfo) => {
-            if (headers.USN.startsWith(`${this.private.tv.udn}::`) &&
-                headers.ST === "urn:lge-com:service:webos-second-screen:1") {
-                this.private.powerOn = true;
-                if (callbackCalled === false) {
-                    callbackCalled = true;
-                    // eslint-disable-next-line callback-return
-                    callback(null, {});
+            ssdp.search("urn:lge-com:service:webos-second-screen:1");
+            function cleanup() {
+                done = true;
+                if (ssdp) {
+                    ssdp.removeAllListeners();
+                    ssdp = null;
+                }
+                if (resolved === false) {
+                    resolved = true;
                 }
             }
+            setTimeout(cleanup, 5000);
         });
-        ssdp.search("urn:lge-com:service:webos-second-screen:1");
-
-        function cleanup() {
-            done = true;
-            if (ssdp) {
-                ssdp.removeAllListeners();
-                ssdp = null;
-            }
-            if (callbackCalled === false) {
-                callbackCalled = true;
-                // eslint-disable-next-line callback-return
-                callback(null, {});
-            }
-        }
-        setTimeout(cleanup, 5000);
     }
 
     getPowerState() {
@@ -290,19 +296,21 @@ class LGTVControlOne extends EventEmitter {
             : "OFF";
     }
 
-    lgtvCommand(command, callback) {
-        if (command.payload === null) {
-            this.private.connection.request(
-                command.uri,
-                (error, response) => callback(error, response)
-            );
-        } else {
-            this.private.connection.request(
-                command.uri,
-                command.payload,
-                (error, response) => callback(error, response)
-            );
-        }
+    lgtvCommand(command) {
+        return new Promise((resolve, reject) => {
+            if (command.payload === null) {
+                this.private.connection.request(
+                    command.uri,
+                    (error, response) => callbackToPromise(resolve, reject, error, response)
+                );
+            } else {
+                this.private.connection.request(
+                    command.uri,
+                    command.payload,
+                    (error, response) => callbackToPromise(resolve, reject, error, response)
+                );
+            }
+        });
     }
 }
 
