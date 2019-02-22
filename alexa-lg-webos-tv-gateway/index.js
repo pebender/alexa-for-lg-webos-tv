@@ -14,9 +14,8 @@ const Datastore = require("nedb");
 const ppath = require("persist-path");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const HTTPAuthorization = require("./lib/http-authorization.js");
-const LGTVController = require("./lib/lgtv-controller.js");
-const LGTVSearcher = require("./lib/lgtv-searcher.js");
+const HTTPAuthorization = require("./lib/http-authorization");
+const LGTV = require("./lib/lgtv");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -74,26 +73,11 @@ const httpAuthorization = new HTTPAuthorization(httpDb, (error) => {
     }
 });
 
-// I keep the list of all LG webOS TVs.
-const lgtvController = new LGTVController(lgtvDb, (error) => {
-    if (error) {
-        throw error;
-    }
+const lgtv = new LGTV(lgtvDb);
+lgtv.on("error", (error) => {
+    console.log(error);
 });
-// eslint-disable-next-line no-unused-vars
-lgtvController.on("error", (error, _udn) => {
-    console.error(error);
-});
-lgtvController.dbLoad();
-
-const lgtvSearcher = new LGTVSearcher();
-lgtvSearcher.on("error", (error) => {
-    console.error(error);
-});
-lgtvSearcher.on("found", (tv) => {
-    lgtvController.tvUpsert(tv);
-});
-lgtvSearcher.now();
+lgtv.initialize();
 
 const internal = express();
 internal.use("/HTTP/form", express.urlencoded({
@@ -213,7 +197,7 @@ function requestAuthorizeLGTV(username, password) {
 }
 external.post("/LGTV/MAP", (request, response) => {
     if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, "command") && request.body.command.name === "udnsGet") {
-        const body = {"udns": Object.keys(lgtvController)};
+        const body = {"udns": Object.keys(lgtv.controller)};
         response.
             type("json").
             status(200).
@@ -223,7 +207,7 @@ external.post("/LGTV/MAP", (request, response) => {
     }
 });
 external.post("/LGTV/RUN", (request, response) => {
-    lgtvController.tvCommand(request.body.television, request.body.command).
+    lgtv.controller.smartHomeSkillCommand(request.body).
         then((res) => {
             response.
             type("json").
@@ -247,7 +231,7 @@ external.post("/LGTV/RUN", (request, response) => {
 });
 external.post("/LGTV/SKILL", (request, response) => {
 console.log(JSON.stringify(request.body, null, 2));
-    lgtvController.skillCommand(request.body).
+    lgtv.controller.smartHomeSkillCommand(request.body).
         then((res) => {
 console.log(JSON.stringify(res, null, 2));
             response.

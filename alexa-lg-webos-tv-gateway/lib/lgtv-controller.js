@@ -1,7 +1,7 @@
-const LGTVMessage = require("./lgtv-message.js");
 const EventEmitter = require("events");
-const smartHomeSkill = require("./smart-home/index.js");
-const LGTVControl = require("./lgtv-control.js");
+const customSkill = require("./custom");
+const smartHomeSkill = require("./smart-home");
+const LGTVControl = require("./lgtv-control");
 
 class LGTVController extends EventEmitter {
     constructor (db) {
@@ -9,6 +9,7 @@ class LGTVController extends EventEmitter {
         super();
 
         this.private = {};
+        this.private.initialized = false;
         this.private.controls = [];
         if (typeof db === "undefined" || db === null) {
             return;
@@ -20,19 +21,25 @@ class LGTVController extends EventEmitter {
         return this.private.db;
     }
 
-    dbLoad() {
+    initialize() {
         const that = this;
-        this.private.db.find({}, (error, docs) => {
-            if (error) {
-                that.emit("error", error);
-                return;
+        return new Promise((resolve) => {
+            if (!this.private.initialized) {
+                this.private.db.find({}, (error, docs) => {
+                    if (error) {
+                        that.emit("error", error);
+                        resolve();
+                    }
+                    docs.forEach((doc) => {
+                        if (!(doc.udn in that.private.controls)) {
+                            that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
+                            eventsAdd(doc.udn);
+                        }
+                    });
+                });
+                this.private.initialized = true;
             }
-            docs.forEach((doc) => {
-                if (!(doc.udn in that.private.controls)) {
-                    that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
-                    eventsAdd(doc.udn);
-                }
-            });
+            resolve();
         });
 
         function eventsAdd(udn) {
@@ -44,21 +51,39 @@ class LGTVController extends EventEmitter {
 
     tvUpsert(tv) {
         const that = this;
-        that.private.db.findOne({"$and": [
-            {"udn": tv.udn},
-            {"name": tv.name},
-            {"ip": tv.ip},
-            {"url": tv.url},
-            {"mac": tv.mac}
-        ]}, (error, doc) => {
-            if (error) {
-                that.emit("error", error, tv.udn);
-                return;
-            }
-            if (doc === null) {
+        return checkDatabase().
+            then(addToDatabase).
+            then(addControl);
+
+        function checkDatabase() {
+            return new Promise((resolve, reject) => {
+                that.private.db.findOne({"$and": [
+                    {"udn": tv.udn},
+                    {"name": tv.name},
+                    {"ip": tv.ip},
+                    {"url": tv.url},
+                    {"mac": tv.mac}
+                ]}, (error, doc) => {
+                    if (error) {
+                        that.emit("error", error, tv.udn);
+                        reject(error);
+                        return;
+                    }
+                    resolve(doc);
+                });
+            });
+        }
+
+        function addToDatabase(doc) {
+            return new Promise((resolve, reject) => {
+                if (doc !== null) {
+                    resolve(doc);
+                }
+
                 if (Reflect.has(that.private.controls, tv.udn)) {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
+
                 that.private.db.update(
                     {"udn": tv.udn},
                     {
@@ -74,30 +99,40 @@ class LGTVController extends EventEmitter {
                     (err, _numAffectedDocs, _affectedDocs, _upsert) => {
                         if (err) {
                             that.emit("error", err, tv.udn);
+                            reject(err);
                             return;
                         }
-                        if (!Reflect.has(that.private.controls, tv.udn)) {
-                            that.private.controls[tv.udn] = new LGTVControl(that.private.db, tv);
-                            eventsAdd(tv.udn);
-                        }
+                        resolve(tv);
                     }
                 );
-            } else {
-                // eslint-disable-next-line no-lonely-if
+
+                resolve(null);
+            });
+        }
+
+        function addControl(doc) {
+            return new Promise((resolve) => {
+                if (doc === null) {
+                    resolve(null);
+                }
+
                 if (!Reflect.has(that.private.controls, doc.udn)) {
                     that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
-                    eventsAdd(doc.udn);
+                    that.private.controls[doc.udn].on("error", (error) => {
+                        that.emit("error", error, doc.udn);
+                    });
                 }
-            }
-        });
-        function eventsAdd(udn) {
-            that.private.controls[udn].on("error", (error) => {
-                that.emit("error", error, udn);
+
+                resolve(doc);
             });
         }
     }
 
-    skillCommand(event) {
+    customSkillCommand(event) {
+        return customSkill.handler(this, event);
+    }
+
+    smartHomeSkillCommand(event) {
         return smartHomeSkill.handler(this, event);
     }
 
@@ -126,17 +161,6 @@ class LGTVController extends EventEmitter {
             throw new Error("Requested TV not found.");
         }
         return this.private.controls[udn].getPowerState(udn);
-    }
-
-    tvCommand(udn, command) {
-        return new Promise((resolve) => {
-            if (!Reflect.has(this.private.controls, udn)) {
-                resolve(new Error("Requested TV not found."));
-                return;
-            }
-            const translation = LGTVMessage.translate(command);
-            resolve(this.private.controls[udn].lgtvCommand(translation));
-        });
     }
 
     lgtvCommand(udn, command) {

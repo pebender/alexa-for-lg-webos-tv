@@ -27,162 +27,190 @@ class LGTVSearcher extends EventEmitter {
 
         const that = this;
 
-        this.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-        this.ssdpResponse = new SSDPClient();
-        this.ssdpNotify.start();
-        this.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
-            ssdpProcess("advertise-alive", headers, rinfo, (error, tv) => {
-                if (error) {
+        this.private = {};
+        this.private.initialized = false;
+        this.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+        this.private.ssdpResponse = new SSDPClient();
+        this.private.ssdpNotify.start();
+        this.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+            ssdpProcess("advertise-alive", headers, rinfo).
+                then((tv) => {
+                    if (tv) {
+                        this.emit("found", tv);
+                    }
+                }).
+                catch((error) => {
                     this.emit("error", error);
-                    return error;
-                }
-                if (!tv) {
-                    return null;
-                }
-                this.emit("found", tv);
-                return null;
-            });
+                });
         });
-        this.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
-            ssdpProcess("advertise-bye", headers, rinfo, (error, tv) => {
-                if (error) {
+        this.private.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
+            ssdpProcess("advertise-bye", headers, rinfo).
+                then((tv) => {
+                    if (tv) {
+                        this.emit("found", tv);
+                    }
+                }).
+                catch((error) => {
                     this.emit("error", error);
-                    return error;
-                }
-                if (!tv) {
-                    return null;
-                }
-                this.emit("found", tv);
-                return null;
-            });
+                });
         });
-        this.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+        this.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
             if (statusCode !== "200") {
                 return;
             }
-            ssdpProcess("response", headers, rinfo, (error, tv) => {
-                if (error) {
+            ssdpProcess("response", headers, rinfo).
+                then((tv) => {
+                    if (tv !== null) {
+                        this.emit("found", tv);
+                    }
+                }).
+                catch((error) => {
                     this.emit("error", error);
-                    return error;
-                }
-                if (!tv) {
-                    return null;
-                }
-                this.emit("found", tv);
-                return null;
-            });
+                });
         });
         periodic();
 
         // Periodicly scan for TVs.
         function periodic() {
             // Search every 1800s as that is the UPnP recommended time.
-            that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+            that.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
             setTimeout(periodic, 1800000);
         }
 
-        function ssdpProcess(type, headers, rinfo, callback) {
-            const tv = {};
-            const typeMap = {
-                "advertise-alive": "NT",
-                "advertise-bye": "NT",
-                "response": "ST"
-            };
-            if (!(type in typeMap)) {
-                callback(null, null);
-                return;
+        function ssdpProcess(type, headers, rinfo) {
+            return addToTvFromHeader({}).
+                then(addToTvFromDescription).
+                then(addToTvFromMAC);
+
+            function addToTvFromHeader(tv) {
+                return new Promise((resolve) => {
+                    if (tv === null) {
+                        resolve(null);
+                        return;
+                    }
+                    const typeMap = {
+                        "advertise-alive": "NT",
+                        "advertise-bye": "NT",
+                        "response": "ST"
+                    };
+                    if (!(type in typeMap)) {
+                        resolve(null);
+                        return;
+                    }
+                    // Make sure it is webOS and UPnP 1.0 or 1.1.
+                    if (!("SERVER" in headers) ||
+                        !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
+                        resolve(null);
+                        return;
+                    }
+                    // Make sure it is the webOS second screen service.
+                    if (!(typeMap[type] in headers) ||
+                        headers[typeMap[type]] !== "urn:lge-com:service:webos-second-screen:1") {
+                        resolve(null);
+                        return;
+                    }
+                    // Get the IP address associated with the TV.
+                    if (!("address" in rinfo)) {
+                        resolve(null);
+                        return;
+                    }
+                    tv.ip = rinfo.address;
+                    tv.url = `ws://${tv.ip}:3000`;
+                    resolve(tv);
+                });
             }
-            // Make sure it is webOS and UPnP 1.0 or 1.1.
-            if (!("SERVER" in headers) ||
-                !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
-                callback(null, null);
-                return;
+
+            function addToTvFromDescription(tv) {
+                return new Promise((resolve, reject) => {
+                    if (tv === null) {
+                        resolve(null);
+                        return;
+                    }
+
+                    /*
+                     * Get the device description. I use this to make sure that this is an
+                     * LG Electronics webOS TV as well as to obtain the TV's friendly name
+                     * and Unique Device Name (UDN).
+                     */
+                    if (!("LOCATION" in headers)) {
+                        resolve(null);
+                        return;
+                    }
+                    http.get(headers.LOCATION).then((descriptionXml) => {
+                        xml2js(descriptionXml.data, (error, description) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+                            if (!description) {
+                                resolve(null);
+                                return;
+                            }
+
+                            /*
+                             * These properties are required by the UPnP specification but
+                             * check anyway.
+                             */
+                            if (!("root" in description) ||
+                                !("device" in description.root) ||
+                                description.root.device.length !== 1 ||
+                                !("manufacturer" in description.root.device[0]) ||
+                                description.root.device[0].manufacturer.length !== 1 ||
+                                !("friendlyName" in description.root.device[0]) ||
+                                description.root.device[0].friendlyName.length !== 1 ||
+                                !("UDN" in description.root.device[0]) ||
+                                description.root.device[0].UDN.length !== 1) {
+                                resolve(null);
+                            }
+
+                            /*
+                             * Make sure this is from LG Electronics and has both a friendly
+                             * name and a UDN.
+                             */
+                            if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
+                                description.root.device[0].friendlyName[0] === "" ||
+                                description.root.device[0].UDN[0] === "") {
+                                resolve(null);
+                            }
+                            tv.name = description.root.device[0].friendlyName;
+                            tv.udn = description.root.device[0].UDN;
+                            resolve(tv);
+                        });
+                    });
+                });
             }
-            // Make sure it is the webOS second screen service.
-            if (!(typeMap[type] in headers) ||
-                headers[typeMap[type]] !== "urn:lge-com:service:webos-second-screen:1") {
-                callback(null, null);
-                return;
-            }
-            // Get the IP address associated with the TV.
-            if (!("address" in rinfo)) {
-                callback(null, null);
-                return;
-            }
-            tv.ip = rinfo.address;
-            tv.url = `ws://${tv.ip}:3000`;
 
             /*
-             * Get the device description. I use this to make sure that this is an
-             * LG Electronics webOS TV as well as to obtain the TV's friendly name
-             * and Unique Device Name (UDN).
+             * Get the mac address needed to turn on the TV using wake on
+             * lan.
              */
-            if (!("LOCATION" in headers)) {
-                callback(null, null);
-                return;
-            }
-            http.get(headers.LOCATION).then((descriptionXml) => {
-                xml2js(descriptionXml.data, (error, description) => {
-                    if (error) {
-                        callback(error, null);
-                        return error;
+            function addToTvFromMAC(tv) {
+                return new Promise((resolve, reject) => {
+                    if (tv === null) {
+                        resolve(null);
+                        return;
                     }
-                    if (!description) {
-                        callback(null, null);
-                        return null;
-                    }
-
-                    /*
-                     * These properties are required by the UPnP specification but
-                     * check anyway.
-                     */
-                    if (!("root" in description) ||
-                        !("device" in description.root) ||
-                        description.root.device.length !== 1 ||
-                        !("manufacturer" in description.root.device[0]) ||
-                        description.root.device[0].manufacturer.length !== 1 ||
-                        !("friendlyName" in description.root.device[0]) ||
-                        description.root.device[0].friendlyName.length !== 1 ||
-                        !("UDN" in description.root.device[0]) ||
-                        description.root.device[0].UDN.length !== 1) {
-                        callback(null, null);
-                        return null;
-                    }
-
-                    /*
-                     * Make sure this is from LG Electronics and has both a friendly
-                     * name and a UDN.
-                     */
-                    if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
-                        description.root.device[0].friendlyName[0] === "" ||
-                        description.root.device[0].UDN[0] === "") {
-                        callback(null, null);
-                        return null;
-                    }
-                    [tv.name] = description.root.device[0].friendlyName;
-                    [tv.udn] = description.root.device[0].UDN;
-
-                    /*
-                     * Get the mac address needed to turn on the TV using wake on
-                     * lan.
-                     */
                     arp.getMAC(tv.ip, (err, mac) => {
                         if (err) {
-                            callback(err, null);
-                            return err;
+                            reject(err);
+                            return;
                         }
                         tv.mac = mac;
-                        callback(null, tv);
-                        return null;
+                        resolve(tv);
                     });
-                    return null;
                 });
-            });
+            }
         }
     }
 
-    now() {
-        this.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+    initialize() {
+        return new Promise((resolve) => {
+            if (!this.private.initialized) {
+                this.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+                this.private.initialized = true;
+            }
+            resolve();
+        });
     }
 }
 
