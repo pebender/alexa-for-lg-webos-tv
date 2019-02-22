@@ -1,14 +1,14 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const alexaAuthorization = require("./authorization.js");
-const alexaDiscovery = require("./discovery.js");
-const alexa = require("./alexa.js");
-const alexaPowerController = require("./power-controller.js");
-const alexaSpeaker = require("./speaker.js");
-const alexaChannelController = require("./channel-controller.js");
-const alexaInputController = require("./input-controller.js");
-const alexaLauncher = require("./launcher.js");
-const alexaPlaybackController = require("./playback-controller.js");
-const {errorResponse} = require("../common");
+const alexaAuthorization = require("./authorization");
+const alexaDiscovery = require("./discovery");
+const alexa = require("./alexa");
+const alexaPowerController = require("./power-controller");
+const alexaSpeaker = require("./speaker");
+const alexaChannelController = require("./channel-controller");
+const alexaInputController = require("./input-controller");
+const alexaLauncher = require("./launcher");
+const alexaPlaybackController = require("./playback-controller");
+const {errorResponse} = require("../../common");
 
 function handler(lgtvController, event) {
     return new Promise((resolve) => {

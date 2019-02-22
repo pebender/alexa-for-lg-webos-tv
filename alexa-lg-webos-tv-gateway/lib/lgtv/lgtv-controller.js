@@ -1,6 +1,6 @@
 const EventEmitter = require("events");
-const customSkill = require("./custom");
-const smartHomeSkill = require("./smart-home");
+const customSkill = require("./custom-skill");
+const smartHomeSkill = require("./smart-home-skill");
 const LGTVControl = require("./lgtv-control");
 
 class LGTVController extends EventEmitter {
