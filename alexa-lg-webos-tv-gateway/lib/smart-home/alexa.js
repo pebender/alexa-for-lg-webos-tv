@@ -14,8 +14,7 @@ function capabilities(lgtvControl, event, udn) {
 
 // eslint-disable-next-line no-unused-vars
 function states(lgtvControl, udn) {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         resolve([]);
     });
 }

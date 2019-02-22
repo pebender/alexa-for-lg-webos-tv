@@ -52,40 +52,32 @@ function handler(lgtvControl, event) {
 }
 
 function turnOffHandler(lgtvControl, event) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
         // eslint-disable-next-line no-unused-vars
-        lgtvControl.turnOff(endpointId, (error, _response) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-
-            const alexaResponse = new AlexaResponse({
-                "request": event
-            });
-            resolve(alexaResponse.get());
-        });
+        resolve(lgtvControl.turnOff(endpointId).
+            then(() => {
+                const alexaResponse = new AlexaResponse({
+                    "request": event
+                });
+                return alexaResponse.get();
+            }));
     });
 }
 
 function turnOnHandler(lgtvControl, event) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
         // eslint-disable-next-line no-unused-vars
-        lgtvControl.turnOn(endpointId, (error, _response) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-
-            const alexaResponse = new AlexaResponse({
-                "request": event
-            });
-            resolve(alexaResponse.get());
-        });
+        resolve(lgtvControl.turnOn(endpointId).
+            then(() => {
+                const alexaResponse = new AlexaResponse({
+                    "request": event
+                });
+                return alexaResponse.get();
+            }));
     });
 }
 
