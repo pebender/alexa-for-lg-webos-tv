@@ -2,7 +2,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(lgtvControl, event, udn) {
+function capabilities(lgtvController, event, udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -13,13 +13,13 @@ function capabilities(lgtvControl, event, udn) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return new Promise((resolve) => {
         resolve([]);
     });
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa") {
             resolve(namespaceErrorResponse(event, "Alexa"));
@@ -28,16 +28,16 @@ function handler(lgtvControl, event) {
 
         switch (event.directive.header.name) {
             case "ReportState":
-                resolve(reportStateHandler(lgtvControl, event));
+                resolve(reportStateHandler(lgtvController, event));
                 break;
             default:
-                resolve(unknownDirectiveError(lgtvControl, event));
+                resolve(unknownDirectiveError(lgtvController, event));
                 break;
         }
     });
 }
 
-function reportStateHandler(lgtvControl, event) {
+function reportStateHandler(lgtvController, event) {
     return new Promise((resolve) => {
         const alexaResponse = new AlexaResponse({
             "request": event,
@@ -48,7 +48,7 @@ function reportStateHandler(lgtvControl, event) {
     });
 }
 
-function unknownDirectiveError(lgtvControl, event) {
+function unknownDirectiveError(lgtvController, event) {
     return new Promise((resolve) => {
         resolve(directiveErrorResponse(event, "Alexa"));
     });

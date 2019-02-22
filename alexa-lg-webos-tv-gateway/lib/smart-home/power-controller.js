@@ -2,7 +2,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(lgtvControl, event, udn) {
+function capabilities(lgtvController, event, udn) {
     return new Promise((resolve) => {
          resolve({
             "type": "AlexaInterface",
@@ -21,42 +21,41 @@ function capabilities(lgtvControl, event, udn) {
     });
 }
 
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return new Promise((resolve) => {
         const powerStateState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.PowerController",
             "name": "powerState",
-            "value": lgtvControl.getPowerState(udn)
+            "value": lgtvController.getPowerState(udn)
         });
         resolve([powerStateState]);
     });
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.PowerController") {
             resolve(namespaceErrorResponse(event, "Alexa.PowerController"));
         }
         switch (event.directive.header.name) {
             case "TurnOff":
-                resolve(turnOffHandler(lgtvControl, event));
+                resolve(turnOffHandler(lgtvController, event));
                 break;
             case "TurnOn":
-                resolve(turnOnHandler(lgtvControl, event));
+                resolve(turnOnHandler(lgtvController, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvController, event));
                 break;
         }
     });
 }
 
-function turnOffHandler(lgtvControl, event) {
+function turnOffHandler(lgtvController, event) {
     return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
-        // eslint-disable-next-line no-unused-vars
-        resolve(lgtvControl.turnOff(endpointId).
+        resolve(lgtvController.turnOff(endpointId).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event
@@ -66,12 +65,11 @@ function turnOffHandler(lgtvControl, event) {
     });
 }
 
-function turnOnHandler(lgtvControl, event) {
+function turnOnHandler(lgtvController, event) {
     return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
-        // eslint-disable-next-line no-unused-vars
-        resolve(lgtvControl.turnOn(endpointId).
+        resolve(lgtvController.turnOn(endpointId).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event

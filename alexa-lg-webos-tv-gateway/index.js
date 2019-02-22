@@ -15,8 +15,8 @@ const ppath = require("persist-path");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const HTTPAuthorization = require("./lib/http-authorization.js");
-const LGTVControl = require("./lib/lgtv-control.js");
-const LGTVSearch = require("./lib/lgtv-search.js");
+const LGTVController = require("./lib/lgtv-controller.js");
+const LGTVSearcher = require("./lib/lgtv-searcher.js");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -75,25 +75,25 @@ const httpAuthorization = new HTTPAuthorization(httpDb, (error) => {
 });
 
 // I keep the list of all LG webOS TVs.
-const lgtvControl = new LGTVControl(lgtvDb, (error) => {
+const lgtvController = new LGTVController(lgtvDb, (error) => {
     if (error) {
         throw error;
     }
 });
 // eslint-disable-next-line no-unused-vars
-lgtvControl.on("error", (error, _udn) => {
+lgtvController.on("error", (error, _udn) => {
     console.error(error);
 });
-lgtvControl.dbLoad();
+lgtvController.dbLoad();
 
-const lgtvSearch = new LGTVSearch();
-lgtvSearch.on("error", (error) => {
+const lgtvSearcher = new LGTVSearcher();
+lgtvSearcher.on("error", (error) => {
     console.error(error);
 });
-lgtvSearch.on("found", (tv) => {
-    lgtvControl.tvUpsert(tv);
+lgtvSearcher.on("found", (tv) => {
+    lgtvController.tvUpsert(tv);
 });
-lgtvSearch.now();
+lgtvSearcher.now();
 
 const internal = express();
 internal.use("/HTTP/form", express.urlencoded({
@@ -213,7 +213,7 @@ function requestAuthorizeLGTV(username, password) {
 }
 external.post("/LGTV/MAP", (request, response) => {
     if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, "command") && request.body.command.name === "udnsGet") {
-        const body = {"udns": Object.keys(lgtvControl)};
+        const body = {"udns": Object.keys(lgtvController)};
         response.
             type("json").
             status(200).
@@ -223,7 +223,7 @@ external.post("/LGTV/MAP", (request, response) => {
     }
 });
 external.post("/LGTV/RUN", (request, response) => {
-    lgtvControl.tvCommand(request.body.television, request.body.command).
+    lgtvController.tvCommand(request.body.television, request.body.command).
         then((res) => {
             response.
             type("json").
@@ -247,7 +247,7 @@ external.post("/LGTV/RUN", (request, response) => {
 });
 external.post("/LGTV/SKILL", (request, response) => {
 console.log(JSON.stringify(request.body, null, 2));
-    lgtvControl.skillCommand(request.body).
+    lgtvController.skillCommand(request.body).
         then((res) => {
 console.log(JSON.stringify(res, null, 2));
             response.

@@ -2,7 +2,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvControl, _event, _udn) {
+function capabilities(_lgtvController, _event, _udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -24,9 +24,9 @@ function capabilities(_lgtvControl, _event, _udn) {
     });
 }
 
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return new Promise((resolve) => {
-        if (lgtvControl.getPowerState(udn) === "OFF") {
+        if (lgtvController.getPowerState(udn) === "OFF") {
             resolve([]);
             return;
         }
@@ -34,7 +34,7 @@ function states(lgtvControl, udn) {
         const command = {
             "uri": "ssap://audio/getVolume"
         };
-        resolve(lgtvControl.lgtvCommand(udn, command).
+        resolve(lgtvController.lgtvCommand(udn, command).
             then((response) => {
                 const volumeState = AlexaResponse.createContextProperty({
                     "namespace": "Alexa.Speaker",
@@ -55,7 +55,7 @@ function states(lgtvControl, udn) {
     });
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.Speaker") {
             resolve(namespaceErrorResponse(event, "Alexa.Speaker"));
@@ -63,22 +63,22 @@ function handler(lgtvControl, event) {
         }
         switch (event.directive.header.name) {
             case "SetVolume":
-                resolve(setVolumeHandler(lgtvControl, event));
+                resolve(setVolumeHandler(lgtvController, event));
                 break;
             case "AdjustVolume":
-                resolve(adjustVolumeHandler(lgtvControl, event));
+                resolve(adjustVolumeHandler(lgtvController, event));
                 break;
             case "SetMute":
-                resolve(setMuteHandler(lgtvControl, event));
+                resolve(setMuteHandler(lgtvController, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvController, event));
                 break;
         }
     });
 }
 
-function setVolumeHandler(lgtvControl, event) {
+function setVolumeHandler(lgtvController, event) {
     return getVolume().
         then(setVolume);
 
@@ -103,7 +103,7 @@ function setVolumeHandler(lgtvControl, event) {
                 "payload": {"volume": volume}
             };
             // eslint-disable-next-line no-unused-vars
-            resolve(lgtvControl.lgtvCommand(endpointId, command).
+            resolve(lgtvController.lgtvCommand(endpointId, command).
                 then(() => {
                     const alexaResponse = new AlexaResponse({
                         "request": event
@@ -114,7 +114,7 @@ function setVolumeHandler(lgtvControl, event) {
     }
 }
 
-function adjustVolumeHandler(lgtvControl, event) {
+function adjustVolumeHandler(lgtvController, event) {
     return getVolume().
         then(setVolume);
 
@@ -125,7 +125,7 @@ function adjustVolumeHandler(lgtvControl, event) {
             const command = {
                 "uri": "ssap://audio/getVolume"
             };
-            resolve(lgtvControl.lgtvCommand(endpointId, command).
+            resolve(lgtvController.lgtvCommand(endpointId, command).
                 then((response) => {
                     if (!Reflect.has(response, "volume")) {
                         resolve(errorResponse(
@@ -162,7 +162,7 @@ function adjustVolumeHandler(lgtvControl, event) {
                 "uri": "ssap://audio/setVolume",
                 "payload": {"volume": volume}
             };
-            resolve(lgtvControl.lgtvCommand(endpointId, command).
+            resolve(lgtvController.lgtvCommand(endpointId, command).
                 then(() => {
                     const alexaResponse = new AlexaResponse({
                         "request": event
@@ -173,7 +173,7 @@ function adjustVolumeHandler(lgtvControl, event) {
     }
 }
 
-function setMuteHandler(lgtvControl, event) {
+function setMuteHandler(lgtvController, event) {
     return setMute();
 
     function setMute() {
@@ -183,7 +183,7 @@ function setMuteHandler(lgtvControl, event) {
                 "uri": "ssap://audio/setMute",
                 "payload": {"mute": event.directive.payload.mute}
             };
-            resolve(lgtvControl.lgtvCommand(endpointId, command).
+            resolve(lgtvController.lgtvCommand(endpointId, command).
                 then(() => {
                     const alexaResponse = new AlexaResponse({
                         "request": event

@@ -3,7 +3,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvControl, _event, _udn) {
+function capabilities(_lgtvController, _event, _udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -14,13 +14,13 @@ function capabilities(_lgtvControl, _event, _udn) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return new Promise((resolve) => {
         resolve([]);
     });
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.ChannelController") {
             resolve(namespaceErrorResponse(event, "Alexa.ChannelController"));
@@ -28,19 +28,19 @@ function handler(lgtvControl, event) {
         }
         switch (event.directive.header.name) {
             case "ChangeChannel":
-                resolve(changeChannelHandler(lgtvControl, event));
+                resolve(changeChannelHandler(lgtvController, event));
                 break;
             case "SkipChannels":
-                resolve(skipChannelsHandler(lgtvControl, event));
+                resolve(skipChannelsHandler(lgtvController, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvController, event));
                 break;
         }
     });
 }
 
-function changeChannelHandler(lgtvControl, event) {
+function changeChannelHandler(lgtvController, event) {
     return getCommand().
         then(setChannel);
 
@@ -95,7 +95,7 @@ function changeChannelHandler(lgtvControl, event) {
         return new Promise((resolve) => {
             if (command !== null) {
                 const {endpointId} = event.directive.endpoint;
-                resolve(lgtvControl.lgtvCommand(endpointId, command).
+                resolve(lgtvController.lgtvCommand(endpointId, command).
                     then((response) => {
                         if (Reflect.has(response, "returnValue") && (response.returnValue === false)) {
                             const alexaResponse = new AlexaResponse({
@@ -121,13 +121,13 @@ function changeChannelHandler(lgtvControl, event) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function skipChannelsHandler(_lgtvControl, _event) {
+function skipChannelsHandler(_lgtvController, _event) {
     return new Promise((resolve) => {
         resolve(null);
     });
 }
 
-function unknownChannelError(lgtvControl, event) {
+function unknownChannelError(lgtvController, event) {
     return errorResponse(event, "INVALID_VALUE", "The gateway doesn't recognize channel.");
 }
 

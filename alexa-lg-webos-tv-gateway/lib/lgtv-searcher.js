@@ -20,7 +20,7 @@ const arp = require("node-arp");
 const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
 
-class LGTVSearch extends EventEmitter {
+class LGTVSearcher extends EventEmitter {
     constructor() {
 
         super();
@@ -186,4 +186,4 @@ class LGTVSearch extends EventEmitter {
     }
 }
 
-module.exports = LGTVSearch;
+module.exports = LGTVSearcher;

@@ -56,7 +56,7 @@ const lgtvToAlexa = {
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvControl, _event, _udn) {
+function capabilities(_lgtvController, _event, _udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -78,14 +78,14 @@ function capabilities(_lgtvControl, _event, _udn) {
     });
 }
 
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return getInput().
         then(mapInput).
         then(buildStates);
 
     function getInput() {
         return new Promise((resolve) => {
-            if (lgtvControl.getPowerState(udn) === "OFF") {
+            if (lgtvController.getPowerState(udn) === "OFF") {
                 resolve(null);
                 return;
             }
@@ -93,7 +93,7 @@ function states(lgtvControl, udn) {
             const command = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            resolve(lgtvControl.lgtvCommand(udn, command));
+            resolve(lgtvController.lgtvCommand(udn, command));
         });
     }
 
@@ -123,7 +123,7 @@ function states(lgtvControl, udn) {
     }
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.Launcher") {
             resolve(namespaceErrorResponse(event, "Alexa.Launcher"));
@@ -131,10 +131,10 @@ function handler(lgtvControl, event) {
         }
         switch (event.directive.header.name) {
             case "LaunchTarget":
-                resolve(launchTargetHandler(lgtvControl, event));
+                resolve(launchTargetHandler(lgtvController, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvController, event));
                 break;
         }
     });
@@ -146,7 +146,7 @@ function handler(lgtvControl, event) {
  * A list of LG webOS TV target ids can be found bet issuing the command
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
-function launchTargetHandler(lgtvControl, event) {
+function launchTargetHandler(lgtvController, event) {
     return new Promise((resolve) => {
         if (Reflect.has(alexaToLGTV, event.directive.payload.identifier)) {
             resolve(errorResponse(
@@ -162,7 +162,7 @@ function launchTargetHandler(lgtvControl, event) {
             "payload": alexaToLGTV[event.directive.payload.identifier]
         };
         // eslint-disable-next-line no-unused-vars
-        resolve(lgtvControl.lgtvCommand(endpointId, command).
+        resolve(lgtvController.lgtvCommand(endpointId, command).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event

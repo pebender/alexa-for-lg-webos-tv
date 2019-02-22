@@ -8,14 +8,14 @@ const alexaInputController = require("./input-controller.js");
 const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve, reject) => {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
             namespaceErrorResponse(event, "Alexa.Discovery");
             return;
         }
 
-        lgtvControl.getDb().find(
+        lgtvController.getDb().find(
             {},
             (err, docs) => {
                 if (err) {
@@ -32,13 +32,13 @@ function handler(lgtvControl, event) {
         return new Promise((resolve) => {
             const [udn] = doc.udn;
             resolve(Promise.all([
-                    alexa.capabilities(lgtvControl, event, doc.udn),
-                    alexaPowerController.capabilities(lgtvControl, event, udn),
-                    alexaSpeaker.capabilities(lgtvControl, event, udn),
-                    alexaChannelController.capabilities(lgtvControl, event, udn),
-                    alexaInputController.capabilities(lgtvControl, event, udn),
-                    alexaLauncher.capabilities(lgtvControl, event, udn),
-                    alexaPlaybackController.capabilities(lgtvControl, event, udn)
+                    alexa.capabilities(lgtvController, event, doc.udn),
+                    alexaPowerController.capabilities(lgtvController, event, udn),
+                    alexaSpeaker.capabilities(lgtvController, event, udn),
+                    alexaChannelController.capabilities(lgtvController, event, udn),
+                    alexaInputController.capabilities(lgtvController, event, udn),
+                    alexaLauncher.capabilities(lgtvController, event, udn),
+                    alexaPlaybackController.capabilities(lgtvController, event, udn)
                 ]).
                 then(buildEndpointHandler).
                 catch(buildEndpointErrorHandler));

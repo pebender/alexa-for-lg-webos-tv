@@ -10,7 +10,7 @@ const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
 const {errorResponse} = require("../common");
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (!Reflect.has(event, "directive")) {
             resolve(missingKeyError(event, "directive"));
@@ -58,29 +58,29 @@ function handler(lgtvControl, event) {
             if (Reflect.has(event.directive, "endpoint") &&
                 Reflect.has(event.directive.endpoint, "endpointId")) {
                 const {endpointId} = event.directive.endpoint;
-                resolve(fn(lgtvControl, event).
-                    then((response) => stateHandler(lgtvControl, endpointId, response)));
+                resolve(fn(lgtvController, event).
+                    then((response) => stateHandler(lgtvController, endpointId, response)));
             } else {
-                resolve(fn(lgtvControl, event));
+                resolve(fn(lgtvController, event));
             }
         } else {
-            resolve(unknownNamespaceError(lgtvControl, event));
+            resolve(unknownNamespaceError(lgtvController, event));
         }
     });
 }
 
-function stateHandler(lgtvControl, udn, response) {
+function stateHandler(lgtvController, udn, response) {
     return new Promise((resolve) => {
         const alexaResponse = new AlexaResponse(response);
         const startTime = new Date();
         resolve(Promise.all([
-                alexa.states(lgtvControl, udn),
-                alexaPowerController.states(lgtvControl, udn),
-                alexaSpeaker.states(lgtvControl, udn),
-                alexaChannelController.states(lgtvControl, udn),
-                alexaInputController.states(lgtvControl, udn),
-                alexaLauncher.states(lgtvControl, udn),
-                alexaPlaybackController.states(lgtvControl, udn)
+                alexa.states(lgtvController, udn),
+                alexaPowerController.states(lgtvController, udn),
+                alexaSpeaker.states(lgtvController, udn),
+                alexaChannelController.states(lgtvController, udn),
+                alexaInputController.states(lgtvController, udn),
+                alexaLauncher.states(lgtvController, udn),
+                alexaPlaybackController.states(lgtvController, udn)
             ]).
             then((values) => {
                 const endTime = new Date();
@@ -103,7 +103,7 @@ function stateHandler(lgtvControl, udn, response) {
     });
 }
 
-function unknownNamespaceError(lgtvControl, event) {
+function unknownNamespaceError(lgtvController, event) {
     return errorResponse(
         event,
         "INTERNAL_ERROR",

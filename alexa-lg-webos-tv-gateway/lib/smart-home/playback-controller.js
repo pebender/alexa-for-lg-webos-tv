@@ -2,7 +2,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse} = require("../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvControl, _event, _udn) {
+function capabilities(_lgtvController, _event, _udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -20,13 +20,13 @@ function capabilities(_lgtvControl, _event, _udn) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(lgtvControl, udn) {
+function states(lgtvController, udn) {
     return new Promise((resolve) => {
         resolve([]);
     });
 }
 
-function handler(lgtvControl, event) {
+function handler(lgtvController, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.PlaybackController") {
             resolve(namespaceErrorResponse("Alexa.PlaybackController"));
@@ -34,54 +34,54 @@ function handler(lgtvControl, event) {
         }
         switch (event.directive.header.name) {
             case "Play":
-                resolve(playHandler(lgtvControl, event));
+                resolve(playHandler(lgtvController, event));
                 break;
             case "Pause":
-                resolve(pauseHandler(lgtvControl, event));
+                resolve(pauseHandler(lgtvController, event));
                 break;
             case "Stop":
-                resolve(stopHandler(lgtvControl, event));
+                resolve(stopHandler(lgtvController, event));
                 break;
             case "Rewind":
-                resolve(rewindHandler(lgtvControl, event));
+                resolve(rewindHandler(lgtvController, event));
                 break;
             case "FastForward":
-                resolve(fastForwardHandler(lgtvControl, event));
+                resolve(fastForwardHandler(lgtvController, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvControl, event));
+                resolve(directiveErrorResponse(lgtvController, event));
                 break;
         }
     });
 }
 
-function playHandler(lgtvControl, event) {
-    return genericHandler(lgtvControl, event, "ssap://media.controls/play");
+function playHandler(lgtvController, event) {
+    return genericHandler(lgtvController, event, "ssap://media.controls/play");
 }
 
-function pauseHandler(lgtvControl, event) {
-    return genericHandler(lgtvControl, event, "ssap://media.controls/pause");
+function pauseHandler(lgtvController, event) {
+    return genericHandler(lgtvController, event, "ssap://media.controls/pause");
 }
 
-function stopHandler(lgtvControl, event) {
-    return genericHandler(lgtvControl, event, "ssap://media.controls/stop");
+function stopHandler(lgtvController, event) {
+    return genericHandler(lgtvController, event, "ssap://media.controls/stop");
 }
 
-function rewindHandler(lgtvControl, event) {
-    return genericHandler(lgtvControl, event, "ssap://media.controls/rewind");
+function rewindHandler(lgtvController, event) {
+    return genericHandler(lgtvController, event, "ssap://media.controls/rewind");
 }
 
-function fastForwardHandler(lgtvControl, event) {
-    return genericHandler(lgtvControl, event, "ssap://media.controls/fastForward");
+function fastForwardHandler(lgtvController, event) {
+    return genericHandler(lgtvController, event, "ssap://media.controls/fastForward");
 }
 
-function genericHandler(lgtvControl, event, commandURI) {
+function genericHandler(lgtvController, event, commandURI) {
     return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
         const command = {
             "uri": commandURI
         };
-        resolve(lgtvControl.lgtvCommand(endpointId, command).
+        resolve(lgtvController.lgtvCommand(endpointId, command).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event
