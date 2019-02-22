@@ -150,6 +150,7 @@ function adjustVolumeHandler(lgtvControl, event) {
                     if (volume > 100) {
                         volume = 100;
                     }
+                    return volume;
                 }));
         });
     }
