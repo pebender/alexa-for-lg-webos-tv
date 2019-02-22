@@ -32,17 +32,15 @@ function ipAddressOctetCapability(octet) {
     };
     const texts = textsList[octet];
     const instance = octet;
-    const friendlyNames = [];
-    let index = 0;
-    for (index = 0; index < texts.length; index += 1) {
-        friendlyNames.push({
+    const friendlyNames = texts.map((text) => {
+        return {
             "@type": "text",
             "value": {
-                "text": texts[index],
+                "text": text,
                 "locale": "en-US"
             }
-        });
-    }
+        };
+    });
 
     return {
         "type": "AlexaInterface",

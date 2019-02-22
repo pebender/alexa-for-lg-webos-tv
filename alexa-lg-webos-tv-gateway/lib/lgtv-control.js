@@ -30,14 +30,14 @@ class LGTVControl extends EventEmitter {
                 that.emit("error", error);
                 return;
             }
-            let index = 0;
-            for (index = 0; index < docs.length; index += 1) {
-                if (!(docs[index].udn in that.private.controls)) {
-                    that.private.controls[docs[index].udn] = new LGTVControlOne(that.private.db, docs[index]);
-                    eventsAdd(docs[index].udn);
+            docs.forEach((doc) => {
+                if (!(doc.udn in that.private.controls)) {
+                    that.private.controls[doc.udn] = new LGTVControlOne(that.private.db, doc);
+                    eventsAdd(doc.udn);
                 }
-            }
+            });
         });
+
         function eventsAdd(udn) {
             that.private.controls[udn].on("error", (error) => {
                 that.emit("error", error, udn);

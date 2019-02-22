@@ -246,19 +246,16 @@ external.post("/LGTV/RUN", (request, response) => {
     });
 });
 external.post("/LGTV/SKILL", (request, response) => {
-console.log("abc");
 console.log(JSON.stringify(request.body, null, 2));
-console.log("qrs");
     lgtvControl.skillCommand(request.body).
         then((res) => {
+console.log(JSON.stringify(res, null, 2));
             response.
                 type("json").
                 status(200).
                 json(res).
                 end();
-console.log("xyz");
-console.log(JSON.stringify(res, null, 2));
-            }).
+        }).
         catch((err) => {
             const alexaResponse = new AlexaResponse({
                 "name": "ErrorResponse",
@@ -275,7 +272,6 @@ console.log(JSON.stringify(res, null, 2));
         });
 });
 external.get("/LGTV/PING", (request, response) => {
-console.log(`hello ${request.originalUrl}`);
     response.
         status(200).
         end();

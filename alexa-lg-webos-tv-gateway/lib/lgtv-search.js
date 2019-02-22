@@ -118,7 +118,7 @@ class LGTVSearch extends EventEmitter {
              * and Unique Device Name (UDN).
              */
             if (!("LOCATION" in headers)) {
-                callback(null);
+                callback(null, null);
                 return;
             }
             http.get(headers.LOCATION).then((descriptionXml) => {

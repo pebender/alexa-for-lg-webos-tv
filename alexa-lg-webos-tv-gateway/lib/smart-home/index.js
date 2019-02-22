@@ -87,19 +87,16 @@ function stateHandler(lgtvControl, udn, response) {
                 const timeOfSample = endTime.toISOString();
                 const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
                 const contextProperties = [];
-                let index = 0;
-                for (index = 0; index < values.length; index += 1) {
-                    if (values && values[index].length > 0) {
-                        contextProperties.push(...values[index]);
+                values.forEach((value) => {
+                    if (value.length > 0) {
+                        contextProperties.push(...value);
                     }
-                }
-                if (contextProperties.length > 0) {
-                    for (index = 0; index < contextProperties.length; index += 1) {
-                        contextProperties[index].timeOfSample = timeOfSample;
-                        contextProperties[index].uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-                        alexaResponse.addContextProperty(contextProperties[index]);
-                    }
-                }
+                });
+                contextProperties.forEach((contextProperty) => {
+                    contextProperty.timeOfSample = timeOfSample;
+                    contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
+                    alexaResponse.addContextProperty(contextProperty);
+                });
                 return alexaResponse.get();
             }).
             catch(() => alexaResponse.get()));

@@ -112,17 +112,16 @@ function states(lgtvControl, udn) {
 
             let input = null;
             if (appId !== null) {
-                let index = 0;
-                for (index = 0; index < inputList.length; index += 1) {
-                    if (inputList[index].appId === appId) {
-                        input = inputList[index].id;
+                inputList.forEach((value) => {
+                    if (value.appId === appId) {
+                        input = value.id;
                         if (Reflect.has(lgtvToAlexa, input)) {
                             input = lgtvToAlexa[input];
                         } else {
                             input = input.replace("_", " ");
                         }
                     }
-                }
+                });
             }
             resolve(input);
         });
@@ -205,10 +204,9 @@ function selectInputHandler(lgtvControl, event) {
                 input = alexaToLGTV[input];
             }
             let device = null;
-            let index = 0;
-            for (index = 0; index < inputList.length; index += 1) {
-                const id = inputList[index].id.toUpperCase();
-                const label = inputList[index].label.toUpperCase();
+            inputList.forEach((value) => {
+                const id = value.id.toUpperCase();
+                const label = value.label.toUpperCase();
                 if (id === input) {
                     device = id;
                 }
@@ -221,7 +219,7 @@ function selectInputHandler(lgtvControl, event) {
                 if (label === input.replace(/ /g, "_")) {
                     device = id;
                 }
-            }
+            });
             resolve(device);
         });
     }
