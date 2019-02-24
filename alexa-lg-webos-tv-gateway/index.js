@@ -11,9 +11,7 @@ const fs = require("fs-extra");
 const Datastore = require("nedb");
 const ppath = require("persist-path");
 const LGTV = require("./lib/lgtv");
-const ServerSecurity = require("./lib/server/server-security");
-const ServerInternal = require("./lib/server/server-internal");
-const ServerExternal = require("./lib/server/server-external");
+const Server = require("./lib/server");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -65,7 +63,6 @@ lgtvDb.loadDatabase((error) => {
 lgtvDb.ensureIndex({"fieldName": "udn",
     "unique": true});
 
-const serverSecurity = new ServerSecurity(serverDb);
 
 const lgtv = new LGTV(lgtvDb);
 lgtv.on("error", (error) => {
@@ -73,8 +70,6 @@ lgtv.on("error", (error) => {
 });
 lgtv.initialize();
 
-const serverInternal = new ServerInternal(serverSecurity);
-serverInternal.start();
-
-const serverExternal = new ServerExternal(lgtv, serverSecurity);
-serverExternal.start();
+const server = new Server(lgtv, serverDb);
+server.initialize();
+server.start();

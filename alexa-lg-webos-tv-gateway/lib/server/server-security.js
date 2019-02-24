@@ -42,6 +42,11 @@ class ServerSecurity {
     }
 
     // eslint-disable-next-line class-methods-use-this
+    initialize() {
+        //
+    }
+
+    // eslint-disable-next-line class-methods-use-this
     get getRootUsername() {
         return Promise.resolve("HTTP");
     }

@@ -2,7 +2,7 @@ const express = require("express");
 const basicAuth = require("express-basic-auth");
 
 class ServerExternal {
-    constructor(lgtv, security) {
+    constructor(security, lgtv) {
         const that = this;
         that.private = {};
         that.private.lgtv = lgtv;
@@ -79,6 +79,11 @@ console.log(JSON.stringify(res, null, 2));
                 status(401).
                 end();
         });
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    initialize() {
+        //
     }
 
     start() {
