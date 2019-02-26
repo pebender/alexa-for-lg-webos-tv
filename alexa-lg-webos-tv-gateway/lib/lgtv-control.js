@@ -1,4 +1,4 @@
-const LGTVConnection = require("lgtv2");
+const LGTV = require("lgtv2");
 const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
@@ -34,7 +34,7 @@ class LGTVControl extends EventEmitter {
                 }
             );
         };
-        this.private.connection = new LGTVConnection({
+        this.private.connection = new LGTV({
             "url": this.private.tv.url,
             "timeout": 10000,
             "reconnect": 0,
