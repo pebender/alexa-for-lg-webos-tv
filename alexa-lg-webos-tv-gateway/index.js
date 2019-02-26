@@ -7,16 +7,14 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-const express = require("express");
-const basicAuth = require("express-basic-auth");
 const fs = require("fs-extra");
 const Datastore = require("nedb");
 const ppath = require("persist-path");
-const {constants} = require("alexa-lg-webos-tv-common");
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const ServerSecurity = require("./lib/server/server-security.js");
 const LGTVController = require("./lib/lgtv/lgtv-controller.js");
 const LGTVSearcher = require("./lib/lgtv/lgtv-searcher.js");
+const ServerSecurity = require("./lib/server/server-security.js");
+const ServerInternal = require("./lib/server/server-internal.js");
+const ServerExternal = require("./lib/server/server-external.js");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -45,7 +43,7 @@ try {
  * occures once at startup and because the database is needed before the LG
  * webOS TV gateway can run.
  */
-const serverDb = new Datastore({"filename": `${configurationDir}/http.nedb`});
+const serverDb = new Datastore({"filename": `${configurationDir}/server.nedb`});
 serverDb.loadDatabase((error) => {
     if (error) {
         throw error;
@@ -95,188 +93,8 @@ lgtvSearcher.on("found", (tv) => {
 });
 lgtvSearcher.now();
 
-const internal = express();
-internal.use("/HTTP/form", express.urlencoded({
-    "extended": false
-}));
-internal.get("/HTTP/form", (request, response) => {
-    serverSecurity.hostname = request.query.hostname;
-    if (("passwordDelete" in request.query) && (/^on$/i).test(request.query.passwordDelete)) {
-        serverSecurity.password = null;
-    }
-    const {hostname, password} = serverSecurity;
-    let hostnameHTML = "<p>The LG webOS TV gateway has no hostname.</p>";
-    if (hostname !== null) {
-        hostnameHTML = `<p>The LG webOS TV gateway hostname is ${hostname}.`;
-    }
-    let passwordHTML = "<p>The LG webOS TV gateway has no password.</p>";
-    if (password !== null) {
-        passwordHTML = "<p>The LG webOS TV gateway has a password.</p>";
-    }
-    const page = `<!DOCTYPE html>
-        <html>
-            <head>
-                <title>
-                    LG webOS TV gateway
-                </title>
-            </head>
-            <body>
-                <H1>LG webOS TV gateway</H1>
-                ${hostnameHTML}
-                ${passwordHTML}
-            </body>
-        </html>`;
-    response.
-        type("html").
-        status(200).
-        send(page).
-        end();
-});
-internal.get("/", (request, response) => {
-    let hostname = "";
-    if (serverSecurity.hostname !== null) {
-        ({hostname} = serverSecurity);
-    }
-    const page = `<!DOCTYPE html>
-        <html>
-            <head>
-                <title>
-                    LG webOS TV gateway
-                </title>
-            </head>
-            <body>
-                <H1>LG webOS TV gateway</H1>
-                    <form action="/HTTP/form" enctype="url-encoded" method="get">
-                        <div>
-                            <label for="hostname_label">LG webOS TV gateway hostname:</label>
-                            <input type="text" id="hostname_id" name="hostname" value="${hostname}">
-                        </div>
-                        <div>
-                            <label for="hostname_label">LG webOS TV gateway password delete:</label>
-                            <input type="checkbox" id="passwordDelete_id" name="passwordDelete">
-                        </div>
-                        <div class="button">
-                            <button type="submit">submit your changes</submit>
-                        </div>
-                    </form>
-            </body>
-        </html>`;
-    response.
-        type("html").
-        status(200).
-        send(page).
-        end();
-});
-internal.listen(25393);
+const internal = new ServerInternal(serverSecurity);
+const external = new ServerExternal(serverSecurity, lgtvController);
 
-const external = express();
-external.use("/", express.json());
-external.use("/HTTP", basicAuth({"authorizer": requestAuthorizeHTTP}));
-function requestAuthorizeHTTP(username, password) {
-    if (username === "HTTP" && password === constants.password) {
-        return true;
-    }
-    return false;
-}
-external.post("/HTTP", (request, response) => {
-    if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
-        if (serverSecurity.password === null) {
-            serverSecurity.password = request.body.command.value;
-            response.
-                type("json").
-                status(200).
-                json({}).
-                end();
-        } else {
-            const body = {
-                "error": {
-                    "message": "Gateway's password is already set."
-                }
-            };
-            response.
-                type("json").
-                status(200).
-                json(body).
-                end();
-        }
-    } else {
-        response.status(400).end();
-    }
-});
-external.use("/LGTV", basicAuth({"authorizer": requestAuthorizeLGTV}));
-function requestAuthorizeLGTV(username, password) {
-//    if (username === serverSecurity.username && password === serverSecurity.password) {
-    if (username === serverSecurity.username && password === "0") {
-        return true;
-    }
-    return false;
-}
-external.post("/LGTV/MAP", (request, response) => {
-    if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, "command") && request.body.command.name === "udnsGet") {
-        const body = {"udns": Object.keys(lgtvController)};
-        response.
-            type("json").
-            status(200).
-            json(body).
-            send().
-            end();
-    }
-});
-external.post("/LGTV/RUN", (request, response) => {
-    lgtvController.tvCommand(request.body.television, request.body.command).
-        then((res) => {
-            response.
-            type("json").
-            status(200).
-            json(res).
-            end();
-        }).
-        catch((err) => {
-            const body = {
-                "error": {
-                    "name": err.name,
-                    "message": err.message
-                }
-            };
-            response.
-                type("json").
-                status(200).
-                json(body).
-                end();
-    });
-});
-external.post("/LGTV/SKILL", (request, response) => {
-console.log(JSON.stringify(request.body, null, 2));
-    lgtvController.skillCommand(request.body).
-        then((res) => {
-console.log(JSON.stringify(res, null, 2));
-            response.
-                type("json").
-                status(200).
-                json(res).
-                end();
-        }).
-        catch((err) => {
-            const alexaResponse = new AlexaResponse({
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `${err.name}: ${err.message}`
-                }
-            });
-            response.
-                type("json").
-                status(200).
-                json(alexaResponse.get()).
-                end();
-        });
-});
-external.get("/LGTV/PING", (request, response) => {
-    response.
-        status(200).
-        end();
-});
-external.post("/", (request, response) => {
-    response.status(401).end();
-});
-external.listen(25391, "localhost");
+internal.start();
+external.start();
