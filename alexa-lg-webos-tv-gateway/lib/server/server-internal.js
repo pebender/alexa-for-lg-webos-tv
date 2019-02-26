@@ -1,4 +1,5 @@
 const express = require("express");
+const {UnititializedClassError} = require("../common");
 
 class ServerInternal {
     constructor(serverSecurity) {
@@ -17,6 +18,11 @@ class ServerInternal {
         }
         this.private.initializing = true;
         const that = this;
+
+        if (that.private.initialized === true) {
+            that.private.initializing = false;
+            return;
+        }
 
         that.private.server = express();
 
@@ -92,14 +98,13 @@ class ServerInternal {
                 end();
         });
         that.private.initialized = true;
-        that.private.initializing = true;
+        that.private.initializing = false;
     }
 
     start() {
         const that = this;
-
         if (that.private.initialized === false) {
-            that.initialize();
+            throw new UnititializedClassError("ServerInternal", "start");
         }
 
         return that.private.server.listen(25393);

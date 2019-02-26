@@ -19,12 +19,11 @@ const EventEmitter = require("events");
 const arp = require("node-arp");
 const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
+const {UnititializedClassError} = require("../common");
 
 class LGTVSearcher extends EventEmitter {
     constructor() {
-
         super();
-
         const that = this;
 
         that.private = {};
@@ -42,7 +41,7 @@ class LGTVSearcher extends EventEmitter {
 
         const that = this;
         if (that.private.initialized === true) {
-            that.private.initializing = true;
+            that.private.initializing = false;
             return;
         }
 
@@ -195,10 +194,15 @@ class LGTVSearcher extends EventEmitter {
                 });
             });
         }
+        that.private.initialized = true;
+        that.private.initializing = false;
     }
 
     now() {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVSearcher", "now");
+        }
 
         that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }

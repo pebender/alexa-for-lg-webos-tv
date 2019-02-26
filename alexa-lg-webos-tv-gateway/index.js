@@ -95,7 +95,8 @@ serverSecurity.initialize((error) => {
         throw error;
     }
 });
-
+serverInternal.initialize();
+serverExternal.initialize();
 
 serverInternal.start();
 serverExternal.start();

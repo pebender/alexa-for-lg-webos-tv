@@ -1,3 +1,5 @@
+const {UnititializedClassError} = require("../common");
+
 class ServerSecurity {
     constructor(db) {
         const that = this;
@@ -17,18 +19,25 @@ class ServerSecurity {
             return;
         }
         this.private.initializing = true;
+
         const that = this;
+        if (that.private.initialized === true) {
+            that.private.initializing = false;
+            return;
+        }
 
         that.private.db.findOne(
             {"username": that.private.dbRecord.username},
             (err, doc) => {
                 if (err) {
+                    that.private.initializing = false;
                     callback(err);
                     return;
                 } else if (doc === null) {
                     // eslint-disable-next-line no-unused-vars
                     that.private.db.insert(that.private.dbRecord, (error, _doc) => {
                         if (error) {
+                            that.private.initializing = false;
                             callback(error);
                             // eslint-disable-next-line no-useless-return
                             return;
@@ -41,23 +50,32 @@ class ServerSecurity {
             }
         );
         that.private.initialized = true;
-        that.private.initializing = true;
+        that.private.initializing = false;
     }
 
     get username() {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("ServerSecurity", "get+username");
+        }
 
         return that.private.dbRecord.username;
     }
 
     get password() {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("ServerSecurity", "get+password");
+        }
 
         return that.private.dbRecord.password;
     }
 
     set password(value) {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("ServerSecurity", "set+password");
+        }
 
         if (typeof value === "undefined") {
             that.private.dbRecord.password = null;
@@ -84,12 +102,18 @@ class ServerSecurity {
 
     get hostname() {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("ServerSecurity", "get+hostname");
+        }
 
         return that.private.dbRecord.hostname;
     }
 
     set hostname(value) {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("ServerSecurity", "set+hostname");
+        }
 
         if (typeof value === "undefined") {
             that.private.dbRecord.hostname = null;

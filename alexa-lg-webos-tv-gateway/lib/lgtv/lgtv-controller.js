@@ -6,9 +6,7 @@ const LGTVControl = require("./lgtv-control");
 
 class LGTVController extends EventEmitter {
     constructor (db) {
-
         super();
-
         const that = this;
 
         that.private = {};
@@ -36,7 +34,7 @@ class LGTVController extends EventEmitter {
 
         const that = this;
         if (that.private.initialized === true) {
-            that.private.initializing = true;
+            that.private.initializing = false;
             callback(null, null);
             return;
         }

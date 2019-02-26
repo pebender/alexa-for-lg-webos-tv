@@ -11,6 +11,7 @@ const express = require("express");
 const basicAuth = require("express-basic-auth");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {UnititializedClassError} = require("../common");
 
 class ServerExternal {
     constructor(serverSecurity, lgtvController) {
@@ -32,7 +33,8 @@ class ServerExternal {
 
         const that = this;
 
-        if (that.private.initialized) {
+        if (that.private.initialized === true) {
+            that.private.initializing = false;
             return;
         }
 
@@ -148,14 +150,13 @@ class ServerExternal {
             response.status(401).end();
         });
         that.private.initialized = true;
-        that.private.initializing = true;
+        that.private.initializing = false;
     }
 
     start() {
         const that = this;
-
         if (that.private.initialized === false) {
-            that.initialize();
+            throw new UnititializedClassError("ServerExternal", "start");
         }
 
         that.private.server.listen(25391, "localhost");
