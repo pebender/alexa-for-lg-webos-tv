@@ -28,7 +28,7 @@ class ServerSecurity {
             return;
         }
 
-        that.private.db.findOne(
+        that.private.db.db.findOne(
             {"username": that.private.dbRecord.username},
             (err, doc) => {
                 if (err) {
@@ -38,7 +38,7 @@ class ServerSecurity {
                 }
                 if (doc === null) {
                     // eslint-disable-next-line no-unused-vars
-                    that.private.db.insert(that.private.dbRecord, (error, _doc) => {
+                    that.private.db.db.insert(that.private.dbRecord, (error, _doc) => {
                         if (error) {
                             that.private.initializing = false;
                             callback(error);
@@ -105,7 +105,7 @@ class ServerSecurity {
         } else {
             that.private.dbRecord.password = value.toString();
         }
-        that.private.db.update(
+        that.private.db.db.update(
             {"username": that.private.dbRecord.username},
             {"$set": {"password": that.private.dbRecord.password}}
         );
@@ -143,7 +143,7 @@ class ServerSecurity {
         } else {
             that.private.dbRecord.hostname = value.toString();
         }
-        that.private.db.update(
+        that.private.db.db.update(
             {"username": that.private.dbRecord.username},
             {"$set": {"hostname": that.private.dbRecord.hostname}}
         );

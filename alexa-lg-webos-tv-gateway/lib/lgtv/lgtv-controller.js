@@ -39,7 +39,7 @@ class LGTVController extends EventEmitter {
             return;
         }
 
-        that.private.db.find({}, (error, docs) => {
+        that.private.db.db.find({}, (error, docs) => {
             if (error) {
                 that.private.initialized = false;
                 that.private.initializing = false;
@@ -70,7 +70,7 @@ class LGTVController extends EventEmitter {
             throw new UnititializedClassError("LGTVController", "tvUpsert");
         }
 
-        that.private.db.findOne({"$and": [
+        that.private.db.db.findOne({"$and": [
             {"udn": tv.udn},
             {"name": tv.name},
             {"ip": tv.ip},
@@ -85,7 +85,7 @@ class LGTVController extends EventEmitter {
                 if (Reflect.has(that.private.controls, tv.udn) === true) {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
-                that.private.db.update(
+                that.private.db.db.update(
                     {"udn": tv.udn},
                     {
                         "udn": tv.udn,

@@ -49,8 +49,8 @@ lgtvDb.initialize((error) => {
     }
 });
 
-const lgtv = new LGTV(lgtvDb.db);
-const server = new Server(serverDb.db, lgtv);
+const lgtv = new LGTV(lgtvDb);
+const server = new Server(serverDb, lgtv);
 
 lgtv.on("error", (error, id) => {
     console.log(id);

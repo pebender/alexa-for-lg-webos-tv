@@ -24,7 +24,7 @@ class LGTVControl extends EventEmitter {
         that.private.tv.mac = tv.mac;
 
         function saveKey(key, callback) {
-            that.private.db.update(
+            that.private.db.db.update(
                 {"udn": that.private.tv.udn},
                 {"$set": {"key": key}},
                 // eslint-disable-next-line no-unused-vars
