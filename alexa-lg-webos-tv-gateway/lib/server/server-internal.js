@@ -116,11 +116,6 @@ class ServerInternal {
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    initialize() {
-        //
-    }
-
     start() {
         this.private.server.listen(25393);
     }
