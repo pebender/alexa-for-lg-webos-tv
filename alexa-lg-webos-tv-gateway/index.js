@@ -10,11 +10,8 @@
 const fs = require("fs-extra");
 const Datastore = require("nedb");
 const ppath = require("persist-path");
-const LGTVController = require("./lib/lgtv/lgtv-controller");
-const LGTVSearcher = require("./lib/lgtv/lgtv-searcher");
-const ServerSecurity = require("./lib/server/server-security");
-const ServerInternal = require("./lib/server/server-internal");
-const ServerExternal = require("./lib/server/server-external");
+const LGTV = require("./lib/lgtv");
+const Server = require("./lib/server");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -66,37 +63,23 @@ lgtvDb.loadDatabase((error) => {
 lgtvDb.ensureIndex({"fieldName": "udn",
     "unique": true});
 
-const lgtvController = new LGTVController(lgtvDb);
-const lgtvSearcher = new LGTVSearcher();
-// eslint-disable-next-line no-unused-vars
-lgtvController.on("error", (error, _udn) => {
-    console.error(error);
+const lgtv = new LGTV(lgtvDb);
+const server = new Server(serverDb, lgtv);
+
+lgtv.on("error", (error, id) => {
+    console.log(id);
+    console.log(error);
 });
-lgtvController.initialize((error) => {
-    if (error) {
-        throw error;
+
+lgtv.initialize((lgtvError) => {
+    if (lgtvError) {
+        throw lgtvError;
     }
+    lgtv.start();
+    server.initialize((serverError) => {
+        if (serverError) {
+            throw serverError;
+        }
+        server.start();
+    });
 });
-lgtvSearcher.on("error", (error) => {
-    console.error(error);
-});
-lgtvSearcher.on("found", (tv) => {
-    lgtvController.tvUpsert(tv);
-});
-lgtvSearcher.initialize();
-lgtvSearcher.now();
-
-const serverSecurity = new ServerSecurity(serverDb);
-const serverInternal = new ServerInternal(serverSecurity);
-const serverExternal = new ServerExternal(serverSecurity, lgtvController);
-
-serverSecurity.initialize((error) => {
-    if (error) {
-        throw error;
-    }
-});
-serverInternal.initialize();
-serverExternal.initialize();
-
-serverInternal.start();
-serverExternal.start();

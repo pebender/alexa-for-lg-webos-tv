@@ -33,8 +33,9 @@ class LGTVSearcher extends EventEmitter {
         that.private.ssdpResponse = null;
     }
 
-    initialize() {
+    initialize(callback) {
         if (this.private.initializing === true) {
+            callback(null);
             return;
         }
         this.private.initializing = true;
@@ -42,6 +43,7 @@ class LGTVSearcher extends EventEmitter {
         const that = this;
         if (that.private.initialized === true) {
             that.private.initializing = false;
+            callback(null);
             return;
         }
 
@@ -96,7 +98,7 @@ class LGTVSearcher extends EventEmitter {
             setTimeout(periodic, 1800000);
         }
 
-        function ssdpProcess(type, headers, rinfo, callback) {
+        function ssdpProcess(type, headers, rinfo, cb) {
             const tv = {};
             const typeMap = {
                 "advertise-alive": "NT",
@@ -104,24 +106,24 @@ class LGTVSearcher extends EventEmitter {
                 "response": "ST"
             };
             if (!(type in typeMap)) {
-                callback(null, null);
+                cb(null, null);
                 return;
             }
             // Make sure it is webOS and UPnP 1.0 or 1.1.
             if (!("SERVER" in headers) ||
                 !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
-                callback(null, null);
+                cb(null, null);
                 return;
             }
             // Make sure it is the webOS second screen service.
             if (!(typeMap[type] in headers) ||
                 headers[typeMap[type]] !== "urn:lge-com:service:webos-second-screen:1") {
-                callback(null, null);
+                cb(null, null);
                 return;
             }
             // Get the IP address associated with the TV.
             if (!("address" in rinfo)) {
-                callback(null, null);
+                cb(null, null);
                 return;
             }
             tv.ip = rinfo.address;
@@ -133,17 +135,17 @@ class LGTVSearcher extends EventEmitter {
              * and Unique Device Name (UDN).
              */
             if (!("LOCATION" in headers)) {
-                callback(null, null);
+                cb(null, null);
                 return;
             }
             http.get(headers.LOCATION).then((descriptionXml) => {
                 xml2js(descriptionXml.data, (error, description) => {
                     if (error) {
-                        callback(error, null);
+                        cb(error, null);
                         return error;
                     }
                     if (!description) {
-                        callback(null, null);
+                        cb(null, null);
                         return null;
                     }
 
@@ -160,7 +162,7 @@ class LGTVSearcher extends EventEmitter {
                         description.root.device[0].friendlyName.length !== 1 ||
                         !("UDN" in description.root.device[0]) ||
                         description.root.device[0].UDN.length !== 1) {
-                        callback(null, null);
+                        cb(null, null);
                         return null;
                     }
 
@@ -171,7 +173,7 @@ class LGTVSearcher extends EventEmitter {
                     if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
                         description.root.device[0].friendlyName[0] === "" ||
                         description.root.device[0].UDN[0] === "") {
-                        callback(null, null);
+                        cb(null, null);
                         return null;
                     }
                     [tv.name] = description.root.device[0].friendlyName;
@@ -183,11 +185,11 @@ class LGTVSearcher extends EventEmitter {
                      */
                     arp.getMAC(tv.ip, (err, mac) => {
                         if (err) {
-                            callback(err, null);
+                            cb(err, null);
                             return err;
                         }
                         tv.mac = mac;
-                        callback(null, tv);
+                        cb(null, tv);
                         return null;
                     });
                     return null;
@@ -196,6 +198,7 @@ class LGTVSearcher extends EventEmitter {
         }
         that.private.initialized = true;
         that.private.initializing = false;
+        callback(null);
     }
 
     now() {

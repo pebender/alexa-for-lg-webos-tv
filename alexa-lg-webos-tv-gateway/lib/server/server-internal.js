@@ -12,8 +12,9 @@ class ServerInternal {
         that.private.server = null;
     }
 
-    initialize() {
+    initialize(callback) {
         if (this.private.initializing === true) {
+            callback(null);
             return;
         }
         this.private.initializing = true;
@@ -21,6 +22,7 @@ class ServerInternal {
 
         if (that.private.initialized === true) {
             that.private.initializing = false;
+            callback(null);
             return;
         }
 
@@ -99,6 +101,7 @@ class ServerInternal {
         });
         that.private.initialized = true;
         that.private.initializing = false;
+        callback(null);
     }
 
     start() {

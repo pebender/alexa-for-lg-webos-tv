@@ -16,6 +16,7 @@ class ServerSecurity {
 
     initialize(callback) {
         if (this.private.initializing === true) {
+            callback(null);
             return;
         }
         this.private.initializing = true;
@@ -23,6 +24,7 @@ class ServerSecurity {
         const that = this;
         if (that.private.initialized === true) {
             that.private.initializing = false;
+            callback(null);
             return;
         }
 
@@ -33,24 +35,33 @@ class ServerSecurity {
                     that.private.initializing = false;
                     callback(err);
                     return;
-                } else if (doc === null) {
+                }
+                if (doc === null) {
                     // eslint-disable-next-line no-unused-vars
                     that.private.db.insert(that.private.dbRecord, (error, _doc) => {
                         if (error) {
                             that.private.initializing = false;
                             callback(error);
-                            // eslint-disable-next-line no-useless-return
                             return;
                         }
+                        that.private.initialized = true;
+                        that.private.initializing = false;
+                        callback(null);
+                        // eslint-disable-next-line no-useless-return
+                        return;
                     });
+                } else {
+                    that.private.dbRecord.username = doc.username;
+                    that.private.dbRecord.password = doc.password;
+                    that.private.dbRecord.hostname = doc.hostname;
+                    that.private.initialized = true;
+                    that.private.initializing = false;
+                    callback(null);
+                    // eslint-disable-next-line no-useless-return
+                    return;
                 }
-                that.private.dbRecord.username = doc.username;
-                that.private.dbRecord.password = doc.password;
-                that.private.dbRecord.hostname = doc.hostname;
             }
         );
-        that.private.initialized = true;
-        that.private.initializing = false;
     }
 
     get username() {

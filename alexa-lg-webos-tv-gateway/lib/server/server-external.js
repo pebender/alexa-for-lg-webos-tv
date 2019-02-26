@@ -14,19 +14,20 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {UnititializedClassError} = require("../common");
 
 class ServerExternal {
-    constructor(serverSecurity, lgtvController) {
+    constructor(serverSecurity, lgtv) {
         const that = this;
 
         that.private = {};
         that.private.initialized = false;
         that.private.initializing = false;
         that.private.security = serverSecurity;
-        that.private.lgtvController = lgtvController;
+        that.private.lgtv = lgtv;
         that.private.server = null;
     }
 
-    initialize() {
+    initialize(callback) {
         if (this.private.initializing === true) {
+            callback(null);
             return;
         }
         this.private.initializing = true;
@@ -35,6 +36,7 @@ class ServerExternal {
 
         if (that.private.initialized === true) {
             that.private.initializing = false;
+            callback(null);
             return;
         }
 
@@ -81,19 +83,8 @@ class ServerExternal {
             }
             return false;
         }
-        that.private.server.post("/LGTV/MAP", (request, response) => {
-            if (Reflect.apply(Object.getOwnPropertyDescriptor.hasOwnProperty, request.body, "command") && request.body.command.name === "udnsGet") {
-                const body = {"udns": Object.keys(that.private.lgtvController)};
-                response.
-                    type("json").
-                    status(200).
-                    json(body).
-                    send().
-                    end();
-            }
-        });
         that.private.server.post("/LGTV/RUN", (request, response) => {
-            that.private.lgtvController.tvCommand(request.body.television, request.body.command).
+            that.private.lgtv.ontroller.tvCommand(request.body.television, request.body.command).
                 then((res) => {
                     response.
                     type("json").
@@ -117,7 +108,7 @@ class ServerExternal {
         });
         that.private.server.post("/LGTV/SKILL", (request, response) => {
         console.log(JSON.stringify(request.body, null, 2));
-            that.private.lgtvController.skillCommand(request.body).
+            that.private.lgtv.controller.skillCommand(request.body).
                 then((res) => {
         console.log(JSON.stringify(res, null, 2));
                     response.
@@ -151,6 +142,7 @@ class ServerExternal {
         });
         that.private.initialized = true;
         that.private.initializing = false;
+        callback(null);
     }
 
     start() {
