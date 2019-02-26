@@ -8,8 +8,8 @@
  */
 
 const fs = require("fs-extra");
-const Datastore = require("nedb");
 const ppath = require("persist-path");
+const DatabaseTable = require("./lib/database");
 const LGTV = require("./lib/lgtv");
 const Server = require("./lib/server");
 
@@ -35,36 +35,22 @@ try {
     }
 }
 
-/*
- * This operation is synchronous. It is both expected and desired because it
- * occures once at startup and because the database is needed before the LG
- * webOS TV gateway can run.
- */
-const serverDb = new Datastore({"filename": `${configurationDir}/server.nedb`});
-serverDb.loadDatabase((error) => {
+const serverDb = new DatabaseTable(configurationDir, "server", ["username"], "username");
+serverDb.initialize((error) => {
     if (error) {
         throw error;
     }
 });
-serverDb.ensureIndex({"fieldName": "username",
-    "unique": true});
 
-/*
- * This operation is synchronous. It is both expected and desired because it
- * occures once at startup and because the database is needed before the LG
- * webOS TV gateway can run.
- */
-const lgtvDb = new Datastore({"filename": `${configurationDir}/lgtv.nedb`});
-lgtvDb.loadDatabase((error) => {
+const lgtvDb = new DatabaseTable(configurationDir, "lgtv", ["udn"], "udn");
+lgtvDb.initialize((error) => {
     if (error) {
         throw error;
     }
 });
-lgtvDb.ensureIndex({"fieldName": "udn",
-    "unique": true});
 
-const lgtv = new LGTV(lgtvDb);
-const server = new Server(serverDb, lgtv);
+const lgtv = new LGTV(lgtvDb.db);
+const server = new Server(serverDb.db, lgtv);
 
 lgtv.on("error", (error, id) => {
     console.log(id);
