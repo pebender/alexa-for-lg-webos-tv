@@ -28,40 +28,43 @@ class ServerSecurity {
             return;
         }
 
-        that.private.db.db.findOne(
-            {"username": that.private.dbRecord.username},
-            (err, doc) => {
-                if (err) {
-                    that.private.initializing = false;
-                    callback(err);
-                    return;
-                }
-                if (doc === null) {
-                    // eslint-disable-next-line no-unused-vars
-                    that.private.db.db.insert(that.private.dbRecord, (error, _doc) => {
-                        if (error) {
-                            that.private.initializing = false;
-                            callback(error);
-                            return;
-                        }
-                        that.private.initialized = true;
-                        that.private.initializing = false;
-                        callback(null);
-                        // eslint-disable-next-line no-useless-return
-                        return;
-                    });
-                } else {
-                    that.private.dbRecord.username = doc.username;
-                    that.private.dbRecord.password = doc.password;
-                    that.private.dbRecord.hostname = doc.hostname;
+        that.private.db.getRecord({"username": that.private.dbRecord.username}).
+        then((record) => {
+            if (record === null) {
+                // eslint-disable-next-line no-unused-vars
+                that.private.db.insertRecord(that.private.dbRecord).
+                then(() => {
                     that.private.initialized = true;
                     that.private.initializing = false;
                     callback(null);
                     // eslint-disable-next-line no-useless-return
                     return;
-                }
+                }).
+                catch((error) => {
+                    that.private.initializing = false;
+                    callback(error);
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                });
+            } else {
+                that.private.dbRecord.username = record.username;
+                that.private.dbRecord.password = record.password;
+                that.private.dbRecord.hostname = record.hostname;
+                that.private.initialized = true;
+                that.private.initializing = false;
+                callback(null);
+                // eslint-disable-next-line no-useless-return
+                return;
             }
-        );
+        }).
+        catch((error) => {
+            if (error) {
+                that.private.initializing = false;
+                callback(error);
+                // eslint-disable-next-line no-useless-return
+                return;
+            }
+        });
     }
 
     get username() {
@@ -105,7 +108,7 @@ class ServerSecurity {
         } else {
             that.private.dbRecord.password = value.toString();
         }
-        that.private.db.db.update(
+        that.private.db.updateRecord(
             {"username": that.private.dbRecord.username},
             {"$set": {"password": that.private.dbRecord.password}}
         );
@@ -143,7 +146,7 @@ class ServerSecurity {
         } else {
             that.private.dbRecord.hostname = value.toString();
         }
-        that.private.db.db.update(
+        that.private.db.updateRecord(
             {"username": that.private.dbRecord.username},
             {"$set": {"hostname": that.private.dbRecord.hostname}}
         );

@@ -15,19 +15,20 @@ function handler(lgtvController, event) {
             return;
         }
 
-        lgtvController.db.db.find(
-            {},
-            (err, docs) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-
-                resolve(Promise.all(docs.map(buildEndpoint)).
-                    then(buildResponse));
-            }
-        );
+        lgtvController.db.getRecords({}).
+        then((records) => {
+            resolve(Promise.all(records.map(buildEndpoint)).
+            then(buildResponse));
+            // eslint-disable-next-line no-useless-return
+            return;
+        }).
+        catch((error) => {
+            reject(error);
+            // eslint-disable-next-line no-useless-return
+            return;
+        });
     });
+
     function buildEndpoint(doc) {
         return new Promise((resolve) => {
             const [udn] = doc.udn;

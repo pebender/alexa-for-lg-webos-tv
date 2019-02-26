@@ -24,18 +24,15 @@ class LGTVControl extends EventEmitter {
         that.private.tv.mac = tv.mac;
 
         function saveKey(key, callback) {
-            that.private.db.db.update(
+            that.private.db.updateRecord(
                 {"udn": that.private.tv.udn},
-                {"$set": {"key": key}},
-                // eslint-disable-next-line no-unused-vars
-                (err, _numAffected, _affectedDocuments, _upsert) => {
-                    if (err) {
-                        callback(err);
-                        // eslint-disable-next-line no-useless-return
-                        return;
-                    }
-                }
-            );
+                {"$set": {"key": key}}
+            ).
+            catch((error) => {
+                callback(error);
+                // eslint-disable-next-line no-useless-return
+                return;
+            });
         }
 
         that.private.connection = new LGTV({

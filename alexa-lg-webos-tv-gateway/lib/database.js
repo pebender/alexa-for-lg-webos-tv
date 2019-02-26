@@ -38,10 +38,98 @@ class DatabaseTable {
         callback(null);
     }
 
-    get db() {
-        const that = this;
+    getRecord(query) {
+        return new Promise((resolve, reject) => {
+            const that = this;
 
-        return that.private.db;
+            that.private.db.findOne(
+                query,
+                (err, doc) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(doc);
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                }
+            );
+        });
+    }
+
+    getRecords(query) {
+        return new Promise((resolve, reject) => {
+            const that = this;
+
+            that.private.db.find(
+                query,
+                (err, docs) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(docs);
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                }
+            );
+        });
+    }
+
+    insertRecord(record) {
+        return new Promise((resolve, reject) => {
+            const that = this;
+
+            // eslint-disable-next-line no-unused-vars
+            that.private.db.insert(record, (error, _doc) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve();
+                // eslint-disable-next-line no-useless-return
+                return;
+            });
+        });
+    }
+
+    updateRecord(query, update) {
+        return new Promise((resolve, reject) => {
+            const that = this;
+
+            that.private.db.update(
+                query,
+                update,
+                // eslint-disable-next-line no-unused-vars
+                (err, _numAffectedDocs, _affectedDocs, _upsert) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                }
+            );
+        });
+    }
+
+    updateOrInsertRecord(query, update) {
+        return new Promise((resolve, reject) => {
+            const that = this;
+
+            that.private.db.update(
+                query,
+                update,
+                {"upsert": true},
+                // eslint-disable-next-line no-unused-vars
+                (err, _numAffectedDocs, _affectedDocs, _upsert) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                }
+            );
+        });
     }
 }
 

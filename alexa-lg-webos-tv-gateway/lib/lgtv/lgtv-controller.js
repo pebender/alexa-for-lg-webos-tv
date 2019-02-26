@@ -39,29 +39,28 @@ class LGTVController extends EventEmitter {
             return;
         }
 
-        that.private.db.db.find({}, (error, docs) => {
-            if (error) {
-                that.private.initialized = false;
-                that.private.initializing = false;
-                callback(error, null);
-                return;
-            }
-            docs.forEach((doc) => {
-                if (Reflect.has(that.private.controls, doc.udn) === false) {
-                    that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
-                    eventsAdd(doc.udn);
+        that.private.db.getRecords({}).
+        then((records) => {
+            records.forEach((record) => {
+                if (Reflect.has(that.private.controls, record.udn) === false) {
+                    that.private.controls[record.udn] = new LGTVControl(that.private.db, record);
+                    eventsAdd(record.udn);
                 }
             });
+            function eventsAdd(udn) {
+                that.private.controls[udn].on("error", (error) => {
+                    that.emit("error", error, udn);
+                });
+            }
             that.private.initialized = true;
             that.private.initializing = true;
             callback(null, null);
+        }).
+        catch((error) => {
+            that.private.initialized = false;
+            that.private.initializing = false;
+            callback(error, null);
         });
-
-        function eventsAdd(udn) {
-            that.private.controls[udn].on("error", (error) => {
-                that.emit("error", error, udn);
-            });
-        }
     }
 
     tvUpsert(tv) {
@@ -70,22 +69,19 @@ class LGTVController extends EventEmitter {
             throw new UnititializedClassError("LGTVController", "tvUpsert");
         }
 
-        that.private.db.db.findOne({"$and": [
+        that.private.db.getRecord({"$and": [
             {"udn": tv.udn},
             {"name": tv.name},
             {"ip": tv.ip},
             {"url": tv.url},
             {"mac": tv.mac}
-        ]}, (error, doc) => {
-            if (error) {
-                that.emit("error", error, tv.udn);
-                return;
-            }
-            if (doc === null) {
+        ]}).
+        then((record) => {
+            if (record === null) {
                 if (Reflect.has(that.private.controls, tv.udn) === true) {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
-                that.private.db.db.update(
+                return that.private.db.updateOrInsertRecord(
                     {"udn": tv.udn},
                     {
                         "udn": tv.udn,
@@ -94,33 +90,26 @@ class LGTVController extends EventEmitter {
                         "url": tv.url,
                         "mac": tv.mac,
                         "key": ""
-                    },
-                    {"upsert": true},
-                    // eslint-disable-next-line no-unused-vars
-                    (err, _numAffectedDocs, _affectedDocs, _upsert) => {
-                        if (err) {
-                            that.emit("error", err, tv.udn);
-                            return;
-                        }
-                        if (Reflect.has(that.private.controls, tv.udn) === false) {
-                            that.private.controls[tv.udn] = new LGTVControl(that.private.db, tv);
-                            eventsAdd(tv.udn);
-                        }
                     }
-                );
-            } else {
-                // eslint-disable-next-line no-lonely-if
-                if (Reflect.has(that.private.controls, doc.udn) === false) {
-                    that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
-                    eventsAdd(doc.udn);
-                }
+                ).
+                then(() => tv);
             }
+            return record;
+        }).
+        then((tvUpdatedOrInserted) => {
+            if (Reflect.has(that.private.controls, tv.udn) === false) {
+                that.private.controls[tv.udn] = new LGTVControl(that.private.db, tvUpdatedOrInserted);
+                eventsAdd(tv.udn);
+            }
+            function eventsAdd(udn) {
+                that.private.controls[udn].on("error", (error) => {
+                    that.emit("error", error, udn);
+                });
+            }
+        }).
+        catch((error) => {
+            that.emit("error", error, tv.udn);
         });
-        function eventsAdd(udn) {
-            that.private.controls[udn].on("error", (error) => {
-                that.emit("error", error, udn);
-            });
-        }
     }
 
     skillCommand(event) {
