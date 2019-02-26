@@ -1,4 +1,4 @@
-const {errorResponse} = require("../../common");
+const {errorResponse} = require("../common");
 
 function handler(lgtvController, udn, event) {
     return new Promise((resolve) => {

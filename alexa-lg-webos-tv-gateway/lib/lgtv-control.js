@@ -2,7 +2,7 @@ const LGTVConnection = require("lgtv2");
 const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
-const {callbackToPromise} = require("../common");
+const {callbackToPromise} = require("./common");
 
 class LGTVControl extends EventEmitter {
     constructor(db, tv) {
