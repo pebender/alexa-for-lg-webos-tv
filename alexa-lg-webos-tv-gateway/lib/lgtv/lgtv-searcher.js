@@ -27,49 +27,65 @@ class LGTVSearcher extends EventEmitter {
 
         const that = this;
 
-        this.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-        this.ssdpResponse = new SSDPClient();
-        this.ssdpNotify.start();
-        this.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+        that.private = {};
+        that.private.initialized = false;
+        that.private.initializing = false;
+        that.private.ssdpNotify = null;
+        that.private.ssdpResponse = null;
+    }
+
+    initialize() {
+        if (this.private.initializing === true) {
+            return;
+        }
+        this.private.initializing = true;
+
+        const that = this;
+        if (that.private.initialized === true) {
+            that.private.initializing = true;
+            return;
+        }
+
+        that.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+        that.ssdpResponse = new SSDPClient();
+        that.ssdpNotify.start();
+        that.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
             ssdpProcess("advertise-alive", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit("error", error);
-                    return error;
+                    that.emit("error", error);
+                    return;
                 }
                 if (!tv) {
-                    return null;
+                    return;
                 }
-                this.emit("found", tv);
-                return null;
+                that.emit("found", tv);
             });
         });
-        this.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
+        that.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
             ssdpProcess("advertise-bye", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit("error", error);
-                    return error;
+                    that.emit("error", error);
+                    return;
                 }
                 if (!tv) {
-                    return null;
+                    return;
                 }
-                this.emit("found", tv);
-                return null;
+                that.emit("found", tv);
             });
         });
-        this.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+        that.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
             if (statusCode !== "200") {
                 return;
             }
             ssdpProcess("response", headers, rinfo, (error, tv) => {
                 if (error) {
-                    this.emit("error", error);
-                    return error;
+                    that.emit("error", error);
+                    return;
                 }
                 if (!tv) {
-                    return null;
+                    return;
                 }
-                this.emit("found", tv);
-                return null;
+                that.emit("found", tv);
             });
         });
         periodic();
@@ -182,7 +198,9 @@ class LGTVSearcher extends EventEmitter {
     }
 
     now() {
-        this.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+        const that = this;
+
+        that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }
 

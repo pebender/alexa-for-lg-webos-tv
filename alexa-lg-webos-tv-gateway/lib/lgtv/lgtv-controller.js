@@ -25,10 +25,17 @@ class LGTVController extends EventEmitter {
 
     initialize(callback) {
         if (this.private.initializing === true) {
+            callback(null, null);
             return;
         }
         this.private.initializing = true;
+
         const that = this;
+        if (that.private.initialized === true) {
+            that.private.initializing = true;
+            callback(null, null);
+            return;
+        }
 
         that.private.db.find({}, (error, docs) => {
             if (error) {

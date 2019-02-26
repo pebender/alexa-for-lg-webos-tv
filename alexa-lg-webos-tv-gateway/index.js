@@ -79,7 +79,7 @@ const lgtvController = new LGTVController(lgtvDb);
 lgtvController.on("error", (error, _udn) => {
     console.error(error);
 });
-lgtvController.initialize((error, response) => {
+lgtvController.initialize((error) => {
     if (error) {
         throw error;
     }
@@ -92,6 +92,7 @@ lgtvSearcher.on("error", (error) => {
 lgtvSearcher.on("found", (tv) => {
     lgtvController.tvUpsert(tv);
 });
+lgtvSearcher.initialize();
 lgtvSearcher.now();
 
 const internal = new ServerInternal(serverSecurity);
