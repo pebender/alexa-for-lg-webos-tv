@@ -66,15 +66,8 @@ lgtvDb.loadDatabase((error) => {
 lgtvDb.ensureIndex({"fieldName": "udn",
     "unique": true});
 
-const serverSecurity = new ServerSecurity(serverDb, (error) => {
-    if (error) {
-        throw error;
-    }
-});
-
-// I keep the list of all LG webOS TVs.
 const lgtvController = new LGTVController(lgtvDb);
-
+const lgtvSearcher = new LGTVSearcher();
 // eslint-disable-next-line no-unused-vars
 lgtvController.on("error", (error, _udn) => {
     console.error(error);
@@ -84,8 +77,6 @@ lgtvController.initialize((error) => {
         throw error;
     }
 });
-
-const lgtvSearcher = new LGTVSearcher();
 lgtvSearcher.on("error", (error) => {
     console.error(error);
 });
@@ -95,8 +86,16 @@ lgtvSearcher.on("found", (tv) => {
 lgtvSearcher.initialize();
 lgtvSearcher.now();
 
-const internal = new ServerInternal(serverSecurity);
-const external = new ServerExternal(serverSecurity, lgtvController);
+const serverSecurity = new ServerSecurity(serverDb);
+const serverInternal = new ServerInternal(serverSecurity);
+const serverExternal = new ServerExternal(serverSecurity, lgtvController);
 
-internal.start();
-external.start();
+serverSecurity.initialize((error) => {
+    if (error) {
+        throw error;
+    }
+});
+
+
+serverInternal.start();
+serverExternal.start();
