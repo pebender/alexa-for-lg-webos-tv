@@ -15,7 +15,7 @@ function handler(lgtvController, event) {
             return;
         }
 
-        lgtvController.getDb().find(
+        lgtvController.db.find(
             {},
             (err, docs) => {
                 if (err) {

@@ -10,11 +10,11 @@
 const fs = require("fs-extra");
 const Datastore = require("nedb");
 const ppath = require("persist-path");
-const LGTVController = require("./lib/lgtv/lgtv-controller.js");
-const LGTVSearcher = require("./lib/lgtv/lgtv-searcher.js");
-const ServerSecurity = require("./lib/server/server-security.js");
-const ServerInternal = require("./lib/server/server-internal.js");
-const ServerExternal = require("./lib/server/server-external.js");
+const LGTVController = require("./lib/lgtv/lgtv-controller");
+const LGTVSearcher = require("./lib/lgtv/lgtv-searcher");
+const ServerSecurity = require("./lib/server/server-security");
+const ServerInternal = require("./lib/server/server-internal");
+const ServerExternal = require("./lib/server/server-external");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -73,16 +73,17 @@ const serverSecurity = new ServerSecurity(serverDb, (error) => {
 });
 
 // I keep the list of all LG webOS TVs.
-const lgtvController = new LGTVController(lgtvDb, (error) => {
-    if (error) {
-        throw error;
-    }
-});
+const lgtvController = new LGTVController(lgtvDb);
+
 // eslint-disable-next-line no-unused-vars
 lgtvController.on("error", (error, _udn) => {
     console.error(error);
 });
-lgtvController.dbLoad();
+lgtvController.initialize((error, response) => {
+    if (error) {
+        throw error;
+    }
+});
 
 const lgtvSearcher = new LGTVSearcher();
 lgtvSearcher.on("error", (error) => {

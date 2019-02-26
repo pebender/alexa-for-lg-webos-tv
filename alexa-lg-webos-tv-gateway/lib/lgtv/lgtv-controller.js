@@ -1,30 +1,40 @@
-const LGTVMessage = require("../lgtv-message.js");
+const LGTVMessage = require("../lgtv-message");
 const EventEmitter = require("events");
-const smartHomeSkill = require("../smart-home/index.js");
-const LGTVControl = require("./lgtv-control.js");
+const smartHomeSkill = require("../smart-home/index");
+const LGTVControl = require("./lgtv-control");
 
 class LGTVController extends EventEmitter {
     constructor (db) {
 
         super();
 
-        this.private = {};
-        this.private.controls = [];
-        if (typeof db === "undefined" || db === null) {
+        const that = this;
+
+        that.private = {};
+        that.private.initialized = false;
+        that.private.initializing = false;
+        that.private.db = db;
+        that.private.controls = [];
+    }
+
+    get db() {
+        const that = this;
+
+        return that.private.db;
+    }
+
+    initialize(callback) {
+        if (this.private.initializing === true) {
             return;
         }
-        this.private.db = db;
-    }
-
-    getDb() {
-        return this.private.db;
-    }
-
-    dbLoad() {
+        this.private.initializing = true;
         const that = this;
-        this.private.db.find({}, (error, docs) => {
+
+        that.private.db.find({}, (error, docs) => {
             if (error) {
-                that.emit("error", error);
+                that.private.initialized = false;
+                that.private.initializing = false;
+                callback(error, null);
                 return;
             }
             docs.forEach((doc) => {
@@ -33,6 +43,9 @@ class LGTVController extends EventEmitter {
                     eventsAdd(doc.udn);
                 }
             });
+            that.private.initialized = true;
+            that.private.initializing = true;
+            callback(null, null);
         });
 
         function eventsAdd(udn) {
@@ -44,6 +57,7 @@ class LGTVController extends EventEmitter {
 
     tvUpsert(tv) {
         const that = this;
+
         that.private.db.findOne({"$and": [
             {"udn": tv.udn},
             {"name": tv.name},

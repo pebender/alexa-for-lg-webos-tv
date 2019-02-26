@@ -1,103 +1,116 @@
 class ServerSecurity {
-    constructor(db, callback) {
-        this.private = {};
-        this.private.dbRecord = {};
-        this.private.dbRecord.username = "LGTV";
-        this.private.dbRecord.password = null;
-        this.private.dbRecord.hostname = null;
-        if (typeof callback === "undefined" || db === null) {
+    constructor(db) {
+        const that = this;
+
+        that.private = {};
+        that.private.initialized = false;
+        that.private.initializing = false;
+        that.private.db = db;
+        that.private.dbRecord = {};
+        that.private.dbRecord.username = "LGTV";
+        that.private.dbRecord.password = null;
+        that.private.dbRecord.hostname = "";
+    }
+
+    initialize(callback) {
+        if (this.private.initializing === true) {
             return;
         }
-        if (typeof db === "function") {
-            return;
-        }
-        if (typeof db === "undefined" || db === null) {
-            return;
-        }
-        this.private.db = db;
-        this.private.db.findOne(
-            {"username": this.private.dbRecord.username},
+        this.private.initializing = true;
+        const that = this;
+
+        that.private.db.findOne(
+            {"username": that.private.dbRecord.username},
             (err, doc) => {
                 if (err) {
                     callback(err);
-                    return null;
+                    return;
                 } else if (doc === null) {
                     // eslint-disable-next-line no-unused-vars
-                    this.private.db.insert(this.private.dbRecord, (error, _doc) => {
+                    that.private.db.insert(that.private.dbRecord, (error, _doc) => {
                         if (error) {
                             callback(error);
-                            return null;
+                            // eslint-disable-next-line no-useless-return
+                            return;
                         }
-                        return null;
                     });
-                } else {
-                    this.private.dbRecord.username = doc.username;
-                    this.private.dbRecord.password = doc.password;
-                    this.private.dbRecord.hostname = doc.hostname;
-                    return null;
                 }
-                return null;
+                that.private.dbRecord.username = doc.username;
+                that.private.dbRecord.password = doc.password;
+                that.private.dbRecord.hostname = doc.hostname;
             }
         );
+        that.private.initialized = true;
+        that.private.initializing = true;
     }
 
     get username() {
-        return this.private.dbRecord.username;
+        const that = this;
+
+        return that.private.dbRecord.username;
     }
 
     get password() {
-        return this.private.dbRecord.password;
+        const that = this;
+
+        return that.private.dbRecord.password;
     }
 
     set password(value) {
+        const that = this;
+
         if (typeof value === "undefined") {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else if (value === null) {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else if (value === "") {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else if (typeof value === "string") {
-            this.private.dbRecord.password = value;
+            that.private.dbRecord.password = value;
         } else if (typeof value.toString() === "undefined") {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else if (value.toString() === null) {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else if (value.toString() === "") {
-            this.private.dbRecord.password = null;
+            that.private.dbRecord.password = null;
         } else {
-            this.private.dbRecord.password = value.toString();
+            that.private.dbRecord.password = value.toString();
         }
-        this.private.db.update(
-            {"username": this.private.dbRecord.username},
-            {"$set": {"password": this.private.dbRecord.password}}
+        that.private.db.update(
+            {"username": that.private.dbRecord.username},
+            {"$set": {"password": that.private.dbRecord.password}}
         );
     }
 
     get hostname() {
-        return this.private.dbRecord.hostname;
+        const that = this;
+
+        return that.private.dbRecord.hostname;
     }
 
     set hostname(value) {
+        const that = this;
+
         if (typeof value === "undefined") {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else if (value === null) {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else if (value === "") {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else if (typeof value === "string") {
-            this.private.dbRecord.hostname = value;
+            that.private.dbRecord.hostname = value;
         } else if (typeof value.toString() === "undefined") {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else if (value.toString() === null) {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else if (value.toString() === "") {
-            this.private.dbRecord.hostname = null;
+            that.private.dbRecord.hostname = null;
         } else {
-            this.private.dbRecord.hostname = value.toString();
+            that.private.dbRecord.hostname = value.toString();
         }
-        this.private.db.update(
-            {"username": this.private.dbRecord.username},
-            {"$set": {"hostname": this.private.dbRecord.hostname}}
+        that.private.db.update(
+            {"username": that.private.dbRecord.username},
+            {"$set": {"hostname": that.private.dbRecord.hostname}}
         );
     }
 }

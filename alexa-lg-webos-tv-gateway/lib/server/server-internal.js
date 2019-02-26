@@ -6,6 +6,7 @@ class ServerInternal {
 
         that.private = {};
         that.private.initialized = false;
+        that.private.initializing = false;
         that.private.security = serverSecurity;
         that.private.server = null;
     }
