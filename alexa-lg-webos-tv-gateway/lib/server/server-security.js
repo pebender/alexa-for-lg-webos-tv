@@ -1,4 +1,4 @@
-class HTTPAuthorization {
+class ServerSecurity {
     constructor(db, callback) {
         this.private = {};
         this.private.dbRecord = {};
@@ -102,4 +102,4 @@ class HTTPAuthorization {
     }
 }
 
-module.exports = HTTPAuthorization;
+module.exports = ServerSecurity;

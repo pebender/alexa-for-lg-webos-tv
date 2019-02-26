@@ -14,7 +14,7 @@ const Datastore = require("nedb");
 const ppath = require("persist-path");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const HTTPAuthorization = require("./lib/http-authorization.js");
+const ServerSecurity = require("./lib/server/server-security.js");
 const LGTVController = require("./lib/lgtv/lgtv-controller.js");
 const LGTVSearcher = require("./lib/lgtv/lgtv-searcher.js");
 
@@ -45,13 +45,13 @@ try {
  * occures once at startup and because the database is needed before the LG
  * webOS TV gateway can run.
  */
-const httpDb = new Datastore({"filename": `${configurationDir}/http.nedb`});
-httpDb.loadDatabase((error) => {
+const serverDb = new Datastore({"filename": `${configurationDir}/http.nedb`});
+serverDb.loadDatabase((error) => {
     if (error) {
         throw error;
     }
 });
-httpDb.ensureIndex({"fieldName": "username",
+serverDb.ensureIndex({"fieldName": "username",
     "unique": true});
 
 /*
@@ -68,7 +68,7 @@ lgtvDb.loadDatabase((error) => {
 lgtvDb.ensureIndex({"fieldName": "udn",
     "unique": true});
 
-const httpAuthorization = new HTTPAuthorization(httpDb, (error) => {
+const serverSecurity = new ServerSecurity(serverDb, (error) => {
     if (error) {
         throw error;
     }
@@ -100,11 +100,11 @@ internal.use("/HTTP/form", express.urlencoded({
     "extended": false
 }));
 internal.get("/HTTP/form", (request, response) => {
-    httpAuthorization.hostname = request.query.hostname;
+    serverSecurity.hostname = request.query.hostname;
     if (("passwordDelete" in request.query) && (/^on$/i).test(request.query.passwordDelete)) {
-        httpAuthorization.password = null;
+        serverSecurity.password = null;
     }
-    const {hostname, password} = httpAuthorization;
+    const {hostname, password} = serverSecurity;
     let hostnameHTML = "<p>The LG webOS TV gateway has no hostname.</p>";
     if (hostname !== null) {
         hostnameHTML = `<p>The LG webOS TV gateway hostname is ${hostname}.`;
@@ -134,8 +134,8 @@ internal.get("/HTTP/form", (request, response) => {
 });
 internal.get("/", (request, response) => {
     let hostname = "";
-    if (httpAuthorization.hostname !== null) {
-        ({hostname} = httpAuthorization);
+    if (serverSecurity.hostname !== null) {
+        ({hostname} = serverSecurity);
     }
     const page = `<!DOCTYPE html>
         <html>
@@ -180,8 +180,8 @@ function requestAuthorizeHTTP(username, password) {
 }
 external.post("/HTTP", (request, response) => {
     if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
-        if (httpAuthorization.password === null) {
-            httpAuthorization.password = request.body.command.value;
+        if (serverSecurity.password === null) {
+            serverSecurity.password = request.body.command.value;
             response.
                 type("json").
                 status(200).
@@ -205,8 +205,8 @@ external.post("/HTTP", (request, response) => {
 });
 external.use("/LGTV", basicAuth({"authorizer": requestAuthorizeLGTV}));
 function requestAuthorizeLGTV(username, password) {
-//    if (username === httpAuthorization.username && password === httpAuthorization.password) {
-    if (username === httpAuthorization.username && password === "0") {
+//    if (username === serverSecurity.username && password === serverSecurity.password) {
+    if (username === serverSecurity.username && password === "0") {
         return true;
     }
     return false;
