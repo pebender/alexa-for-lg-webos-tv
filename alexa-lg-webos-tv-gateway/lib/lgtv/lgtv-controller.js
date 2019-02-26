@@ -1,5 +1,6 @@
-const LGTVMessage = require("../lgtv-message");
 const EventEmitter = require("events");
+const {GenericError, UnititializedClassError} = require("../common");
+const LGTVMessage = require("../lgtv-message");
 const smartHomeSkill = require("../smart-home/index");
 const LGTVControl = require("./lgtv-control");
 
@@ -19,6 +20,9 @@ class LGTVController extends EventEmitter {
 
     get db() {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "db");
+        }
 
         return that.private.db;
     }
@@ -45,7 +49,7 @@ class LGTVController extends EventEmitter {
                 return;
             }
             docs.forEach((doc) => {
-                if (!(doc.udn in that.private.controls)) {
+                if (Reflect.has(that.private.controls, doc.udn) === false) {
                     that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
                     eventsAdd(doc.udn);
                 }
@@ -64,6 +68,9 @@ class LGTVController extends EventEmitter {
 
     tvUpsert(tv) {
         const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "tvUpsert");
+        }
 
         that.private.db.findOne({"$and": [
             {"udn": tv.udn},
@@ -77,7 +84,7 @@ class LGTVController extends EventEmitter {
                 return;
             }
             if (doc === null) {
-                if (Reflect.has(that.private.controls, tv.udn)) {
+                if (Reflect.has(that.private.controls, tv.udn) === true) {
                     Reflect.deleteProperty(that.private.controls, tv.udn);
                 }
                 that.private.db.update(
@@ -97,7 +104,7 @@ class LGTVController extends EventEmitter {
                             that.emit("error", err, tv.udn);
                             return;
                         }
-                        if (!Reflect.has(that.private.controls, tv.udn)) {
+                        if (Reflect.has(that.private.controls, tv.udn) === false) {
                             that.private.controls[tv.udn] = new LGTVControl(that.private.db, tv);
                             eventsAdd(tv.udn);
                         }
@@ -105,7 +112,7 @@ class LGTVController extends EventEmitter {
                 );
             } else {
                 // eslint-disable-next-line no-lonely-if
-                if (!Reflect.has(that.private.controls, doc.udn)) {
+                if (Reflect.has(that.private.controls, doc.udn) === false) {
                     that.private.controls[doc.udn] = new LGTVControl(that.private.db, doc);
                     eventsAdd(doc.udn);
                 }
@@ -119,55 +126,93 @@ class LGTVController extends EventEmitter {
     }
 
     skillCommand(event) {
-        return smartHomeSkill.handler(this, event);
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "skillCommand");
+        }
+        return smartHomeSkill.handler(that, event);
     }
 
     turnOff(udn) {
+        const that = this;
         return new Promise((resolve, reject) => {
-            if (!Reflect.has(this.private.controls, udn)) {
-                reject(new Error("Requested TV not found."));
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", "turnOff"));
                 return;
             }
-            resolve(this.private.controls[udn].turnOff());
+            if (Reflect.has(that.private.controls, udn) === false) {
+                reject(new UnknownTVError(udn, "LGTVController", "turnOff"));
+                return;
+            }
+            resolve(that.private.controls[udn].turnOff());
         });
     }
 
     turnOn(udn) {
+        const that = this;
         return new Promise((resolve, reject) => {
-            if (!Reflect.has(this.private.controls, udn)) {
-                reject(new Error("Requested TV not found."));
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", "turnOn"));
                 return;
             }
-            resolve(this.private.controls[udn].turnOn());
+            if (Reflect.has(that.private.controls, udn) === false) {
+                reject(new UnknownTVError(udn, "LGTVController", "turnOn"));
+                return;
+            }
+            resolve(that.private.controls[udn].turnOn());
         });
     }
 
     getPowerState(udn) {
-        if (!Reflect.has(this.private.controls, udn)) {
-            throw new Error("Requested TV not found.");
+        const that = this;
+
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "getPowerState");
         }
-        return this.private.controls[udn].getPowerState(udn);
+        if (Reflect.has(that.private.controls, udn) === false) {
+            throw new UnknownTVError(udn, "LGTVController", "getPowerState");
+        }
+        return that.private.controls[udn].getPowerState();
     }
 
     tvCommand(udn, command) {
-        return new Promise((resolve) => {
-            if (!Reflect.has(this.private.controls, udn)) {
-                resolve(new Error("Requested TV not found."));
+        const that = this;
+        return new Promise((resolve, reject) => {
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", "tvCommand"));
                 return;
             }
-            const translation = LGTVMessage.translate(command);
-            resolve(this.private.controls[udn].lgtvCommand(translation));
+            if (Reflect.has(that.private.controls, udn) === false) {
+                reject(new UnknownTVError(udn, "LGTVController", "tvCommand"));
+                return;
+            }
+            resolve(that.private.controls[udn].lgtvCommand(LGTVMessage.translate(command)));
         });
     }
 
     lgtvCommand(udn, command) {
+        const that = this;
         return new Promise((resolve, reject) => {
-            if (!Reflect.has(this.private.controls, udn)) {
-                reject(new Error("Requested TV not found."), null);
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", "tvCommand"));
                 return;
             }
-            resolve(this.private.controls[udn].lgtvCommand(command));
+            if (Reflect.has(that.private.controls, udn) === false) {
+                reject(new UnknownTVError(udn, "LGTVController", "lgtvCommand"));
+                return;
+            }
+            resolve(that.private.controls[udn].lgtvCommand(command));
         });
+    }
+}
+
+class UnknownTVError extends GenericError {
+    constructor(udn, className, methodName) {
+        super();
+        const that = this;
+
+        that.name = "UnknownTVError";
+        that.message = `the requested television '${udn}' is not known in '${className}.${methodName}'`;
     }
 }
 

@@ -65,7 +65,32 @@ function callbackToPromise(resolve, reject, error, response) {
     resolve(response);
 }
 
+class GenericError extends Error {
+    constructor(name, message) {
+        super();
+
+        const that = this;
+
+        that.name = name;
+        that.message = message;
+    }
+}
+
+class UnititializedClassError extends GenericError {
+    constructor(className, methodName) {
+
+        super();
+
+        const that = this;
+
+        that.name = "UnitializedClass";
+        that.message = `method '${methodName}' called but class '${className}' not initialized.`;
+    }
+}
+
 module.exports = {
+    "GenericError": GenericError,
+    "UnititializedClassError": UnititializedClassError,
     "defaultAlexaResponse": defaultAlexaResponse,
     "createState": createState,
     "errorToErrorResponse": errorToErrorResponse,
