@@ -15,8 +15,8 @@ const ppath = require("persist-path");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const HTTPAuthorization = require("./lib/http-authorization.js");
-const LGTVController = require("./lib/lgtv-controller.js");
-const LGTVSearcher = require("./lib/lgtv-searcher.js");
+const LGTVController = require("./lib/lgtv/lgtv-controller.js");
+const LGTVSearcher = require("./lib/lgtv/lgtv-searcher.js");
 
 /*
  * I keep long term information needed to connect to each TV in a database.

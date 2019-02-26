@@ -1,6 +1,6 @@
-const LGTVMessage = require("./lgtv-message.js");
+const LGTVMessage = require("../lgtv-message.js");
 const EventEmitter = require("events");
-const smartHomeSkill = require("./smart-home/index.js");
+const smartHomeSkill = require("../smart-home/index.js");
 const LGTVControl = require("./lgtv-control.js");
 
 class LGTVController extends EventEmitter {
