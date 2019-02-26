@@ -1,5 +1,4 @@
 const EventEmitter = require("events");
-const {errorToErrorResponse} = require("../common");
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
 const LGTVControl = require("./lgtv-control");
@@ -134,7 +133,7 @@ class LGTVController extends EventEmitter {
     }
 
     smartHomeSkillCommand(event) {
-        return smartHomeSkill.handler(this, event).catch((error) => errorToErrorResponse(event, error));
+        return smartHomeSkill.handler(this, event);
     }
 
     turnOff(udn) {
