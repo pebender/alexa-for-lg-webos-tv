@@ -84,27 +84,17 @@ class ServerExternal {
             return false;
         }
         that.private.server.post("/LGTV/RUN", (request, response) => {
-            that.private.lgtv.ontroller.tvCommand(request.body.television, request.body.command).
+            that.private.lgtv.controller.runCommand(request.body).
                 then((res) => {
-                    response.
-                    type("json").
-                    status(200).
-                    json(res).
-                    end();
-                }).
-                catch((err) => {
-                    const body = {
-                        "error": {
-                            "name": err.name,
-                            "message": err.message
-                        }
-                    };
                     response.
                         type("json").
                         status(200).
-                        json(body).
+                        json(res).
                         end();
-            });
+                }).
+                catch((error) => {
+                    throw error;
+                });
         });
         that.private.server.post("/LGTV/SKILL", (request, response) => {
         console.log(JSON.stringify(request.body, null, 2));
@@ -117,19 +107,8 @@ class ServerExternal {
                         json(res).
                         end();
                 }).
-                catch((err) => {
-                    const alexaResponse = new AlexaResponse({
-                        "name": "ErrorResponse",
-                        "payload": {
-                            "type": "INTERNAL_ERROR",
-                            "message": `${err.name}: ${err.message}`
-                        }
-                    });
-                    response.
-                        type("json").
-                        status(200).
-                        json(alexaResponse.get()).
-                        end();
+                catch((error) => {
+                    throw error;
                 });
         });
         that.private.server.get("/LGTV/PING", (request, response) => {

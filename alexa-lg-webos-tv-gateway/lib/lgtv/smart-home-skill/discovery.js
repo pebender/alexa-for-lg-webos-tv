@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {namespaceErrorResponse} = require("../common");
+const {namespaceErrorResponse} = require("../../common");
 const alexa = require("./alexa.js");
 const alexaPowerController = require("./power-controller.js");
 const alexaSpeaker = require("./speaker.js");

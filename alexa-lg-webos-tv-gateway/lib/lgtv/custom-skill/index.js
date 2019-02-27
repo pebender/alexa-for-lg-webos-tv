@@ -6,8 +6,11 @@
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-class LGTVMessage {
-    static translate(controllerMessage) {
+function handler(lgtvController, event) {
+    return new Promise((resolve) => {
+        const udn = event.body.television;
+        const controllerMessage = event.body.command;
+
         const lgtvMessage = {
             "uri": null,
             "payload": null
@@ -63,8 +66,26 @@ class LGTVMessage {
         default:
             break;
         }
-        return lgtvMessage;
-    }
+        lgtvController.lgtvCommand(udn, lgtvMessage).
+        then((response) => {
+            resolve(response);
+            // eslint-disable-next-line no-useless-return
+            return;
+        }).
+        catch((error) => {
+            const body = {
+                "error": {
+                    "name": error.name,
+                    "message": error.message
+                }
+            };
+            resolve(body);
+            // eslint-disable-next-line no-useless-return
+            return;
+        });
+    });
 }
 
-module.exports = LGTVMessage;
+module.exports = {
+    "handler": handler
+};

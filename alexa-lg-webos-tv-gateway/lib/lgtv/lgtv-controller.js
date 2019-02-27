@@ -1,7 +1,7 @@
 const EventEmitter = require("events");
 const {GenericError, UnititializedClassError} = require("../common");
-const LGTVMessage = require("../lgtv-message");
-const smartHomeSkill = require("../smart-home/index");
+const customSkill = require("./custom-skill");
+const smartHomeSkill = require("./smart-home-skill");
 const LGTVControl = require("./lgtv-control");
 
 class LGTVController extends EventEmitter {
@@ -112,6 +112,14 @@ class LGTVController extends EventEmitter {
         });
     }
 
+    runCommand(event) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "runCommand");
+        }
+        return customSkill.handler(that, event);
+    }
+
     skillCommand(event) {
         const that = this;
         if (that.private.initialized === false) {
@@ -162,26 +170,11 @@ class LGTVController extends EventEmitter {
         return that.private.controls[udn].getPowerState();
     }
 
-    tvCommand(udn, command) {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "tvCommand"));
-                return;
-            }
-            if (Reflect.has(that.private.controls, udn) === false) {
-                reject(new UnknownTVError(udn, "LGTVController", "tvCommand"));
-                return;
-            }
-            resolve(that.private.controls[udn].lgtvCommand(LGTVMessage.translate(command)));
-        });
-    }
-
     lgtvCommand(udn, command) {
         const that = this;
         return new Promise((resolve, reject) => {
             if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "tvCommand"));
+                reject(new UnititializedClassError("LGTVController", "lgtvCommand"));
                 return;
             }
             if (Reflect.has(that.private.controls, udn) === false) {

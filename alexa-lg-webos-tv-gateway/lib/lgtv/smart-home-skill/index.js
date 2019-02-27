@@ -8,7 +8,7 @@ const alexaChannelController = require("./channel-controller.js");
 const alexaInputController = require("./input-controller.js");
 const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
-const {errorResponse} = require("../common");
+const {errorResponse} = require("../../common");
 
 function handler(lgtvController, event) {
     return new Promise((resolve) => {
