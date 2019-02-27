@@ -15,42 +15,43 @@ class LGTV extends EventEmitter {
         that.private.searcher = new LGTVSearcher();
     }
 
-    initialize(callback) {
-        if (this.private.initializing === true) {
-            callback(null);
-            return;
-        }
-        this.private.initializing = true;
-
-        const that = this;
-        if (that.private.initialized === true) {
-            that.private.initializing = false;
-            callback(null);
-            return;
-        }
-
-        that.private.controller.on("error", (error, id) => {
-            that.emit("error", error, `LGTVController.${id}`);
-        });
-        that.private.controller.initialize((error) => {
-            if (error) {
-                callback(error);
+    initialize() {
+        return new Promise((resolve, reject) => {
+            if (this.private.initializing === true) {
+                resolve();
                 return;
             }
-            that.private.searcher.on("error", (error) => {
-                that.emit("error", error, "LGTVController");
+            this.private.initializing = true;
+
+            const that = this;
+            if (that.private.initialized === true) {
+                that.private.initializing = false;
+                resolve();
+                return;
+            }
+
+            that.private.controller.on("error", (error, id) => {
+                that.emit("error", error, `LGTVController.${id}`);
             });
-            that.private.searcher.on("found", (tv) => {
-                that.private.controller.tvUpsert(tv);
-            });
-            that.private.searcher.initialize((searcherError) => {
-                if (searcherError) {
-                    callback(searcherError);
-                    return;
-                }
+            that.private.controller.initialize().
+            then(() => {
+                that.private.searcher.on("error", (error) => {
+                    that.emit("error", error, "LGTVController");
+                });
+                that.private.searcher.on("found", (tv) => {
+                    that.private.controller.tvUpsert(tv);
+                });
+                return that.private.searcher.initialize();
+            }).
+            then(() => {
                 that.private.initialized = true;
                 that.private.initializing = false;
-                callback(null);
+                resolve();
+                // eslint-disable-next-line no-useless-return
+                return;
+            }).
+            catch((error) => {
+                reject(error);
                 // eslint-disable-next-line no-useless-return
                 return;
             });

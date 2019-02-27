@@ -57,15 +57,14 @@ lgtv.on("error", (error, id) => {
     console.log(error);
 });
 
-lgtv.initialize((lgtvError) => {
-    if (lgtvError) {
-        throw lgtvError;
-    }
-    lgtv.start();
-    server.initialize((serverError) => {
-        if (serverError) {
-            throw serverError;
-        }
+lgtv.initialize().
+    then(() => {
+        lgtv.start();
+        return server.initialize();
+    }).
+    then(() => {
         server.start();
+    }).
+    catch((error) => {
+        throw error;
     });
-});

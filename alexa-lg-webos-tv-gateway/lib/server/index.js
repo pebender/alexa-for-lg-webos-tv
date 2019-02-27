@@ -17,45 +17,36 @@ class Server {
     }
 
     initialize(callback) {
-        if (this.private.initializing === true) {
-            callback(null);
-            return;
-        }
-        this.private.initializing = true;
-
         const that = this;
-
-        if (that.private.initialized === true) {
-            that.private.initializing = false;
-            callback(null);
-            return;
-        }
-
-        that.private.security.initialize((securityError) => {
-            if (securityError) {
-                that.private.initializing = false;
-                callback(securityError);
+        return new Promise((resolve, reject) => {
+            if (that.private.initializing === true) {
+                resolve();
                 return;
             }
-            that.private.internal.initialize((internalError) => {
-                if (internalError) {
-                    that.private.initializing = false;
-                    callback(internalError);
-                    return;
-                }
-                that.private.external.initialize((externalError) => {
-                    if (externalError) {
-                        that.private.initializing = false;
-                        callback(externalError);
-                        return;
-                    }
+            that.private.initializing = true;
+
+            if (that.private.initialized === true) {
+                that.private.initializing = false;
+                resolve();
+                return;
+            }
+
+            that.private.security.initialize().
+                then(() => that.private.internal.initialize()).
+                then(() => that.private.external.initialize()).
+                then(() => {
                     that.private.initialized = true;
                     that.private.initializing = false;
-                    callback(null);
+                    resolve();
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                }).
+                catch((error) => {
+                    that.private.initializing = false;
+                    reject(error);
                     // eslint-disable-next-line no-useless-return
                     return;
                 });
-            });
         });
     }
 

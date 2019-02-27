@@ -25,41 +25,43 @@ class LGTVController extends EventEmitter {
         return that.private.db;
     }
 
-    initialize(callback) {
-        if (this.private.initializing === true) {
-            callback(null, null);
-            return;
-        }
-        this.private.initializing = true;
-
+    initialize() {
         const that = this;
-        if (that.private.initialized === true) {
-            that.private.initializing = false;
-            callback(null, null);
-            return;
-        }
-
-        that.private.db.getRecords({}).
-        then((records) => {
-            records.forEach((record) => {
-                if (Reflect.has(that.private.controls, record.udn) === false) {
-                    that.private.controls[record.udn] = new LGTVControl(that.private.db, record);
-                    eventsAdd(record.udn);
-                }
-            });
-            function eventsAdd(udn) {
-                that.private.controls[udn].on("error", (error) => {
-                    that.emit("error", error, udn);
-                });
+        return new Promise((resolve, reject) => {
+            if (that.private.initializing === true) {
+                resolve();
+                return;
             }
-            that.private.initialized = true;
             that.private.initializing = true;
-            callback(null, null);
-        }).
-        catch((error) => {
-            that.private.initialized = false;
-            that.private.initializing = false;
-            callback(error, null);
+
+            if (that.private.initialized === true) {
+                that.private.initializing = false;
+                resolve();
+                return;
+            }
+
+            that.private.db.getRecords({}).
+            then((records) => {
+                records.forEach((record) => {
+                    if (Reflect.has(that.private.controls, record.udn) === false) {
+                        that.private.controls[record.udn] = new LGTVControl(that.private.db, record);
+                        eventsAdd(record.udn);
+                    }
+                });
+                function eventsAdd(udn) {
+                    that.private.controls[udn].on("error", (error) => {
+                        that.emit("error", error, udn);
+                    });
+                }
+                that.private.initialized = true;
+                that.private.initializing = true;
+                resolve();
+            }).
+            catch((error) => {
+                that.private.initialized = false;
+                that.private.initializing = false;
+                reject(error);
+            });
         });
     }
 
