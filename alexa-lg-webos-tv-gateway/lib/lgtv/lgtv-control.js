@@ -65,8 +65,7 @@ class LGTVControl extends EventEmitter {
         that.private.ssdp.start();
         // eslint-disable-next-line no-unused-vars
         that.private.ssdp.on("advertise-alive", (headers, _rinfo) => {
-            if (headers.USN.startsWith(`${that.private.tv.udn}::`) &&
-                headers.NT === "urn:lge-com:service:webos-second-screen:1") {
+            if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 that.private.powerOn = true;
                 if (that.private.connecting === false) {
                     that.private.connection.connect(that.private.tv.url);
@@ -75,8 +74,7 @@ class LGTVControl extends EventEmitter {
         });
         // eslint-disable-next-line no-unused-vars
         that.private.ssdp.on("advertise-bye", (headers, _rinfo) => {
-            if (headers.USN.startsWith(`${that.private.tv.udn}::`) &&
-                headers.NT === "urn:lge-com:service:webos-second-screen:1") {
+            if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 that.private.powerOn = false;
                 that.private.connection.disconnect();
             }
@@ -110,45 +108,73 @@ class LGTVControl extends EventEmitter {
                 return;
             }
 
-            let done = false;
-            let resolved = false;
+            let finished = false;
+            let finishing = false;
 
-            const {mac} = that.private.tv;
+            let ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+            ssdpNotify.on("advertise-alive", ssdpHandler);
+
+            let ssdpResponse = new SSDPClient();
+            ssdpResponse.on("response", ssdpHandler);
+
+            ssdpNotify.start();
+            setImmediate(wolHandler);
+            setImmediate(searchHandler);
+            setTimeout(finish, 5000);
 
             function wolHandler() {
+                const {mac} = that.private.tv;
                 // eslint-disable-next-line no-unused-vars
                 wol.wake(mac, (error, response) => {
-                    if (done === false) {
+                    if (finished === false) {
                         setTimeout(wolHandler, 250);
                     }
                 });
             }
-            setImmediate(wolHandler);
 
-            let ssdp = new SSDPClient();
-            // eslint-disable-next-line no-unused-vars
-            ssdp.on("response", (headers, rinfo) => {
-                if (headers.USN.startsWith(`${that.private.tv.udn}::`) &&
-                    headers.ST === "urn:lge-com:service:webos-second-screen:1") {
-                    that.private.powerOn = true;
-                    if (resolved === false) {
-                        resolved = true;
-                        resolve({});
-                    }
-                }
-            });
-            ssdp.search("urn:lge-com:service:webos-second-screen:1");
-            function cleanup() {
-                done = true;
-                if (ssdp) {
-                    ssdp.removeAllListeners();
-                    ssdp = null;
-                }
-                if (resolved === false) {
-                    resolved = true;
+            function searchHandler() {
+                if (finished === false && ssdpResponse !== null) {
+                    ssdpResponse.search(that.private.tv.udn);
+                    setTimeout(searchHandler, 1000);
                 }
             }
-            setTimeout(cleanup, 5000);
+
+            // eslint-disable-next-line no-unused-vars
+            function ssdpHandler(headers, rinfo) {
+                if (headers.USN.startsWith(`${that.private.tv.udn}::`) === true &&
+                    (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive")) {
+                        that.private.powerOn = true;
+                    if (finished === false) {
+                        finish();
+                    }
+                }
+            }
+
+            function finish() {
+                if (finishing === true) {
+                    return;
+                }
+                finishing = true;
+                if (finished === true) {
+                    finishing = false;
+                    return;
+                }
+
+                if (ssdpNotify !== null) {
+                    ssdpNotify.removeAllListeners();
+                    ssdpNotify = null;
+                }
+                if (ssdpResponse !== null) {
+                    ssdpResponse.removeAllListeners();
+                    ssdpResponse = null;
+                }
+
+                if (finished === false) {
+                    finished = true;
+                    finishing = false;
+                    resolve({});
+                }
+            }
         });
     }
 

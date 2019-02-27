@@ -48,80 +48,80 @@ class LGTVSearcher extends EventEmitter {
                 return;
             }
 
-            that.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            that.ssdpResponse = new SSDPClient();
-            that.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
-                ssdpProcess("advertise-alive", headers, rinfo, (error, tv) => {
-                    if (error) {
-                        that.emit("error", error);
-                        return;
-                    }
-                    if (!tv) {
-                        return;
-                    }
-                    that.emit("found", tv);
-                });
+            const service = "urn:lge-com:service:webos-second-screen:1";
+
+            that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+            that.private.ssdpResponse = new SSDPClient();
+            that.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+                ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
             });
-            that.ssdpNotify.on("advertise-bye", (headers, rinfo) => {
-                ssdpProcess("advertise-bye", headers, rinfo, (error, tv) => {
-                    if (error) {
-                        that.emit("error", error);
-                        return;
-                    }
-                    if (!tv) {
-                        return;
-                    }
-                    that.emit("found", tv);
-                });
-            });
-            that.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
-                if (statusCode !== "200") {
+            that.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+                if (statusCode !== 200) {
                     return;
                 }
-                ssdpProcess("response", headers, rinfo, (error, tv) => {
-                    if (error) {
-                        that.emit("error", error);
-                        return;
-                    }
-                    if (!tv) {
-                        return;
-                    }
-                    that.emit("found", tv);
-                });
+                ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
             });
-            that.ssdpNotify.start();
-            periodic();
+            that.private.ssdpNotify.start();
+            setImmediate(periodicSearch);
             that.private.initialized = true;
             that.private.initializing = false;
             resolve();
 
             // Periodicly scan for TVs.
-            function periodic() {
+            function periodicSearch() {
                 // Search every 1800s as that is the UPnP recommended time.
-                that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
-                setTimeout(periodic, 1800000);
+                that.private.ssdpResponse.search(service);
+                setTimeout(periodicSearch, 1800000);
             }
 
-            function ssdpProcess(type, headers, rinfo, cb) {
+            function ssdpProcessCallback(error, tv) {
+                if (error) {
+                    that.emit("error", error);
+                    return;
+                }
+                if (!tv) {
+                    return;
+                }
+                that.emit("found", tv);
+            }
+
+            function ssdpProcess(messageName, headers, rinfo, cb) {
                 const tv = {};
-                const typeMap = {
+                if (Reflect.has(headers, "USN") === false) {
+                    cb(null, null);
+                    return;
+                }
+                if (headers.USN.endsWith(`::${service}`) === false) {
+                    cb(null, null);
+                    return;
+                }
+                const messageTypeMap = {
                     "advertise-alive": "NT",
                     "advertise-bye": "NT",
                     "response": "ST"
                 };
-                if (!(type in typeMap)) {
+                if (Reflect.has(messageTypeMap, messageName) === false) {
+                    cb(null, null);
+                    return;
+                }
+                // Make sure it is the webOS second screen service.
+                if (Reflect.has(headers, messageTypeMap[messageName]) === false) {
+                    cb(null, null);
+                    return;
+                }
+                if ((headers[messageTypeMap[messageName]] === service) === false) {
+                    cb(null, null);
+                    return;
+                }
+                // Make sure that if it is a advertise (NT) message then it is "ssdp:alive".
+                if ((messageTypeMap[messageName] === "NT") &&
+                    (Reflect.has(headers, "NTS") === false || (headers.NTS === "ssdp:alive") === false)) {
                     cb(null, null);
                     return;
                 }
                 // Make sure it is webOS and UPnP 1.0 or 1.1.
                 if (!("SERVER" in headers) ||
                     !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
-                    cb(null, null);
-                    return;
-                }
-                // Make sure it is the webOS second screen service.
-                if (!(typeMap[type] in headers) ||
-                    headers[typeMap[type]] !== "urn:lge-com:service:webos-second-screen:1") {
                     cb(null, null);
                     return;
                 }
@@ -209,7 +209,7 @@ class LGTVSearcher extends EventEmitter {
             throw new UnititializedClassError("LGTVSearcher", "now");
         }
 
-        that.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+        that.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }
 
