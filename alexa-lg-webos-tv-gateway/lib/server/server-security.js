@@ -14,56 +14,56 @@ class ServerSecurity {
         that.private.dbRecord.hostname = "";
     }
 
-    initialize(callback) {
-        if (this.private.initializing === true) {
-            callback(null);
-            return;
-        }
-        this.private.initializing = true;
-
+    initialize() {
         const that = this;
-        if (that.private.initialized === true) {
-            that.private.initializing = false;
-            callback(null);
-            return;
-        }
+        return new Promise((resolve, reject) => {
+            if (that.private.initializing === true) {
+                resolve();
+                return;
+            }
+            that.private.initializing = true;
 
-        that.private.db.getRecord({"username": that.private.dbRecord.username}).
-        then((record) => {
-            if (record === null) {
-                // eslint-disable-next-line no-unused-vars
-                that.private.db.insertRecord(that.private.dbRecord).
-                then(() => {
+            if (that.private.initialized === true) {
+                that.private.initializing = false;
+                resolve();
+                return;
+            }
+
+            that.private.db.getRecord({"username": that.private.dbRecord.username}).
+            then((record) => {
+                if (record === null) {
+                    // eslint-disable-next-line no-unused-vars
+                    that.private.db.insertRecord(that.private.dbRecord).
+                    then(() => {
+                        that.private.initialized = true;
+                        that.private.initializing = false;
+                        resolve();
+                        // eslint-disable-next-line no-useless-return
+                        return;
+                    }).
+                    catch((error) => {
+                        that.private.initializing = false;
+                        reject(error);
+                        // eslint-disable-next-line no-useless-return
+                        return;
+                    });
+                } else {
+                    that.private.dbRecord.username = record.username;
+                    that.private.dbRecord.password = record.password;
+                    that.private.dbRecord.hostname = record.hostname;
                     that.private.initialized = true;
                     that.private.initializing = false;
-                    callback(null);
+                    resolve();
                     // eslint-disable-next-line no-useless-return
                     return;
-                }).
-                catch((error) => {
-                    that.private.initializing = false;
-                    callback(error);
-                    // eslint-disable-next-line no-useless-return
-                    return;
-                });
-            } else {
-                that.private.dbRecord.username = record.username;
-                that.private.dbRecord.password = record.password;
-                that.private.dbRecord.hostname = record.hostname;
-                that.private.initialized = true;
+                }
+            }).
+            catch((error) => {
                 that.private.initializing = false;
-                callback(null);
+                reject(error);
                 // eslint-disable-next-line no-useless-return
                 return;
-            }
-        }).
-        catch((error) => {
-            if (error) {
-                that.private.initializing = false;
-                callback(error);
-                // eslint-disable-next-line no-useless-return
-                return;
-            }
+            });
         });
     }
 
