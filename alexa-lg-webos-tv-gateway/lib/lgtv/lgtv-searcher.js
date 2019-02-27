@@ -50,7 +50,6 @@ class LGTVSearcher extends EventEmitter {
 
             that.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
             that.ssdpResponse = new SSDPClient();
-            that.ssdpNotify.start();
             that.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
                 ssdpProcess("advertise-alive", headers, rinfo, (error, tv) => {
                     if (error) {
@@ -90,7 +89,11 @@ class LGTVSearcher extends EventEmitter {
                     that.emit("found", tv);
                 });
             });
+            that.ssdpNotify.start();
             periodic();
+            that.private.initialized = true;
+            that.private.initializing = false;
+            resolve();
 
             // Periodicly scan for TVs.
             function periodic() {
@@ -197,9 +200,6 @@ class LGTVSearcher extends EventEmitter {
                     });
                 });
             }
-            that.private.initialized = true;
-            that.private.initializing = false;
-            resolve();
         });
     }
 
