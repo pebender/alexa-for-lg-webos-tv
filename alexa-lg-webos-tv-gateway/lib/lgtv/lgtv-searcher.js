@@ -119,6 +119,7 @@ class LGTVSearcher extends EventEmitter {
                     cb(null, null);
                     return;
                 }
+console.log(JSON.stringify(headers, null, 2));
                 // Make sure it is webOS and UPnP 1.0 or 1.1.
                 if (!("SERVER" in headers) ||
                     !headers.SERVER.match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
