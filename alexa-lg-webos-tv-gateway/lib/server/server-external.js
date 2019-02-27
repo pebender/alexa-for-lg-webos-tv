@@ -96,7 +96,7 @@ class ServerExternal {
             }
 
             function lgtvRunHandler(request, response) {
-                that.private.lgtv.controller.runCommand(request.body).
+                that.private.lgtv.runCommand(request.body).
                     then((res) => {
                         response.
                             type("json").
@@ -111,7 +111,7 @@ class ServerExternal {
 
             function lgtvSkillHandler(request, response) {
             console.log(JSON.stringify(request.body, null, 2));
-                that.private.lgtv.controller.skillCommand(request.body).
+                that.private.lgtv.skillCommand(request.body).
                     then((res) => {
             console.log(JSON.stringify(res, null, 2));
                         response.

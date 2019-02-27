@@ -6,7 +6,7 @@
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-function handler(lgtvController, event) {
+function handler(lgtv, event) {
     return new Promise((resolve) => {
         const udn = event.body.television;
         const controllerMessage = event.body.command;
@@ -66,7 +66,7 @@ function handler(lgtvController, event) {
         default:
             break;
         }
-        lgtvController.lgtvCommand(udn, lgtvMessage).
+        lgtv.lgtvCommand(udn, lgtvMessage).
         then((response) => {
             resolve(response);
             // eslint-disable-next-line no-useless-return

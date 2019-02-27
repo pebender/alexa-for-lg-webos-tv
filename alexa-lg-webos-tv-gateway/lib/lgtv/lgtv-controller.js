@@ -16,15 +16,6 @@ class LGTVController extends EventEmitter {
         that.private.controls = [];
     }
 
-    get db() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "db");
-        }
-
-        return that.private.db;
-    }
-
     initialize() {
         const that = this;
         return new Promise((resolve, reject) => {
@@ -128,6 +119,27 @@ class LGTVController extends EventEmitter {
             throw new UnititializedClassError("LGTVController", "skillCommand");
         }
         return smartHomeSkill.handler(that, event);
+    }
+
+    getUDNList() {
+        const that = this;
+        return new Promise((resolve, reject) => {
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", "getUDNList"));
+            }
+            resolve(Object.keys(this.private.controls));
+        });
+    }
+
+    tv(udn) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVController", "tv");
+        }
+        if (Reflect.has(that.private.controls, udn) === false) {
+            throw new UnknownTVError(udn, "LGTVController", "tv");
+        }
+        return that.private.controls[udn].tv;
     }
 
     turnOff(udn) {

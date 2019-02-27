@@ -8,16 +8,16 @@ const alexaInputController = require("./input-controller.js");
 const alexaLauncher = require("./launcher.js");
 const alexaPlaybackController = require("./playback-controller.js");
 
-function handler(lgtvController, event) {
+function handler(lgtv, event) {
     return new Promise((resolve, reject) => {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
             namespaceErrorResponse(event, "Alexa.Discovery");
             return;
         }
 
-        lgtvController.db.getRecords({}).
-        then((records) => {
-            resolve(Promise.all(records.map(buildEndpoint)).
+        lgtv.getUDNList().
+        then((udnList) => {
+            resolve(Promise.all(udnList.map(buildEndpoint)).
             then(buildResponse));
             // eslint-disable-next-line no-useless-return
             return;
@@ -29,17 +29,16 @@ function handler(lgtvController, event) {
         });
     });
 
-    function buildEndpoint(doc) {
+    function buildEndpoint(udn) {
         return new Promise((resolve) => {
-            const [udn] = doc.udn;
             resolve(Promise.all([
-                    alexa.capabilities(lgtvController, event, doc.udn),
-                    alexaPowerController.capabilities(lgtvController, event, udn),
-                    alexaSpeaker.capabilities(lgtvController, event, udn),
-                    alexaChannelController.capabilities(lgtvController, event, udn),
-                    alexaInputController.capabilities(lgtvController, event, udn),
-                    alexaLauncher.capabilities(lgtvController, event, udn),
-                    alexaPlaybackController.capabilities(lgtvController, event, udn)
+                    alexa.capabilities(lgtv, event, udn),
+                    alexaPowerController.capabilities(lgtv, event, udn),
+                    alexaSpeaker.capabilities(lgtv, event, udn),
+                    alexaChannelController.capabilities(lgtv, event, udn),
+                    alexaInputController.capabilities(lgtv, event, udn),
+                    alexaLauncher.capabilities(lgtv, event, udn),
+                    alexaPlaybackController.capabilities(lgtv, event, udn)
                 ]).
                 then(buildEndpointHandler).
                 catch(buildEndpointErrorHandler));
@@ -47,9 +46,10 @@ function handler(lgtvController, event) {
 
         function buildEndpointHandler(capabilitiesList) {
             return new Promise((resolve) => {
+                const {name} = lgtv.tv(udn);
                 const endpoint = {
-                    "endpointId": doc.udn,
-                    "friendlyName": doc.name,
+                    "endpointId": udn,
+                    "friendlyName": name,
                     "description": "LG webOS TV",
                     "manufacturerName": "LG Electronics",
                     "displayCategories": ["TV"],

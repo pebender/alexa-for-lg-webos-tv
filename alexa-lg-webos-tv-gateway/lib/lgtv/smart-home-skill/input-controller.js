@@ -43,7 +43,7 @@ const lgtvToAlexa = {
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtvController, _event, _udn) {
+function capabilities(_lgtv, _event, _udn) {
     return new Promise((resolve) => {
         resolve({
             "type": "AlexaInterface",
@@ -62,7 +62,7 @@ function capabilities(_lgtvController, _event, _udn) {
     });
 }
 
-function states(lgtvController, udn) {
+function states(lgtv, udn) {
     return Promise.all([
             getExternalInputList(),
             getInput()
@@ -72,7 +72,7 @@ function states(lgtvController, udn) {
 
     function getExternalInputList() {
         return new Promise((resolve) => {
-            if (lgtvController.getPowerState(udn) === "OFF") {
+            if (lgtv.getPowerState(udn) === "OFF") {
                 resolve([]);
                 return;
             }
@@ -80,7 +80,7 @@ function states(lgtvController, udn) {
             const command = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            resolve(lgtvController.lgtvCommand(udn, command).
+            resolve(lgtv.lgtvCommand(udn, command).
                 then((response) => {
                     if (!Reflect.has(response, "devices")) {
                         return [];
@@ -92,7 +92,7 @@ function states(lgtvController, udn) {
 
     function getInput() {
         return new Promise((resolve) => {
-            if (lgtvController.getPowerState(udn) === "OFF") {
+            if (lgtv.getPowerState(udn) === "OFF") {
                 resolve(null);
                 return;
             }
@@ -100,7 +100,7 @@ function states(lgtvController, udn) {
             const command = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            resolve(lgtvController.lgtvCommand(udn, command).
+            resolve(lgtv.lgtvCommand(udn, command).
                 then((response) => response.appId));
             });
     }
@@ -143,7 +143,7 @@ function states(lgtvController, udn) {
     }
 }
 
-function handler(lgtvController, event) {
+function handler(lgtv, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.InputController") {
             resolve(namespaceErrorResponse(event, "Alexa.InputController"));
@@ -151,16 +151,16 @@ function handler(lgtvController, event) {
         }
         switch (event.directive.header.name) {
             case "SelectInput":
-                resolve(selectInputHandler(lgtvController, event));
+                resolve(selectInputHandler(lgtv, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvController, event));
+                resolve(directiveErrorResponse(lgtv, event));
                 break;
         }
     });
 }
 
-function selectInputHandler(lgtvController, event) {
+function selectInputHandler(lgtv, event) {
     return Promise.all(
             getExternalInputList,
             getInput
@@ -171,7 +171,7 @@ function selectInputHandler(lgtvController, event) {
     function getExternalInputList() {
         const {endpointId} = event.directive.endpoint;
         return new Promise((resolve) => {
-            if (lgtvController.getPowerState(endpointId) === "OFF") {
+            if (lgtv.getPowerState(endpointId) === "OFF") {
                 resolve([]);
                 return;
             }
@@ -179,7 +179,7 @@ function selectInputHandler(lgtvController, event) {
             const command = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            resolve(lgtvController.lgtvCommand(endpointId, command).
+            resolve(lgtv.lgtvCommand(endpointId, command).
                 then((response) => {
                     if (!Reflect.has(response, "devices")) {
                         return [];
@@ -226,7 +226,7 @@ function selectInputHandler(lgtvController, event) {
 
     function setExternalInput(input) {
         return new Promise((resolve) => {
-            if (lgtvController.getPowerState(endpointId) === "OFF") {
+            if (lgtv.getPowerState(endpointId) === "OFF") {
                 resolve([]);
                 return;
             }
@@ -246,7 +246,7 @@ function selectInputHandler(lgtvController, event) {
                 "payload": {"inputId": input}
             };
             // eslint-disable-next-line no-unused-vars
-            resolve(lgtvController.lgtvCommand(endpointId, command).
+            resolve(lgtv.lgtvCommand(endpointId, command).
                 then(() => {
                     const alexaResponse = new AlexaResponse({
                         "request": event

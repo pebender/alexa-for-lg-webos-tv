@@ -61,18 +61,74 @@ class LGTV extends EventEmitter {
     start() {
         const that = this;
         if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "skillCommand");
+            throw new UnititializedClassError("LGTV", "start");
         }
 
         that.private.searcher.now();
     }
 
-    get controller() {
+    runCommand(event) {
         const that = this;
         if (that.private.initialized === false) {
-            throw new UnititializedClassError("Server", "get+controller");
+            throw new UnititializedClassError("LGTV", "runCommand");
         }
-        return that.private.controller;
+        return that.private.controller.runCommand(event);
+    }
+
+    skillCommand(event) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "skillCommand");
+        }
+        return that.private.controller.skillCommand(event);
+    }
+
+    getUDNList() {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "getUDNList");
+        }
+        return that.private.controller.getUDNList();
+    }
+
+    tv(udn) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "tv");
+        }
+        return that.private.controller.tv(udn);
+    }
+
+    lgtvCommand(udn, command) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "lgtvCommand");
+        }
+        return that.private.controller.lgtvCommand(udn, command);
+    }
+
+    getPowerState(udn) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "getPowerState");
+        }
+        return that.private.controller.getPowerState(udn);
+    }
+
+    turnOff(udn) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "turnOff");
+        }
+        return that.private.controller.turnOff(udn);
+    }
+
+    turnOn(udn) {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTV", "turnOn");
+        }
+        return that.private.controller.turnOn(udn);
     }
 }
 

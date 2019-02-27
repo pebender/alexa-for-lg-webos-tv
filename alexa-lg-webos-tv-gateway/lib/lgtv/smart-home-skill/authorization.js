@@ -1,6 +1,6 @@
 const {errorResponse} = require("../../common");
 
-function handler(lgtvController, udn, event) {
+function handler(_lgtv, _udn, event) {
     return new Promise((resolve) => {
         resolve(errorResponse(event, "INTERNAL_ERROR", ""));
     });

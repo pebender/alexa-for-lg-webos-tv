@@ -2,7 +2,7 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {directiveErrorResponse, namespaceErrorResponse} = require("../../common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(lgtvController, event, udn) {
+function capabilities(_lgtv, _event, _udn) {
     return new Promise((resolve) => {
          resolve({
             "type": "AlexaInterface",
@@ -21,41 +21,41 @@ function capabilities(lgtvController, event, udn) {
     });
 }
 
-function states(lgtvController, udn) {
+function states(lgtv, udn) {
     return new Promise((resolve) => {
         const powerStateState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.PowerController",
             "name": "powerState",
-            "value": lgtvController.getPowerState(udn)
+            "value": lgtv.getPowerState(udn)
         });
         resolve([powerStateState]);
     });
 }
 
-function handler(lgtvController, event) {
+function handler(lgtv, event) {
     return new Promise((resolve) => {
         if (event.directive.header.namespace !== "Alexa.PowerController") {
             resolve(namespaceErrorResponse(event, "Alexa.PowerController"));
         }
         switch (event.directive.header.name) {
             case "TurnOff":
-                resolve(turnOffHandler(lgtvController, event));
+                resolve(turnOffHandler(lgtv, event));
                 break;
             case "TurnOn":
-                resolve(turnOnHandler(lgtvController, event));
+                resolve(turnOnHandler(lgtv, event));
                 break;
             default:
-                resolve(directiveErrorResponse(lgtvController, event));
+                resolve(directiveErrorResponse(lgtv, event));
                 break;
         }
     });
 }
 
-function turnOffHandler(lgtvController, event) {
+function turnOffHandler(lgtv, event) {
     return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
-        resolve(lgtvController.turnOff(endpointId).
+        resolve(lgtv.turnOff(endpointId).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event
@@ -65,11 +65,11 @@ function turnOffHandler(lgtvController, event) {
     });
 }
 
-function turnOnHandler(lgtvController, event) {
+function turnOnHandler(lgtv, event) {
     return new Promise((resolve) => {
         const {endpointId} = event.directive.endpoint;
 
-        resolve(lgtvController.turnOn(endpointId).
+        resolve(lgtv.turnOn(endpointId).
             then(() => {
                 const alexaResponse = new AlexaResponse({
                     "request": event

@@ -83,6 +83,21 @@ class LGTVControl extends EventEmitter {
         that.private.initializing = false;
     }
 
+    get tv() {
+        const that = this;
+        if (that.private.initialized === false) {
+            throw new UnititializedClassError("LGTVControl", "get+tv");
+        }
+        const tv = {
+            "udn": that.private.tv.udn,
+            "name": that.private.tv.name,
+            "ip": that.private.tv.ip,
+            "url": that.private.tv.url,
+            "mac": that.private.tv.mac
+        };
+        return tv;
+    }
+
     turnOff() {
         const that = this;
         return new Promise((resolve, reject) => {
