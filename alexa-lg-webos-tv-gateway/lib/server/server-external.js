@@ -9,9 +9,7 @@
 
 const express = require("express");
 const basicAuth = require("express-basic-auth");
-const {constants} = require("alexa-lg-webos-tv-common");
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {UnititializedClassError} = require("../common");
+const {GenericError, UnititializedClassError} = require("../common");
 
 class ServerExternal {
     constructor(serverSecurity, lgtv) {
@@ -42,9 +40,9 @@ class ServerExternal {
 
             that.private.server = express();
             that.private.server.use("/", express.json());
-            that.private.server.use("/HTTP", basicAuth({"authorizer": requestAuthorizeHTTP}));
+            that.private.server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
             that.private.server.post("/HTTP", httpHandler);
-            that.private.server.use("/LGTV", basicAuth({"authorizer": requestAuthorizeLGTV}));
+            that.private.server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
             that.private.server.post("/LGTV/RUN", lgtvRunHandler);
             that.private.server.post("/LGTV/SKILL", lgtvSkillHandler);
             that.private.server.get("/LGTV/PING", lgtvPingHandler);
@@ -54,83 +52,99 @@ class ServerExternal {
             that.private.initialized = true;
             that.private.initializing = false;
             resolve();
+        });
 
-            function requestAuthorizeHTTP(username, password) {
-                if (username === "HTTP" && password === constants.password) {
-                    return true;
-                }
-                return false;
-            }
+        async function authorizeRoot(username, password) {
+            const valid = await that.private.security.authorizeRoot(username, password);
+            return valid;
+        }
 
-            function httpHandler(request, response) {
-                if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
-                    let body = {};
-                    if (that.private.security.password === null) {
-                        that.private.security.password = request.body.command.value;
-                        body = {};
+        async function authorizeUser(username, password) {
+            const valid = await that.private.security.authorizeUser(username, password);
+            return valid;
+        }
+
+        function httpHandler(request, response) {
+            if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
+                that.private.security.userPasswordIsNull().
+                then((isNull) => {
+                    if (isNull) {
+                        that.private.security.setUserPassword(request.body.command.value).
+                        then(() => {
+                            const body = {};
+                            response.
+                                type("json").
+                                status(200).
+                                json(body).
+                                end();
+                        }).
+                        catch((error) => {
+                            const body = {
+                                "error": {
+                                    "name": error.name,
+                                    "message": error.message
+                                }
+                            };
+                            response.
+                                type("json").
+                                status(200).
+                                json(body).
+                                end();
+                        });
                     } else {
-                        body = {
+                        const body = {
                             "error": {
-                                "message": "Gateway's password is already set."
+                                "message": "The password is already set."
                             }
                         };
+                        response.
+                            type("json").
+                            status(200).
+                            json(body).
+                            end();
                     }
+                });
+            } else {
+                response.
+                    status(400).
+                    end();
+            }
+        }
+
+        function lgtvRunHandler(request, response) {
+            return that.private.lgtv.runCommand(request.body).
+                then((res) => {
                     response.
                         type("json").
                         status(200).
-                        json(body).
+                        json(res).
                         end();
-                } else {
+                }).
+                catch((error) => {
+                    throw error;
+                });
+        }
+
+        function lgtvSkillHandler(request, response) {
+            return that.private.lgtv.skillCommand(request.body).
+                then((res) => {
                     response.
-                        status(400).
+                        type("json").
+                        status(200).
+                        json(res).
                         end();
-                }
-            }
+                }).
+                catch((error) => {
+                    throw error;
+                });
+        }
 
-            function requestAuthorizeLGTV(username, password) {
-            //    if (username === that.private.security.username && password === that.private.security.password) {
-                if (username === that.private.security.username && password === "0") {
-                    return true;
-                }
-                return false;
-            }
 
-            function lgtvRunHandler(request, response) {
-                that.private.lgtv.runCommand(request.body).
-                    then((res) => {
-                        response.
-                            type("json").
-                            status(200).
-                            json(res).
-                            end();
-                    }).
-                    catch((error) => {
-                        throw error;
-                    });
-            }
-
-            function lgtvSkillHandler(request, response) {
-            console.log(JSON.stringify(request.body, null, 2));
-                that.private.lgtv.skillCommand(request.body).
-                    then((res) => {
-            console.log(JSON.stringify(res, null, 2));
-                        response.
-                            type("json").
-                            status(200).
-                            json(res).
-                            end();
-                    }).
-                    catch((error) => {
-                        throw error;
-                    });
-            }
-
-            function lgtvPingHandler(request, response) {
-                response.
-                    status(200).
-                    end();
-            }
-        });
+        function lgtvPingHandler(request, response) {
+            response.
+                status(200).
+                end();
+        }
     }
 
     start() {

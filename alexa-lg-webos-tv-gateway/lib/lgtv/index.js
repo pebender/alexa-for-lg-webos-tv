@@ -58,78 +58,56 @@ class LGTV extends EventEmitter {
         });
     }
 
-    start() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "start");
-        }
+    initialized() {
+        return this.private.initialized;
+    }
 
-        that.private.searcher.now();
+    start() {
+        return isInitialized(this, "LGTV", "start").then(() => this.private.searcher.now());
     }
 
     runCommand(event) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "runCommand");
-        }
-        return that.private.controller.runCommand(event);
+        return isInitialized(this, "LGTV", "runCommand").then(() => this.private.controller.runCommand(event));
     }
 
     skillCommand(event) {
         const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "skillCommand");
-        }
-        return that.private.controller.skillCommand(event);
+        return isInitialized(that, "LGTV", "skillCommand").then(() => that.private.controller.skillCommand(event));
     }
 
     getUDNList() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "getUDNList");
-        }
-        return that.private.controller.getUDNList();
+        return isInitialized(this, "LGTV", "getUDNList").then(() => this.private.controller.getUDNList());
     }
 
     tv(udn) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "tv");
-        }
-        return that.private.controller.tv(udn);
+        return isInitialized(this, "LGTV", "tv").then(() => this.private.controller.tv(udn));
     }
 
     lgtvCommand(udn, command) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "lgtvCommand");
-        }
-        return that.private.controller.lgtvCommand(udn, command);
+        return isInitialized(this, "LGTV", "lgtvCommand").then(() => this.private.controller.lgtvCommand(udn, command));
     }
 
     getPowerState(udn) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "getPowerState");
-        }
-        return that.private.controller.getPowerState(udn);
+        return isInitialized(this, "LGTV", "getPowerState").then(() => this.private.controller.getPowerState(udn));
     }
 
     turnOff(udn) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "turnOff");
-        }
-        return that.private.controller.turnOff(udn);
+        return isInitialized(this, "LGTV", "turnOff").then(() => this.private.controller.turnOff(udn));
     }
 
     turnOn(udn) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTV", "turnOn");
-        }
-        return that.private.controller.turnOn(udn);
+        return isInitialized(this, "LGTV", "turnOn").then(() => this.private.controller.turnOn(udn));
     }
+}
+
+function isInitialized(classObject, className, methodName) {
+    return new Promise((resolve, reject) => {
+        if (classObject.initialized() === false) {
+            reject(new UnititializedClassError(className, methodName));
+            return;
+        }
+        resolve(true);
+    });
 }
 
 module.exports = LGTV;

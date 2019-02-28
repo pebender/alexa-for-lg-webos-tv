@@ -37,32 +37,65 @@ class ServerInternal {
             that.private.initialized = true;
             that.private.initializing = false;
             resolve();
+        });
 
-            function getHandler(request, response) {
-                sendForm(request, response);
+        function getHandler(request, response) {
+            sendForm(request, response);
+        }
+
+        function postHandler(request, response) {
+            processForm(request.body).
+                then(() => sendForm(request, response));
+        }
+
+        function processForm(formAttributes) {
+            return new Promise((resolve) => {
+                resolve(processHostname(formAttributes).then(() => processPassword()));
+            });
+
+            function processHostname() {
+                return new Promise((resolve) => {
+                    let hostname = "";
+                    if (formAttributes !== null &&
+                        Reflect.has(formAttributes, "hostname")
+                    ) {
+                        ({hostname} = formAttributes);
+                    }
+                    resolve(that.private.security.setHostname(hostname));
+                });
             }
 
-            function postHandler(request, response) {
-                processForm(request.body);
-                sendForm(request, response);
+            function processPassword() {
+                return new Promise((resolve) => {
+                    let deletePassword = false;
+                    if (formAttributes !== null &&
+                        Reflect.has(formAttributes, "deletePassword") &&
+                        formAttributes.deletePassword.toUpperCase() === "ON"
+                    ) {
+                        deletePassword = true;
+                    }
+                    if (deletePassword) {
+                        resolve(that.private.security.setUserPassword(null));
+                        return;
+                    }
+                    resolve();
+                });
             }
+        }
 
-            function processForm(formAttributes) {
-                if (Reflect.has(formAttributes, "hostname")) {
-                    that.private.security.hostname = formAttributes.hostname;
-                }
-                if (Reflect.has(formAttributes, "deletePassword") && formAttributes.deletePassword.toUpperCase() === "ON") {
-                    that.private.security.password = null;
-                }
-            }
+        function sendForm(request, response) {
+            return Promise.all([
+                that.private.security.getHostname(),
+                that.private.security.userPasswordIsNull()
+            ]).
+            then((values) => {
+                const [
+                    hostname,
+                    passwordIsNull
+                ] = values;
 
-            function sendForm(request, response) {
-                let hostname = "";
-                if (that.private.security.hostname !== null) {
-                    ({hostname} = that.private.security);
-                }
                 let deletePasswordHTML = "";
-                if (that.private.security.password === null) {
+                if (passwordIsNull) {
                     deletePasswordHTML = "" +
                         "<label>" +
                             "LG webOS TV gateway password delete" +
@@ -116,8 +149,8 @@ class ServerInternal {
                     status(200).
                     send(page).
                     end();
-            }
-        });
+            });
+        }
     }
 
     start() {
