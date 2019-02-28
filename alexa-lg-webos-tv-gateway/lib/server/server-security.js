@@ -40,6 +40,7 @@ class ServerSecurity {
             const that = this;
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
+                return;
             }
             if (username === "HTTP" && password === constants.password) {
                 resolve(true);
@@ -54,6 +55,7 @@ class ServerSecurity {
         return new Promise((resolve, reject) => {
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeUser"));
+                return;
             }
             that.private.db.getRecord({"name": "password"}).
             then((record) => {
@@ -69,7 +71,8 @@ class ServerSecurity {
                     return;
                 }
                 resolve(false);
-            });
+            }).
+            catch(reject);
         });
     }
 
@@ -78,6 +81,7 @@ class ServerSecurity {
             const that = this;
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
+                return;
             }
             that.private.db.getRecord({"name": "password"}).
             then((record) => {
@@ -99,6 +103,7 @@ class ServerSecurity {
             const that = this;
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
+                return;
             }
             that.private.db.updateOrInsertRecord(
                 {"name": "password"},
@@ -108,7 +113,7 @@ class ServerSecurity {
                 }
             ).
             then(() => resolve()).
-            catch((error) => reject(error));
+            catch(reject);
         });
     }
 
@@ -117,6 +122,7 @@ class ServerSecurity {
             const that = this;
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
+                return;
             }
             that.private.db.getRecord({"name": "hostname"}).
             then((record) => {
@@ -135,6 +141,7 @@ class ServerSecurity {
             const that = this;
             if (that.private.initialized === false) {
                 reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
+                return;
             }
             that.private.db.updateOrInsertRecord(
                 {"name": "hostname"},
@@ -144,7 +151,7 @@ class ServerSecurity {
                 }
             ).
             then(() => resolve()).
-            catch((error) => reject(error));
+            catch(reject);
         });
     }
 }

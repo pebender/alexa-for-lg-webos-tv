@@ -9,7 +9,7 @@
 
 const express = require("express");
 const basicAuth = require("express-basic-auth");
-const {GenericError, UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("../common");
 
 class ServerExternal {
     constructor(serverSecurity, lgtv) {
