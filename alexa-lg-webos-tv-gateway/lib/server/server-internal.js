@@ -29,57 +29,62 @@ class ServerInternal {
 
             that.private.server = express();
 
-            that.private.server.use("/", express.urlencoded({
+            that.private.server.use(express.urlencoded({
                 "extended": false
             }));
-            that.private.server.post("/", postHandler);
             that.private.server.get("/", getHandler);
+            that.private.server.post("/", postHandler);
             that.private.initialized = true;
             that.private.initializing = false;
             resolve();
 
-            function postHandler(request, response) {
-                that.private.security.hostname = request.query.hostname;
-                if (("deletePassword" in request.query) && (/^on$/i).test(request.query.deletePassword)) {
-                    that.private.security.password = null;
-                }
-                getHandler(request, response);
+            function getHandler(request, response) {
+                sendForm(request, response);
             }
 
-            function getHandler(_request, response) {
+            function postHandler(request, response) {
+                processForm(request.body);
+                sendForm(request, response);
+            }
+
+            function processForm(formAttributes) {
+                if (Reflect.has(formAttributes, "hostname")) {
+                    that.private.security.hostname = formAttributes.hostname;
+                }
+                if (Reflect.has(formAttributes, "deletePassword") && formAttributes.deletePassword.toUpperCase() === "ON") {
+                    that.private.security.password = null;
+                }
+            }
+
+            function sendForm(request, response) {
                 let hostname = "";
                 if (that.private.security.hostname !== null) {
                     ({hostname} = that.private.security);
                 }
-                let deletePasswordHTMLLabel = "";
-                let deletePasswordHTMLInput = "";
+                let deletePasswordHTML = "";
                 if (that.private.security.password === null) {
-                    deletePasswordHTMLLabel = "<label" +
-                            " for=\"deletePassword\"" +
-                        ">" +
+                    deletePasswordHTML = "" +
+                        "<label>" +
                             "LG webOS TV gateway password delete" +
                             " (already deleted)" +
                             ":" +
+                            "<input" +
+                                " type=\"checkbox\"" +
+                                " name=\"deletePassword\"" +
+                                " checked" +
+                                " disabled" +
+                            " />" +
                         "</label>";
-                    deletePasswordHTMLInput = "<input" +
-                            " type=\"checkbox\"" +
-                            " id=\"deletePassword\"" +
-                            " name=\"deletePassword\"" +
-                            " checked" +
-                            " disabled" +
-                        ">";
                 } else {
-                    deletePasswordHTMLLabel = "<label" +
-                            " for=\"deletePassword\"" +
-                        ">" +
+                    deletePasswordHTML = "" +
+                        "<label>" +
                             "LG webOS TV gateway password delete" +
                             ":" +
+                            "<input" +
+                                " type=\"checkbox\"" +
+                                " name=\"deletePassword\"" +
+                            " />" +
                         "</label>";
-                    deletePasswordHTMLInput = "<input" +
-                            " type=\"checkbox\"" +
-                            " id=\"deletePassword\"" +
-                            " name=\"deletePassword\"" +
-                        ">";
                 }
                 const page = `<!DOCTYPE html>
                     <html>
@@ -90,17 +95,18 @@ class ServerInternal {
                         </head>
                         <body>
                             <H1>LG webOS TV gateway</H1>
-                                <form action="/" enctype="url-encoded" method="post">
+                                <form  method="post" action="/" enctype="application/x-www-form-urlencoded">
                                     <div>
-                                        <label for="hostname">LG webOS TV gateway hostname:</label>
-                                        <input type="text" id="hostname" name="hostname" value="${hostname}">
+                                        <label>
+                                            LG webOS TV gateway hostname:
+                                            <input type="text" name="hostname" value="${hostname}" />
+                                        </label>
                                     </div>
                                     <div>
-                                        ${deletePasswordHTMLLabel}
-                                        ${deletePasswordHTMLInput}
+                                        ${deletePasswordHTML}
                                     </div>
                                     <div class="button">
-                                        <button type="submit">submit your changes</submit>
+                                        <button type="submit">submit your changes</button>
                                     </div>
                                 </form>
                         </body>

@@ -16,7 +16,7 @@ class Server {
         that.private.external = new ServerExternal(that.private.security, lgtv);
     }
 
-    initialize(callback) {
+    initialize() {
         const that = this;
         return new Promise((resolve, reject) => {
             if (that.private.initializing === true) {
