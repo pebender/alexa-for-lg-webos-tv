@@ -10,8 +10,8 @@
 const fs = require("fs-extra");
 const ppath = require("persist-path");
 const DatabaseTable = require("./lib/database");
-const LGTV = require("./lib/lgtv");
-const Server = require("./lib/server");
+const Backend = require("./lib/backend");
+const Frontend = require("./lib/frontend");
 
 /*
  * I keep long term information needed to connect to each TV in a database.
@@ -35,35 +35,35 @@ try {
     }
 }
 
-const serverDb = new DatabaseTable(configurationDir, "server", ["username"], "username");
-serverDb.initialize((error) => {
+const frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
+frontendDb.initialize((error) => {
     if (error) {
         throw error;
     }
 });
 
-const lgtvDb = new DatabaseTable(configurationDir, "lgtv", ["udn"], "udn");
-lgtvDb.initialize((error) => {
+const backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
+backendDb.initialize((error) => {
     if (error) {
         throw error;
     }
 });
 
-const lgtv = new LGTV(lgtvDb);
-const server = new Server(serverDb, lgtv);
+const backend = new Backend(backendDb);
+const frontend = new Frontend(frontendDb, backend);
 
-lgtv.on("error", (error, id) => {
+backend.on("error", (error, id) => {
     console.log(id);
     console.log(error);
 });
 
-lgtv.initialize().
+backend.initialize().
     then(() => {
-        lgtv.start();
-        return server.initialize();
+        backend.start();
+        return frontend.initialize();
     }).
     then(() => {
-        server.start();
+        frontend.start();
     }).
     catch((error) => {
         throw error;

@@ -12,14 +12,14 @@ const basicAuth = require("express-basic-auth");
 const {UnititializedClassError} = require("../common");
 
 class ServerExternal {
-    constructor(serverSecurity, lgtv) {
+    constructor(serverSecurity, backend) {
         const that = this;
 
         that.private = {};
         that.private.initialized = false;
         that.private.initializing = false;
         that.private.security = serverSecurity;
-        that.private.lgtv = lgtv;
+        that.private.backend = backend;
         that.private.server = null;
     }
 
@@ -43,9 +43,9 @@ class ServerExternal {
             that.private.server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
             that.private.server.post("/HTTP", httpHandler);
             that.private.server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
-            that.private.server.post("/LGTV/RUN", lgtvRunHandler);
-            that.private.server.post("/LGTV/SKILL", lgtvSkillHandler);
-            that.private.server.get("/LGTV/PING", lgtvPingHandler);
+            that.private.server.post("/LGTV/RUN", backendRunHandler);
+            that.private.server.post("/LGTV/SKILL", backendSkillHandler);
+            that.private.server.get("/LGTV/PING", backendPingHandler);
             that.private.server.post("/", (request, response) => {
                 response.status(401).end();
             });
@@ -105,8 +105,8 @@ class ServerExternal {
             }
         }
 
-        function lgtvRunHandler(request, response) {
-            return that.private.lgtv.runCommand(request.body).
+        function backendRunHandler(request, response) {
+            return that.private.backend.runCommand(request.body).
                 then((res) => {
                     response.
                         type("json").
@@ -119,8 +119,8 @@ class ServerExternal {
                 });
         }
 
-        function lgtvSkillHandler(request, response) {
-            return that.private.lgtv.skillCommand(request.body).
+        function backendSkillHandler(request, response) {
+            return that.private.backend.skillCommand(request.body).
                 then((res) => {
                     response.
                         type("json").
@@ -134,7 +134,7 @@ class ServerExternal {
         }
 
 
-        function lgtvPingHandler(request, response) {
+        function backendPingHandler(request, response) {
             response.
                 status(200).
                 end();

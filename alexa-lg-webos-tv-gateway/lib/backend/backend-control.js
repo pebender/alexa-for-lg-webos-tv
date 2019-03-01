@@ -5,7 +5,7 @@ const EventEmitter = require("events");
 const {UnititializedClassError} = require("../common");
 const {callbackToPromise} = require("../common");
 
-class LGTVControl extends EventEmitter {
+class BackendControl extends EventEmitter {
     constructor(db, tv) {
         super();
         const that = this;
@@ -25,7 +25,7 @@ class LGTVControl extends EventEmitter {
 
         that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
             if (this.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVControl", methodName));
+                reject(new UnititializedClassError("BackendControl", methodName));
                 return;
             }
             resolve();
@@ -33,7 +33,7 @@ class LGTVControl extends EventEmitter {
 
         that.private.throwIfNotInitialized = (methodName) => {
             if (this.private.initialized === false) {
-                throw new UnititializedClassError("LGTVControl", methodName);
+                throw new UnititializedClassError("BackendControl", methodName);
             }
         };
         
@@ -221,4 +221,4 @@ class LGTVControl extends EventEmitter {
     }
 }
 
-module.exports = LGTVControl;
+module.exports = BackendControl;

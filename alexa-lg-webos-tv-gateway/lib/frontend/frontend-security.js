@@ -9,13 +9,9 @@ class ServerSecurity {
         that.private.initialized = false;
         that.private.initializing = false;
         that.private.db = db;
-        that.private.dbRecord = {};
-        that.private.dbRecord.username = "LGTV";
-        that.private.dbRecord.password = null;
-        that.private.dbRecord.hostname = "";
 
         that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
-            if (this.private.initialized === false) {
+            if (that.private.initialized === false) {
                 reject(new UnititializedClassError("ServerSecurity", methodName));
                 return;
             }

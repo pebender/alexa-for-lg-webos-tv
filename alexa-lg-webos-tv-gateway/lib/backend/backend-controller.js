@@ -2,9 +2,9 @@ const EventEmitter = require("events");
 const {GenericError, UnititializedClassError} = require("../common");
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
-const LGTVControl = require("./lgtv-control");
+const BackendControl = require("./backend-control");
 
-class LGTVController extends EventEmitter {
+class BackendController extends EventEmitter {
     constructor (db) {
         super();
         const that = this;
@@ -17,7 +17,7 @@ class LGTVController extends EventEmitter {
 
         that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
             if (this.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", methodName));
+                reject(new UnititializedClassError("BackendController", methodName));
                 return;
             }
             resolve();
@@ -25,7 +25,7 @@ class LGTVController extends EventEmitter {
 
         that.private.throwIfNotInitialized = (methodName) => {
             if (this.private.initialized === false) {
-                throw new UnititializedClassError("LGTVController", methodName);
+                throw new UnititializedClassError("BackendController", methodName);
             }
         };
 
@@ -33,7 +33,7 @@ class LGTVController extends EventEmitter {
             if (Reflect.has(this.private.controls, udn) === false) {
                 reject(new GenericError(
                     "UnknownTVError",
-                    `the requested television '${udn}' is not known in 'LGTVController.${methodName}'`
+                    `the requested television '${udn}' is not known in 'BackendController.${methodName}'`
                 ));
                 return;
             }
@@ -44,7 +44,7 @@ class LGTVController extends EventEmitter {
             if (Reflect.has(this.private.controls, udn) === false) {
                 throw new GenericError(
                     "UnknownTVError",
-                    `the requested television '${udn}' is not known in 'LGTVController.${methodName}'`
+                    `the requested television '${udn}' is not known in 'BackendController.${methodName}'`
                 );
             }
         };
@@ -69,7 +69,7 @@ class LGTVController extends EventEmitter {
             then((records) => {
                 records.forEach((record) => {
                     if (Reflect.has(that.private.controls, record.udn) === false) {
-                        that.private.controls[record.udn] = new LGTVControl(that.private.db, record);
+                        that.private.controls[record.udn] = new BackendControl(that.private.db, record);
                         eventsAdd(record.udn);
                     }
                 });
@@ -124,7 +124,7 @@ class LGTVController extends EventEmitter {
         }).
         then((tvUpdatedOrInserted) => {
             if (Reflect.has(that.private.controls, tv.udn) === false) {
-                that.private.controls[tv.udn] = new LGTVControl(that.private.db, tvUpdatedOrInserted);
+                that.private.controls[tv.udn] = new BackendControl(that.private.db, tvUpdatedOrInserted);
                 eventsAdd(tv.udn);
             }
             function eventsAdd(udn) {
@@ -154,14 +154,14 @@ class LGTVController extends EventEmitter {
     }
 
     tv(udn) {
-        this.private.throwIfNotInitialized("skillCommand");
-        this.private.throwIfNotKnownTV("skillCommand", udn);
+        this.private.throwIfNotInitialized("tv");
+        this.private.throwIfNotKnownTV("tv", udn);
         return this.private.controls[udn].tv;
     }
 
     turnOff(udn) {
-        return this.private.rejectIfNotInitialized("getPowerState").
-            then(() => this.private.rejectIfNotKnownTV("getPowerState", udn)).
+        return this.private.rejectIfNotInitialized("turnOff").
+            then(() => this.private.rejectIfNotKnownTV("turnOff", udn)).
             then(() => this.private.controls[udn].turnOff());
     }
 
@@ -171,16 +171,16 @@ class LGTVController extends EventEmitter {
     }
 
     getPowerState(udn) {
-        this.private.throwIfNotInitialized("skillCommand");
-        this.private.throwIfNotKnownTV("skillCommand", udn);
+        this.private.throwIfNotInitialized("getPowerState");
+        this.private.throwIfNotKnownTV("getPowerState", udn);
         return this.private.controls[udn].getPowerState();
     }
 
     lgtvCommand(udn, command) {
-        return this.private.rejectIfNotInitialized("getPowerState").
-            then(() => this.private.rejectIfNotKnownTV("getPowerState", udn)).
+        return this.private.rejectIfNotInitialized("lgtvCommand").
+            then(() => this.private.rejectIfNotKnownTV("lgtvCommand", udn)).
             then(() => this.private.controls[udn].lgtvCommand(command));
     }
 }
 
-module.exports = LGTVController;
+module.exports = BackendController;

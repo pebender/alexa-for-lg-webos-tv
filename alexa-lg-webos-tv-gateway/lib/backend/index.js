@@ -1,9 +1,9 @@
 const EventEmitter = require("events");
 const {UnititializedClassError} = require("../common");
-const LGTVController = require("./lgtv-controller");
-const LGTVSearcher = require("./lgtv-searcher");
+const BackendController = require("./backend-controller");
+const BackendSearcher = require("./backend-searcher");
 
-class LGTV extends EventEmitter {
+class Backend extends EventEmitter {
     constructor(db) {
         super();
         const that = this;
@@ -11,20 +11,20 @@ class LGTV extends EventEmitter {
         that.private = {};
         that.private.initialized = false;
         that.private.initializing = false;
-        that.private.controller = new LGTVController(db);
-        that.private.searcher = new LGTVSearcher();
+        that.private.controller = new BackendController(db);
+        that.private.searcher = new BackendSearcher();
 
         that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
-            if (this.private.initialized === false) {
-                reject(new UnititializedClassError("LGTV", methodName));
+            if (that.private.initialized === false) {
+                reject(new UnititializedClassError("Backend", methodName));
                 return;
             }
             resolve();
         });
 
         that.private.throwIfNotInitialized = (methodName) => {
-            if (this.private.initialized === false) {
-                throw new UnititializedClassError("LGTV", methodName);
+            if (that.private.initialized === false) {
+                throw new UnititializedClassError("Backend", methodName);
             }
         };
     }
@@ -45,12 +45,12 @@ class LGTV extends EventEmitter {
             }
 
             that.private.controller.on("error", (error, id) => {
-                that.emit("error", error, `LGTVController.${id}`);
+                that.emit("error", error, `BackendController.${id}`);
             });
             that.private.controller.initialize().
             then(() => {
                 that.private.searcher.on("error", (error) => {
-                    that.emit("error", error, "LGTVController");
+                    that.emit("error", error, "BackendController");
                 });
                 that.private.searcher.on("found", (tv) => {
                     that.private.controller.tvUpsert(tv);
@@ -118,4 +118,4 @@ class LGTV extends EventEmitter {
     }
 }
 
-module.exports = LGTV;
+module.exports = Backend;

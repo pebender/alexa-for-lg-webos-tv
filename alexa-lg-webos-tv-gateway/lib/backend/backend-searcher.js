@@ -21,7 +21,7 @@ const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
 const {UnititializedClassError} = require("../common");
 
-class LGTVSearcher extends EventEmitter {
+class BackendSearcher extends EventEmitter {
     constructor() {
         super();
         const that = this;
@@ -206,11 +206,11 @@ class LGTVSearcher extends EventEmitter {
     now() {
         const that = this;
         if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVSearcher", "now");
+            throw new UnititializedClassError("BackendSearcher", "now");
         }
 
         that.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }
 
-module.exports = LGTVSearcher;
+module.exports = BackendSearcher;

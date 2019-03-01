@@ -1,11 +1,11 @@
 
 const {UnititializedClassError} = require("../common");
-const ServerSecurity = require("./server-security");
-const ServerInternal = require("./server-internal");
-const ServerExternal = require("./server-external");
+const ServerSecurity = require("./frontend-security");
+const ServerInternal = require("./frontend-internal");
+const ServerExternal = require("./frontend-external");
 
 class Server {
-    constructor(db, lgtv) {
+    constructor(db, backend) {
         const that = this;
 
         that.private = {};
@@ -13,10 +13,10 @@ class Server {
         that.private.initializing = false;
         that.private.security = new ServerSecurity(db);
         that.private.internal = new ServerInternal(that.private.security);
-        that.private.external = new ServerExternal(that.private.security, lgtv);
+        that.private.external = new ServerExternal(that.private.security, backend);
 
         that.private.throwIfNotInitialized = (methodName) => {
-            if (this.private.initialized === false) {
+            if (that.private.initialized === false) {
                 throw new UnititializedClassError("Server", methodName);
             }
         };
