@@ -162,7 +162,7 @@ function adjustVolumeHandler(lgtv, event) {
                 "uri": "ssap://audio/setVolume",
                 "payload": {"volume": volume}
             };
-            resolve(lgtv.interfaceontroller.lgtvCommand(endpointId, command).
+            resolve(lgtv.lgtvCommand(endpointId, command).
                 then(() => {
                     const alexaResponse = new AlexaResponse({
                         "request": event
