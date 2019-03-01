@@ -146,11 +146,11 @@ class BackendSearcher extends EventEmitter {
                     xml2js(descriptionXml.data, (error, description) => {
                         if (error) {
                             callback(error, null);
-                            return error;
+                            return;
                         }
                         if (!description) {
                             callback(null, null);
-                            return null;
+                            return;
                         }
 
                         /*
@@ -167,7 +167,7 @@ class BackendSearcher extends EventEmitter {
                             !("UDN" in description.root.device[0]) ||
                             description.root.device[0].UDN.length !== 1) {
                             callback(null, null);
-                            return null;
+                            return;
                         }
 
                         /*
@@ -178,7 +178,7 @@ class BackendSearcher extends EventEmitter {
                             description.root.device[0].friendlyName[0] === "" ||
                             description.root.device[0].UDN[0] === "") {
                             callback(null, null);
-                            return null;
+                            return;
                         }
                         [tv.name] = description.root.device[0].friendlyName;
                         [tv.udn] = description.root.device[0].UDN;

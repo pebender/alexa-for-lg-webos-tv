@@ -36,7 +36,7 @@ class BackendControl extends EventEmitter {
                 throw new UnititializedClassError("BackendControl", methodName);
             }
         };
-        
+
         function saveKey(key, callback) {
             that.private.db.updateRecord(
                 {"udn": that.private.tv.udn},
