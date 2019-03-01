@@ -66,10 +66,11 @@ class BackendController extends EventEmitter {
             }
 
             that.private.db.getRecords({}).
-            then((records) => {
-                records.forEach((record) => {
+            then(async (records) => {
+                await records.forEach((record) => {
                     if (Reflect.has(that.private.controls, record.udn) === false) {
                         that.private.controls[record.udn] = new BackendControl(that.private.db, record);
+                        that.private.controls[record.udn].initialize().catch(reject);
                         eventsAdd(record.udn);
                     }
                 });
@@ -125,6 +126,7 @@ class BackendController extends EventEmitter {
         then((tvUpdatedOrInserted) => {
             if (Reflect.has(that.private.controls, tv.udn) === false) {
                 that.private.controls[tv.udn] = new BackendControl(that.private.db, tvUpdatedOrInserted);
+                that.private.controls[tv.udn].initialize();
                 eventsAdd(tv.udn);
             }
             function eventsAdd(udn) {
