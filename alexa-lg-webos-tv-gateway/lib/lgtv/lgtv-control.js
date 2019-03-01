@@ -23,6 +23,20 @@ class LGTVControl extends EventEmitter {
         that.private.tv.url = tv.url;
         that.private.tv.mac = tv.mac;
 
+        that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
+            if (this.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVControl", methodName));
+                return;
+            }
+            resolve();
+        });
+
+        that.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("LGTVControl", methodName);
+            }
+        };
+        
         function saveKey(key, callback) {
             that.private.db.updateRecord(
                 {"udn": that.private.tv.udn},
@@ -84,121 +98,105 @@ class LGTVControl extends EventEmitter {
     }
 
     get tv() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVControl", "get+tv");
-        }
+        this.private.throwIfNotInitialized("get+tv");
         const tv = {
-            "udn": that.private.tv.udn,
-            "name": that.private.tv.name,
-            "ip": that.private.tv.ip,
-            "url": that.private.tv.url,
-            "mac": that.private.tv.mac
+            "udn": this.private.tv.udn,
+            "name": this.private.tv.name,
+            "ip": this.private.tv.ip,
+            "url": this.private.tv.url,
+            "mac": this.private.tv.mac
         };
         return tv;
     }
 
     turnOff() {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVControl", "turnOff"));
-                return;
-            }
-            const command = {
-                "uri": "ssap://system/turnOff"
-            };
-            // eslint-disable-next-line no-unused-vars
-            that.private.connection.request(command.uri);
-            that.private.powerOn = false;
-            resolve();
-        });
+        return this.private.rejectIfNotInitialized("turnOff").
+            then(() => {
+                const command = {
+                    "uri": "ssap://system/turnOff"
+                };
+                this.private.connection.request(command.uri);
+                this.private.powerOn = false;
+            });
     }
 
     turnOn() {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVControl", "turnOn"));
-                return;
-            }
+        return this.private.rejectIfNotInitialized("turnOn").
+            then(() => {
+                const that = this;
 
-            let finished = false;
-            let finishing = false;
+                let finished = false;
+                let finishing = false;
 
-            let ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            ssdpNotify.on("advertise-alive", ssdpHandler);
+                let ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+                ssdpNotify.on("advertise-alive", ssdpHandler);
 
-            let ssdpResponse = new SSDPClient();
-            ssdpResponse.on("response", ssdpHandler);
+                let ssdpResponse = new SSDPClient();
+                ssdpResponse.on("response", ssdpHandler);
 
-            ssdpNotify.start();
-            setImmediate(wolHandler);
-            setImmediate(searchHandler);
-            setTimeout(finish, 5000);
+                ssdpNotify.start();
+                setImmediate(wolHandler);
+                setImmediate(searchHandler);
+                setTimeout(finish, 5000);
 
-            function wolHandler() {
-                const {mac} = that.private.tv;
+                function wolHandler() {
+                    const {mac} = that.private.tv;
+                    // eslint-disable-next-line no-unused-vars
+                    wol.wake(mac, (error, response) => {
+                        if (finished === false) {
+                            setTimeout(wolHandler, 250);
+                        }
+                    });
+                }
+
+                function searchHandler() {
+                    if (finished === false && ssdpResponse !== null) {
+                        ssdpResponse.search(that.private.tv.udn);
+                        setTimeout(searchHandler, 1000);
+                    }
+                }
+
                 // eslint-disable-next-line no-unused-vars
-                wol.wake(mac, (error, response) => {
-                    if (finished === false) {
-                        setTimeout(wolHandler, 250);
-                    }
-                });
-            }
-
-            function searchHandler() {
-                if (finished === false && ssdpResponse !== null) {
-                    ssdpResponse.search(that.private.tv.udn);
-                    setTimeout(searchHandler, 1000);
-                }
-            }
-
-            // eslint-disable-next-line no-unused-vars
-            function ssdpHandler(headers, rinfo) {
-                if (headers.USN.startsWith(`${that.private.tv.udn}::`) === true &&
-                    (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive")) {
-                        that.private.powerOn = true;
-                    if (finished === false) {
-                        finish();
+                function ssdpHandler(headers, rinfo) {
+                    if (headers.USN.startsWith(`${that.private.tv.udn}::`) === true &&
+                        (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive")) {
+                            that.private.powerOn = true;
+                        if (finished === false) {
+                            finish();
+                        }
                     }
                 }
-            }
 
-            function finish() {
-                if (finishing === true) {
-                    return;
-                }
-                finishing = true;
-                if (finished === true) {
-                    finishing = false;
-                    return;
-                }
+                function finish() {
+                    if (finishing === true) {
+                        return;
+                    }
+                    finishing = true;
+                    if (finished === true) {
+                        finishing = false;
+                        return;
+                    }
 
-                if (ssdpNotify !== null) {
-                    ssdpNotify.removeAllListeners();
-                    ssdpNotify = null;
-                }
-                if (ssdpResponse !== null) {
-                    ssdpResponse.removeAllListeners();
-                    ssdpResponse = null;
-                }
+                    if (ssdpNotify !== null) {
+                        ssdpNotify.removeAllListeners();
+                        ssdpNotify = null;
+                    }
+                    if (ssdpResponse !== null) {
+                        ssdpResponse.removeAllListeners();
+                        ssdpResponse = null;
+                    }
 
-                if (finished === false) {
-                    finished = true;
-                    finishing = false;
-                    resolve({});
+                    if (finished === false) {
+                        finished = true;
+                        finishing = false;
+                    }
                 }
-            }
-        });
+            });
     }
 
     getPowerState() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVControl", "getPowerState");
-        }
-        return that.private.powerOn
+        this.private.throwIfNotInitialized("getPowerState");
+        return this.private.powerOn
             ? "ON"
             : "OFF";
     }
@@ -206,10 +204,7 @@ class LGTVControl extends EventEmitter {
     lgtvCommand(command) {
         const that = this;
         return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVControl", "lgtvCommand"));
-                return;
-            }
+            this.private.throwIfNotInitialized("lgtvCommand");
             if (command.payload === null) {
                 that.private.connection.request(
                     command.uri,

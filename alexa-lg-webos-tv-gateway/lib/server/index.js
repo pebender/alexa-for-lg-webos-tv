@@ -14,6 +14,12 @@ class Server {
         that.private.security = new ServerSecurity(db);
         that.private.internal = new ServerInternal(that.private.security);
         that.private.external = new ServerExternal(that.private.security, lgtv);
+
+        that.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("Server", methodName);
+            }
+        };
     }
 
     initialize() {
@@ -51,37 +57,24 @@ class Server {
     }
 
     start() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("Server", "start");
-        }
-
-        that.private.internal.start();
-        that.private.external.start();
+        this.private.throwIfNotInitialized("start");
+        this.private.internal.start();
+        this.private.external.start();
     }
 
     get security() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("Server", "get+security");
-        }
-        return that.private.security;
+        this.private.throwIfNotInitialized("get+security");
+        return this.private.security;
     }
 
     get internal() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("Server", "get+internal");
-        }
-        return that.private.internal;
+        this.private.throwIfNotInitialized("get+internal");
+        return this.private.internal;
     }
 
     get external() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("Server", "get+external");
-        }
-        return that.private.external;
+        this.private.throwIfNotInitialized("get+external");
+        return this.private.external;
     }
 }
 

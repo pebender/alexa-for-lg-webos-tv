@@ -68,41 +68,35 @@ class ServerExternal {
             if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
                 that.private.security.userPasswordIsNull().
                 then((isNull) => {
+                    let body = {};
                     if (isNull) {
                         that.private.security.setUserPassword(request.body.command.value).
                         then(() => {
-                            const body = {};
-                            response.
-                                type("json").
-                                status(200).
-                                json(body).
-                                end();
+                            body = {};
                         }).
                         catch((error) => {
-                            const body = {
+                            body = {
                                 "error": {
                                     "name": error.name,
                                     "message": error.message
                                 }
                             };
-                            response.
-                                type("json").
-                                status(200).
-                                json(body).
-                                end();
                         });
                     } else {
-                        const body = {
+                        body = {
                             "error": {
                                 "message": "The password is already set."
                             }
                         };
-                        response.
-                            type("json").
-                            status(200).
-                            json(body).
-                            end();
                     }
+                    return body;
+                }).
+                then((body) => {
+                    response.
+                    type("json").
+                    status(200).
+                    json(body).
+                    end();
                 });
             } else {
                 response.

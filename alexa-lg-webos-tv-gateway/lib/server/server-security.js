@@ -13,6 +13,14 @@ class ServerSecurity {
         that.private.dbRecord.username = "LGTV";
         that.private.dbRecord.password = null;
         that.private.dbRecord.hostname = "";
+
+        that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
+            if (this.private.initialized === false) {
+                reject(new UnititializedClassError("ServerSecurity", methodName));
+                return;
+            }
+            resolve();
+        });
     }
 
     initialize() {
@@ -36,123 +44,81 @@ class ServerSecurity {
     }
 
     authorizeRoot(username, password) {
-        return new Promise((resolve, reject) => {
-            const that = this;
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
-                return;
-            }
-            if (username === "HTTP" && password === constants.password) {
-                resolve(true);
-                return;
-            }
-            resolve(false);
-        });
+        return this.private.rejectIfNotInitialized("authorizeRoot").
+            then(() => {
+                if (username === "HTTP" && password === constants.password) {
+                    return true;
+                }
+                return false;
+            });
     }
 
     authorizeUser(username, password) {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeUser"));
-                return;
-            }
-            that.private.db.getRecord({"name": "password"}).
+        return this.private.rejectIfNotInitialized("authorizeUser").
+            then(() => this.private.db.getRecord({"name": "password"})).
             then((record) => {
                 if (record === null ||
                     Reflect.has(record, "value") === false ||
                     record.value === null) {
-                    resolve(false);
-                    return;
+                    return false;
                 }
 //                if (username === "LGTV" && password === record.value) {
                 if (username === "LGTV" && password === "0") {
-                    resolve(true);
-                    return;
+                    return true;
                 }
-                resolve(false);
-            }).
-            catch(reject);
-        });
+                return false;
+            });
     }
 
     userPasswordIsNull() {
-        return new Promise((resolve, reject) => {
-            const that = this;
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
-                return;
-            }
-            that.private.db.getRecord({"name": "password"}).
+        return this.private.rejectIfNotInitialized("userPasswordIsNull").
+            then(() => this.private.db.getRecord({"name": "password"})).
             then((record) => {
                 if (record === null ||
                     Reflect.has(record, "value") === false ||
                     record.value === null
                 ) {
-                    resolve(true);
-                    return;
+                    return true;
                 }
-                resolve(false);
-            }).
-            catch(reject);
-        });
+                return false;
+            });
     }
 
     setUserPassword(password) {
-        return new Promise((resolve, reject) => {
-            const that = this;
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
-                return;
-            }
-            that.private.db.updateOrInsertRecord(
-                {"name": "password"},
-                {
-                    "name": "password",
-                    "value": password
-                }
-            ).
-            then(() => resolve()).
-            catch(reject);
-        });
+        return this.private.rejectIfNotInitialized("setUserPassword").
+            then(() => {
+                this.private.db.updateOrInsertRecord(
+                    {"name": "password"},
+                    {
+                        "name": "password",
+                        "value": password
+                    }
+                );
+            });
     }
 
     getHostname() {
-        return new Promise((resolve, reject) => {
-            const that = this;
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
-                return;
-            }
-            that.private.db.getRecord({"name": "hostname"}).
+        return this.private.rejectIfNotInitialized("getHostname").
+            then(() => this.private.db.getRecord({"name": "hostname"})).
             then((record) => {
                 if (record === null || Reflect.has(record, "value") === false) {
-                    resolve("");
-                    return;
+                    return "";
                 }
-                resolve(record.value);
-            }).
-            catch(reject);
-        });
+                return record.value;
+            });
     }
 
     setHostname(hostname) {
-        return new Promise((resolve, reject) => {
-            const that = this;
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVSecurity", "authorizeRoot"));
-                return;
-            }
-            that.private.db.updateOrInsertRecord(
-                {"name": "hostname"},
-                {
-                    "name": "hostname",
-                    "value": hostname
-                }
-            ).
-            then(() => resolve()).
-            catch(reject);
-        });
+        return this.private.rejectIfNotInitialized("setHostname").
+            then(() => {
+                this.private.db.updateOrInsertRecord(
+                    {"name": "hostname"},
+                    {
+                        "name": "hostname",
+                        "value": hostname
+                    }
+                );
+            });
     }
 }
 

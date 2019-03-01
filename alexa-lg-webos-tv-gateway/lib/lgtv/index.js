@@ -13,6 +13,20 @@ class LGTV extends EventEmitter {
         that.private.initializing = false;
         that.private.controller = new LGTVController(db);
         that.private.searcher = new LGTVSearcher();
+
+        that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
+            if (this.private.initialized === false) {
+                reject(new UnititializedClassError("LGTV", methodName));
+                return;
+            }
+            resolve();
+        });
+
+        that.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("LGTV", methodName);
+            }
+        };
     }
 
     initialize() {
@@ -58,56 +72,50 @@ class LGTV extends EventEmitter {
         });
     }
 
-    initialized() {
-        return this.private.initialized;
-    }
-
     start() {
-        return isInitialized(this, "LGTV", "start").then(() => this.private.searcher.now());
+        return this.private.rejectIfNotInitialized("start").
+            then(() => this.private.searcher.now());
     }
 
     runCommand(event) {
-        return isInitialized(this, "LGTV", "runCommand").then(() => this.private.controller.runCommand(event));
+        return this.private.rejectIfNotInitialized("runCommand").
+            then(() => this.private.controller.runCommand(event));
     }
 
     skillCommand(event) {
-        const that = this;
-        return isInitialized(that, "LGTV", "skillCommand").then(() => that.private.controller.skillCommand(event));
+        return this.private.rejectIfNotInitialized("skillCommand").
+            then(() => this.private.controller.skillCommand(event));
     }
 
     getUDNList() {
-        return isInitialized(this, "LGTV", "getUDNList").then(() => this.private.controller.getUDNList());
+        return this.private.rejectIfNotInitialized("getUDNList").
+            then(() => this.private.controller.getUDNList());
     }
 
     tv(udn) {
-        return isInitialized(this, "LGTV", "tv").then(() => this.private.controller.tv(udn));
+        this.private.throwtIfNotInitialized("tv");
+        return this.private.controller.tv(udn);
     }
 
     lgtvCommand(udn, command) {
-        return isInitialized(this, "LGTV", "lgtvCommand").then(() => this.private.controller.lgtvCommand(udn, command));
+        return this.private.rejectIfNotInitialized("lgtvCommand").
+            then(() => this.private.controller.lgtvCommand(udn, command));
     }
 
     getPowerState(udn) {
-        return isInitialized(this, "LGTV", "getPowerState").then(() => this.private.controller.getPowerState(udn));
+        this.private.throwtIfNotInitialized("getPowerState");
+        return this.private.controller.getPowerState(udn);
     }
 
     turnOff(udn) {
-        return isInitialized(this, "LGTV", "turnOff").then(() => this.private.controller.turnOff(udn));
+        return this.private.rejectIfNotInitialized("turnOff").
+            then(() => this.private.controller.turnOff(udn));
     }
 
     turnOn(udn) {
-        return isInitialized(this, "LGTV", "turnOn").then(() => this.private.controller.turnOn(udn));
+        return this.private.rejectIfNotInitialized("turnOn").
+            then(() => this.private.controller.turnOn(udn));
     }
-}
-
-function isInitialized(classObject, className, methodName) {
-    return new Promise((resolve, reject) => {
-        if (classObject.initialized() === false) {
-            reject(new UnititializedClassError(className, methodName));
-            return;
-        }
-        resolve(true);
-    });
 }
 
 module.exports = LGTV;

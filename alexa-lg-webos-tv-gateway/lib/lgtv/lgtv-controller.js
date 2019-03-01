@@ -14,6 +14,40 @@ class LGTVController extends EventEmitter {
         that.private.initializing = false;
         that.private.db = db;
         that.private.controls = [];
+
+        that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
+            if (this.private.initialized === false) {
+                reject(new UnititializedClassError("LGTVController", methodName));
+                return;
+            }
+            resolve();
+        });
+
+        that.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("LGTVController", methodName);
+            }
+        };
+
+        that.private.rejectIfNotKnownTV = (methodName, udn) => new Promise((resolve, reject) => {
+            if (Reflect.has(this.private.controls, udn) === false) {
+                reject(new GenericError(
+                    "UnknownTVError",
+                    `the requested television '${udn}' is not known in 'LGTVController.${methodName}'`
+                ));
+                return;
+            }
+            resolve();
+        });
+
+        that.private.throwIfNotKnownTV = (methodName, udn) => {
+            if (Reflect.has(this.private.controls, udn) === false) {
+                throw new GenericError(
+                    "UnknownTVError",
+                    `the requested television '${udn}' is not known in 'LGTVController.${methodName}'`
+                );
+            }
+        };
     }
 
     initialize() {
@@ -58,9 +92,8 @@ class LGTVController extends EventEmitter {
 
     tvUpsert(tv) {
         const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "tvUpsert");
-        }
+
+        that.private.throwIfNotInitialized("tvUpsert");
 
         that.private.db.getRecord({"$and": [
             {"udn": tv.udn},
@@ -106,107 +139,47 @@ class LGTVController extends EventEmitter {
     }
 
     runCommand(event) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "runCommand");
-        }
-        return customSkill.handler(that, event);
+        return this.private.throwIfNotInitialized("runCommand").
+            then(() => customSkill.handler(this, event));
     }
 
     skillCommand(event) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "skillCommand");
-        }
-        return smartHomeSkill.handler(that, event);
+        return this.private.rejectIfNotInitialized("skillCommand").
+            then(() => smartHomeSkill.handler(this, event));
     }
 
     getUDNList() {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "getUDNList"));
-            }
-            resolve(Object.keys(this.private.controls));
-        });
+        return this.private.rejectIfNotInitialized("getUDNList").
+            then(() => Object.keys(this.private.controls));
     }
 
     tv(udn) {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "tv");
-        }
-        if (Reflect.has(that.private.controls, udn) === false) {
-            throw new UnknownTVError(udn, "LGTVController", "tv");
-        }
-        return that.private.controls[udn].tv;
+        this.private.throwIfNotInitialized("skillCommand");
+        this.private.throwIfNotKnownTV("skillCommand", udn);
+        return this.private.controls[udn].tv;
     }
 
     turnOff(udn) {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "turnOff"));
-                return;
-            }
-            if (Reflect.has(that.private.controls, udn) === false) {
-                reject(new UnknownTVError(udn, "LGTVController", "turnOff"));
-                return;
-            }
-            resolve(that.private.controls[udn].turnOff());
-        });
+        return this.private.rejectIfNotInitialized("getPowerState").
+            then(() => this.private.rejectIfNotKnownTV("getPowerState", udn)).
+            then(() => this.private.controls[udn].turnOff());
     }
 
     turnOn(udn) {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "turnOn"));
-                return;
-            }
-            if (Reflect.has(that.private.controls, udn) === false) {
-                reject(new UnknownTVError(udn, "LGTVController", "turnOn"));
-                return;
-            }
-            resolve(that.private.controls[udn].turnOn());
-        });
+        return this.private.rejectIfNotInitialized().
+            then(() => this.private.controls[udn].turnOn());
     }
 
     getPowerState(udn) {
-        const that = this;
-
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("LGTVController", "getPowerState");
-        }
-        if (Reflect.has(that.private.controls, udn) === false) {
-            throw new UnknownTVError(udn, "LGTVController", "getPowerState");
-        }
-        return that.private.controls[udn].getPowerState();
+        this.private.throwIfNotInitialized("skillCommand");
+        this.private.throwIfNotKnownTV("skillCommand", udn);
+        return this.private.controls[udn].getPowerState();
     }
 
     lgtvCommand(udn, command) {
-        const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("LGTVController", "lgtvCommand"));
-                return;
-            }
-            if (Reflect.has(that.private.controls, udn) === false) {
-                reject(new UnknownTVError(udn, "LGTVController", "lgtvCommand"));
-                return;
-            }
-            resolve(that.private.controls[udn].lgtvCommand(command));
-        });
-    }
-}
-
-class UnknownTVError extends GenericError {
-    constructor(udn, className, methodName) {
-        super();
-        const that = this;
-
-        that.name = "UnknownTVError";
-        that.message = `the requested television '${udn}' is not known in '${className}.${methodName}'`;
+        return this.private.rejectIfNotInitialized("getPowerState").
+            then(() => this.private.rejectIfNotKnownTV("getPowerState", udn)).
+            then(() => this.private.controls[udn].lgtvCommand(command));
     }
 }
 

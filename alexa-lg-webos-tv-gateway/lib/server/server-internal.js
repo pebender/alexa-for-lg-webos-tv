@@ -37,15 +37,19 @@ class ServerInternal {
             that.private.initialized = true;
             that.private.initializing = false;
             resolve();
+            // eslint-disable-next-line no-useless-return
+            return;
         });
 
         function getHandler(request, response) {
-            sendForm(request, response);
+            createForm(request, response).
+                then((form) => sendForm(form, response));
         }
 
         function postHandler(request, response) {
             processForm(request.body).
-                then(() => sendForm(request, response));
+                then(() => createForm(request, response)).
+                then((form) => sendForm(form, response));
         }
 
         function processForm(formAttributes) {
@@ -62,6 +66,8 @@ class ServerInternal {
                         ({hostname} = formAttributes);
                     }
                     resolve(that.private.security.setHostname(hostname));
+                    // eslint-disable-next-line no-useless-return
+                    return;
                 });
             }
 
@@ -79,11 +85,13 @@ class ServerInternal {
                         return;
                     }
                     resolve();
+                    // eslint-disable-next-line no-useless-return
+                    return;
                 });
             }
         }
 
-        function sendForm(request, response) {
+        function createForm() {
             return Promise.all([
                 that.private.security.getHostname(),
                 that.private.security.userPasswordIsNull()
@@ -119,7 +127,7 @@ class ServerInternal {
                             " />" +
                         "</label>";
                 }
-                const page = `<!DOCTYPE html>
+                const form = `<!DOCTYPE html>
                     <html>
                         <head>
                             <title>
@@ -144,11 +152,18 @@ class ServerInternal {
                                 </form>
                         </body>
                     </html>`;
+                return form;
+            });
+        }
+
+        function sendForm(form, response) {
+            return new Promise((resolve) => {
                 response.
                     type("html").
                     status(200).
-                    send(page).
+                    send(form).
                     end();
+                resolve();
             });
         }
     }
