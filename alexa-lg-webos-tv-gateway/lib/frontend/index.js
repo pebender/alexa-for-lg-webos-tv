@@ -1,8 +1,11 @@
 
+const {Mutex} = require("async-mutex");
 const {UnititializedClassError} = require("../common");
 const ServerSecurity = require("./frontend-security");
 const ServerInternal = require("./frontend-internal");
 const ServerExternal = require("./frontend-external");
+
+const mutex = new Mutex();
 
 class Server {
     constructor(db, backend) {
@@ -10,7 +13,6 @@ class Server {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.security = new ServerSecurity(db);
         that.private.internal = new ServerInternal(that.private.security);
         that.private.external = new ServerExternal(that.private.security, backend);
@@ -24,36 +26,26 @@ class Server {
 
     initialize() {
         const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initializing === true) {
-                resolve();
-                return;
-            }
-            that.private.initializing = true;
-
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-
-            that.private.security.initialize().
-                then(() => that.private.internal.initialize()).
-                then(() => that.private.external.initialize()).
-                then(() => {
-                    that.private.initialized = true;
-                    that.private.initializing = false;
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve, reject) => {
+                if (that.private.initialized === true) {
                     resolve();
-                    // eslint-disable-next-line no-useless-return
                     return;
-                }).
-                catch((error) => {
-                    that.private.initializing = false;
-                    reject(error);
-                    // eslint-disable-next-line no-useless-return
-                    return;
-                });
-        });
+                }
+
+                that.private.security.initialize().
+                    then(() => that.private.internal.initialize()).
+                    then(() => that.private.external.initialize()).
+                    then(() => {
+                        that.private.initialized = true;
+                        resolve();
+                    }).
+                    catch((error) => {
+                        reject(error);
+                    });
+            });
+        }
     }
 
     start() {

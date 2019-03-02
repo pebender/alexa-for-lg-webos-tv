@@ -1,8 +1,11 @@
 const EventEmitter = require("events");
+const {Mutex} = require("async-mutex");
 const {GenericError, UnititializedClassError} = require("../common");
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
 const BackendControl = require("./backend-control");
+
+const mutex = new Mutex();
 
 class BackendController extends EventEmitter {
     constructor (db) {
@@ -11,7 +14,6 @@ class BackendController extends EventEmitter {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.db = db;
         that.private.controls = [];
 
@@ -52,43 +54,34 @@ class BackendController extends EventEmitter {
 
     initialize() {
         const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initializing === true) {
-                resolve();
-                return;
-            }
-            that.private.initializing = true;
-
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-
-            that.private.db.getRecords({}).
-            then(async (records) => {
-                await records.forEach((record) => {
-                    if (Reflect.has(that.private.controls, record.udn) === false) {
-                        that.private.controls[record.udn] = new BackendControl(that.private.db, record);
-                        that.private.controls[record.udn].initialize().catch(reject);
-                        eventsAdd(record.udn);
-                    }
-                });
-                function eventsAdd(udn) {
-                    that.private.controls[udn].on("error", (error) => {
-                        that.emit("error", error, udn);
-                    });
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve, reject) => {
+                if (that.private.initialized === true) {
+                    resolve();
+                    return;
                 }
-                that.private.initialized = true;
-                that.private.initializing = true;
-                resolve();
-            }).
-            catch((error) => {
-                that.private.initialized = false;
-                that.private.initializing = false;
-                reject(error);
+
+                that.private.db.getRecords({}).
+                then(async (records) => {
+                    await records.forEach((record) => {
+                        if (Reflect.has(that.private.controls, record.udn) === false) {
+                            that.private.controls[record.udn] = new BackendControl(that.private.db, record);
+                            that.private.controls[record.udn].initialize().catch(reject);
+                            eventsAdd(record.udn);
+                        }
+                    });
+                    function eventsAdd(udn) {
+                        that.private.controls[udn].on("error", (error) => {
+                            that.emit("error", error, udn);
+                        });
+                    }
+                    that.private.initialized = true;
+                    resolve();
+                }).
+                catch(reject);
             });
-        });
+        }
     }
 
     tvUpsert(tv) {

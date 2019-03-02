@@ -1,7 +1,10 @@
 const EventEmitter = require("events");
+const {Mutex} = require("async-mutex");
 const {UnititializedClassError} = require("../common");
 const BackendController = require("./backend-controller");
 const BackendSearcher = require("./backend-searcher");
+
+const mutex = new Mutex();
 
 class Backend extends EventEmitter {
     constructor(db) {
@@ -10,7 +13,6 @@ class Backend extends EventEmitter {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.controller = new BackendController(db);
         that.private.searcher = new BackendSearcher();
 
@@ -30,46 +32,37 @@ class Backend extends EventEmitter {
     }
 
     initialize() {
-        return new Promise((resolve, reject) => {
-            if (this.private.initializing === true) {
-                resolve();
-                return;
-            }
-            this.private.initializing = true;
+        const that = this;
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve, reject) => {
+                if (that.private.initialized === true) {
+                    resolve();
+                    return;
+                }
 
-            const that = this;
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-
-            that.private.controller.on("error", (error, id) => {
-                that.emit("error", error, `BackendController.${id}`);
-            });
-            that.private.controller.initialize().
-            then(() => {
-                that.private.searcher.on("error", (error) => {
-                    that.emit("error", error, "BackendController");
+                that.private.controller.on("error", (error, id) => {
+                    that.emit("error", error, `BackendController.${id}`);
                 });
-                that.private.searcher.on("found", (tv) => {
-                    that.private.controller.tvUpsert(tv);
-                });
-                return that.private.searcher.initialize();
-            }).
-            then(() => {
-                that.private.initialized = true;
-                that.private.initializing = false;
-                resolve();
-                // eslint-disable-next-line no-useless-return
-                return;
-            }).
-            catch((error) => {
-                reject(error);
-                // eslint-disable-next-line no-useless-return
-                return;
+                that.private.controller.initialize().
+                then(() => {
+                    that.private.searcher.on("error", (error) => {
+                        that.emit("error", error, "BackendController");
+                    });
+                    that.private.searcher.on("found", (tv) => {
+                        that.private.controller.tvUpsert(tv);
+                    });
+                    return that.private.searcher.initialize();
+                }).
+                then(() => {
+                    that.private.initialized = true;
+                    resolve();
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                }).
+                catch(reject);
             });
-        });
+        }
     }
 
     start() {

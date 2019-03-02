@@ -2,8 +2,11 @@ const LGTV = require("lgtv2");
 const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
+const {Mutex} = require("async-mutex");
 const {GenericError, UnititializedClassError} = require("../common");
 const {callbackToPromise} = require("../common");
+
+const mutex = new Mutex();
 
 class BackendControl extends EventEmitter {
     constructor(db, tv) {
@@ -12,7 +15,6 @@ class BackendControl extends EventEmitter {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.db = db;
         that.private.connecting = false;
         that.private.powerOn = false;
@@ -46,57 +48,52 @@ class BackendControl extends EventEmitter {
 
     initialize() {
         const that = this;
-        return new Promise((resolve, reject) => {
-            if (that.private.initializing === true) {
-                resolve();
-                return;
-            }
-            that.private.initializing = true;
-
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-
-            let clientKey = "";
-            if (Reflect.has(that.private.tv, "key")) {
-                clientKey = that.private.tv.key;
-                Reflect.deleteProperty(that.private.tv, "key");
-            } else {
-                reject(new GenericError("error", "initial LGTV key not set"));
-            }
-
-            that.private.connection = new LGTV({
-                "url": that.private.tv.url,
-                "timeout": 10000,
-                "reconnect": 0,
-                "clientKey": clientKey,
-                "saveKey": saveKey
-            });
-            that.private.connection.on("error", (error) => {
-                that.private.connecting = false;
-                if (error && error.code !== "EHOSTUNREACH") {
-                    that.emit("error", error, that.private.tv.udn);
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve, reject) => {
+                if (that.private.initialized === true) {
+                    resolve();
+                    return;
                 }
+
+                let clientKey = "";
+                if (Reflect.has(that.private.tv, "key")) {
+                    clientKey = that.private.tv.key;
+                    Reflect.deleteProperty(that.private.tv, "key");
+                } else {
+                    reject(new GenericError("error", "initial LGTV key not set"));
+                }
+
+                that.private.connection = new LGTV({
+                    "url": that.private.tv.url,
+                    "timeout": 10000,
+                    "reconnect": 0,
+                    "clientKey": clientKey,
+                    "saveKey": saveKey
+                });
+                that.private.connection.on("error", (error) => {
+                    that.private.connecting = false;
+                    if (error && error.code !== "EHOSTUNREACH") {
+                        that.emit("error", error, that.private.tv.udn);
+                    }
+                });
+                // eslint-disable-next-line no-unused-vars
+                that.private.connection.on("connecting", (_host) => {
+                    that.private.connecting = true;
+                });
+                that.private.connection.on("connect", () => {
+                    that.private.connecting = false;
+                    that.private.powerOn = true;
+                });
+                that.private.connection.on("close", () => {
+                    that.private.connecting = false;
+                });
+                that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+                that.private.ssdpNotify.on("advertise-alive", advertiseAliveHandler);
+                that.private.ssdpNotify.on("advertise-bye", advertiseByeHandler);
+                that.private.ssdpNotify.start();
+                that.private.initialized = true;
             });
-            // eslint-disable-next-line no-unused-vars
-            that.private.connection.on("connecting", (_host) => {
-                that.private.connecting = true;
-            });
-            that.private.connection.on("connect", () => {
-                that.private.connecting = false;
-                that.private.powerOn = true;
-            });
-            that.private.connection.on("close", () => {
-                that.private.connecting = false;
-            });
-            that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            that.private.ssdpNotify.on("advertise-alive", advertiseAliveHandler);
-            that.private.ssdpNotify.on("advertise-bye", advertiseByeHandler);
-            that.private.ssdpNotify.start();
-            that.private.initialized = true;
-            that.private.initializing = false;
 
             function saveKey(key, callback) {
                 that.private.db.updateRecord(
@@ -127,7 +124,7 @@ class BackendControl extends EventEmitter {
                     that.private.connection.disconnect();
                 }
             }
-        });
+        }
     }
 
     get tv() {

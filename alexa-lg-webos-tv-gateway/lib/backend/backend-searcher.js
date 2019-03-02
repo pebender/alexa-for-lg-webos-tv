@@ -16,10 +16,13 @@
 
 const http = require("axios");
 const EventEmitter = require("events");
+const {Mutex} = require("async-mutex");
 const arp = require("node-arp");
 const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
 const {UnititializedClassError} = require("../common");
+
+const mutex = new Mutex();
 
 class BackendSearcher extends EventEmitter {
     constructor() {
@@ -28,49 +31,41 @@ class BackendSearcher extends EventEmitter {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.ssdpNotify = null;
         that.private.ssdpResponse = null;
     }
 
     initialize() {
         const that = this;
-        return new Promise((resolve) => {
-            if (that.private.initializing === true) {
-                resolve();
-                return;
-            }
-            that.private.initializing = true;
-
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-
-            const service = "urn:lge-com:service:webos-second-screen:1";
-
-            that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            that.private.ssdpResponse = new SSDPClient();
-            that.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
-                ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
-            });
-            that.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
-                if (statusCode !== 200) {
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve) => {
+                if (that.private.initialized === true) {
+                    resolve();
                     return;
                 }
-                ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+
+                that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+                that.private.ssdpResponse = new SSDPClient();
+                that.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+                    ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+                });
+                that.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+                    if (statusCode !== 200) {
+                        return;
+                    }
+                    ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+                });
+                that.private.ssdpNotify.start();
+                setImmediate(periodicSearch);
+                that.private.initialized = true;
+                resolve();
             });
-            that.private.ssdpNotify.start();
-            setImmediate(periodicSearch);
-            that.private.initialized = true;
-            that.private.initializing = false;
-            resolve();
 
             // Periodicly scan for TVs.
             function periodicSearch() {
                 // Search every 1800s as that is the UPnP recommended time.
-                that.private.ssdpResponse.search(service);
+                that.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
                 setTimeout(periodicSearch, 1800000);
             }
 
@@ -91,7 +86,7 @@ class BackendSearcher extends EventEmitter {
                     callback(null, null);
                     return;
                 }
-                if (headers.USN.endsWith(`::${service}`) === false) {
+                if (headers.USN.endsWith("::urn:lge-com:service:webos-second-screen:1") === false) {
                     callback(null, null);
                     return;
                 }
@@ -109,7 +104,7 @@ class BackendSearcher extends EventEmitter {
                     callback(null, null);
                     return;
                 }
-                if ((headers[messageTypeMap[messageName]] === service) === false) {
+                if ((headers[messageTypeMap[messageName]] === "urn:lge-com:service:webos-second-screen:1") === false) {
                     callback(null, null);
                     return;
                 }
@@ -200,7 +195,7 @@ class BackendSearcher extends EventEmitter {
                     });
                 });
             }
-        });
+        }
     }
 
     now() {

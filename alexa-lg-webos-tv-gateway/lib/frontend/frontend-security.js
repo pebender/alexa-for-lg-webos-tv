@@ -1,5 +1,8 @@
+const {Mutex} = require("async-mutex");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {UnititializedClassError} = require("../common");
+
+const mutex = new Mutex();
 
 class ServerSecurity {
     constructor(db) {
@@ -7,7 +10,6 @@ class ServerSecurity {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.db = db;
 
         that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
@@ -21,22 +23,17 @@ class ServerSecurity {
 
     initialize() {
         const that = this;
-        return new Promise((resolve) => {
-            if (that.private.initializing === true) {
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve) => {
+                if (that.private.initialized === true) {
+                    resolve();
+                    return;
+                }
+                that.private.initialized = true;
                 resolve();
-                return;
-            }
-            that.private.initializing = true;
-
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
-                resolve();
-                return;
-            }
-            that.private.initialized = true;
-            that.private.initializing = false;
-            resolve();
-        });
+            });
+        }
     }
 
     authorizeRoot(username, password) {

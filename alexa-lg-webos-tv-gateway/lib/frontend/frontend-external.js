@@ -9,7 +9,10 @@
 
 const express = require("express");
 const basicAuth = require("express-basic-auth");
+const {Mutex} = require("async-mutex");
 const {UnititializedClassError} = require("../common");
+
+const mutex = new Mutex();
 
 class ServerExternal {
     constructor(serverSecurity, backend) {
@@ -17,7 +20,6 @@ class ServerExternal {
 
         that.private = {};
         that.private.initialized = false;
-        that.private.initializing = false;
         that.private.security = serverSecurity;
         that.private.backend = backend;
         that.private.server = null;
@@ -25,119 +27,113 @@ class ServerExternal {
 
     initialize() {
         const that = this;
-        return new Promise((resolve) => {
-            if (that.private.initializing === true) {
-                resolve();
-                return;
-            }
-            that.private.initializing = true;
+        return mutex.runExclusive(initializeHandler);
+        function initializeHandler() {
+            return new Promise((resolve) => {
+                if (that.private.initialized === true) {
+                    resolve();
+                    return;
+                }
 
-            if (that.private.initialized === true) {
-                that.private.initializing = false;
+                that.private.server = express();
+                that.private.server.use("/", express.json());
+                that.private.server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
+                that.private.server.post("/HTTP", httpHandler);
+                that.private.server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
+                that.private.server.post("/LGTV/RUN", backendRunHandler);
+                that.private.server.post("/LGTV/SKILL", backendSkillHandler);
+                that.private.server.get("/LGTV/PING", backendPingHandler);
+                that.private.server.post("/", (request, response) => {
+                    response.status(401).end();
+                });
+                that.private.initialized = true;
                 resolve();
-                return;
-            }
-
-            that.private.server = express();
-            that.private.server.use("/", express.json());
-            that.private.server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
-            that.private.server.post("/HTTP", httpHandler);
-            that.private.server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
-            that.private.server.post("/LGTV/RUN", backendRunHandler);
-            that.private.server.post("/LGTV/SKILL", backendSkillHandler);
-            that.private.server.get("/LGTV/PING", backendPingHandler);
-            that.private.server.post("/", (request, response) => {
-                response.status(401).end();
             });
-            that.private.initialized = true;
-            that.private.initializing = false;
-            resolve();
-        });
 
-        async function authorizeRoot(username, password) {
-            const valid = await that.private.security.authorizeRoot(username, password);
-            return valid;
-        }
+            async function authorizeRoot(username, password) {
+                const valid = await that.private.security.authorizeRoot(username, password);
+                return valid;
+            }
 
-        async function authorizeUser(username, password) {
-            const valid = await that.private.security.authorizeUser(username, password);
-            return valid;
-        }
+            async function authorizeUser(username, password) {
+                const valid = await that.private.security.authorizeUser(username, password);
+                return valid;
+            }
 
-        function httpHandler(request, response) {
-            if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
-                that.private.security.userPasswordIsNull().
-                then((isNull) => {
-                    let body = {};
-                    if (isNull) {
-                        that.private.security.setUserPassword(request.body.command.value).
-                        then(() => {
-                            body = {};
-                        }).
-                        catch((error) => {
+            function httpHandler(request, response) {
+                if (Reflect.has(request.body, "command") && request.body.command.name === "passwordSet") {
+                    that.private.security.userPasswordIsNull().
+                    then((isNull) => {
+                        let body = {};
+                        if (isNull) {
+                            that.private.security.setUserPassword(request.body.command.value).
+                            then(() => {
+                                body = {};
+                            }).
+                            catch((error) => {
+                                body = {
+                                    "error": {
+                                        "name": error.name,
+                                        "message": error.message
+                                    }
+                                };
+                            });
+                        } else {
                             body = {
                                 "error": {
-                                    "name": error.name,
-                                    "message": error.message
+                                    "message": "The password is already set."
                                 }
                             };
-                        });
-                    } else {
-                        body = {
-                            "error": {
-                                "message": "The password is already set."
-                            }
-                        };
-                    }
-                    return body;
-                }).
-                then((body) => {
+                        }
+                        return body;
+                    }).
+                    then((body) => {
+                        response.
+                        type("json").
+                        status(200).
+                        json(body).
+                        end();
+                    });
+                } else {
                     response.
-                    type("json").
-                    status(200).
-                    json(body).
-                    end();
-                });
-            } else {
+                        status(400).
+                        end();
+                }
+            }
+
+            function backendRunHandler(request, response) {
+                return that.private.backend.runCommand(request.body).
+                    then((res) => {
+                        response.
+                            type("json").
+                            status(200).
+                            json(res).
+                            end();
+                    }).
+                    catch((error) => {
+                        throw error;
+                    });
+            }
+
+            function backendSkillHandler(request, response) {
+                return that.private.backend.skillCommand(request.body).
+                    then((res) => {
+                        response.
+                            type("json").
+                            status(200).
+                            json(res).
+                            end();
+                    }).
+                    catch((error) => {
+                        throw error;
+                    });
+            }
+
+            function backendPingHandler(request, response) {
                 response.
-                    status(400).
+                    status(200).
                     end();
             }
-        }
-
-        function backendRunHandler(request, response) {
-            return that.private.backend.runCommand(request.body).
-                then((res) => {
-                    response.
-                        type("json").
-                        status(200).
-                        json(res).
-                        end();
-                }).
-                catch((error) => {
-                    throw error;
-                });
-        }
-
-        function backendSkillHandler(request, response) {
-            return that.private.backend.skillCommand(request.body).
-                then((res) => {
-                    response.
-                        type("json").
-                        status(200).
-                        json(res).
-                        end();
-                }).
-                catch((error) => {
-                    throw error;
-                });
-        }
-
-
-        function backendPingHandler(request, response) {
-            response.
-                status(200).
-                end();
         }
     }
 
