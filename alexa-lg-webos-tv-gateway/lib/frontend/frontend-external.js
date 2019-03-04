@@ -116,8 +116,19 @@ class ServerExternal {
             }
 
             function backendSkillHandler(request, response) {
+                if (Reflect.has(request.body, "log")) {
+                    console.log(JSON.stringify(request.body, null, 2));
+                    response.
+                        type("json").
+                        status(200).
+                        json({}).
+                        end();
+                    return Promise.resolve();
+                }
+//console.log(JSON.stringify(request.body, null, 2));
                 return that.private.backend.skillCommand(request.body).
                     then((res) => {
+// console.log(JSON.stringify(res, null, 2));
                         response.
                             type("json").
                             status(200).

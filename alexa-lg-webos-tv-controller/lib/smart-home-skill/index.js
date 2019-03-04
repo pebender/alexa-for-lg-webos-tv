@@ -8,6 +8,26 @@ const alexaEndpointHealth = require("./endpoint-health.js");
 const alexaPowerController = require("./power-controller.js");
 const alexaRangeController = require("./range-controller.js");
 
+function logSkillHandler(event, context, callback) {
+    skillHandler(event, context, (error, response) => {
+        if (error) {
+            callback(error, response);
+            return;
+        }
+        const gateway = new Gateway("x");
+        const logRequest = {
+            "log": event
+        };
+        const logResponse = {
+            "log": response
+        };
+        gateway.sendSkillDirective(logRequest).
+            then(() => gateway.sendSkillDirective(logResponse)).
+            then(() => callback(error, response)).
+            catch((err) => callback(err, response));
+    });
+}
+
 // eslint-disable-next-line no-unused-vars
 function skillHandler(event, _context, callback) {
     if (!(Reflect.has(event.directive, "endpoint") && Reflect.has(event.directive.endpoint, "endpointId"))) {
@@ -130,4 +150,4 @@ function errorToErrorResponse(error, event) {
     return alexaResponse.get();
 }
 
-module.exports = {"handler": skillHandler};
+module.exports = {"handler": logSkillHandler};
