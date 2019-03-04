@@ -14,13 +14,13 @@
   ],
   "dependencies": {
     "alexa-lg-webos-tv-common": "../alexa-lg-webos-tv-common",
-    "ask-sdk": "2.3.0",
-    "ask-sdk-dynamodb-persistence-adapter": "2.3.0",
+    "ask-sdk": "2.4.0",
+    "ask-sdk-dynamodb-persistence-adapter": "2.4.0",
     "certnames": "1.0.4"
   },
   "devDependencies": {
-    "@types/node": "10.12.18",
-    "eslint": "5.11.1",
+    "@types/node": "11.10.4",
+    "eslint": "5.15.0",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
