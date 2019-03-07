@@ -19,8 +19,8 @@
     "certnames": "1.0.4"
   },
   "devDependencies": {
-    "@types/node": "11.10.4",
-    "eslint": "5.15.0",
+    "@types/node": "11.10.5",
+    "eslint": "5.15.1",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
