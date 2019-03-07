@@ -1,8 +1,8 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const Gateway = require("../gateway-api/index.js");
-const endpointHealth = require("./endpoint-health.js");
-const powerController = require("./power-controller.js");
-const rangeController = require("./range-controller.js");
+const Gateway = require("../gateway-api");
+const endpointHealth = require("./endpoint-health");
+const powerController = require("./power-controller");
+const rangeController = require("./range-controller");
 
 function handler(event, callback) {
     if (event.directive.header.namespace !== "Alexa.Discovery") {

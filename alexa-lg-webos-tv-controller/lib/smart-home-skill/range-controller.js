@@ -1,4 +1,4 @@
-const {unknownDirectiveError} = require("./common.js");
+const {unknownDirectiveError} = require("./common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars

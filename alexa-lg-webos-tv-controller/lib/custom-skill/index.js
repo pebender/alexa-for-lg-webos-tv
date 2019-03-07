@@ -1,5 +1,5 @@
 const Alexa = require("ask-sdk");
-const authorization = require("./authorization.js");
+const authorization = require("./authorization");
 
 const {DynamoDbPersistenceAdapter} = require("ask-sdk-dynamodb-persistence-adapter");
 const persistenceAdapter = new DynamoDbPersistenceAdapter({

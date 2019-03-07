@@ -1,4 +1,4 @@
-const {unknownDirectiveError} = require("./common.js");
+const {unknownDirectiveError} = require("./common");
 const Gateway = require("../gateway-api");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 

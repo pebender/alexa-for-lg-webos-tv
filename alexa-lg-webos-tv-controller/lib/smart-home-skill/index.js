@@ -1,12 +1,12 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const Gateway = require("../gateway-api");
-const {unknownDirectiveError} = require("./common.js");
-const alexaAuthorization = require("./authorization.js");
-const alexaDiscovery = require("./discovery.js");
-const alexa = require("./alexa.js");
-const alexaEndpointHealth = require("./endpoint-health.js");
-const alexaPowerController = require("./power-controller.js");
-const alexaRangeController = require("./range-controller.js");
+const {unknownDirectiveError} = require("./common");
+const alexaAuthorization = require("./authorization");
+const alexaDiscovery = require("./discovery");
+const alexa = require("./alexa");
+const alexaEndpointHealth = require("./endpoint-health");
+const alexaPowerController = require("./power-controller");
+const alexaRangeController = require("./range-controller");
 
 function logSkillHandler(event, context, callback) {
     skillHandler(event, context, (error, response) => {

@@ -2,7 +2,7 @@ const tls = require("tls");
 const crypto = require("crypto");
 const certnames = require("certnames");
 const {constants} = require("alexa-lg-webos-tv-common");
-const gateway = require("../gateway-api/index.js");
+const gateway = require("../gateway-api");
 
 const SetHostnameIntentHandler = {
     canHandle(handlerInput) {

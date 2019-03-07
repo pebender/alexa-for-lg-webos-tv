@@ -1,6 +1,5 @@
 const https = require("https");
 const {constants} = require("alexa-lg-webos-tv-common");
-const httpStatusMessages = require("./http-status-messages.js");
 
 class Gateway {
     constructor(userId) {
@@ -114,11 +113,11 @@ function pingHandler(requestOptions) {
                 if (response.statusCode === 200) {
                     resolve(true);
                 }
-                if (Reflect.has(httpStatusMessages, response.statusCode)) {
+                if (Reflect.has(https.STATUS_CODES, response.statusCode)) {
                     const error = new Error();
                     error.name = "HTTP_SERVER_ERROR";
                     error.message = "The gateway returned HTTP/1.1 status " +
-                        ` '${httpStatusMessages[response.statusCode]} (${response.statusCode})'.`;
+                        ` '${https.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
                     reject(error);
                 }
                 const error = new Error();
@@ -191,13 +190,13 @@ function sendHandler(requestOptions, requestBody) {
             });
             response.on("end", () => {
                 if (response.statusCode !== 200) {
-                    if (!Reflect.has(httpStatusMessages, response.statusCode)) {
+                    if (!Reflect.has(https.STATUS_CODES, response.statusCode)) {
                         const message = "The gateway returned HTTP/1.1 status code" +
                             ` '${response.statusCode}'.`;
                         return reject(new GatewayAPIError(message));
                     }
                     const message = "The gateway returned HTTP/1.1 status message" +
-                        ` '${httpStatusMessages[response.statusCode]} (${response.statusCode})'.`;
+                        ` '${https.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
                     return reject(new GatewayAPIError(message));
                 }
                 if (!(/^application\/json/).test(response.headers["content-type"])) {
