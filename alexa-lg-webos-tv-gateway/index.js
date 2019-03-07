@@ -13,58 +13,60 @@ const DatabaseTable = require("./lib/database");
 const Backend = require("./lib/backend");
 const Frontend = require("./lib/frontend");
 
+let configurationDir = null;
+let backend = null;
+let backendDb = null;
+let frontend = null;
+let frontendDb = null;
+
+Promise.resolve().
+
+/*
+ * This operation is synchronous. It is both expected and desired because it
+ * occures once at startup and because the directory is needed before the LG
+ * webOS TV gateway can run.
+ */
+then(() => {
+    configurationDir = ppath("LGwebOSTVGateway");
+    try {
+
+        // eslint-disable-next-line no-sync
+        fs.mkdirSync(configurationDir);
+    } catch (error) {
+        if (error.code !== "EEXIST") {
+            throw error;
+        }
+    }
+}).
+
 /*
  * I keep long term information needed to connect to each TV in a database.
  * The long term information is the TV's unique device name (udn), friendly name
  * (name), Internet Protocol address (ip), media access control address (mac)
  * and client key (key).
  */
-const configurationDir = ppath("LGwebOSTVGateway");
-try {
-
-    /*
-     * This operation is synchronous. It is both expected and desired because it
-     * occures once at startup and because the directory is needed before the LG
-     * webOS TV gateway can run.
-     */
-    // eslint-disable-next-line no-sync
-    fs.mkdirSync(configurationDir);
-} catch (error) {
-    if (error.code !== "EEXIST") {
-        throw error;
-    }
-}
-
-const frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
-frontendDb.initialize((error) => {
-    if (error) {
-        throw error;
-    }
-});
-
-const backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
-backendDb.initialize((error) => {
-    if (error) {
-        throw error;
-    }
-});
-
-const backend = new Backend(backendDb);
-const frontend = new Frontend(frontendDb, backend);
-
-backend.on("error", (error, id) => {
-    console.log(id);
+then(() => {
+    backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
+    return backendDb.initialize();
+}).
+then(() => {
+    frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
+    return frontendDb.initialize();
+}).
+then(() => {
+    backend = new Backend(backendDb);
+    backend.on("error", (error, id) => {
+        console.log(id);
+        console.log(error);
+    });
+    return backend.initialize();
+}).
+then(() => {
+    frontend = new Frontend(frontendDb, backend);
+    return frontend.initialize();
+}).
+then(() => frontend.start()).
+then(() => backend.start()).
+catch((error) => {
     console.log(error);
 });
-
-backend.initialize().
-    then(() => {
-        backend.start();
-        return frontend.initialize();
-    }).
-    then(() => {
-        frontend.start();
-    }).
-    catch((error) => {
-        throw error;
-    });

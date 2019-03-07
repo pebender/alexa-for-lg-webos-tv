@@ -39,7 +39,7 @@ class ServerSecurity {
     authorizeRoot(username, password) {
         return this.private.rejectIfNotInitialized("authorizeRoot").
             then(() => {
-                if (username === "HTTP" && password === constants.password) {
+                if (username === "HTTP" && password === constants.gatewayRootPassword) {
                     return true;
                 }
                 return false;
@@ -55,8 +55,7 @@ class ServerSecurity {
                     record.value === null) {
                     return false;
                 }
-//                if (username === "LGTV" && password === record.value) {
-                if (username === "LGTV" && password === "0") {
+                if (username === "LGTV" && password === record.value) {
                     return true;
                 }
                 return false;

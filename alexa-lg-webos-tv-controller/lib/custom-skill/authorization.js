@@ -210,7 +210,7 @@ const SetPasswordIntentHandler = {
                     "hostname": persistentAttributes.hostname,
                     "path": "/HTTP",
                     "username": "HTTP",
-                    "password": constants.password
+                    "password": constants.gatewayRootPassword
                 };
                 const request = {
                     "command": {

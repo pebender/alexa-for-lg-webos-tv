@@ -1,4 +1,5 @@
 const https = require("https");
+const {constants} = require("alexa-lg-webos-tv-common");
 const httpStatusMessages = require("./http-status-messages.js");
 
 class Gateway {
@@ -11,9 +12,9 @@ class Gateway {
         };
 
         // These will be in a database indexed by userId.
-        this.private.hostname = "alexa.backinthirty.net";
+        this.private.hostname = constants.gatewayHostname;
         this.private.username = "LGTV";
-        this.private.password = "0";
+        this.private.password = constants.gatewayUserPassword;
     }
 
     set hostname(hostname) {
