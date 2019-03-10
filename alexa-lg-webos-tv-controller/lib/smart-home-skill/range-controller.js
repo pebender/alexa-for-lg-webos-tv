@@ -135,68 +135,78 @@ function handler(event) {
     });
 }
 
-function setRangeValueHandler(event, callback) {
-    switch (event.directive.header.instance) {
-        case "A":
-            setRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "B":
-            setRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "C":
-            setRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "D":
-            setRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        default:
-            unknownInstanceError(event, (error, response) => callback(error, response));
-    }
-}
-
-function adjustRangeValueHandler(event, callback) {
-    switch (event.directive.header.instance) {
-        case "A":
-            adjustRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "B":
-            adjustRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "C":
-            adjustRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        case "D":
-            adjustRangeValueInstanceHandler(event, (error, response) => callback(error, response));
-            return;
-        default:
-            unknownInstanceError(event, (error, response) => callback(error, response));
-    }
-}
-
-function setRangeValueInstanceHandler(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event
-    });
-    callback(null, alexaResponse.get());
-}
-
-function adjustRangeValueInstanceHandler(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event
-    });
-    callback(null, alexaResponse.get());
-}
-
-function unknownInstanceError(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
+function setRangeValueHandler(event) {
+    return new Promise((resolve) => {
+        switch (event.directive.header.instance) {
+            case "A":
+                resolve(setRangeValueInstanceHandler(event));
+                return;
+            case "B":
+                resolve(setRangeValueInstanceHandler(event));
+                return;
+            case "C":
+                resolve(setRangeValueInstanceHandler(event));
+                return;
+            case "D":
+                resolve(setRangeValueInstanceHandler(event));
+                return;
+            default:
+                resolve(unknownInstanceError(event));
         }
     });
-    callback(null, alexaResponse.get());
+}
+
+function adjustRangeValueHandler(event) {
+    return new Promise((resolve) => {
+        switch (event.directive.header.instance) {
+            case "A":
+                resolve(adjustRangeValueInstanceHandler(event));
+                return;
+            case "B":
+                resolve(adjustRangeValueInstanceHandler(event));
+                return;
+            case "C":
+                resolve(adjustRangeValueInstanceHandler(event));
+                return;
+            case "D":
+                resolve(adjustRangeValueInstanceHandler(event));
+                return;
+            default:
+                resolve(unknownInstanceError(event));
+        }
+    });
+}
+
+function setRangeValueInstanceHandler(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event
+        });
+        resolve(alexaResponse.get());
+    });
+}
+
+function adjustRangeValueInstanceHandler(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event
+        });
+        resolve(alexaResponse.get());
+    });
+}
+
+function unknownInstanceError(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event,
+            "name": "ErrorResponse",
+            "payload": {
+                "type": "INTERNAL_ERROR",
+                "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
+            }
+        });
+        resolve(alexaResponse.get());
+    });
 }
 
 module.exports = {

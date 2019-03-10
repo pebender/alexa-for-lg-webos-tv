@@ -62,18 +62,22 @@ function handler(event) {
     });
 }
 
-function turnOffHandler(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event
+function turnOffHandler(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event
+        });
+        resolve(alexaResponse.get());
     });
-    callback(null, alexaResponse.get());
 }
 
-function turnOnHandler(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event
+function turnOnHandler(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event
+        });
+        resolve(alexaResponse.get());
     });
-    callback(null, alexaResponse.get());
 }
 
 module.exports = {
