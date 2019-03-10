@@ -8,34 +8,23 @@ const alexaEndpointHealth = require("./endpoint-health");
 const alexaPowerController = require("./power-controller");
 const alexaRangeController = require("./range-controller");
 
-function logSkillHandler(event, context, callback) {
-    skillHandler(event, context, (error, response) => {
-        if (error) {
-            callback(error, response);
-            return;
-        }
-        const gateway = new Gateway("x");
-        const logRequest = {
-            "log": event
-        };
-        const logResponse = {
-            "log": response
-        };
-        gateway.sendSkillDirective(logRequest).
-            then(() => gateway.sendSkillDirective(logResponse)).
-            then(() => callback(error, response)).
-            catch((err) => callback(err, response));
-    });
-}
+async function handlerWithLogging(event, context) {
+    const response = await handler(event, context);
 
-function skillHandler(event, context, callback) {
-    skillHandlerWithPromise(event, context).
-    then((response) => callback(null, response)).
-    catch((error) => callback(error, null));
+    const gateway = new Gateway("x");
+    const logRequest = {
+        "log": event
+    };
+    const logResponse = {
+        "log": response
+    };
+    await gateway.sendSkillDirective(logRequest);
+    await gateway.sendSkillDirective(logResponse);
+    return response;
 }
 
 // eslint-disable-next-line no-unused-vars
-function skillHandlerWithPromise(event, _context) {
+function handler(event, _context) {
     try {
         if (!(Reflect.has(event.directive, "endpoint") && Reflect.has(event.directive.endpoint, "endpointId"))) {
             switch (event.directive.header.namespace) {
@@ -114,4 +103,4 @@ function errorToErrorResponse(error, event) {
     return alexaResponse.get();
 }
 
-module.exports = {"handler": logSkillHandler};
+module.exports = {"handler": handlerWithLogging};
