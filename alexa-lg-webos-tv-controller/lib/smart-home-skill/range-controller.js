@@ -104,30 +104,25 @@ function states() {
 }
 
 function handler(event) {
-    return new Promise((resolve) => {
-        if (event.directive.header.namespace !== "Alexa.RangeController") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Range Controller processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
-            return;
-        }
-        switch (event.directive.header.name) {
-            case "SetRangeValue":
-                resolve(setRangeValueHandler(event));
-                return;
-            case "AdjustRangeValue":
-                resolve(adjustRangeValueHandler(event));
-                return;
-            default:
-                resolve(unknownDirectiveError(event));
-        }
-    });
+    if (event.directive.header.namespace !== "Alexa.RangeController") {
+        const alexaResponse = new AlexaResponse({
+            "request": event,
+            "name": "ErrorResponse",
+            "payload": {
+                "type": "INTERNAL_ERROR",
+                "message": "You were sent to Range Controller processing in error."
+            }
+        });
+        return alexaResponse.get();
+    }
+    switch (event.directive.header.name) {
+        case "SetRangeValue":
+            return setRangeValueHandler(event);
+        case "AdjustRangeValue":
+            return adjustRangeValueHandler(event);
+        default:
+            return unknownDirectiveError(event);
+    }
 }
 
 function setRangeValueHandler(event) {

@@ -43,24 +43,21 @@ async function states() {
 }
 
 function handler(event) {
-    return new Promise((resolve) => {
-        if (event.directive.header.namespace !== "Alexa.EndpointHealth") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": "You were sent to Endpoint Health processing in error."
-                }
-            });
-            resolve(alexaResponse.get());
-            return;
-        }
-        switch (event.directive.header.name) {
-            default:
-                resolve(unknownDirectiveError(event));
-        }
-    });
+    if (event.directive.header.namespace !== "Alexa.EndpointHealth") {
+        const alexaResponse = new AlexaResponse({
+            "request": event,
+            "name": "ErrorResponse",
+            "payload": {
+                "type": "INTERNAL_ERROR",
+                "message": "You were sent to Endpoint Health processing in error."
+            }
+        });
+        return alexaResponse.get();
+    }
+    switch (event.directive.header.name) {
+        default:
+            return unknownDirectiveError(event);
+    }
 }
 
 module.exports = {
