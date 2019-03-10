@@ -76,9 +76,9 @@ async function handler(lgtv, event) {
                 Promise.resolve(alexaPlaybackController.states(lgtv, udn))
             ]);
             const endTime = new Date();
+            const states = [].concat(...statesList);
             const timeOfSample = endTime.toISOString();
             const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-            const states = [].concat(...statesList);
             states.forEach((contextProperty) => {
                 contextProperty.timeOfSample = timeOfSample;
                 contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;

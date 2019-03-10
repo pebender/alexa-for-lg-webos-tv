@@ -89,37 +89,29 @@ function remoteResponse(event) {
     });
 }
 
-function stateHandler(response) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse(response);
+async function stateHandler(response) {
+    const alexaResponse = new AlexaResponse(response);
+    try {
         const startTime = new Date();
-        Promise.all([
+        const statesList = await Promise.all([
             Promise.resolve(alexa.states()),
             Promise.resolve(alexaEndpointHealth.states()),
             Promise.resolve(alexaPowerController.states()),
             Promise.resolve(alexaRangeController.states())
-        ]).then((values) => {
-            const endTime = new Date();
-            const timeOfSample = endTime.toISOString();
-            const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-            const contextProperties = [];
-            values.forEach((value) => {
-                if (value.length > 0) {
-                    contextProperties.push(...value);
-                }
-            });
-            contextProperties.forEach((contextProperty) => {
-                contextProperty.timeOfSample = timeOfSample;
-                contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-                alexaResponse.addContextProperty(contextProperty);
-            });
-            resolve(alexaResponse.get());
-        }).
-        // eslint-disable-next-line no-unused-vars
-        catch((error) => {
-            resolve(alexaResponse.get());
+        ]);
+        const endTime = new Date();
+        const states = [].concat(...statesList);
+        const timeOfSample = endTime.toISOString();
+        const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
+        states.forEach((contextProperty) => {
+            contextProperty.timeOfSample = timeOfSample;
+            contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
+            alexaResponse.addContextProperty(contextProperty);
         });
-    });
+        return alexaResponse.get();
+    } catch (_error) {
+        return alexaResponse.get();
+    }
 }
 
 function errorToErrorResponse(error, event) {
