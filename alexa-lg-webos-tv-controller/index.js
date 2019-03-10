@@ -9,10 +9,16 @@ function skilllHandler(event, context, callback) {
 }
 
 
-function smartHomeSkillHandler(event, context, callback) {
-    smartHomeSkill.handler(event, context).
-    then((response) => callback(null, response)).
-    catch((error) => callback(error, null));
+async function smartHomeSkillHandler(event, context, callback) {
+    try {
+        const response = await smartHomeSkill.handler(event, context);
+        callback(null, response);
+        return;
+    } catch (error) {
+        callback(error, null);
+        // eslint-disable-next-line no-useless-return
+        return;
+    }
 }
 
 exports.handler = skilllHandler;
