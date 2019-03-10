@@ -33,29 +33,31 @@ function states() {
     });
 }
 
-function handler(event, callback) {
-    if (event.directive.header.namespace !== "Alexa.PowerController") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Power Controller processing in error."
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
-    switch (event.directive.header.name) {
-        case "TurnOff":
-            turnOffHandler(event, (error, response) => callback(error, response));
+function handler(event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa.PowerController") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": "You were sent to Power Controller processing in error."
+                }
+            });
+            resolve(alexaResponse.get());
             return;
-        case "TurnOn":
-            turnOnHandler(event, (error, response) => callback(error, response));
-            return;
-        default:
-            unknownDirectiveError(event, (error, response) => callback(error, response));
-    }
+        }
+        switch (event.directive.header.name) {
+            case "TurnOff":
+                resolve(turnOffHandler(event));
+                return;
+            case "TurnOn":
+                resolve(turnOnHandler(event));
+                return;
+            default:
+                resolve(unknownDirectiveError(event));
+        }
+    });
 }
 
 function turnOffHandler(event, callback) {

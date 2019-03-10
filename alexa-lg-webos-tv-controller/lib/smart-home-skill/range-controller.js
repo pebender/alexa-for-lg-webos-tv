@@ -33,13 +33,14 @@ function ipAddressOctetCapability(octet) {
     const texts = textsList[octet];
     const instance = octet;
     const friendlyNames = texts.map((text) => {
-        return {
+        const friendlyName = {
             "@type": "text",
             "value": {
                 "text": text,
                 "locale": "en-US"
             }
         };
+        return friendlyName;
     });
 
     return {
@@ -105,30 +106,31 @@ function states() {
     });
 }
 
-function handler(event, callback) {
-    if (event.directive.header.namespace !== "Alexa.RangeController") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Range Controller processing in error."
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
-    switch (event.directive.header.name) {
-        case "SetRangeValue":
-            setRangeValueHandler(event, (error, response) => callback(error, response));
+function handler(event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa.RangeController") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": "You were sent to Range Controller processing in error."
+                }
+            });
+            resolve(alexaResponse.get());
             return;
-        case "AdjustRangeValue":
-            adjustRangeValueHandler(event, (error, response) => callback(error, response));
-            return;
-        default:
-            unknownDirectiveError(event, (error, response) => callback(error, response));
-    }
-    callback(null, null);
+        }
+        switch (event.directive.header.name) {
+            case "SetRangeValue":
+                resolve(setRangeValueHandler(event));
+                return;
+            case "AdjustRangeValue":
+                resolve(adjustRangeValueHandler(event));
+                return;
+            default:
+                resolve(unknownDirectiveError(event));
+        }
+    });
 }
 
 function setRangeValueHandler(event, callback) {

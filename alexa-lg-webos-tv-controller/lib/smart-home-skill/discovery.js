@@ -4,31 +4,30 @@ const endpointHealth = require("./endpoint-health");
 const powerController = require("./power-controller");
 const rangeController = require("./range-controller");
 
-function handler(event, callback) {
-    if (event.directive.header.namespace !== "Alexa.Discovery") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
+function handler(event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa.Discovery") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
+                }
+            });
+            resolve(alexaResponse.get());
+            return;
+        }
 
-    const gateway = new Gateway("x");
-    const LGTVGatewayEndpoint = gatewayEndpoint(event);
-    gateway.sendSkillDirective(event).then(
-        (response) => {
-console.log("hello");
+        const gateway = new Gateway("x");
+        const LGTVGatewayEndpoint = gatewayEndpoint(event);
+        gateway.sendSkillDirective(event).
+        then((response) => {
             if (response.event.header.namespace === "Alexa.Discovery" &&
                 response.event.header.name === "Discover.Response") {
-console.log("hello again");
                 const alexaResponse = new AlexaResponse(response);
                 alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-                callback(null, alexaResponse.get());
+                resolve(alexaResponse.get());
                 return;
             }
             const alexaResponse = new AlexaResponse({
@@ -36,20 +35,17 @@ console.log("hello again");
                 "name": "Discover.Response"
             });
             alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-            callback(null, alexaResponse.get());
-        },
-        // eslint-disable-next-line no-unused-vars
-        (error) => {
-console.log("goodbye");
-console.log(error);
+            resolve(alexaResponse.get());
+        }).
+        catch(() => {
             const alexaResponse = new AlexaResponse({
                 "namespace": "Alexa.Discovery",
                 "name": "Discover.Response"
             });
             alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
-            callback(null, alexaResponse.get());
-        }
-    );
+            resolve(alexaResponse.get());
+        });
+    });
 }
 
 // eslint-disable-next-line no-unused-vars

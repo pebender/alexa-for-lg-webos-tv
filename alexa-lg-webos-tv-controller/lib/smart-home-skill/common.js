@@ -1,6 +1,6 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
-function unknownDirectiveError(event, callback) {
+function unknownDirectiveError(event) {
     const alexaResponse = new AlexaResponse({
         "request": event,
         "name": "ErrorResponse",
@@ -9,7 +9,7 @@ function unknownDirectiveError(event, callback) {
             "message": `I do not know the Range Controller directive ${event.directive.header.name}`
         }
     });
-    callback(null, alexaResponse.get());
+    return alexaResponse.get();
 }
 
 module.exports = {

@@ -18,36 +18,40 @@ function states() {
     });
 }
 
-function handler(event, callback) {
-    if (event.directive.header.namespace !== "Alexa") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Alexa processing in error."
-            }
-        });
-        callback(null, alexaResponse.get());
-        return;
-    }
-
-    switch (event.directive.header.name) {
-        case "ReportState":
-            reportStateHandler(event, (error, response) => callback(error, response));
+function handler(event) {
+    return new Promise((resolve) => {
+        if (event.directive.header.namespace !== "Alexa") {
+            const alexaResponse = new AlexaResponse({
+                "request": event,
+                "name": "ErrorResponse",
+                "payload": {
+                    "type": "INTERNAL_ERROR",
+                    "message": "You were sent to Alexa processing in error."
+                }
+            });
+            resolve(alexaResponse.get());
             return;
-        default:
-            unknownDirectiveError(event, (error, response) => callback(error, response));
-    }
+        }
+
+        switch (event.directive.header.name) {
+            case "ReportState":
+                resolve(reportStateHandler(event));
+                return;
+            default:
+                resolve(unknownDirectiveError(event));
+        }
+    });
 }
 
-function reportStateHandler(event, callback) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "namespace": "Alexa",
-        "name": "StateReport"
+function reportStateHandler(event) {
+    return new Promise((resolve) => {
+        const alexaResponse = new AlexaResponse({
+            "request": event,
+            "namespace": "Alexa",
+            "name": "StateReport"
+        });
+        resolve(alexaResponse);
     });
-    callback(null, alexaResponse);
 }
 
 module.exports = {
