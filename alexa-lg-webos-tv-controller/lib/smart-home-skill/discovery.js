@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
 const Gateway = require("../gateway-api");
 const alexa = require("./alexa");
 const alexaEndpointHealth = require("./endpoint-health");
@@ -9,15 +10,7 @@ async function handler(event) {
     let lgtvGatewayEndpoint = null;
     try {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
-            const alexaResponse = new AlexaResponse({
-                "request": event,
-                "name": "ErrorResponse",
-                "payload": {
-                    "type": "INTERNAL_ERROR",
-                    "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
-                }
-            });
-            return alexaResponse.get();
+            return namespaceErrorResponse(event, event.directive.header.namespace);
         }
 
         const gateway = new Gateway("x");

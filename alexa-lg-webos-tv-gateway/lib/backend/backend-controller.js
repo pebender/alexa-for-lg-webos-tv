@@ -1,6 +1,6 @@
 const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
-const {GenericError, UnititializedClassError} = require("../common");
+const {GenericError, UnititializedClassError} = require("alexa-lg-webos-tv-common");
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
 const BackendControl = require("./backend-control");

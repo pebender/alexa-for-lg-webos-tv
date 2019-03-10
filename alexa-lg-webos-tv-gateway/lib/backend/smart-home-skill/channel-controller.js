@@ -1,6 +1,6 @@
 const isNumeric = require("isnumeric");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../../common");
+const {namespaceErrorResponse, directiveErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtv, _event, _udn) {

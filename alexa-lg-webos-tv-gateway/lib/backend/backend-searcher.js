@@ -20,7 +20,7 @@ const {Mutex} = require("async-mutex");
 const arp = require("node-arp");
 const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
-const {UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 

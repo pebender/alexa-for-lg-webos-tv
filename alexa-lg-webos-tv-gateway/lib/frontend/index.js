@@ -1,6 +1,6 @@
 
 const {Mutex} = require("async-mutex");
-const {UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 const ServerSecurity = require("./frontend-security");
 const ServerInternal = require("./frontend-internal");
 const ServerExternal = require("./frontend-external");

@@ -1,6 +1,7 @@
 const {Mutex} = require("async-mutex");
 const Datastore = require("nedb");
-const {UnititializedClassError, callbackToPromise} = require("./common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
+const {callbackToPromise} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 

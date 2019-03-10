@@ -1,5 +1,5 @@
-const {unknownDirectiveError} = require("./common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_event) {
@@ -32,15 +32,7 @@ function states() {
 
 function handler(event) {
     if (event.directive.header.namespace !== "Alexa.PowerController") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Power Controller processing in error."
-            }
-        });
-        return alexaResponse.get();
+        return namespaceErrorResponse(event, event.directive.header.namespace);
     }
     switch (event.directive.header.name) {
         case "TurnOff":
@@ -48,7 +40,7 @@ function handler(event) {
         case "TurnOn":
             return turnOnHandler(event);
         default:
-            return unknownDirectiveError(event);
+            return directiveErrorResponse(event, event.directive.header.namespace);
     }
 }
 

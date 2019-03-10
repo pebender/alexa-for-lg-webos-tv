@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {namespaceErrorResponse} = require("../../common");
+const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
 const alexa = require("./alexa");
 const alexaPowerController = require("./power-controller");
 const alexaSpeaker = require("./speaker");
@@ -55,17 +55,19 @@ async function handler(lgtv, event) {
 
     async function buildEndpoint(udn) {
         try {
+            // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
-                Promise.resolve(alexa.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaPowerController.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaSpeaker.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaChannelController.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaInputController.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaLauncher.capabilities(lgtv, event, udn)),
-                Promise.resolve(alexaPlaybackController.capabilities(lgtv, event, udn))
-            ]);
+                alexa.capabilities(lgtv, event, udn),
+                alexaPowerController.capabilities(lgtv, event, udn),
+                alexaSpeaker.capabilities(lgtv, event, udn),
+                alexaChannelController.capabilities(lgtv, event, udn),
+                alexaInputController.capabilities(lgtv, event, udn),
+                alexaLauncher.capabilities(lgtv, event, udn),
+                alexaPlaybackController.capabilities(lgtv, event, udn)
+            ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
+
             if (capabilities.length === 0) {
                 return null;
             }

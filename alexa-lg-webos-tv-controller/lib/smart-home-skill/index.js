@@ -1,6 +1,6 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const Gateway = require("../gateway-api");
-const {unknownDirectiveError} = require("./common");
+const {errorToErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
 const alexaAuthorization = require("./authorization");
 const alexaDiscovery = require("./discovery");
 const alexa = require("./alexa");
@@ -33,7 +33,7 @@ function handler(event, _context) {
                 case "Alexa.Discovery":
                     return alexaDiscovery.handler(event);
                 default:
-                    return unknownDirectiveError(event);
+                    return directiveErrorResponse(event, event.directive.header.namespace);
             }
         } else if (event.directive.endpoint.endpointId === "lg-webos-tv-gateway") {
             switch (event.directive.header.namespace) {
@@ -46,7 +46,7 @@ function handler(event, _context) {
                 case "Alexa.RangeController":
                     return stateHandler(alexaRangeController.handler(event));
                 default:
-                    return unknownDirectiveError(event);
+                    return directiveErrorResponse(event, event.directive.header.namespace);
             }
         } else {
             return remoteResponse(event);
@@ -89,18 +89,6 @@ async function stateHandler(response) {
     } catch (_error) {
         return alexaResponse.get();
     }
-}
-
-function errorToErrorResponse(error, event) {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
-        "name": "ErrorResponse",
-        "payload": {
-            "type": "INTERNAL_ERROR",
-            "message": `${error.name}: ${error.message}.`
-        }
-    });
-    return alexaResponse.get();
 }
 
 module.exports = {"handler": handlerWithLogging};

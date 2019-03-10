@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("../../common");
+const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 
 const alexaToLGTV = {
     // Amazon Video

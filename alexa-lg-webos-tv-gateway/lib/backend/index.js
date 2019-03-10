@@ -1,6 +1,6 @@
 const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
-const {UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 const BackendController = require("./backend-controller");
 const BackendSearcher = require("./backend-searcher");
 

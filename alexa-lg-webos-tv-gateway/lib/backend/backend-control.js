@@ -3,8 +3,8 @@ const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
-const {GenericError, UnititializedClassError} = require("../common");
-const {callbackToPromise} = require("../common");
+const {GenericError, UnititializedClassError} = require("alexa-lg-webos-tv-common");
+const {callbackToPromise} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 

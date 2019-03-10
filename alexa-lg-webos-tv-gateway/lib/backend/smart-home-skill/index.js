@@ -1,4 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+const {errorToErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 const alexaAuthorization = require("./authorization");
 const alexaDiscovery = require("./discovery");
 const alexa = require("./alexa");
@@ -8,7 +9,6 @@ const alexaChannelController = require("./channel-controller");
 const alexaInputController = require("./input-controller");
 const alexaLauncher = require("./launcher");
 const alexaPlaybackController = require("./playback-controller");
-const {errorToErrorResponse, errorResponse} = require("../../common");
 
 async function handler(lgtv, event) {
     if (!Reflect.has(event, "directive")) {
@@ -67,14 +67,14 @@ async function handler(lgtv, event) {
             const udn = event.directive.endpoint.endpointId;
             const startTime = new Date();
             const statesList = await Promise.all([
-                Promise.resolve(alexa.states(lgtv, udn)),
-                Promise.resolve(alexaPowerController.states(lgtv, udn)),
-                Promise.resolve(alexaSpeaker.states(lgtv, udn)),
-                Promise.resolve(alexaChannelController.states(lgtv, udn)),
-                Promise.resolve(alexaInputController.states(lgtv, udn)),
-                Promise.resolve(alexaLauncher.states(lgtv, udn)),
-                Promise.resolve(alexaPlaybackController.states(lgtv, udn))
-            ]);
+                alexa.states(lgtv, udn),
+                alexaPowerController.states(lgtv, udn),
+                alexaSpeaker.states(lgtv, udn),
+                alexaChannelController.states(lgtv, udn),
+                alexaInputController.states(lgtv, udn),
+                alexaLauncher.states(lgtv, udn),
+                alexaPlaybackController.states(lgtv, udn)
+            ].map((value) => Promise.resolve(value)));
             const endTime = new Date();
             const states = [].concat(...statesList);
             const timeOfSample = endTime.toISOString();

@@ -1,4 +1,4 @@
-const {unknownDirectiveError} = require("./common");
+const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
 const Gateway = require("../gateway-api");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
@@ -44,19 +44,12 @@ async function states() {
 
 function handler(event) {
     if (event.directive.header.namespace !== "Alexa.EndpointHealth") {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": "You were sent to Endpoint Health processing in error."
-            }
-        });
-        return alexaResponse.get();
+        return namespaceErrorResponse(event, event.directive.header.namespace);
+
     }
     switch (event.directive.header.name) {
         default:
-            return unknownDirectiveError(event);
+            return directiveErrorResponse(event, event.directive.header.namespace);
     }
 }
 

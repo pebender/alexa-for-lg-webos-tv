@@ -10,7 +10,7 @@
 const express = require("express");
 const basicAuth = require("express-basic-auth");
 const {Mutex} = require("async-mutex");
-const {UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 

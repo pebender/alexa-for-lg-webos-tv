@@ -1,4 +1,8 @@
-const AlexaResponse = require("./lib/alexa-response.js");
+const general = require("./lib/general");
+const errorClasses = require("./lib/error-classes");
+const AlexaResponse = require("./lib/alexa-response");
+const alexaErrorResponses = require("./lib/alexa-response");
+
 
 const constants = {
     "amazonVendorId": "M2V6930QON4TLV",
@@ -11,3 +15,12 @@ module.exports = {
     "AlexaResponse": AlexaResponse,
     "constants": constants
 };
+Object.keys(general).forEach((key) => {
+    module.exports[key] = general[key];
+});
+Object.keys(errorClasses).forEach((key) => {
+    module.exports[key] = errorClasses[key];
+});
+Object.keys(alexaErrorResponses).forEach((key) => {
+    module.exports[key] = alexaErrorResponses[key];
+});

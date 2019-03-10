@@ -1,6 +1,6 @@
 const {Mutex} = require("async-mutex");
 const {constants} = require("alexa-lg-webos-tv-common");
-const {UnititializedClassError} = require("../common");
+const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 
