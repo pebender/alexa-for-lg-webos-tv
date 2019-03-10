@@ -131,77 +131,59 @@ function handler(event) {
 }
 
 function setRangeValueHandler(event) {
-    return new Promise((resolve) => {
         switch (event.directive.header.instance) {
             case "A":
-                resolve(setRangeValueInstanceHandler(event));
-                return;
+                return setRangeValueInstanceHandler(event);
             case "B":
-                resolve(setRangeValueInstanceHandler(event));
-                return;
+                return setRangeValueInstanceHandler(event);
             case "C":
-                resolve(setRangeValueInstanceHandler(event));
-                return;
+                return setRangeValueInstanceHandler(event);
             case "D":
-                resolve(setRangeValueInstanceHandler(event));
-                return;
+                return setRangeValueInstanceHandler(event);
             default:
-                resolve(unknownInstanceError(event));
+                return unknownInstanceError(event);
         }
-    });
 }
 
 function adjustRangeValueHandler(event) {
-    return new Promise((resolve) => {
         switch (event.directive.header.instance) {
             case "A":
-                resolve(adjustRangeValueInstanceHandler(event));
-                return;
+                return adjustRangeValueInstanceHandler(event);
             case "B":
-                resolve(adjustRangeValueInstanceHandler(event));
-                return;
+                return adjustRangeValueInstanceHandler(event);
             case "C":
-                resolve(adjustRangeValueInstanceHandler(event));
-                return;
+                return adjustRangeValueInstanceHandler(event);
             case "D":
-                resolve(adjustRangeValueInstanceHandler(event));
-                return;
+                return adjustRangeValueInstanceHandler(event);
             default:
-                resolve(unknownInstanceError(event));
+                return unknownInstanceError(event);
         }
-    });
 }
 
 function setRangeValueInstanceHandler(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
 function adjustRangeValueInstanceHandler(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
 function unknownInstanceError(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": "INTERNAL_ERROR",
-                "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
-            }
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event,
+        "name": "ErrorResponse",
+        "payload": {
+            "type": "INTERNAL_ERROR",
+            "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
+        }
     });
+    return alexaResponse.get();
 }
 
 module.exports = {

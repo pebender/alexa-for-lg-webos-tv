@@ -42,14 +42,12 @@ function handler(event) {
 }
 
 function reportStateHandler(event) {
-    return new Promise((resolve) => {
         const alexaResponse = new AlexaResponse({
             "request": event,
             "namespace": "Alexa",
             "name": "StateReport"
         });
-        resolve(alexaResponse);
-    });
+        return alexaResponse;
 }
 
 module.exports = {

@@ -58,21 +58,17 @@ function handler(event) {
 }
 
 function turnOffHandler(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
 function turnOnHandler(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
 module.exports = {
