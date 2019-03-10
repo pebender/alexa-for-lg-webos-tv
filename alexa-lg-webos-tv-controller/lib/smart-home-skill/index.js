@@ -80,13 +80,14 @@ function skillHandlerWithPromise(event, _context) {
     });
 }
 
-function remoteResponse(event) {
-    return new Promise((resolve) => {
-        const gateway = new Gateway("x");
-        gateway.sendSkillDirective(event).
-            then((response) => resolve(response)).
-            catch((error) => resolve(errorToErrorResponse(error, event)));
-    });
+async function remoteResponse(event) {
+    const gateway = new Gateway("x");
+    try {
+        const response = await gateway.sendSkillDirective(event);
+        return response;
+    } catch (error) {
+        return errorToErrorResponse(error, event);
+    }
 }
 
 async function stateHandler(response) {
