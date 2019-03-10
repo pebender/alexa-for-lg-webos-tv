@@ -3,11 +3,15 @@ const {unknownDirectiveError} = require("./common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(event) {
-    return {
-        "type": "AlexaInterface",
-        "interface": "Alexa",
-        "version": "3"
-    };
+    return new Promise((resolve) => {
+        resolve([
+            {
+                "type": "AlexaInterface",
+                "interface": "Alexa",
+                "version": "3"
+            }
+        ]);
+    });
 }
 
 // eslint-disable-next-line no-unused-vars

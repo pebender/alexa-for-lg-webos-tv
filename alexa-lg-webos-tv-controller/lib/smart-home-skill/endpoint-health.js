@@ -4,22 +4,24 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(event) {
-    return [
-        {
-            "type": "AlexaInterface",
-            "interface": "Alexa.EndpointHealth",
-            "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "connectivity"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
+    return new Promise((resolve) => {
+        resolve([
+            {
+                "type": "AlexaInterface",
+                "interface": "Alexa.EndpointHealth",
+                "version": "3",
+                "properties": {
+                    "supported": [
+                        {
+                            "name": "connectivity"
+                        }
+                    ],
+                    "proactivelyReported": false,
+                    "retrievable": true
+                }
             }
-        }
-    ];
+        ]);
+    });
 }
 
 function states() {

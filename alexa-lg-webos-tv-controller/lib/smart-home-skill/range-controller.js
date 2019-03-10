@@ -3,12 +3,14 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(event) {
-    return [
-        ipAddressOctetCapability("A"),
-        ipAddressOctetCapability("B"),
-        ipAddressOctetCapability("C"),
-        ipAddressOctetCapability("D")
-    ];
+    return new Promise((resolve) => {
+        resolve([
+            ipAddressOctetCapability("A"),
+            ipAddressOctetCapability("B"),
+            ipAddressOctetCapability("C"),
+            ipAddressOctetCapability("D")
+        ]);
+    });
 }
 
 function ipAddressOctetCapability(octet) {

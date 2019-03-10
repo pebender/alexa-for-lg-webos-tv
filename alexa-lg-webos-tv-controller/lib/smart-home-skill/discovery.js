@@ -1,8 +1,9 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const Gateway = require("../gateway-api");
-const endpointHealth = require("./endpoint-health");
-const powerController = require("./power-controller");
-const rangeController = require("./range-controller");
+const alexa = require("./alexa");
+const alexaEndpointHealth = require("./endpoint-health");
+const alexaPowerController = require("./power-controller");
+const alexaRangeController = require("./range-controller");
 
 function handler(event) {
     return new Promise((resolve) => {
@@ -20,13 +21,21 @@ function handler(event) {
         }
 
         const gateway = new Gateway("x");
-        const LGTVGatewayEndpoint = gatewayEndpoint(event);
-        gateway.sendSkillDirective(event).
+        let lgtvGatewayEndpoint = null;
+        gatewayEndpoint(event).
+        then((endpoint) => {
+            lgtvGatewayEndpoint = endpoint;
+            return gateway.sendSkillDirective(event);
+        }).
         then((response) => {
+            if (lgtvGatewayEndpoint === null) {
+                resolve(response);
+                return;
+            }
             if (response.event.header.namespace === "Alexa.Discovery" &&
                 response.event.header.name === "Discover.Response") {
                 const alexaResponse = new AlexaResponse(response);
-                alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
+                alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
                 resolve(alexaResponse.get());
                 return;
             }
@@ -34,15 +43,19 @@ function handler(event) {
                 "namespace": "Alexa.Discovery",
                 "name": "Discover.Response"
             });
-            alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
+            alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
             resolve(alexaResponse.get());
         }).
         catch(() => {
+            if (lgtvGatewayEndpoint === null) {
+                resolve(null);
+                return;
+            }
             const alexaResponse = new AlexaResponse({
                 "namespace": "Alexa.Discovery",
                 "name": "Discover.Response"
             });
-            alexaResponse.addPayloadEndpoint(LGTVGatewayEndpoint);
+            alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
             resolve(alexaResponse.get());
         });
     });
@@ -50,25 +63,32 @@ function handler(event) {
 
 // eslint-disable-next-line no-unused-vars
 function gatewayEndpoint(event) {
-    const capabilitiesAlexa = [AlexaResponse.createPayloadEndpointCapability()];
-    const capabilitiesAlexaPowerController = powerController.capabilities(event);
-    const capabilitiesAlexaEndpointHealth = endpointHealth.capabilities(event);
-    const capabilitiesAlexaRangeController = rangeController.capabilities(event);
-
-    const alexaEndpoint = AlexaResponse.createPayloadEndpoint({
-        "endpointId": "lg-webos-tv-gateway",
-        "friendlyName": "LGTV Gateway",
-        "description": "LG webOS TV Gateway",
-        "manufacturerName": "Paul Bender",
-        "displayCategories": ["OTHER"],
-        "capabilities": [
-            ...capabilitiesAlexa,
-            ...capabilitiesAlexaEndpointHealth,
-            ...capabilitiesAlexaPowerController,
-            ...capabilitiesAlexaRangeController
-        ]
+    return new Promise((resolve) => {
+        Promise.all([
+            alexa.capabilities(event),
+            alexaPowerController.capabilities(event),
+            alexaEndpointHealth.capabilities(event),
+            alexaRangeController.capabilities(event)
+        ]).
+        then((capabilitiesList) => {
+            // Convert from a two dimensional array to a one dimensional array.
+            const capabilities = [].concat(...capabilitiesList);
+            if (capabilities.length === 0) {
+                resolve(null);
+                return;
+            }
+            const endpoint = AlexaResponse.createPayloadEndpoint({
+                "endpointId": "lg-webos-tv-gateway",
+                "friendlyName": "LGTV Gateway",
+                "description": "LG webOS TV Gateway",
+                "manufacturerName": "Paul Bender",
+                "displayCategories": ["OTHER"],
+                "capabilities": capabilities
+            });
+            resolve(endpoint);
+        }).
+        catch(() => resolve(null));
     });
-    return alexaEndpoint;
 }
 
 module.exports = {"handler": handler};
