@@ -19,14 +19,18 @@ let backendDb = null;
 let frontend = null;
 let frontendDb = null;
 
-Promise.resolve().
+startGateway().
+catch((error) => {
+    console.log(error);
+});
 
-/*
- * This operation is synchronous. It is both expected and desired because it
- * occures once at startup and because the directory is needed before the LG
- * webOS TV gateway can run.
- */
-then(() => {
+async function startGateway() {
+
+    /*
+     * This operation is synchronous. It is both expected and desired because it
+     * occures once at startup and because the directory is needed before the LG
+     * webOS TV gateway can run.
+     */
     configurationDir = ppath("LGwebOSTVGateway");
     try {
 
@@ -37,36 +41,25 @@ then(() => {
             throw error;
         }
     }
-}).
 
-/*
- * I keep long term information needed to connect to each TV in a database.
- * The long term information is the TV's unique device name (udn), friendly name
- * (name), Internet Protocol address (ip), media access control address (mac)
- * and client key (key).
- */
-then(() => {
+    /*
+     * I keep long term information needed to connect to each TV in a database.
+     * The long term information is the TV's unique device name (udn), friendly name
+     * (name), Internet Protocol address (ip), media access control address (mac)
+     * and client key (key).
+     */
     backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
-    return backendDb.initialize();
-}).
-then(() => {
+    await backendDb.initialize();
     frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
-    return frontendDb.initialize();
-}).
-then(() => {
+    await frontendDb.initialize();
     backend = new Backend(backendDb);
     backend.on("error", (error, id) => {
         console.log(id);
         console.log(error);
     });
-    return backend.initialize();
-}).
-then(() => {
+    await backend.initialize();
     frontend = new Frontend(frontendDb, backend);
-    return frontend.initialize();
-}).
-then(() => frontend.start()).
-then(() => backend.start()).
-catch((error) => {
-    console.log(error);
-});
+    await frontend.initialize();
+    await frontend.start();
+    await backend.start();
+}

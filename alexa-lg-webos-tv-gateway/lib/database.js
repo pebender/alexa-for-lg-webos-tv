@@ -6,15 +6,13 @@ const mutex = new Mutex();
 
 class DatabaseTable {
     constructor(path, name, indexes, key) {
-        const that = this;
-
-        that.private = {};
-        that.private.initialized = false;
-        that.private.path = path;
-        that.private.name = name;
-        that.private.indexes = indexes;
-        that.private.key = key;
-        that.private.db = null;
+        this.private = {};
+        this.private.initialized = false;
+        this.private.path = path;
+        this.private.name = name;
+        this.private.indexes = indexes;
+        this.private.key = key;
+        this.private.db = null;
 
         /*
          * This operation is synchronous. It is both expected and desired because it
@@ -22,94 +20,81 @@ class DatabaseTable {
          * webOS TV gateway can run.
          */
         try {
-            that.private.db = new Datastore({"filename": `${that.private.path}/${name}.nedb`});
+            this.private.db = new Datastore({"filename": `${this.private.path}/${name}.nedb`});
         } catch (error) {
             throw error;
         }
-        that.private.db.loadDatabase((error) => {
+        this.private.db.loadDatabase((error) => {
             if (error) {
                 throw error;
             }
         });
 
-        that.private.rejectIfNotInitialized = (methodName) => new Promise((resolve, reject) => {
-            if (that.private.initialized === false) {
-                reject(new UnititializedClassError("DatabaseTable", methodName));
-                return;
+        this.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("ServerSecurity", methodName);
             }
-            resolve();
-        });
+        };
     }
 
     initialize() {
-        const that = this;
-        return mutex.runExclusive(initializeHandler);
-        function initializeHandler() {
-            return new Promise((resolve) => {
-                that.private.indexes.forEach((record) => {
-                    that.private.db.ensureIndex({
-                        "fieldName": record,
-                        "unique": true
-                    });
+        return mutex.runExclusive(() => new Promise((resolve) => {
+            this.private.indexes.forEach((record) => {
+                this.private.db.ensureIndex({
+                    "fieldName": record,
+                    "unique": true
                 });
-                that.private.initialized = true;
-                resolve();
             });
-        }
+            this.private.initialized = true;
+            resolve();
+        }));
     }
 
-    static clean() {
-        return this.private.rejectIfNotInitialized("clean").
-        then(() => {
-            const that = this;
-            return new Promise((resolve, reject) => {
-                const query1 = {};
-                query1[that.private.key] = {"$exists": false};
-                const query2 = {};
-                query2[that.private.key] = null;
-                // eslint-disable-next-line array-element-newline
-                const query = {"$or": [query1, query2]};
-                that.private.db.remove(
-                    query,
-                    {"multi": true},
-                    // eslint-disable-next-line no-unused-vars
-                    (error, _numRemoved) => callbackToPromise(resolve, reject, error, that.private.db)
-                );
-            });
+    async clean() {
+        this.private.throwIfNotInitialized("clean");
+        const query1 = {};
+        query1[this.private.key] = {"$exists": false};
+        const query2 = {};
+        query2[this.private.key] = null;
+        // eslint-disable-next-line array-element-newline
+        const query = {"$or": [query1, query2]};
+        await new Promise((resolve, reject) => {
+            this.private.db.remove(
+                query,
+                {"multi": true},
+                // eslint-disable-next-line no-unused-vars
+                (error, _numRemoved) => callbackToPromise(resolve, reject, error, this.private.db)
+            );
         });
     }
 
-    getRecord(query) {
-        return this.private.rejectIfNotInitialized("getRecord").
-        then(() => new Promise((resolve, reject) => {
-            const that = this;
-
-            that.private.db.findOne(
+    async getRecord(query) {
+        this.private.throwIfNotInitialized("getRecord");
+        const record = await new Promise((resolve, reject) => {
+            this.private.db.findOne(
                 query,
                 (err, doc) => callbackToPromise(resolve, reject, err, doc)
             );
-        }));
+        });
+        return record;
     }
 
-    getRecords(query) {
-        return this.private.rejectIfNotInitialized("getRecords").
-        then(() => new Promise((resolve, reject) => {
-            const that = this;
-
-            that.private.db.find(
+    async getRecords(query) {
+        this.private.throwIfNotInitialized("getRecords");
+        const records = await new Promise((resolve, reject) => {
+            this.private.db.find(
                 query,
                 (err, docs) => callbackToPromise(resolve, reject, err, docs)
             );
-        }));
+        });
+        return records;
     }
 
-    insertRecord(record) {
-        return this.private.rejectIfNotInitialized("insertRecord").
-        then(() => new Promise((resolve, reject) => {
-            const that = this;
-
+    async insertRecord(record) {
+        this.private.throwIfNotInitialized("insertRecord");
+        await new Promise((resolve, reject) => {
             // eslint-disable-next-line no-unused-vars
-            that.private.db.insert(record, (error, _doc) => {
+            this.private.db.insert(record, (error, _doc) => {
                 if (error) {
                     reject(error);
                     return;
@@ -118,15 +103,13 @@ class DatabaseTable {
                 // eslint-disable-next-line no-useless-return
                 return;
             });
-        }));
+        });
     }
 
-    updateRecord(query, update) {
-        return this.private.rejectIfNotInitialized("updateRecord").
-        then(() => new Promise((resolve, reject) => {
-            const that = this;
-
-            that.private.db.update(
+    async updateRecord(query, update) {
+        this.private.throwIfNotInitialized("updateRecord");
+        await new Promise((resolve, reject) => {
+            this.private.db.update(
                 query,
                 update,
                 // eslint-disable-next-line no-unused-vars
@@ -138,15 +121,13 @@ class DatabaseTable {
                     resolve();
                 }
             );
-        }));
+        });
     }
 
-    updateOrInsertRecord(query, update) {
-        return this.private.rejectIfNotInitialized("updateOrInsertRecord").
-        then(() => new Promise((resolve, reject) => {
-            const that = this;
-
-            that.private.db.update(
+    async updateOrInsertRecord(query, update) {
+        this.private.throwIfNotInitialized("updateOrInsertRecord");
+        await new Promise((resolve, reject) => {
+            this.private.db.update(
                 query,
                 update,
                 {"upsert": true},
@@ -159,7 +140,7 @@ class DatabaseTable {
                     resolve();
                 }
             );
-        }));
+        });
     }
 }
 

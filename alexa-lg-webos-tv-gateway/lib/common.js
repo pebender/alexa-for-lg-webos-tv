@@ -1,22 +1,18 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 function defaultAlexaResponse(event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
 function createState(namespace, name, value) {
-    return new Promise((resolve) => {
-        resolve({
-            "namespace": namespace,
-            "name": name,
-            "value": value
-        });
-    });
+    return {
+        "namespace": namespace,
+        "name": name,
+        "value": value
+    };
 }
 
 function errorToErrorResponse(event, error) {
@@ -44,17 +40,15 @@ function directiveErrorResponse(event, namespace) {
 }
 
 function errorResponse(event, type, message) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "name": "ErrorResponse",
-            "payload": {
-                "type": type,
-                "message": message
-            }
-        });
-        resolve(alexaResponse.get());
+    const alexaResponse = new AlexaResponse({
+        "request": event,
+        "name": "ErrorResponse",
+        "payload": {
+            "type": type,
+            "message": message
+        }
     });
+    return alexaResponse.get();
 }
 
 function callbackToPromise(resolve, reject, error, response) {
@@ -66,25 +60,16 @@ function callbackToPromise(resolve, reject, error, response) {
 }
 
 class GenericError extends Error {
-    constructor(name, message) {
-        super();
-
-        const that = this;
-
-        that.name = name;
-        that.message = message;
+    constructor(name, message, ...args) {
+        super(message, ...args);
+        this.name = name;
+        Error.captureStackTrace(this, this.constructor);
     }
 }
 
 class UnititializedClassError extends GenericError {
     constructor(className, methodName) {
-
-        super();
-
-        const that = this;
-
-        that.name = "UnitializedClass";
-        that.message = `method '${methodName}' called but class '${className}' not initialized.`;
+        super("UnitializedClass", `method '${methodName}' called but class '${className}' not initialized.`);
     }
 }
 

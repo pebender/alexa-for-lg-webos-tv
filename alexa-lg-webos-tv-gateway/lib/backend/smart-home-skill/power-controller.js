@@ -3,8 +3,8 @@ const {directiveErrorResponse, namespaceErrorResponse} = require("../../common")
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtv, _event, _udn) {
-    return new Promise((resolve) => {
-         resolve({
+    return [
+        {
             "type": "AlexaInterface",
             "interface": "Alexa.PowerController",
             "version": "3",
@@ -17,66 +17,50 @@ function capabilities(_lgtv, _event, _udn) {
                 "proactivelyReported": false,
                 "retrievable": true
             }
-        });
-    });
+        }
+    ];
 }
 
 function states(lgtv, udn) {
-    return new Promise((resolve) => {
-        const powerStateState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.PowerController",
-            "name": "powerState",
-            "value": lgtv.getPowerState(udn)
-        });
-        resolve([powerStateState]);
+    const powerStateState = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.PowerController",
+        "name": "powerState",
+        "value": lgtv.getPowerState(udn)
     });
+    return [powerStateState];
 }
 
 function handler(lgtv, event) {
-    return new Promise((resolve) => {
-        if (event.directive.header.namespace !== "Alexa.PowerController") {
-            resolve(namespaceErrorResponse(event, "Alexa.PowerController"));
-        }
-        switch (event.directive.header.name) {
-            case "TurnOff":
-                resolve(turnOffHandler(lgtv, event));
-                break;
-            case "TurnOn":
-                resolve(turnOnHandler(lgtv, event));
-                break;
-            default:
-                resolve(directiveErrorResponse(lgtv, event));
-                break;
-        }
-    });
+    if (event.directive.header.namespace !== "Alexa.PowerController") {
+        return namespaceErrorResponse(event, "Alexa.PowerController");
+    }
+    switch (event.directive.header.name) {
+        case "TurnOff":
+            return turnOffHandler(lgtv, event);
+        case "TurnOn":
+            return turnOnHandler(lgtv, event);
+        default:
+            return directiveErrorResponse(lgtv, event);
+    }
 }
 
-function turnOffHandler(lgtv, event) {
-    return new Promise((resolve) => {
-        const {endpointId} = event.directive.endpoint;
+async function turnOffHandler(lgtv, event) {
+    const {endpointId} = event.directive.endpoint;
 
-        resolve(lgtv.turnOff(endpointId).
-            then(() => {
-                const alexaResponse = new AlexaResponse({
-                    "request": event
-                });
-                return alexaResponse.get();
-            }));
+    await lgtv.turnOff(endpointId);
+    const alexaResponse = new AlexaResponse({
+        "request": event
     });
+    return alexaResponse.get();
 }
 
-function turnOnHandler(lgtv, event) {
-    return new Promise((resolve) => {
+async function turnOnHandler(lgtv, event) {
         const {endpointId} = event.directive.endpoint;
-
-        resolve(lgtv.turnOn(endpointId).
-            then(() => {
-                const alexaResponse = new AlexaResponse({
-                    "request": event
-                });
-                return alexaResponse.get();
-            }));
-    });
+        await lgtv.turnOn(endpointId);
+        const alexaResponse = new AlexaResponse({
+            "request": event
+        });
+        return alexaResponse.get();
 }
 
 module.exports = {

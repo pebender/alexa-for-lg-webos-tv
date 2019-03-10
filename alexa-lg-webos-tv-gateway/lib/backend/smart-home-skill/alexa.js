@@ -3,55 +3,43 @@ const {directiveErrorResponse, namespaceErrorResponse} = require("../../common")
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtv, _event, _udn) {
-    return new Promise((resolve) => {
-        resolve({
+    return [
+        {
             "type": "AlexaInterface",
             "interface": "Alexa",
             "version": "3"
-        });
-    });
+        }
+    ];
 }
 
 // eslint-disable-next-line no-unused-vars
 function states(_lgtv, _udn) {
-    return new Promise((resolve) => {
-        resolve([]);
-    });
+    return [];
 }
 
 function handler(lgtv, event) {
-    return new Promise((resolve) => {
-        if (event.directive.header.namespace !== "Alexa") {
-            resolve(namespaceErrorResponse(event, "Alexa"));
-            return;
-        }
-
-        switch (event.directive.header.name) {
-            case "ReportState":
-                resolve(reportStateHandler(lgtv, event));
-                break;
-            default:
-                resolve(unknownDirectiveError(lgtv, event));
-                break;
-        }
-    });
+    if (event.directive.header.namespace !== "Alexa") {
+        return namespaceErrorResponse(event, "Alexa");
+    }
+    switch (event.directive.header.name) {
+        case "ReportState":
+            return reportStateHandler(lgtv, event);
+        default:
+            return unknownDirectiveError(lgtv, event);
+    }
 }
 
 function reportStateHandler(_lgtv, event) {
-    return new Promise((resolve) => {
-        const alexaResponse = new AlexaResponse({
-            "request": event,
-            "namespace": "Alexa",
-            "name": "StateReport"
-        });
-        resolve(alexaResponse);
+    const alexaResponse = new AlexaResponse({
+        "request": event,
+        "namespace": "Alexa",
+        "name": "StateReport"
     });
+    return alexaResponse.get();
 }
 
 function unknownDirectiveError(_lgtv, event) {
-    return new Promise((resolve) => {
-        resolve(directiveErrorResponse(event, "Alexa"));
-    });
+    return directiveErrorResponse(event, "Alexa");
 }
 
 module.exports = {

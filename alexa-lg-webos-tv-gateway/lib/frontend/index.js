@@ -9,43 +9,31 @@ const mutex = new Mutex();
 
 class Server {
     constructor(db, backend) {
-        const that = this;
+        this.private = {};
+        this.private.initialized = false;
+        this.private.security = new ServerSecurity(db);
+        this.private.internal = new ServerInternal(this.private.security);
+        this.private.external = new ServerExternal(this.private.security, backend);
 
-        that.private = {};
-        that.private.initialized = false;
-        that.private.security = new ServerSecurity(db);
-        that.private.internal = new ServerInternal(that.private.security);
-        that.private.external = new ServerExternal(that.private.security, backend);
-
-        that.private.throwIfNotInitialized = (methodName) => {
-            if (that.private.initialized === false) {
+        this.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
                 throw new UnititializedClassError("Server", methodName);
             }
         };
     }
 
     initialize() {
-        const that = this;
-        return mutex.runExclusive(initializeHandler);
-        function initializeHandler() {
-            return new Promise((resolve, reject) => {
-                if (that.private.initialized === true) {
-                    resolve();
-                    return;
-                }
-
-                that.private.security.initialize().
-                    then(() => that.private.internal.initialize()).
-                    then(() => that.private.external.initialize()).
-                    then(() => {
-                        that.private.initialized = true;
-                        resolve();
-                    }).
-                    catch((error) => {
-                        reject(error);
-                    });
-            });
-        }
+        return mutex.runExclusive(() => new Promise(async (resolve) => {
+            if (this.private.initialized === true) {
+                resolve();
+                return;
+            }
+            await this.private.security.initialize();
+            await this.private.internal.initialize();
+            await this.private.external.initialize();
+            this.private.initialized = true;
+            resolve();
+        }));
     }
 
     start() {

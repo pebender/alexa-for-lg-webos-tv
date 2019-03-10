@@ -4,127 +4,115 @@ const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require(
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtv, _event, _udn) {
-    return new Promise((resolve) => {
-        resolve({
+    return [
+        {
             "type": "AlexaInterface",
             "interface": "Alexa.ChannelController",
             "version": "3"
-        });
-    });
+        }
+    ];
 }
 
 // eslint-disable-next-line no-unused-vars
 function states(_lgtv, _udn) {
-    return new Promise((resolve) => {
-        resolve([]);
-    });
+    return [];
 }
 
 function handler(lgtv, event) {
-    return new Promise((resolve) => {
-        if (event.directive.header.namespace !== "Alexa.ChannelController") {
-            resolve(namespaceErrorResponse(event, "Alexa.ChannelController"));
-            return;
-        }
-        switch (event.directive.header.name) {
-            case "ChangeChannel":
-                resolve(changeChannelHandler(lgtv, event));
-                break;
-            case "SkipChannels":
-                resolve(skipChannelsHandler(lgtv, event));
-                break;
-            default:
-                resolve(directiveErrorResponse(lgtv, event));
-                break;
-        }
-    });
+    if (event.directive.header.namespace !== "Alexa.ChannelController") {
+        return namespaceErrorResponse(event, "Alexa.ChannelController");
+    }
+    switch (event.directive.header.name) {
+        case "ChangeChannel":
+            return changeChannelHandler(lgtv, event);
+        case "SkipChannels":
+            return skipChannelsHandler(lgtv, event);
+        default:
+            return directiveErrorResponse(lgtv, event);
+    }
 }
 
-function changeChannelHandler(lgtv, event) {
-    return getCommand().
-        then(setChannel);
+async function changeChannelHandler(lgtv, event) {
+    const channelCommand = await getCommand();
+    return setChannel(channelCommand);
 
     function getCommand() {
-        return new Promise((resolve) => {
-            const command = {};
-            if (Reflect.has(event.directive, "payload")) {
-                const {payload} = event.directive;
-                if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "number")) {
-                    if (isNumeric(payload.channel.number)) {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelNumber": payload.channel.number};
-                    } else {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelId": payload.channel.number};
-                    }
-                } else if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "callSign")) {
-                    if (isNumeric(payload.channel.callSign)) {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelNumber": payload.channel.callSign};
-                    } else {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelId": payload.channel.callSign};
-                    }
-                } else if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "affiliateCallSign")) {
-                    if (isNumeric(payload.channel.affiliateCallSign)) {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelNumber": payload.channel.affiliateCallSign};
-                    } else {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelId": payload.channel.affiliateCallSign};
-                    }
-                } else if (Reflect.has(payload, "channelMetadata") && Reflect.has(payload.channelMetadata, "name")) {
-                    if (isNumeric(payload.channelMetadata.name)) {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelNumber": payload.channelMetadata.name};
-                    } else {
-                        command.uri = "ssap://tv/openChannel";
-                        command.payload = {"channelId": payload.channelMetadata.name};
-                    }
+        const command = {};
+        if (Reflect.has(event.directive, "payload")) {
+            const {payload} = event.directive;
+            if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "number")) {
+                if (isNumeric(payload.channel.number)) {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelNumber": payload.channel.number};
+                } else {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelId": payload.channel.number};
+                }
+            } else if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "callSign")) {
+                if (isNumeric(payload.channel.callSign)) {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelNumber": payload.channel.callSign};
+                } else {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelId": payload.channel.callSign};
+                }
+            } else if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "affiliateCallSign")) {
+                if (isNumeric(payload.channel.affiliateCallSign)) {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelNumber": payload.channel.affiliateCallSign};
+                } else {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelId": payload.channel.affiliateCallSign};
+                }
+            } else if (Reflect.has(payload, "channelMetadata") && Reflect.has(payload.channelMetadata, "name")) {
+                if (isNumeric(payload.channelMetadata.name)) {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelNumber": payload.channelMetadata.name};
+                } else {
+                    command.uri = "ssap://tv/openChannel";
+                    command.payload = {"channelId": payload.channelMetadata.name};
                 }
             }
-            if (Reflect.has(command, "uri") && Reflect.has(command, "payload")) {
-                resolve(command);
-            } else {
-                resolve(null);
-            }
-        });
+        }
+        if (Reflect.has(command, "uri") === false || Reflect.has(command, "payload") === false) {
+            return null;
+        }
+        return command;
     }
 
-    function setChannel(command) {
-        return new Promise((resolve) => {
-            if (command !== null) {
-                const {endpointId} = event.directive.endpoint;
-                resolve(lgtv.lgtvCommand(endpointId, command).
-                    then((response) => {
-                        if (Reflect.has(response, "returnValue") && (response.returnValue === false)) {
-                            const alexaResponse = new AlexaResponse({
-                                "request": event
-                            });
-                            // Dummy 'value' values.
-                            alexaResponse.addContextProperty({
-                                "namespace": "Alexa.ChannelController",
-                                "name": "channel",
-                                "value": {
-                                    "number": "1234",
-                                    "callSign": "callsign1",
-                                    "affiliateCallSign": "callsign2"
-                                }
-                            });
-                            return alexaResponse.get();
-                        }
-                        return {};
-                    }));
+    async function setChannel(command) {
+        if (command === null) {
+            return unknownChannelError(lgtv, event);
+        }
+        const {endpointId} = event.directive.endpoint;
+        try {
+            await lgtv.lgtvCommand(endpointId, command);
+        } catch (error) {
+            return {};
+        }
+
+        // const [state] = await states(lgtv, null);
+        // Dummy 'value' values.
+        const state = {
+            "namespace": "Alexa.ChannelController",
+            "name": "channel",
+            "value": {
+                "number": "1234",
+                "callSign": "callsign1",
+                "affiliateCallSign": "callsign2"
             }
+        };
+        const alexaResponse = new AlexaResponse({
+            "request": event
         });
+        alexaResponse.addContextProperty(state);
+        return alexaResponse.get();
     }
 }
 
 // eslint-disable-next-line no-unused-vars
 function skipChannelsHandler(_lgtv, _event) {
-    return new Promise((resolve) => {
-        resolve(null);
-    });
+    return null;
 }
 
 function unknownChannelError(_lgtv, event) {

@@ -8,115 +8,103 @@ const alexaChannelController = require("./channel-controller");
 const alexaInputController = require("./input-controller");
 const alexaLauncher = require("./launcher");
 const alexaPlaybackController = require("./playback-controller");
-const {errorResponse} = require("../../common");
+const {errorToErrorResponse, errorResponse} = require("../../common");
 
-function handler(lgtv, event) {
-    return new Promise((resolve) => {
-        if (!Reflect.has(event, "directive")) {
-            resolve(missingKeyError(event, "directive"));
-            return;
-        }
-        if (!Reflect.has(event.directive, "header")) {
-            resolve(missingKeyError(event, "directive.header"));
-            return;
-        }
-        if (!Reflect.has(event.directive.header, "payloadVersion")) {
-            resolve(missingKeyError(event, "directive.header.payloadVersion"));
-            return;
-        }
-        if (!(event.directive.header.payloadVersion === "3")) {
-            resolve(errorResponse(
-                event,
-                "INTERNAL_ERROR",
-                "This skill only supports Smart Home API version three."
-            ));
-            return;
-        }
-        if (!Reflect.has(event.directive.header, "namespace")) {
-            resolve(missingKeyError(event, "directive.header.namespace"));
-            return;
-        }
-        if (!Reflect.has(event.directive.header, "name")) {
-            resolve(missingKeyError(event, "directive.header.name"));
-            return;
-        }
+async function handler(lgtv, event) {
+    if (!Reflect.has(event, "directive")) {
+        return missingKeyError(event, "directive");
+    }
+    if (!Reflect.has(event.directive, "header")) {
+        return missingKeyError(event, "directive.header");
+    }
+    if (!Reflect.has(event.directive.header, "payloadVersion")) {
+        return missingKeyError(event, "directive.header.payloadVersion");
+    }
+    if (!(event.directive.header.payloadVersion === "3")) {
+        return errorResponse(
+            event,
+            "INTERNAL_ERROR",
+            "This skill only supports Smart Home API version three."
+        );
+    }
+    if (!Reflect.has(event.directive.header, "namespace")) {
+        return missingKeyError(event, "directive.header.namespace");
+    }
+    if (!Reflect.has(event.directive.header, "name")) {
+        return missingKeyError(event, "directive.header.name");
+    }
 
-        const namespaces = {
-            "Alexa.Authorization": alexaAuthorization.handler,
-            "Alexa.Discovery": alexaDiscovery.handler,
-            "Alexa": alexa.handler,
-            "Alexa.PowerController": alexaPowerController.handler,
-            "Alexa.Speaker": alexaSpeaker.handler,
-            "Alexa.ChannelController": alexaChannelController.handler,
-            "Alexa.InputController": alexaInputController.handler,
-            "Alexa.Launcher": alexaLauncher.handler,
-            "Alexa.PlaybackController": alexaPlaybackController.handler
-        };
-        const {namespace} = event.directive.header;
-        if (Reflect.has(namespaces, namespace)) {
-            const fn = namespaces[namespace];
-            if (Reflect.has(event.directive, "endpoint") &&
-                Reflect.has(event.directive.endpoint, "endpointId")) {
-                const {endpointId} = event.directive.endpoint;
-                resolve(fn(lgtv, event).
-                    then((response) => stateHandler(lgtv, endpointId, response)));
-            } else {
-                resolve(fn(lgtv, event));
-            }
-        } else {
-            resolve(unknownNamespaceError(lgtv, event));
+    try {
+        switch (event.directive.header.namespace) {
+            case "Alexa.Authorization":
+                return alexaAuthorization.handler(lgtv, event);
+            case "Alexa.Discovery":
+                return alexaDiscovery.handler(lgtv, event);
+            case "Alexa":
+                return stateHandler(alexa.handler(lgtv, event));
+            case "Alexa.PowerController":
+                return stateHandler(alexaPowerController.handler(lgtv, event));
+            case "Alexa.Speaker":
+                return stateHandler(await alexaSpeaker.handler(lgtv, event));
+            case "Alexa.ChannelController":
+                return stateHandler(alexaChannelController.handler(lgtv, event));
+            case "Alexa.InputController":
+                return stateHandler(alexaInputController.handler(lgtv, event));
+            case "Alexa.Launcher":
+                return stateHandler(alexaLauncher.handler(lgtv, event));
+            case "Alexa.PlaybackController":
+                return stateHandler(alexaPlaybackController.handler(lgtv, event));
+            default:
+                return unknownNamespaceError();
         }
-    });
-}
+    } catch (error) {
+        return errorToErrorResponse(event, error);
+    }
 
-function stateHandler(lgtv, udn, response) {
-    return new Promise((resolve) => {
+    async function stateHandler(response) {
         const alexaResponse = new AlexaResponse(response);
-        const startTime = new Date();
-        resolve(Promise.all([
-                alexa.states(lgtv, udn),
-                alexaPowerController.states(lgtv, udn),
-                alexaSpeaker.states(lgtv, udn),
-                alexaChannelController.states(lgtv, udn),
-                alexaInputController.states(lgtv, udn),
-                alexaLauncher.states(lgtv, udn),
-                alexaPlaybackController.states(lgtv, udn)
-            ]).
-            then((values) => {
-                const endTime = new Date();
-                const timeOfSample = endTime.toISOString();
-                const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-                const contextProperties = [];
-                values.forEach((value) => {
-                    if (value.length > 0) {
-                        contextProperties.push(...value);
-                    }
-                });
-                contextProperties.forEach((contextProperty) => {
-                    contextProperty.timeOfSample = timeOfSample;
-                    contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-                    alexaResponse.addContextProperty(contextProperty);
-                });
-                return alexaResponse.get();
-            }).
-            catch(() => alexaResponse.get()));
-    });
-}
+        try {
+            const udn = event.directive.endpoint.endpointId;
+            const startTime = new Date();
+            const statesList = await Promise.all([
+                Promise.resolve(alexa.states(lgtv, udn)),
+                Promise.resolve(alexaPowerController.states(lgtv, udn)),
+                Promise.resolve(alexaSpeaker.states(lgtv, udn)),
+                Promise.resolve(alexaChannelController.states(lgtv, udn)),
+                Promise.resolve(alexaInputController.states(lgtv, udn)),
+                Promise.resolve(alexaLauncher.states(lgtv, udn)),
+                Promise.resolve(alexaPlaybackController.states(lgtv, udn))
+            ]);
+            const endTime = new Date();
+            const timeOfSample = endTime.toISOString();
+            const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
+            const states = [].concat(...statesList);
+            states.forEach((contextProperty) => {
+                contextProperty.timeOfSample = timeOfSample;
+                contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
+                alexaResponse.addContextProperty(contextProperty);
+            });
+            return alexaResponse.get();
+        } catch (error) {
+            return alexaResponse.get();
+        }
+    }
 
-function unknownNamespaceError(_lgtv, event) {
-    return errorResponse(
-        event,
-        "INTERNAL_ERROR",
-        `Unknown namespace ${event.directive.header.namespace}`
-    );
-}
+    function unknownNamespaceError() {
+        return errorResponse(
+            event,
+            "INTERNAL_ERROR",
+            `Unknown namespace ${event.directive.header.namespace}`
+        );
+    }
 
-function missingKeyError(event, key) {
-    return errorResponse(
-        event,
-        "INVALID_DIRECTIVE",
-        `Missing key: ${key}.`
-    );
+    function missingKeyError(key) {
+        return errorResponse(
+            event,
+            "INVALID_DIRECTIVE",
+            `Missing key: ${key}.`
+        );
+    }
 }
 
 module.exports = {"handler": handler};

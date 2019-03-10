@@ -6,172 +6,146 @@ const mutex = new Mutex();
 
 class ServerInternal {
     constructor(serverSecurity) {
-        const that = this;
+        this.private = {};
+        this.private.initialized = false;
+        this.private.security = serverSecurity;
+        this.private.server = null;
 
-        that.private = {};
-        that.private.initialized = false;
-        that.private.security = serverSecurity;
-        that.private.server = null;
+        this.private.throwIfNotInitialized = (methodName) => {
+            if (this.private.initialized === false) {
+                throw new UnititializedClassError("ServerInternal", methodName);
+            }
+        };
     }
 
     initialize() {
-        const that = this;
-        return mutex.runExclusive(initializeHandler);
-        function initializeHandler() {
-            return new Promise((resolve) => {
-                if (that.private.initialized === true) {
-                    resolve();
-                    return;
+        // eslint-disable-next-line func-style
+        const processForm = (formAttributes) => {
+            const processHostname = () => {
+                let hostname = "";
+                if (formAttributes !== null &&
+                    Reflect.has(formAttributes, "hostname")
+                ) {
+                    ({hostname} = formAttributes);
                 }
+                this.private.security.setHostname(hostname);
+            };
 
-                that.private.server = express();
-
-                that.private.server.use(express.urlencoded({
-                    "extended": false
-                }));
-                that.private.server.get("/", getHandler);
-                that.private.server.post("/", postHandler);
-                that.private.initialized = true;
-                resolve();
-                // eslint-disable-next-line no-useless-return
-                return;
-            });
-
-            function getHandler(request, response) {
-                createForm(request, response).
-                    then((form) => sendForm(form, response));
-            }
-
-            function postHandler(request, response) {
-                processForm(request.body).
-                    then(() => createForm(request, response)).
-                    then((form) => sendForm(form, response));
-            }
-
-            function processForm(formAttributes) {
-                return new Promise((resolve) => {
-                    resolve(processHostname(formAttributes).then(() => processPassword()));
-                });
-
-                function processHostname() {
-                    return new Promise((resolve) => {
-                        let hostname = "";
-                        if (formAttributes !== null &&
-                            Reflect.has(formAttributes, "hostname")
-                        ) {
-                            ({hostname} = formAttributes);
-                        }
-                        resolve(that.private.security.setHostname(hostname));
-                        // eslint-disable-next-line no-useless-return
-                        return;
-                    });
+            const processPassword = () => {
+                let deletePassword = false;
+                if (formAttributes !== null &&
+                    Reflect.has(formAttributes, "deletePassword") &&
+                    formAttributes.deletePassword.toUpperCase() === "ON"
+                ) {
+                    deletePassword = true;
                 }
-
-                function processPassword() {
-                    return new Promise((resolve) => {
-                        let deletePassword = false;
-                        if (formAttributes !== null &&
-                            Reflect.has(formAttributes, "deletePassword") &&
-                            formAttributes.deletePassword.toUpperCase() === "ON"
-                        ) {
-                            deletePassword = true;
-                        }
-                        if (deletePassword) {
-                            resolve(that.private.security.setUserPassword(null));
-                            return;
-                        }
-                        resolve();
-                        // eslint-disable-next-line no-useless-return
-                        return;
-                    });
+                if (deletePassword) {
+                    this.private.security.setUserPassword(null);
                 }
+            };
+
+            processHostname();
+            processPassword();
+        };
+
+        const createForm = async () => {
+            const hostname = await this.private.security.getHostname();
+            const passwordIsNull = await this.private.security.userPasswordIsNull();
+
+            let deletePasswordHTML = "";
+            if (passwordIsNull) {
+                deletePasswordHTML = "" +
+                    "<label>" +
+                        "LG webOS TV gateway password delete" +
+                        " (already deleted)" +
+                        ":" +
+                        "<input" +
+                            " type=\"checkbox\"" +
+                            " name=\"deletePassword\"" +
+                            " checked" +
+                            " disabled" +
+                        " />" +
+                    "</label>";
+            } else {
+                deletePasswordHTML = "" +
+                    "<label>" +
+                        "LG webOS TV gateway password delete" +
+                        ":" +
+                        "<input" +
+                            " type=\"checkbox\"" +
+                            " name=\"deletePassword\"" +
+                        " />" +
+                    "</label>";
             }
 
-            function createForm() {
-                return Promise.all([
-                    that.private.security.getHostname(),
-                    that.private.security.userPasswordIsNull()
-                ]).
-                then((values) => {
-                    const [
-                        hostname,
-                        passwordIsNull
-                    ] = values;
+            const form = `<!DOCTYPE html>
+                <html>
+                    <head>
+                        <title>
+                            LG webOS TV gateway
+                        </title>
+                    </head>
+                    <body>
+                        <H1>LG webOS TV gateway</H1>
+                            <form  method="post" action="/" enctype="application/x-www-form-urlencoded">
+                                <div>
+                                    <label>
+                                        LG webOS TV gateway hostname:
+                                        <input type="text" name="hostname" value="${hostname}" />
+                                    </label>
+                                </div>
+                                <div>
+                                    ${deletePasswordHTML}
+                                </div>
+                                <div class="button">
+                                    <button type="submit">submit your changes</button>
+                                </div>
+                            </form>
+                    </body>
+                </html>`;
+            return form;
+        };
 
-                    let deletePasswordHTML = "";
-                    if (passwordIsNull) {
-                        deletePasswordHTML = "" +
-                            "<label>" +
-                                "LG webOS TV gateway password delete" +
-                                " (already deleted)" +
-                                ":" +
-                                "<input" +
-                                    " type=\"checkbox\"" +
-                                    " name=\"deletePassword\"" +
-                                    " checked" +
-                                    " disabled" +
-                                " />" +
-                            "</label>";
-                    } else {
-                        deletePasswordHTML = "" +
-                            "<label>" +
-                                "LG webOS TV gateway password delete" +
-                                ":" +
-                                "<input" +
-                                    " type=\"checkbox\"" +
-                                    " name=\"deletePassword\"" +
-                                " />" +
-                            "</label>";
-                    }
-                    const form = `<!DOCTYPE html>
-                        <html>
-                            <head>
-                                <title>
-                                    LG webOS TV gateway
-                                </title>
-                            </head>
-                            <body>
-                                <H1>LG webOS TV gateway</H1>
-                                    <form  method="post" action="/" enctype="application/x-www-form-urlencoded">
-                                        <div>
-                                            <label>
-                                                LG webOS TV gateway hostname:
-                                                <input type="text" name="hostname" value="${hostname}" />
-                                            </label>
-                                        </div>
-                                        <div>
-                                            ${deletePasswordHTML}
-                                        </div>
-                                        <div class="button">
-                                            <button type="submit">submit your changes</button>
-                                        </div>
-                                    </form>
-                            </body>
-                        </html>`;
-                    return form;
-                });
-            }
-
-            function sendForm(form, response) {
-                return new Promise((resolve) => {
-                    response.
-                        type("html").
-                        status(200).
-                        send(form).
-                        end();
-                    resolve();
-                });
-            }
+        function sendForm(form, response) {
+            response.
+                type("html").
+                status(200).
+                send(form).
+                end();
         }
+
+        async function getHandler(request, response) {
+            const form = await createForm(request, response);
+            await sendForm(form, response);
+        }
+
+        async function postHandler(request, response) {
+            await processForm(request.body);
+            const form = await createForm(request, response);
+            await sendForm(form, response);
+        }
+
+        return mutex.runExclusive(() => new Promise((resolve) => {
+            if (this.private.initialized === true) {
+                resolve();
+                return;
+            }
+
+            this.private.server = express();
+
+            this.private.server.use(express.urlencoded({
+                "extended": false
+            }));
+            this.private.server.get("/", getHandler);
+            this.private.server.post("/", postHandler);
+            this.private.initialized = true;
+            resolve();
+        }));
     }
 
     start() {
-        const that = this;
-        if (that.private.initialized === false) {
-            throw new UnititializedClassError("ServerInternal", "start");
-        }
-
-        return that.private.server.listen(25393);
+        this.private.throwIfNotInitialized("start");
+        this.private.server.listen(25393);
     }
 }
 
