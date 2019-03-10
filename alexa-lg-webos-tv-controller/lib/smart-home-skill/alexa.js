@@ -2,24 +2,18 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {unknownDirectiveError} = require("./common");
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(event) {
-    return new Promise((resolve) => {
-        resolve([
-            {
-                "type": "AlexaInterface",
-                "interface": "Alexa",
-                "version": "3"
-            }
-        ]);
-    });
+function capabilities(_event) {
+    return [
+        {
+            "type": "AlexaInterface",
+            "interface": "Alexa",
+            "version": "3"
+        }
+    ];
 }
 
-// eslint-disable-next-line no-unused-vars
 function states() {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        resolve([]);
-    });
+    return [];
 }
 
 function handler(event) {

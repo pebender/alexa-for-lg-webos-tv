@@ -3,36 +3,31 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_event) {
-    return new Promise((resolve) => {
-        resolve([
-            {
-                "type": "AlexaInterface",
-                "interface": "Alexa.PowerController",
-                "version": "3",
-                "properties": {
-                    "supported": [
-                        {
-                            "name": "powerState"
-                        }
-                    ],
-                    "proactivelyReported": false,
-                    "retrievable": true
-                }
+    return [
+        {
+            "type": "AlexaInterface",
+            "interface": "Alexa.PowerController",
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "powerState"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
             }
-        ]);
-    });
+        }
+    ];
 }
 
 function states() {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        const powerStateState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.PowerController",
-            "name": "powerState",
-            "value": "OFF"
-        });
-        resolve([powerStateState]);
+    const powerStateState = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.PowerController",
+        "name": "powerState",
+        "value": "OFF"
     });
+    return [powerStateState];
 }
 
 function handler(event) {

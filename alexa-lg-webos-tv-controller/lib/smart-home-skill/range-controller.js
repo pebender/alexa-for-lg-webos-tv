@@ -3,14 +3,12 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(event) {
-    return new Promise((resolve) => {
-        resolve([
-            ipAddressOctetCapability("A"),
-            ipAddressOctetCapability("B"),
-            ipAddressOctetCapability("C"),
-            ipAddressOctetCapability("D")
-        ]);
-    });
+    return [
+        ipAddressOctetCapability("A"),
+        ipAddressOctetCapability("B"),
+        ipAddressOctetCapability("C"),
+        ipAddressOctetCapability("D")
+    ];
 }
 
 function ipAddressOctetCapability(octet) {
@@ -73,39 +71,36 @@ function ipAddressOctetCapability(octet) {
 }
 
 function states() {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        const rangeValueStateA = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.RangeController",
-            "instance": "A",
-            "name": "rangeValue",
-            "value": "0"
-        });
-        const rangeValueStateB = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.RangeController",
-            "instance": "B",
-            "name": "rangeValue",
-            "value": "0"
-        });
-        const rangeValueStateC = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.RangeController",
-            "instance": "C",
-            "name": "rangeValue",
-            "value": "0"
-        });
-        const rangeValueStateD = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.RangeController",
-            "instance": "D",
-            "name": "rangeValue",
-            "value": "0"
-        });
-        resolve([
-            rangeValueStateA,
-            rangeValueStateB,
-            rangeValueStateC,
-            rangeValueStateD
-        ]);
+    const rangeValueStateA = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.RangeController",
+        "instance": "A",
+        "name": "rangeValue",
+        "value": "0"
     });
+    const rangeValueStateB = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.RangeController",
+        "instance": "B",
+        "name": "rangeValue",
+        "value": "0"
+    });
+    const rangeValueStateC = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.RangeController",
+        "instance": "C",
+        "name": "rangeValue",
+        "value": "0"
+    });
+    const rangeValueStateD = AlexaResponse.createContextProperty({
+        "namespace": "Alexa.RangeController",
+        "instance": "D",
+        "name": "rangeValue",
+        "value": "0"
+    });
+    return [
+        rangeValueStateA,
+        rangeValueStateB,
+        rangeValueStateC,
+        rangeValueStateD
+    ];
 }
 
 function handler(event) {

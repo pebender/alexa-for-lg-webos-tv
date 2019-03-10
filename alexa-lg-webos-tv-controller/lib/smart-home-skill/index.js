@@ -94,10 +94,10 @@ function stateHandler(response) {
         const alexaResponse = new AlexaResponse(response);
         const startTime = new Date();
         Promise.all([
-            alexa.states(),
-            alexaEndpointHealth.states(),
-            alexaPowerController.states(),
-            alexaRangeController.states()
+            Promise.resolve(alexa.states()),
+            Promise.resolve(alexaEndpointHealth.states()),
+            Promise.resolve(alexaPowerController.states()),
+            Promise.resolve(alexaRangeController.states())
         ]).then((values) => {
             const endTime = new Date();
             const timeOfSample = endTime.toISOString();

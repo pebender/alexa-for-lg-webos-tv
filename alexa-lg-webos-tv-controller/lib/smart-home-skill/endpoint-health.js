@@ -4,51 +4,42 @@ const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(event) {
-    return new Promise((resolve) => {
-        resolve([
-            {
-                "type": "AlexaInterface",
-                "interface": "Alexa.EndpointHealth",
-                "version": "3",
-                "properties": {
-                    "supported": [
-                        {
-                            "name": "connectivity"
-                        }
-                    ],
-                    "proactivelyReported": false,
-                    "retrievable": true
-                }
+    return [
+        {
+            "type": "AlexaInterface",
+            "interface": "Alexa.EndpointHealth",
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "connectivity"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
             }
-        ]);
-    });
+        }
+    ];
 }
 
-function states() {
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-        const gateway = new Gateway("x");
-        gateway.ping().then(
-            // eslint-disable-next-line no-unused-vars
-            (response) => {
-                const connectivityState = AlexaResponse.createContextProperty({
-                    "namespace": "Alexa.EndpointHealth",
-                    "name": "connectivity",
-                    "value": "OK"
-                });
-                resolve([connectivityState]);
-            },
-            // eslint-disable-next-line no-unused-vars
-            (error) => {
-                const connectivityState = AlexaResponse.createContextProperty({
-                    "namespace": "Alexa.EndpointHealth",
-                    "name": "connectivity",
-                    "value": "UNREACHABLE"
-                });
-                resolve([connectivityState]);
-            }
-        );
-    });
+async function states() {
+    const gateway = new Gateway("x");
+    try {
+        await gateway.ping();
+        const connectivityState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.EndpointHealth",
+            "name": "connectivity",
+            "value": "OK"
+        });
+        return [connectivityState];
+    } catch (_error) {
+        const connectivityState = AlexaResponse.createContextProperty({
+            "namespace": "Alexa.EndpointHealth",
+            "name": "connectivity",
+            "value": "UNREACHABLE"
+        });
+        return [connectivityState];
+    }
 }
 
 function handler(event) {
