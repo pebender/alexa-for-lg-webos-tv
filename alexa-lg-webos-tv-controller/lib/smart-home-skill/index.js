@@ -28,56 +28,43 @@ function logSkillHandler(event, context, callback) {
     });
 }
 
-function skillHandler(event, _context, callback) {
-    skillHandlerWithPromise(event, _context).
+function skillHandler(event, context, callback) {
+    skillHandlerWithPromise(event, context).
     then((response) => callback(null, response)).
     catch((error) => callback(error, null));
 }
 
 // eslint-disable-next-line no-unused-vars
 function skillHandlerWithPromise(event, _context) {
-    return new Promise((resolve) => {
+    try {
         if (!(Reflect.has(event.directive, "endpoint") && Reflect.has(event.directive.endpoint, "endpointId"))) {
             switch (event.directive.header.namespace) {
                 case "Alexa.Authorization":
-                    resolve(alexaAuthorization.handler(event));
-                    return;
+                    return alexaAuthorization.handler(event);
                 case "Alexa.Discovery":
-                    resolve(alexaDiscovery.handler(event));
-                    return;
+                    return alexaDiscovery.handler(event);
                 default:
-                    resolve(unknownDirectiveError(event));
+                    return unknownDirectiveError(event);
             }
         } else if (event.directive.endpoint.endpointId === "lg-webos-tv-gateway") {
             switch (event.directive.header.namespace) {
                 case "Alexa":
-                    alexa.handler(event).
-                        then((response) => resolve(stateHandler(response))).
-                        catch((error) => resolve(errorToErrorResponse(error, event)));
-                    return;
+                    return stateHandler(alexa.handler(event));
                 case "Alexa.EndpointHealth":
-                    alexaEndpointHealth.handler(event).
-                        then((response) => resolve(stateHandler(response))).
-                        catch((error) => resolve(errorToErrorResponse(error, event)));
-                    return;
+                    return stateHandler(alexaEndpointHealth.handler(event));
                 case "Alexa.PowerController":
-                    alexaPowerController.handler(event).
-                        then((response) => resolve(stateHandler(response))).
-                        catch((error) => resolve(errorToErrorResponse(error, event)));
-                    return;
+                    return stateHandler(alexaPowerController.handler(event));
                 case "Alexa.RangeController":
-                    alexaRangeController.handler(event).
-                        then((response) => resolve(stateHandler(response))).
-                        catch((error) => resolve(errorToErrorResponse(error, event)));
-                    return;
+                    return stateHandler(alexaRangeController.handler(event));
                 default:
-                    resolve(unknownDirectiveError(event));
-                    break;
+                    return unknownDirectiveError(event);
             }
         } else {
-            resolve(remoteResponse(event));
+            return remoteResponse(event);
         }
-    });
+    } catch (error) {
+        return errorToErrorResponse(error, event);
+    }
 }
 
 async function remoteResponse(event) {
