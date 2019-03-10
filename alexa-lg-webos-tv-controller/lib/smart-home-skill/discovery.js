@@ -5,8 +5,9 @@ const alexaEndpointHealth = require("./endpoint-health");
 const alexaPowerController = require("./power-controller");
 const alexaRangeController = require("./range-controller");
 
-function handler(event) {
-    return new Promise((resolve) => {
+async function handler(event) {
+    let lgtvGatewayEndpoint = null;
+    try {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
             const alexaResponse = new AlexaResponse({
                 "request": event,
@@ -16,79 +17,66 @@ function handler(event) {
                     "message": `You were sent to Discovery processing in error ${event.directive.header.namespace}.`
                 }
             });
-            resolve(alexaResponse.get());
-            return;
+            return alexaResponse.get();
         }
 
         const gateway = new Gateway("x");
-        let lgtvGatewayEndpoint = null;
-        gatewayEndpoint(event).
-        then((endpoint) => {
-            lgtvGatewayEndpoint = endpoint;
-            return gateway.sendSkillDirective(event);
-        }).
-        then((response) => {
-            if (lgtvGatewayEndpoint === null) {
-                resolve(response);
-                return;
-            }
-            if (response.event.header.namespace === "Alexa.Discovery" &&
-                response.event.header.name === "Discover.Response") {
-                const alexaResponse = new AlexaResponse(response);
-                alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-                resolve(alexaResponse.get());
-                return;
-            }
-            const alexaResponse = new AlexaResponse({
-                "namespace": "Alexa.Discovery",
-                "name": "Discover.Response"
-            });
+        lgtvGatewayEndpoint = await gatewayEndpoint(event);
+        const response = await gateway.sendSkillDirective(event);
+        if (lgtvGatewayEndpoint === null) {
+            return response;
+        }
+        if (response.event.header.namespace === "Alexa.Discovery" &&
+            response.event.header.name === "Discover.Response") {
+            const alexaResponse = new AlexaResponse(response);
             alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-            resolve(alexaResponse.get());
-        }).
-        catch(() => {
-            if (lgtvGatewayEndpoint === null) {
-                resolve(null);
-                return;
-            }
-            const alexaResponse = new AlexaResponse({
-                "namespace": "Alexa.Discovery",
-                "name": "Discover.Response"
-            });
-            alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-            resolve(alexaResponse.get());
+            return alexaResponse.get();
+        }
+        const alexaResponse = new AlexaResponse({
+            "namespace": "Alexa.Discovery",
+            "name": "Discover.Response"
         });
-    });
+        alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
+        return alexaResponse.get();
+    } catch (_error) {
+        if (lgtvGatewayEndpoint === null) {
+            return null;
+        }
+        const alexaResponse = new AlexaResponse({
+            "namespace": "Alexa.Discovery",
+            "name": "Discover.Response"
+        });
+        alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
+        return alexaResponse.get();
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
-function gatewayEndpoint(event) {
-    return new Promise((resolve) => {
-        Promise.all([
-            alexa.capabilities(event),
-            alexaPowerController.capabilities(event),
-            alexaEndpointHealth.capabilities(event),
-            alexaRangeController.capabilities(event)
-        ]).
-        then((capabilitiesList) => {
-            // Convert from a two dimensional array to a one dimensional array.
-            const capabilities = [].concat(...capabilitiesList);
-            if (capabilities.length === 0) {
-                resolve(null);
-                return;
-            }
-            const endpoint = AlexaResponse.createPayloadEndpoint({
-                "endpointId": "lg-webos-tv-gateway",
-                "friendlyName": "LGTV Gateway",
-                "description": "LG webOS TV Gateway",
-                "manufacturerName": "Paul Bender",
-                "displayCategories": ["OTHER"],
-                "capabilities": capabilities
-            });
-            resolve(endpoint);
-        }).
-        catch(() => resolve(null));
-    });
+async function gatewayEndpoint(event) {
+    try {
+        const capabilitiesList = await Promise.all([
+            Promise.resolve(alexa.capabilities(event)),
+            Promise.resolve(alexaPowerController.capabilities(event)),
+            Promise.resolve(alexaEndpointHealth.capabilities(event)),
+            Promise.resolve(alexaRangeController.capabilities(event))
+        ]);
+        // Convert from a two dimensional array to a one dimensional array.
+        const capabilities = [].concat(...capabilitiesList);
+        if (capabilities.length === 0) {
+            return null;
+        }
+        const endpoint = AlexaResponse.createPayloadEndpoint({
+            "endpointId": "lg-webos-tv-gateway",
+            "friendlyName": "LGTV Gateway",
+            "description": "LG webOS TV Gateway",
+            "manufacturerName": "Paul Bender",
+            "displayCategories": ["OTHER"],
+            "capabilities": capabilities
+        });
+        return endpoint;
+    } catch (_error) {
+        return null;
+    }
 }
 
 module.exports = {"handler": handler};
