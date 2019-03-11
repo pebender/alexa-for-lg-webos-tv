@@ -2,12 +2,11 @@ const express = require("express");
 const {Mutex} = require("async-mutex");
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class ServerInternal {
     constructor(serverSecurity) {
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.security = serverSecurity;
         this.private.server = null;
 
@@ -19,19 +18,50 @@ class ServerInternal {
     }
 
     initialize() {
-        // eslint-disable-next-line func-style
-        const processForm = (formAttributes) => {
-            const processHostname = () => {
+        const that = this;
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve) => {
+            if (that.private.initialized === true) {
+                resolve();
+                return;
+            }
+
+            this.private.server = express();
+
+            this.private.server.use(express.urlencoded({
+                "extended": false
+            }));
+            this.private.server.get("/", getHandler);
+            this.private.server.post("/", postHandler);
+            this.private.initialized = true;
+            resolve();
+        }));
+
+        async function getHandler(request, response) {
+            const form = await createForm(request, response);
+            await sendForm(form, response);
+        }
+
+        async function postHandler(request, response) {
+            await processForm(request.body);
+            const form = await createForm(request, response);
+            await sendForm(form, response);
+        }
+
+        function processForm(formAttributes) {
+            processHostname();
+            processPassword();
+
+            function processHostname() {
                 let hostname = "";
                 if (formAttributes !== null &&
                     Reflect.has(formAttributes, "hostname")
                 ) {
                     ({hostname} = formAttributes);
                 }
-                this.private.security.setHostname(hostname);
-            };
+                that.private.security.setHostname(hostname);
+            }
 
-            const processPassword = () => {
+            function processPassword() {
                 let deletePassword = false;
                 if (formAttributes !== null &&
                     Reflect.has(formAttributes, "deletePassword") &&
@@ -40,17 +70,14 @@ class ServerInternal {
                     deletePassword = true;
                 }
                 if (deletePassword) {
-                    this.private.security.setUserPassword(null);
+                    that.private.security.setUserPassword(null);
                 }
-            };
+            }
+        }
 
-            processHostname();
-            processPassword();
-        };
-
-        const createForm = async () => {
-            const hostname = await this.private.security.getHostname();
-            const passwordIsNull = await this.private.security.userPasswordIsNull();
+        async function createForm() {
+            const hostname = await that.private.security.getHostname();
+            const passwordIsNull = await that.private.security.userPasswordIsNull();
 
             let deletePasswordHTML = "";
             if (passwordIsNull) {
@@ -104,7 +131,7 @@ class ServerInternal {
                     </body>
                 </html>`;
             return form;
-        };
+        }
 
         function sendForm(form, response) {
             response.
@@ -113,34 +140,6 @@ class ServerInternal {
                 send(form).
                 end();
         }
-
-        async function getHandler(request, response) {
-            const form = await createForm(request, response);
-            await sendForm(form, response);
-        }
-
-        async function postHandler(request, response) {
-            await processForm(request.body);
-            const form = await createForm(request, response);
-            await sendForm(form, response);
-        }
-
-        return mutex.runExclusive(() => new Promise((resolve) => {
-            if (this.private.initialized === true) {
-                resolve();
-                return;
-            }
-
-            this.private.server = express();
-
-            this.private.server.use(express.urlencoded({
-                "extended": false
-            }));
-            this.private.server.get("/", getHandler);
-            this.private.server.post("/", postHandler);
-            this.private.initialized = true;
-            resolve();
-        }));
     }
 
     start() {

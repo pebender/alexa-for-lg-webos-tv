@@ -5,12 +5,11 @@ const ServerSecurity = require("./frontend-security");
 const ServerInternal = require("./frontend-internal");
 const ServerExternal = require("./frontend-external");
 
-const mutex = new Mutex();
-
 class Server {
     constructor(db, backend) {
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.security = new ServerSecurity(db);
         this.private.internal = new ServerInternal(this.private.security);
         this.private.external = new ServerExternal(this.private.security, backend);
@@ -23,15 +22,16 @@ class Server {
     }
 
     initialize() {
-        return mutex.runExclusive(() => new Promise(async (resolve) => {
-            if (this.private.initialized === true) {
+        const that = this;
+        return that.private.initializeMutex.runExclusive(() => new Promise(async (resolve) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
-            await this.private.security.initialize();
-            await this.private.internal.initialize();
-            await this.private.external.initialize();
-            this.private.initialized = true;
+            await that.private.security.initialize();
+            await that.private.internal.initialize();
+            await that.private.external.initialize();
+            that.private.initialized = true;
             resolve();
         }));
     }

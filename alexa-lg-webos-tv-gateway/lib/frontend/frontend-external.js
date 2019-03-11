@@ -12,12 +12,11 @@ const basicAuth = require("express-basic-auth");
 const {Mutex} = require("async-mutex");
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class ServerExternal {
     constructor(serverSecurity, backend) {
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.security = serverSecurity;
         this.private.backend = backend;
         this.private.server = null;
@@ -32,7 +31,7 @@ class ServerExternal {
     initialize() {
         const that = this;
 
-        return mutex.runExclusive(() => new Promise((resolve) => {
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve) => {
             if (this.private.initialized === true) {
                 resolve();
                 return;
@@ -104,7 +103,7 @@ class ServerExternal {
 
         async function backendSkillHandler(request, response) {
             if (Reflect.has(request.body, "log")) {
-                console.log(JSON.stringify(request.body, null, 2));
+console.log(JSON.stringify(request.body, null, 2));
                 response.
                     type("json").
                     status(200).

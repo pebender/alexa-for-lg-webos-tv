@@ -22,14 +22,13 @@ const SSDPClient = require("node-ssdp").Client;
 const xml2js = require("xml2js").parseString;
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class BackendSearcher extends EventEmitter {
     constructor() {
         super();
 
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.ssdpNotify = null;
         this.private.ssdpResponse = null;
 
@@ -42,26 +41,26 @@ class BackendSearcher extends EventEmitter {
 
     initialize() {
         const that = this;
-        return mutex.runExclusive(() => new Promise((resolve) => {
-            if (this.private.initialized === true) {
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
 
-            this.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            this.private.ssdpResponse = new SSDPClient();
-            this.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
+            that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+            that.private.ssdpResponse = new SSDPClient();
+            that.private.ssdpNotify.on("advertise-alive", (headers, rinfo) => {
                 ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
             });
-            this.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
+            that.private.ssdpResponse.on("response", (headers, statusCode, rinfo) => {
                 if (statusCode !== 200) {
                     return;
                 }
                 ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
             });
-            this.private.ssdpNotify.start();
+            that.private.ssdpNotify.start();
             setImmediate(periodicSearch);
-            this.private.initialized = true;
+            that.private.initialized = true;
             resolve();
         }));
 

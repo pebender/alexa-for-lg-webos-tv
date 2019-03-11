@@ -5,14 +5,13 @@ const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
 const {GenericError, UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class BackendControl extends EventEmitter {
     constructor(db, tv) {
         super();
 
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.db = db;
         this.private.connecting = false;
         this.private.powerOn = false;
@@ -38,49 +37,49 @@ class BackendControl extends EventEmitter {
 
     initialize() {
         const that = this;
-        return mutex.runExclusive(() => new Promise((resolve, reject) => {
-            if (this.private.initialized === true) {
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve, reject) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
 
             let clientKey = "";
-            if (Reflect.has(this.private.tv, "key")) {
-                clientKey = this.private.tv.key;
-                Reflect.deleteProperty(this.private.tv, "key");
+            if (Reflect.has(that.private.tv, "key")) {
+                clientKey = that.private.tv.key;
+                Reflect.deleteProperty(that.private.tv, "key");
             } else {
                 reject(new GenericError("error", "initial LGTV key not set"));
             }
 
-            this.private.connection = new LGTV({
-                "url": this.private.tv.url,
+            that.private.connection = new LGTV({
+                "url": that.private.tv.url,
                 "timeout": 10000,
                 "reconnect": 0,
                 "clientKey": clientKey,
                 "saveKey": saveKey
             });
-            this.private.connection.on("error", (error) => {
-                this.private.connecting = false;
+            that.private.connection.on("error", (error) => {
+                that.private.connecting = false;
                 if (error && error.code !== "EHOSTUNREACH") {
-                    this.emit("error", error, this.private.tv.udn);
+                    that.emit("error", error, that.private.tv.udn);
                 }
             });
             // eslint-disable-next-line no-unused-vars
-            this.private.connection.on("connecting", (_host) => {
-                this.private.connecting = true;
+            that.private.connection.on("connecting", (_host) => {
+                that.private.connecting = true;
             });
-            this.private.connection.on("connect", () => {
-                this.private.connecting = false;
-                this.private.powerOn = true;
+            that.private.connection.on("connect", () => {
+                that.private.connecting = false;
+                that.private.powerOn = true;
             });
-            this.private.connection.on("close", () => {
-                this.private.connecting = false;
+            that.private.connection.on("close", () => {
+                that.private.connecting = false;
             });
-            this.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            this.private.ssdpNotify.on("advertise-alive", advertiseAliveHandler);
-            this.private.ssdpNotify.on("advertise-bye", advertiseByeHandler);
-            this.private.ssdpNotify.start();
-            this.private.initialized = true;
+            that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
+            that.private.ssdpNotify.on("advertise-alive", advertiseAliveHandler);
+            that.private.ssdpNotify.on("advertise-bye", advertiseByeHandler);
+            that.private.ssdpNotify.start();
+            that.private.initialized = true;
         }));
 
         function saveKey(key, callback) {
@@ -172,11 +171,13 @@ class BackendControl extends EventEmitter {
 
         // eslint-disable-next-line no-unused-vars
         function ssdpHandler(headers, rinfo) {
-            if (headers.USN.startsWith(`${that.private.tv.udn}::`) === true &&
-                (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive")) {
+            if (headers.USN.startsWith(`${that.private.tv.udn}::`)) {
+                // If it's not a notify message, we assume it's a search message.
+                if (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive") {
                     that.private.powerOn = true;
-                if (finished === false) {
-                    finish();
+                    if (finished === false) {
+                        finish();
+                    }
                 }
             }
         }

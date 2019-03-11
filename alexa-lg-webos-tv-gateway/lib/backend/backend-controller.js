@@ -5,14 +5,13 @@ const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
 const BackendControl = require("./backend-control");
 
-const mutex = new Mutex();
-
 class BackendController extends EventEmitter {
     constructor (db) {
         super();
 
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.db = db;
         this.private.controls = [];
 
@@ -34,21 +33,21 @@ class BackendController extends EventEmitter {
 
     initialize() {
         const that = this;
-        return mutex.runExclusive(() => new Promise(async (resolve, reject) => {
-            if (this.private.initialized === true) {
+        return that.private.initializeMutex.runExclusive(() => new Promise(async (resolve, reject) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
 
-            const records = await this.private.db.getRecords({});
+            const records = await that.private.db.getRecords({});
             await records.forEach((record) => {
-                if (Reflect.has(this.private.controls, record.udn) === false) {
-                    this.private.controls[record.udn] = new BackendControl(this.private.db, record);
-                    this.private.controls[record.udn].initialize().catch(reject);
+                if (Reflect.has(that.private.controls, record.udn) === false) {
+                    that.private.controls[record.udn] = new BackendControl(that.private.db, record);
+                    that.private.controls[record.udn].initialize().catch(reject);
                     eventsAdd(record.udn);
                 }
             });
-            this.private.initialized = true;
+            that.private.initialized = true;
             resolve();
         }));
 

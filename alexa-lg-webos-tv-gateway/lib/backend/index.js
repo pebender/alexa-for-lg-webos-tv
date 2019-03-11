@@ -4,14 +4,13 @@ const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 const BackendController = require("./backend-controller");
 const BackendSearcher = require("./backend-searcher");
 
-const mutex = new Mutex();
-
 class Backend extends EventEmitter {
     constructor(db) {
         super();
 
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.controller = new BackendController(db);
         this.private.searcher = new BackendSearcher();
 
@@ -23,24 +22,25 @@ class Backend extends EventEmitter {
     }
 
     initialize() {
-        return mutex.runExclusive(() => new Promise(async (resolve) => {
-            if (this.private.initialized === true) {
+        const that = this;
+        return that.private.initializeMutex.runExclusive(() => new Promise(async (resolve) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
 
-            this.private.controller.on("error", (error, id) => {
-                this.emit("error", error, `BackendController.${id}`);
+            that.private.controller.on("error", (error, id) => {
+                that.emit("error", error, `BackendController.${id}`);
             });
-            await this.private.controller.initialize();
-            this.private.searcher.on("error", (error) => {
-                this.emit("error", error, "BackendController");
+            await that.private.controller.initialize();
+            that.private.searcher.on("error", (error) => {
+                that.emit("error", error, "BackendController");
             });
-            this.private.searcher.on("found", (tv) => {
-                this.private.controller.tvUpsert(tv);
+            that.private.searcher.on("found", (tv) => {
+                that.private.controller.tvUpsert(tv);
             });
-            await this.private.searcher.initialize();
-            this.private.initialized = true;
+            await that.private.searcher.initialize();
+            that.private.initialized = true;
             resolve();
         }));
     }

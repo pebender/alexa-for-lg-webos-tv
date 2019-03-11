@@ -2,12 +2,11 @@ const {Mutex} = require("async-mutex");
 const {constants} = require("alexa-lg-webos-tv-common");
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class ServerSecurity {
     constructor(db) {
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.db = db;
 
         this.private.throwIfNotInitialized = (methodName) => {
@@ -18,12 +17,13 @@ class ServerSecurity {
     }
 
     initialize() {
-        return mutex.runExclusive(() => new Promise((resolve) => {
-            if (this.private.initialized === true) {
+        const that = this;
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve) => {
+            if (that.private.initialized === true) {
                 resolve();
                 return;
             }
-            this.private.initialized = true;
+            that.private.initialized = true;
             resolve();
         }));
     }

@@ -2,12 +2,11 @@ const {Mutex} = require("async-mutex");
 const Datastore = require("nedb");
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
-const mutex = new Mutex();
-
 class DatabaseTable {
     constructor(path, name, indexes, key) {
         this.private = {};
         this.private.initialized = false;
+        this.private.initializeMutex = new Mutex();
         this.private.path = path;
         this.private.name = name;
         this.private.indexes = indexes;
@@ -38,14 +37,15 @@ class DatabaseTable {
     }
 
     initialize() {
-        return mutex.runExclusive(() => new Promise((resolve) => {
-            this.private.indexes.forEach((record) => {
-                this.private.db.ensureIndex({
+        const that = this;
+        return that.private.initializeMutex.runExclusive(() => new Promise((resolve) => {
+            that.private.indexes.forEach((record) => {
+                that.private.db.ensureIndex({
                     "fieldName": record,
                     "unique": true
                 });
             });
-            this.private.initialized = true;
+            that.private.initialized = true;
             resolve();
         }));
     }
