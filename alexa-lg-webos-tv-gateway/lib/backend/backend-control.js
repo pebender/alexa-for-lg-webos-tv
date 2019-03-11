@@ -4,7 +4,6 @@ const wol = require("wol");
 const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
 const {GenericError, UnititializedClassError} = require("alexa-lg-webos-tv-common");
-const {callbackToPromise} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 
@@ -222,7 +221,13 @@ class BackendControl extends EventEmitter {
             lgtvResponse = await new Promise((resolve, reject) => {
                 this.private.connection.request(
                     command.uri,
-                    (error, response) => callbackToPromise(resolve, reject, error, response)
+                    (error, response) => {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+                        resolve(response);
+                    }
                 );
             });
         } else {
@@ -230,7 +235,13 @@ class BackendControl extends EventEmitter {
                 this.private.connection.request(
                     command.uri,
                     command.payload,
-                    (error, response) => callbackToPromise(resolve, reject, error, response)
+                    (error, response) => {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+                        resolve(response);
+                    }
                 );
             });
         }

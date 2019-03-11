@@ -1,7 +1,6 @@
 const {Mutex} = require("async-mutex");
 const Datastore = require("nedb");
 const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
-const {callbackToPromise} = require("alexa-lg-webos-tv-common");
 
 const mutex = new Mutex();
 
@@ -64,7 +63,13 @@ class DatabaseTable {
                 query,
                 {"multi": true},
                 // eslint-disable-next-line no-unused-vars
-                (error, _numRemoved) => callbackToPromise(resolve, reject, error, this.private.db)
+                (error, _numRemoved) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    resolve(this.private.db);
+                }
             );
         });
     }
@@ -74,7 +79,13 @@ class DatabaseTable {
         const record = await new Promise((resolve, reject) => {
             this.private.db.findOne(
                 query,
-                (err, doc) => callbackToPromise(resolve, reject, err, doc)
+                (err, doc) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(doc);
+                }
             );
         });
         return record;
@@ -85,7 +96,13 @@ class DatabaseTable {
         const records = await new Promise((resolve, reject) => {
             this.private.db.find(
                 query,
-                (err, docs) => callbackToPromise(resolve, reject, err, docs)
+                (err, docs) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(docs);
+                }
             );
         });
         return records;
