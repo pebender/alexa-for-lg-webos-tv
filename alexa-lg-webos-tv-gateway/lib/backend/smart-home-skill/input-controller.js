@@ -162,12 +162,10 @@ async function selectInputHandler(lgtv, event) {
         return event.directive.payload.input.toUpperCase();
     }
 
-    function mapInput(responses) {
-        const [inputList] = responses;
-        let [, input] = responses;
-
-        if (Reflect.has(alexaToLGTV, input)) {
-            input = alexaToLGTV[input];
+    function mapInput(inputList, inputItem) {
+        let input = inputItem;
+        if (Reflect.has(alexaToLGTV, inputItem)) {
+            input = alexaToLGTV[inputItem];
         }
         let device = null;
         inputList.forEach((value) => {
@@ -198,11 +196,12 @@ async function selectInputHandler(lgtv, event) {
             );
         }
 
+        const {endpointId} = event.directive.endpoint;
+
         if (lgtv.getPowerState(endpointId) === "OFF") {
             return [];
         }
 
-        const {endpointId} = event.directive.endpoint;
         const command = {
             "uri": "ssap://tv/switchInput",
             "payload": {"inputId": input}
