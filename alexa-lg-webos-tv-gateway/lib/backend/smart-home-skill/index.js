@@ -41,19 +41,19 @@ async function handler(lgtv, event) {
             case "Alexa.Discovery":
                 return alexaDiscovery.handler(lgtv, event);
             case "Alexa":
-                return stateHandler(alexa.handler(lgtv, event));
+                return stateHandler(await alexa.handler(lgtv, event));
             case "Alexa.PowerController":
-                return stateHandler(alexaPowerController.handler(lgtv, event));
+                return stateHandler(await alexaPowerController.handler(lgtv, event));
             case "Alexa.Speaker":
                 return stateHandler(await alexaSpeaker.handler(lgtv, event));
             case "Alexa.ChannelController":
-                return stateHandler(alexaChannelController.handler(lgtv, event));
+                return stateHandler(await alexaChannelController.handler(lgtv, event));
             case "Alexa.InputController":
-                return stateHandler(alexaInputController.handler(lgtv, event));
+                return stateHandler(await alexaInputController.handler(lgtv, event));
             case "Alexa.Launcher":
-                return stateHandler(alexaLauncher.handler(lgtv, event));
+                return stateHandler(await alexaLauncher.handler(lgtv, event));
             case "Alexa.PlaybackController":
-                return stateHandler(alexaPlaybackController.handler(lgtv, event));
+                return stateHandler(await alexaPlaybackController.handler(lgtv, event));
             default:
                 return unknownNamespaceError();
         }

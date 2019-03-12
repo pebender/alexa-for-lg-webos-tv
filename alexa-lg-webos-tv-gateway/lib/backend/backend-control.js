@@ -3,6 +3,7 @@ const SSDPClient = require("node-ssdp").Client;
 const wol = require("wol");
 const EventEmitter = require("events");
 const {Mutex} = require("async-mutex");
+const uuid = require("uuid/v4");
 const {GenericError, UnititializedClassError} = require("alexa-lg-webos-tv-common");
 
 class BackendControl extends EventEmitter {
@@ -76,9 +77,11 @@ class BackendControl extends EventEmitter {
                 that.private.connecting = false;
             });
             that.private.ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-            that.private.ssdpNotify.on("advertise-alive", advertiseAliveHandler);
-            that.private.ssdpNotify.on("advertise-bye", advertiseByeHandler);
+            that.private.ssdpNotify.on("advertise-alive", ssdpConnectHandler);
+            that.private.ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
             that.private.ssdpNotify.start();
+            that.private.ssdpResponse = new SSDPClient();
+            that.private.ssdpResponse.on("search", ssdpConnectHandler);
             that.private.initialized = true;
         }));
 
@@ -95,9 +98,8 @@ class BackendControl extends EventEmitter {
         }
 
         // eslint-disable-next-line no-unused-vars
-        function advertiseAliveHandler(headers, _rinfo) {
+        function ssdpConnectHandler(headers, _rinfo) {
             if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
-                that.private.powerOn = true;
                 if (that.private.connecting === false) {
                     that.private.connection.connect(that.private.tv.url);
                 }
@@ -105,7 +107,7 @@ class BackendControl extends EventEmitter {
         }
 
         // eslint-disable-next-line no-unused-vars
-        function advertiseByeHandler(headers, _rinfo) {
+        function ssdpDisconnectHandler(headers, _rinfo) {
             if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 that.private.powerOn = false;
                 that.private.connection.disconnect();
@@ -125,87 +127,99 @@ class BackendControl extends EventEmitter {
         return tv;
     }
 
-    async turnOff() {
+    turnOff() {
         this.private.throwIfNotInitialized("turnOff");
         const command = {
             "uri": "ssap://system/turnOff"
         };
-        await this.private.connection.request(command.uri);
+        this.private.connection.request(command.uri);
         this.private.powerOn = false;
+        return true;
     }
 
     turnOn() {
-        const that = this;
         this.private.throwIfNotInitialized("turnOn");
+        const that = this;
+        return new Promise((resolveTurnOn) => {
+            let finished = false;
+            const finishMutex = new Mutex();
+            let finishUUID = null;
 
-        let finished = false;
-        let finishing = false;
+            that.private.powerOn = false;
+            let finishTimeoutObject = setTimeout(finish, 7000, false);
+            monitorFunction();
+            let monitorTimeoutObject = setInterval(monitorFunction, 100);
+            searchFunction();
+            let searchTimeoutObject = setInterval(searchFunction, 1000);
+            wolFunction();
+            let wolTimeoutObject = setInterval(wolFunction, 250);
 
-        let ssdpNotify = new SSDPClient({"sourcePort": "1900"});
-        ssdpNotify.on("advertise-alive", ssdpHandler);
-
-        let ssdpResponse = new SSDPClient();
-        ssdpResponse.on("response", ssdpHandler);
-
-        ssdpNotify.start();
-        setImmediate(wolHandler);
-        setImmediate(searchHandler);
-        setTimeout(finish, 5000);
-
-        function wolHandler() {
-            const {mac} = that.private.tv;
-            // eslint-disable-next-line no-unused-vars
-            wol.wake(mac, (error, response) => {
-                if (finished === false) {
-                    setTimeout(wolHandler, 250);
+            function monitorFunction() {
+                if (that.private.powerOn === true) {
+                    finish(true);
                 }
-            });
-        }
-
-        function searchHandler() {
-            if (finished === false && ssdpResponse !== null) {
-                ssdpResponse.search(that.private.tv.udn);
-                setTimeout(searchHandler, 1000);
             }
-        }
 
-        // eslint-disable-next-line no-unused-vars
-        function ssdpHandler(headers, rinfo) {
-            if (headers.USN.startsWith(`${that.private.tv.udn}::`)) {
-                // If it's not a notify message, we assume it's a search message.
-                if (Reflect.has(headers, "NTS") === false || headers.NTS === "ssdp:alive") {
-                    that.private.powerOn = true;
-                    if (finished === false) {
-                        finish();
+            function searchFunction() {
+                if (that.private.ssdpResponse !== null) {
+                    that.private.ssdpResponse.search(that.private.tv.udn);
+                }
+            }
+
+            function wolFunction() {
+                wol.wake(that.private.tv.mac);
+            }
+
+            /*
+             * The function cleans up and resolves the function's promise. It
+             * uses a mutex and a uuid to ensure that clean up and the
+             * function's promise resolution is only performed once. The mutex
+             * protecting the clean up phase ensures that clean up is called
+             * only once. The uuid, which is set during the clean up phase,
+             * ensures that the function's promise resolution is called only
+             * once.
+             */
+            function finish(poweredOn) {
+                if (finished === true) {
+                    return Promise.resolve(true);
+                }
+                return finishMutex.runExclusive(() => new Promise((resolveFinish) => {
+                    if (finished === true) {
+                        resolveFinish(null);
+                        return;
                     }
-                }
-            }
-        }
 
-        function finish() {
-            if (finishing === true) {
-                return;
-            }
-            finishing = true;
-            if (finished === true) {
-                finishing = false;
-                return;
-            }
+                    finishUUID = uuid();
 
-            if (ssdpNotify !== null) {
-                ssdpNotify.removeAllListeners();
-                ssdpNotify = null;
+                    if (wolTimeoutObject !== null) {
+                        clearImmediate(wolTimeoutObject);
+                        wolTimeoutObject = null;
+                    }
+                    if (searchTimeoutObject !== null) {
+                        clearImmediate(searchTimeoutObject);
+                        searchTimeoutObject = null;
+                    }
+                    if (monitorTimeoutObject !== null) {
+                        clearImmediate(monitorTimeoutObject);
+                        monitorTimeoutObject = null;
+                    }
+                    if (finishTimeoutObject !== null) {
+                        clearImmediate(wolTimeoutObject);
+                        finishTimeoutObject = null;
+                    }
+                    resolveFinish(finishUUID);
+                })).
+                then((currentUUID) => {
+                    if (finished === false) {
+                        if (currentUUID !== null && currentUUID === finishUUID) {
+                            finishUUID = null;
+                            finished = true;
+                            resolveTurnOn(poweredOn);
+                        }
+                    }
+                });
             }
-            if (ssdpResponse !== null) {
-                ssdpResponse.removeAllListeners();
-                ssdpResponse = null;
-            }
-
-            if (finished === false) {
-                finished = true;
-                finishing = false;
-            }
-        }
+        });
     }
 
     getPowerState() {

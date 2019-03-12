@@ -1,5 +1,5 @@
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {directiveErrorResponse, namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
+const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lgtv, _event, _udn) {
@@ -47,7 +47,11 @@ function handler(lgtv, event) {
 async function turnOffHandler(lgtv, event) {
     const {endpointId} = event.directive.endpoint;
 
-    await lgtv.turnOff(endpointId);
+    const poweredOff = await lgtv.turnOff(endpointId);
+    if (poweredOff === false) {
+        return errorResponse(event, "INTERNAL_ERROR", `Alexa.PowerController.turnOff for LGTV ${endpointId} failed.`);
+
+    }
     const alexaResponse = new AlexaResponse({
         "request": event
     });
@@ -56,11 +60,13 @@ async function turnOffHandler(lgtv, event) {
 
 async function turnOnHandler(lgtv, event) {
     const {endpointId} = event.directive.endpoint;
-    await lgtv.turnOn(endpointId);
+    const poweredOn = await lgtv.turnOn(endpointId);
+    if (poweredOn === false) {
+        return errorResponse(event, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${endpointId} failed.`);
+    }
     const alexaResponse = new AlexaResponse({
         "request": event
     });
-    console.log(JSON.stringify(event, null, 2));
     return alexaResponse.get();
 }
 
