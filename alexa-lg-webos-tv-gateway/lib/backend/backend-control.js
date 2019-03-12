@@ -137,37 +137,38 @@ class BackendControl extends EventEmitter {
         return true;
     }
 
+    /*
+     * The method turns on the TV. It forces the BackendControl instance
+     * to assume the TV is off. Then, it kicks the TV using Wake On Lan, forces
+     * a search for the TV and waits for the BackendControl instance to
+     * detect that the TV is on. Before it does any of this, it sets a timeout
+     * of 7 seconds in an attempt to ensure that Alexa has the chance for a
+     * response before its 8 second timeout.
+     */
     turnOn() {
         this.private.throwIfNotInitialized("turnOn");
         const that = this;
         return new Promise((resolveTurnOn) => {
-            let finished = false;
-            const finishMutex = new Mutex();
-            let finishUUID = null;
-
             that.private.powerOn = false;
-            let finishTimeoutObject = setTimeout(finish, 7000, false);
-            monitorFunction();
-            let monitorTimeoutObject = setInterval(monitorFunction, 100);
-            searchFunction();
-            let searchTimeoutObject = setInterval(searchFunction, 1000);
-            wolFunction();
-            let wolTimeoutObject = setInterval(wolFunction, 250);
 
-            function monitorFunction() {
+            let finishTimeoutObject = setTimeout(finish, 7000, false);
+
+            let monitorTimeoutObject = startInterval(100, () => {
                 if (that.private.powerOn === true) {
                     finish(true);
                 }
-            }
-
-            function searchFunction() {
+            });
+            let wolTimeoutObject = startInterval(250, () => {
+                wol.wake(that.private.tv.mac);
+            });
+            let searchTimeoutObject = startInterval(1000, () => {
                 if (that.private.ssdpResponse !== null) {
                     that.private.ssdpResponse.search(that.private.tv.udn);
                 }
-            }
-
-            function wolFunction() {
-                wol.wake(that.private.tv.mac);
+            });
+            function startInterval(milliseconds, handler, ...args) {
+                handler(...args);
+                return setInterval(handler, milliseconds, ...args);
             }
 
             /*
@@ -179,6 +180,9 @@ class BackendControl extends EventEmitter {
              * ensures that the function's promise resolution is called only
              * once.
              */
+            let finished = false;
+            const finishMutex = new Mutex();
+            let finishUUID = null;
             function finish(poweredOn) {
                 if (finished === true) {
                     return Promise.resolve(true);
