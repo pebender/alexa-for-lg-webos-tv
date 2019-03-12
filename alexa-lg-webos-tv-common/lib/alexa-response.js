@@ -19,7 +19,7 @@
  * language governing permissions and limitations under the License.
  */
 
-const uuid = require("uuid");
+const uuid = require("uuid/v4");
 
 /**
  * Helper class to generate an AlexaResponse.
@@ -267,4 +267,6 @@ class AlexaResponse {
     }
 }
 
-module.exports = AlexaResponse;
+module.exports = {
+    "AlexaResponse": AlexaResponse
+};

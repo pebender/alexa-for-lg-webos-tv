@@ -1,6 +1,6 @@
 const errorClasses = require("./lib/error-classes");
-const AlexaResponse = require("./lib/alexa-response");
-const alexaErrorResponses = require("./lib/alexa-response");
+const alexaResponse = require("./lib/alexa-response");
+const alexaErrorResponses = require("./lib/alexa-error-responses");
 
 
 const constants = {
@@ -11,9 +11,11 @@ const constants = {
 };
 
 module.exports = {
-    "AlexaResponse": AlexaResponse,
     "constants": constants
 };
+Object.keys(alexaResponse).forEach((key) => {
+    module.exports[key] = alexaResponse[key];
+});
 Object.keys(errorClasses).forEach((key) => {
     module.exports[key] = errorClasses[key];
 });
