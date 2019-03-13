@@ -197,19 +197,19 @@ class BackendControl extends EventEmitter {
                     finishUUID = uuid();
 
                     if (wolTimeoutObject !== null) {
-                        clearImmediate(wolTimeoutObject);
+                        clearInterval(wolTimeoutObject);
                         wolTimeoutObject = null;
                     }
                     if (searchTimeoutObject !== null) {
-                        clearImmediate(searchTimeoutObject);
+                        clearInterval(searchTimeoutObject);
                         searchTimeoutObject = null;
                     }
                     if (monitorTimeoutObject !== null) {
-                        clearImmediate(monitorTimeoutObject);
+                        clearInterval(monitorTimeoutObject);
                         monitorTimeoutObject = null;
                     }
                     if (finishTimeoutObject !== null) {
-                        clearImmediate(wolTimeoutObject);
+                        clearImmediate(finishTimeoutObject);
                         finishTimeoutObject = null;
                     }
                     resolveFinish(finishUUID);
