@@ -98,7 +98,7 @@ class BackendControl extends EventEmitter {
         }
 
         // eslint-disable-next-line no-unused-vars
-        function ssdpConnectHandler(headers, _rinfo) {
+        function ssdpConnectHandler(headers) {
             if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 if (that.private.connecting === false) {
                     that.private.connection.connect(that.private.tv.url);
@@ -107,7 +107,7 @@ class BackendControl extends EventEmitter {
         }
 
         // eslint-disable-next-line no-unused-vars
-        function ssdpDisconnectHandler(headers, _rinfo) {
+        function ssdpDisconnectHandler(headers) {
             if (headers.USN === `${that.private.tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 that.private.powerOn = false;
                 that.private.connection.disconnect();
@@ -138,10 +138,11 @@ class BackendControl extends EventEmitter {
     }
 
     /*
-     * The method turns on the TV. It forces the BackendControl instance
-     * to assume the TV is off. Then, it kicks the TV using Wake On Lan, forces
-     * a search for the TV and waits for the BackendControl instance to
-     * detect that the TV is on. Before it does any of this, it sets a timeout
+     * The method turns on the TV. It forces the BackendControl instance to
+     * assume the TV is off and to disconnect from the TV. Then, it periodically
+     * kicks the TV using Wake On Lan, periodically searches for the TV using
+     * UPnP Discovery and waits for the BackendControl instance to detect that
+     * the TV is on and connected. Before it does any of this, it sets a timeout
      * of 7 seconds in an attempt to ensure that Alexa has the chance for a
      * response before its 8 second timeout.
      */
@@ -173,13 +174,12 @@ class BackendControl extends EventEmitter {
             }
 
             /*
-             * The function cleans up and resolves the function's promise. It
-             * uses a mutex and a uuid to ensure that clean up and the
+             * The function cleans up and then resolves the function's promise.
+             * It uses a mutex and a uuid to ensure that clean up and the
              * function's promise resolution is only performed once. The mutex
-             * protecting the clean up phase ensures that clean up is called
-             * only once. The uuid, which is set during the clean up phase,
-             * ensures that the function's promise resolution is called only
-             * once.
+             * protects the clean up phase ensures that clean up is called only
+             * once. The uuid, which is set during the clean up phase, ensures
+             * that the function's promise resolution is called only once.
              */
             let finished = false;
             const finishMutex = new Mutex();
