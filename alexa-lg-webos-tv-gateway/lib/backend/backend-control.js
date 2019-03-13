@@ -81,7 +81,7 @@ class BackendControl extends EventEmitter {
             that.private.ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
             that.private.ssdpNotify.start();
             that.private.ssdpResponse = new SSDPClient();
-            that.private.ssdpResponse.on("search", ssdpConnectHandler);
+            that.private.ssdpResponse.on("response", ssdpConnectHandler);
             that.private.initialized = true;
         }));
 
@@ -150,6 +150,7 @@ class BackendControl extends EventEmitter {
         const that = this;
         return new Promise((resolveTurnOn) => {
             that.private.powerOn = false;
+            that.private.connection.disconnect();
 
             let finishTimeoutObject = setTimeout(finish, 7000, false);
 
@@ -163,7 +164,7 @@ class BackendControl extends EventEmitter {
             });
             let searchTimeoutObject = startInterval(1000, () => {
                 if (that.private.ssdpResponse !== null) {
-                    that.private.ssdpResponse.search(that.private.tv.udn);
+                    that.private.ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
                 }
             });
             function startInterval(milliseconds, handler, ...args) {
