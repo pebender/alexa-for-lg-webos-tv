@@ -1,3 +1,4 @@
+const {alexaSmartHomeMessageSchema} = require("alexa-lg-webos-tv-common");
 const {AlexaResponse} = require("alexa-lg-webos-tv-common");
 const {errorToErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 const alexaAuthorization = require("./authorization");
@@ -9,8 +10,30 @@ const alexaChannelController = require("./channel-controller");
 const alexaInputController = require("./input-controller");
 const alexaLauncher = require("./launcher");
 const alexaPlaybackController = require("./playback-controller");
+const Ajv = require("ajv");
 
+/*
+ * We skip the validation function as the schema file does not support
+ * Alexa.Launch or Alexa.PlaybackController.
+ */
+// eslint-disable-next-line no-unused-vars
 async function handler(lgtv, event) {
+    const response = await handlerWithoutValidation(lgtv, event);
+    const ajv = new Ajv({"allErrors": true});
+    const validateSchemaFunction = await ajv.compile(alexaSmartHomeMessageSchema);
+    const valid = await validateSchemaFunction(response);
+    if (valid === true) {
+        return response;
+    }
+    const schemaErrors = JSON.stringify(validateSchemaFunction.errors, null, 2);
+    return errorResponse(
+        event,
+        "INTERNAL_ERROR",
+        `The generated response message was invalid. Schema errors: ${schemaErrors}.`
+    );
+}
+
+async function handlerWithoutValidation(lgtv, event) {
     if (!Reflect.has(event, "directive")) {
         return missingKeyError(event, "directive");
     }
@@ -107,4 +130,4 @@ async function handler(lgtv, event) {
     }
 }
 
-module.exports = {"handler": handler};
+module.exports = {"handler": handlerWithoutValidation};
