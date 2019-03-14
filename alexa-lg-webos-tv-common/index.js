@@ -1,7 +1,7 @@
-const errorClasses = require("./lib/error-classes");
+const alexaSmartHomeMessageSchema = require("./lib/alexa-smart-home-message-schema.json");
 const alexaResponse = require("./lib/alexa-response");
 const alexaErrorResponses = require("./lib/alexa-error-responses");
-
+const errorClasses = require("./lib/error-classes");
 
 const constants = {
     "amazonVendorId": "M2V6930QON4TLV",
@@ -10,9 +10,8 @@ const constants = {
     "gatewayUserPassword": "37f0098320b4478980ceee37acdc208bd830127bfc51d2136c274f280852a58b70b2d9351266a68492cb4284c99869a417866ec5dd0d02ac1788d8ab0295c0c6"
 };
 
-module.exports = {
-    "constants": constants
-};
+module.exports.constants = constants;
+module.exports.alexaSmartHomeMessageSchema = alexaSmartHomeMessageSchema;
 Object.keys(alexaResponse).forEach((key) => {
     module.exports[key] = alexaResponse[key];
 });
