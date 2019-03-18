@@ -1,0 +1,99 @@
+import {Mutex} from "async-mutex";
+const {constants} = require("alexa-lg-webos-tv-common");
+const {unititializedClassError} = require("alexa-lg-webos-tv-common");
+import {DatabaseTable} from "../database"
+
+export class FrontendSecurity {
+    private _initialized: boolean;
+    private _initializeMutex: Mutex;
+    private _db: DatabaseTable;
+    private _throwIfNotInitialized: (methodName: string) => void;
+    constructor(db: DatabaseTable) {
+        this._initialized = false;
+        this._initializeMutex = new Mutex();
+        this._db = db;
+
+        this._throwIfNotInitialized = (methodName: string): void => {
+            if (this._initialized === false) {
+                throw new unititializedClassError("FrontendSecurity", methodName);
+            }
+        };
+    }
+
+    initialize(): Promise<void> {
+        const that: FrontendSecurity = this;
+        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
+            if (that._initialized === true) {
+                resolve();
+                return;
+            }
+            that._initialized = true;
+            resolve();
+        }));
+    }
+
+    authorizeRoot(username: string, password: string): boolean {
+        this._throwIfNotInitialized("authorizeRoot");
+        if (username === "HTTP" && password === constants.gatewayRootPassword) {
+            return true;
+        }
+        return false;
+    }
+
+    async authorizeUser(username: string, password: string): Promise<boolean> {
+        this._throwIfNotInitialized("authorizeUser");
+        const record = await this._db.getRecord({"name": "password"});
+        if (record === null ||
+            Reflect.has(record, "value") === false ||
+            record.value === null) {
+            return false;
+        }
+        if (username === "LGTV" && password === record.value) {
+            return true;
+        }
+        return false;
+    }
+
+    async userPasswordIsNull(): Promise<boolean> {
+        this._throwIfNotInitialized("userPasswordIsNull");
+        const record = await this._db.getRecord({"name": "password"});
+        if (record === null ||
+            Reflect.has(record, "value") === false ||
+            record.value === null
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    setUserPassword(password: string | null): Promise<void> {
+        this._throwIfNotInitialized("setUserPassword");
+        return this._db.updateOrInsertRecord(
+            {"name": "password"},
+            {
+                "name": "password",
+                "value": password
+            }
+        );
+    }
+
+    async getHostname(): Promise<string> {
+        this._throwIfNotInitialized("getHostname");
+        const record = await this._db.getRecord({"name": "hostname"});
+        if (record === null || Reflect.has(record, "value") === false) {
+            return "";
+        }
+        return record.value;
+    }
+
+    setHostname(hostname: string) {
+        this._throwIfNotInitialized("setHostname");
+        return this._db.updateOrInsertRecord(
+            {"name": "hostname"},
+            {
+                "name": "hostname",
+                "value": hostname
+            }
+        );
+    }
+}
