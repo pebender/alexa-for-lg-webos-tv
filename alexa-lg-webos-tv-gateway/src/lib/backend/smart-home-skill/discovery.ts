@@ -1,4 +1,4 @@
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaPayloadEndpoint} from "alexa-lg-webos-tv-common";
 const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
@@ -74,7 +74,7 @@ async function handler(lgtv: BackendController, event: AlexaRequest) {
                 return null;
             }
             const {name} = lgtv.tv(udn);
-            const endpoint = AlexaResponse.createPayloadEndpoint({
+            const endpoint = new AlexaPayloadEndpoint({
                 "endpointId": udn,
                 "friendlyName": name,
                 "description": "LG webOS TV",
