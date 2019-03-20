@@ -21,8 +21,6 @@ import {AlexaHeader, AlexaEndpoint} from "./alexa-base";
  * language governing permissions and limitations under the License.
  */
 
-const uuid = require("uuid/v4");
-
 export class AlexaResponseContextProperty {
     namespace: string;
     name: string;
@@ -178,10 +176,17 @@ export class AlexaResponseEventPayloadEndpoint {
 
 class AlexaResponseEventPayload {
     endpoints?: AlexaResponseEventPayloadEndpoint[];
-    constructor({}) {
-
+    constructor(opts: {}) {
     }
-    addEndpoint(opts: {}) {
+    addEndpoint(opts: {
+        capabilities?: any[],
+        description?: string,
+        displayCategories?: string[],
+        endpointId?: string,
+        friendlyName?: string,
+        manufacturerName?: string
+        cookie?: {[x: string]: any}        
+    }) {
         if (!Reflect.has(this, "endpoints")) {
             this.endpoints = [];
         }
@@ -216,7 +221,6 @@ class AlexaResponseEvent {
             "correlationToken": opts.correlationToken,
             "instance": opts.instance
         });
-        // No endpoint in an AcceptGrant or Discover request
         if ((this.header.name === "AcceptGrant.Response") === false &&
             (this.header.name === "Discover.Response") === false) {
             this.endpoint = new AlexaEndpoint({
@@ -268,18 +272,13 @@ export class AlexaResponse {
                     token: opts.token,
                     endpointId: opts.token,
                 }),
-                "payload": Reflect.has(opts, "payload") && opts.payload !== {}
+                "payload": Reflect.has(opts, "payload")
                     ? opts.payload
                     : {}
             };
         }
     }
 
-    /**
-     * Add a property to the context.
-     * @param {Object} [opts] Contains options for the property.
-     * @return {undefined}
-     */
     addContextProperty(opts: {
         namespace?: string,
         name?: string,
@@ -303,18 +302,10 @@ export class AlexaResponse {
         manufacturerName?: string,
         cookie?: {[x: string]: any}
     }) {
-        if (!Reflect.has(this, "event")) {
-            this.event = {};
-        }
         if (!Reflect.has(this.event, "payload")) {
-            this.event.payload = {};
+            this.event.payload = new AlexaResponseEventPayload({});
         }
-        if (!Reflect.has(this.event.payload, "endpoints")) {
-            this.event.payload.endpoints = [];
-        }
-        const property = new AlexaPayloadEndpoint(opts);
-
-        this.event.payload.endpoints.push(property);
+        (<AlexaResponseEventPayload>this.event.payload).addEndpoint(opts);
     }
 
     get() {

@@ -108,7 +108,7 @@ async function changeChannelHandler(lgtv: BackendController, event: AlexaRequest
             }
         };
         const alexaResponse = new AlexaResponse({
-            "request": event
+            "alexaRequest": event
         });
         alexaResponse.addContextProperty(state);
         return alexaResponse.get();

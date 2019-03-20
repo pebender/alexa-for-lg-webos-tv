@@ -34,7 +34,7 @@ function handler(lgtv: BackendController, event: AlexaRequest) {
 
 function reportStateHandler(_lgtv: BackendController, event: AlexaRequest): AlexaResponse {
     const alexaResponse = new AlexaResponse({
-        "request": event,
+        "alexaRequest": event,
         "namespace": "Alexa",
         "name": "StateReport"
     });

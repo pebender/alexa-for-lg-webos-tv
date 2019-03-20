@@ -73,7 +73,7 @@ async function genericHandler(lgtv: BackendController, event: AlexaRequest, comm
     };
     await lgtv.lgtvCommand(endpointId, command);
     const alexaResponse = new AlexaResponse({
-        "request": event
+        "alexaRequest": event
     });
     return alexaResponse.get();
 }

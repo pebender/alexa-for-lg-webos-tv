@@ -1,4 +1,4 @@
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseContextProperty} from "alexa-lg-webos-tv-common";
 const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
@@ -117,7 +117,7 @@ async function states(lgtv: BackendController, udn: UDN): Promise<any[]> {
         if (input === null) {
             return [];
         }
-        const inputState = AlexaResponse.createContextProperty({
+        const inputState = new AlexaResponseContextProperty({
             "namespace": "Alexa.InputController",
             "name": "input",
             "value": input
@@ -202,7 +202,7 @@ async function selectInputHandler(lgtv: BackendController, event: AlexaRequest):
 
         if (lgtv.getPowerState(endpointId) === "OFF") {
             const alexaResponse = new AlexaResponse({
-                "request": event
+                "alexaRequest": event
             });
             return alexaResponse.get();
         }
@@ -213,7 +213,7 @@ async function selectInputHandler(lgtv: BackendController, event: AlexaRequest):
         };
         await lgtv.lgtvCommand(endpointId, command);
         const alexaResponse = new AlexaResponse({
-            "request": event
+            "alexaRequest": event
         });
         return alexaResponse.get();
     }

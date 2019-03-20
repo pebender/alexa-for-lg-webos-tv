@@ -9,7 +9,7 @@ import {BackendController} from "../../backend";
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-function handler(lgtv: BackendController, event: AlexaRequest) {
+function handler(lgtv: BackendController, event: any) {
     const udn = event.body.television;
     const controllerMessage = event.body.command;
 

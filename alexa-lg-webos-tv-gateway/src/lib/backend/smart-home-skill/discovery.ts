@@ -1,4 +1,4 @@
-import {AlexaRequest, AlexaResponse, AlexaPayloadEndpoint} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpoint} from "alexa-lg-webos-tv-common";
 const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
@@ -57,6 +57,14 @@ async function handler(lgtv: BackendController, event: AlexaRequest) {
 
     async function buildEndpoint(udn: UDN) {
         try {
+            const {name} = lgtv.tv(udn);
+            const endpoint = new AlexaResponseEventPayloadEndpoint({
+                "endpointId": udn,
+                "friendlyName": name,
+                "description": "LG webOS TV",
+                "manufacturerName": "LG Electronics",
+                "displayCategories": ["TV"],
+            });
             // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
                 alexa.capabilities(lgtv, event, udn),
@@ -70,18 +78,10 @@ async function handler(lgtv: BackendController, event: AlexaRequest) {
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
 
-            if (capabilities.length === 0) {
-                return null;
-            }
-            const {name} = lgtv.tv(udn);
-            const endpoint = new AlexaPayloadEndpoint({
-                "endpointId": udn,
-                "friendlyName": name,
-                "description": "LG webOS TV",
-                "manufacturerName": "LG Electronics",
-                "displayCategories": ["TV"],
-                "capabilities": capabilities
+            capabilitiesList.forEach((capability) => {
+                endpoint.addCapability(capability);
             });
+
             return endpoint;
         } catch (error) {
             return null;
