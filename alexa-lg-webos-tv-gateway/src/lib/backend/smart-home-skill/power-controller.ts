@@ -1,5 +1,5 @@
 const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
-import {AlexaRequest, AlexaResponse, AlexaResponseContextProperty} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
@@ -24,7 +24,7 @@ function capabilities(_lgtv: BackendController, _event: AlexaRequest, _udn: UDN)
 }
 
 function states(lgtv: BackendController, udn: UDN): any[] {
-    const powerStateState = new AlexaResponseContextProperty({
+    const powerStateState = AlexaResponse.createContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
         "value": lgtv.getPowerState(udn)
@@ -55,7 +55,7 @@ async function turnOffHandler(lgtv: BackendController, event: AlexaRequest) {
 
     }
     const alexaResponse = new AlexaResponse({
-        "alexaRequest": event
+        "request": event
     });
     return alexaResponse.get();
 }
@@ -67,7 +67,7 @@ async function turnOnHandler(lgtv: BackendController, event: AlexaRequest) {
         return errorResponse(event, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${endpointId} failed.`);
     }
     const alexaResponse = new AlexaResponse({
-        "alexaRequest": event
+        "request": event
     });
     return alexaResponse.get();
 }

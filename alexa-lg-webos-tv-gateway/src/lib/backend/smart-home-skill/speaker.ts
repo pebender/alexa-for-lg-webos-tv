@@ -1,5 +1,5 @@
 const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
-import {AlexaRequest, AlexaResponse, AlexaResponseContextProperty} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 // eslint-disable-next-line no-unused-vars
@@ -35,12 +35,12 @@ async function states(lgtv: BackendController, udn: UDN): Promise<any[]> {
     };
     try {
         const lgtvResponse = await lgtv.lgtvCommand(udn, command);
-        const volumeState = new AlexaResponseContextProperty({
+        const volumeState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.Speaker",
             "name": "volume",
             "value": lgtvResponse.volume
         });
-        const mutedState = new AlexaResponseContextProperty({
+        const mutedState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.Speaker",
             "name": "muted",
             "value": lgtvResponse.muted
@@ -94,13 +94,13 @@ async function setVolumeHandler(lgtv: BackendController, event: AlexaRequest) {
         };
         await lgtv.lgtvCommand(endpointId, command);
         const alexaResponse = new AlexaResponse({
-            "alexaRequest": event
+            "request": event
         });
         return alexaResponse.get();
     }
 }
 
-async function adjustVolumeHandler(lgtv: BackendController, event: AlexaRequest): Promise<AlexaResponse> {
+async function adjustVolumeHandler(lgtv: BackendController, event: AlexaRequest): Promise<AlexaRequest> {
     const lgtvVolume = await getVolume();
     return setVolume(lgtvVolume);
 
@@ -145,7 +145,7 @@ async function adjustVolumeHandler(lgtv: BackendController, event: AlexaRequest)
         };
         await lgtv.lgtvCommand(endpointId, command);
         const alexaResponse: AlexaResponse = new AlexaResponse({
-            "alexaRequest": event
+            "request": event
         });
         return alexaResponse.get();
     }
@@ -162,7 +162,7 @@ function setMuteHandler(lgtv: BackendController, event: AlexaRequest): Promise<A
         };
         await lgtv.lgtvCommand(endpointId, command);
         const alexaResponse = new AlexaResponse({
-            "alexaRequest": event
+            "request": event
         });
         return alexaResponse.get();
     }
