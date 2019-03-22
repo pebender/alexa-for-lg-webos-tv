@@ -1,5 +1,3 @@
-import {AlexaRequest} from "./alexa-request";
-import {AlexaHeader, AlexaEndpoint} from "./alexa-base";
 /*
  * This file started as
  * <https://github.com/alexa/skill-sample-nodejs-smarthome-switch/commits/master/lambda/smarthome/alexa/skills/smarthome/AlexaResponse.js>
@@ -23,220 +21,24 @@ import {AlexaHeader, AlexaEndpoint} from "./alexa-base";
 
 const uuid = require("uuid/v4");
 
-export class AlexaResponseContextProperty {
-    namespace: string;
-    name: string;
-    instance?: string;
-    value: any;
-    timeOfSample: string;
-    uncertaintyInMilliseconds: number;
-    constructor(opts: {
-        namespace?: string,
-        name?: string,
-        instance?: string,
-        value?: any,
-        timeOfSample?: string,
-        uncertaintyInMilliseconds?: number
-    }) {
-        this.namespace = Reflect.has(opts, "namespace") && opts.namespace !== ""
-            ? <string>opts.namespace
-            : "Alexa.EndpointHealth";
-        this.name = Reflect.has(opts, "name") && opts.name !== ""
-            ? <string>opts.name
-            : "connectivity";
-        this.value = Reflect.has(opts, "value") && opts.value !== {}
-            ? opts.value
-            : {"value": "OK"};
-        this.timeOfSample = new Date().toISOString(),
-        this.uncertaintyInMilliseconds = Reflect.has(opts, "uncertaintyInMilliseconds")
-            ? <number>opts.uncertaintyInMilliseconds
-            : 0;
-        if (Reflect.has(opts, "instance")) {
-            this.instance = opts.instance;
-        }
-    }
-}
-
-class AlexaResponseContext {
-    properties?: AlexaResponseContextProperty[];
-    constructor(opts: {
-        namespace?: string,
-        name?: string,
-        instance?: string,
-        value?: any,
-        timeOfSample?: string,
-        uncertaintyInMilliseconds?: number
-    }) {
-        this.addProperty(opts);
-    }
-    addProperty(opts: {
-        namespace?: string,
-        name?: string,
-        instance?: string,
-        value?: any,
-        timeOfSample?: string,
-        uncertaintyInMilliseconds?: number
-    }){
-        if (Reflect.has(this, "properties") === false) {
-            this.properties = [];
-        }
-        (<AlexaResponseContextProperty[]>this.properties).push(new AlexaResponseContextProperty(opts));
-    }
-}
-
-export class AlexaResponseEventPayloadEndpointCapability {
-    type: string;
-    interface: string;
-    version: string;
-    supported?: boolean;
-    properties?: {
-        supported: boolean,
-        proactivelyReported: boolean,
-        retrievable: boolean
-    };
-    constructor(opts: {
-        type?: string,
-        interface?: string,
-        version?: string,
-        supported?: boolean,
-        proactivelyReported?: boolean,
-        retrievable?: boolean
-    }) {
-        this.type = Reflect.has(opts, "type") && opts.type !== ""
-            ? <string>opts.type
-            : "AlexaInterface";
-        this.interface = Reflect.has(opts, "interface") && opts.interface !== ""
-            ? <string>opts.interface
-            : "Alexa";
-        this.version = Reflect.has(opts, "version") && opts.version !== ""
-            ? <string>opts.version
-            : "3";
-        if (Reflect.has(opts, "supported") && opts.supported) {
-            this.properties = {
-                supported: true,
-                proactivelyReported: Reflect.has(opts, "proactivelyReported")
-                    ? <boolean>opts.proactivelyReported
-                    : false,
-                retrievable: Reflect.has(opts, "retrievable")
-                    ? <boolean>opts.retrievable
-                    : false
-            };
-        }
-    }
-}
-
-export class AlexaResponseEventPayloadEndpoint {
-    capabilities: AlexaResponseEventPayloadEndpointCapability[];
-    description: string;
-    displayCategories: string[];
-    endpointId: string;
-    friendlyName: string;
-    manufacturerName: string;
-    cookie?: {[x: string]: any};
-    constructor(opts: {
-        capabilities?: any[],
-        description?: string,
-        displayCategories?: string[],
-        endpointId?: string,
-        friendlyName?: string,
-        manufacturerName?: string
-        cookie?: {[x: string]: any}
-    }) {
-        this.capabilities = Reflect.has(opts, "capabilities")
-            ? <AlexaResponseEventPayloadEndpointCapability[]>opts.capabilities
-            : [];
-        this.description = Reflect.has(opts, "description") && opts.description !== ""
-            ? <string>opts.description
-            : "Sample Endpoint Description";
-        this.displayCategories = Reflect.has(opts, "displayCategories")
-            ? <string[]>opts.displayCategories
-            : ["OTHER"];
-        this.endpointId = Reflect.has(opts, "endpointId") && opts.endpointId !== ""
-            ? <string>opts.endpointId
-            : "endpoint-001";
-        this.friendlyName = Reflect.has(opts, "friendlyName") && opts.friendlyName !== ""
-            ? <string>opts.friendlyName
-            : "Sample Endpoint";
-        this.manufacturerName = Reflect.has(opts, "manufacturerName") && opts.manufacturerName !== ""
-            ? <string>opts.manufacturerName
-            : "Sample Manufacturer"
-        if (Reflect.has(opts, "cookie")) {
-            this.cookie = opts.cookie;
-        }
-    }
-    addCapability(opts: {
-        type?: string,
-        interface?: string,
-        version?: string,
-        supported?: boolean,
-        proactivelyReported?: boolean,
-        retrievable?: boolean
-    }) {
-        this.capabilities.push(new AlexaResponseEventPayloadEndpointCapability(opts));
-    }
-}
-
-class AlexaResponseEventPayload {
-    endpoints?: AlexaResponseEventPayloadEndpoint[];
-    constructor({}) {
-
-    }
-    addEndpoint(opts: {}) {
-        if (!Reflect.has(this, "endpoints")) {
-            this.endpoints = [];
-        }
-        (<AlexaResponseEventPayloadEndpoint[]>this.endpoints).push(new AlexaResponseEventPayloadEndpoint(opts));
-    }
-}
-
-class AlexaResponseEvent {
-    static Header: typeof AlexaHeader;
-    static Endpoint?: typeof AlexaResponseEvent;
-    header: AlexaHeader;
-    endpoint?: AlexaEndpoint;
-    payload: AlexaResponseEventPayload | {};
-    constructor(opts: {
-        alexaRequest?: AlexaRequest,
-        namespace?: string,
-        name?: string,
-        messageId?: string,
-        payloadVersion?: string,
-        token?: any,
-        endpointId?: string,
-        payload: AlexaResponseEventPayload,
-        correlationToken?: string,
-        instance?: string
-    }) {
-        this.header = new AlexaHeader({
-            "alexaRequest": opts.alexaRequest,
-            "namespace": opts.namespace,
-            "name": opts.name,
-            "messageId": opts.messageId,
-            "payloadVersion": opts.payloadVersion,
-            "correlationToken": opts.correlationToken,
-            "instance": opts.instance
-        });
-        // No endpoint in an AcceptGrant or Discover request
-        if ((this.header.name === "AcceptGrant.Response") === false &&
-            (this.header.name === "Discover.Response") === false) {
-            this.endpoint = new AlexaEndpoint({
-                token: opts.token,
-                endpointId: opts.token,
-            });
-        }
-        this.payload = Reflect.has(opts, "payload")
-            ? <AlexaResponseEventPayload>opts.payload
-            : {}
-    }
-}
-
+/**
+ * Helper class to generate an AlexaResponse.
+ * @class AlexaResponse
+ * @classdesc AlexaResponse helps in creating Alexa Response messages.
+ */
 export class AlexaResponse {
-    context?: AlexaResponseContext;
-    event: AlexaResponseEvent;
+    /**
+     * Constructor for an Alexa Response.
+     * @constructor
+     * @param {Object} [opts] Contains initialization options for the Alexa Response.
+     * @returns {undefined}
+     */
+    context?: any;
+    event?: any;
     constructor(opts: {
-        alexaRequest?: AlexaRequest,
-        context?: AlexaResponseContext,
-        event?: AlexaResponseEvent,
+        context?: any,
+        event?: any,
+        request?: any,
         namespace?: string,
         name?: string,
         messageId?: string,
@@ -252,26 +54,78 @@ export class AlexaResponse {
         }
 
         if (Reflect.has(opts, "event")) {
-            this.event = <AlexaResponseEvent>opts.event;
+            this.event = opts.event;
         } else {
+            const alts: {
+                endpointId: string,
+                token: string,
+                correlationToken?: string,
+            } = {
+                endpointId: "INVALID",
+                token: "INVALID"
+            };
+            if (Reflect.has(opts, "request") && Reflect.has(opts.request, "directive")) {
+                if (Reflect.has(opts.request.directive, "header")) {
+                    if (Reflect.has(opts.request.directive.header, "correlationToken")) {
+                        alts.correlationToken = opts.request.directive.header.correlationToken;
+                    }
+                }
+                if (Reflect.has(opts.request.directive, "endpoint")) {
+                    if (Reflect.has(opts.request.directive.endpoint, "endpointId")) {
+                        alts.endpointId = opts.request.directive.endpoint.endpointId;
+                    }
+                    if (Reflect.has(opts.request.directive.endpoint, "scope") &&
+                        Reflect.has(opts.request.directive.endpoint.scope, "token")) {
+                        alts.token = opts.request.directive.endpoint.scope.token;
+                    }
+                }
+            }
             this.event = {
-                "header": new AlexaHeader({
-                    "alexaRequest": opts.alexaRequest,
-                    "namespace": opts.namespace,
-                    "name": opts.name,
-                    "messageId": opts.messageId,
-                    "payloadVersion": opts.payloadVersion,
-                    "correlationToken": opts.correlationToken,
-                    "instance": opts.instance
-                }),
-                "endpoint": new AlexaEndpoint({
-                    token: opts.token,
-                    endpointId: opts.token,
-                }),
+                "header": {
+                    "namespace": Reflect.has(opts, "namespace") && opts.namespace !== ""
+                        ? opts.namespace
+                        : "Alexa",
+                    "name": Reflect.has(opts, "name") && opts.name !== ""
+                        ? opts.name
+                        : "Response",
+                    "messageId": Reflect.has(opts, "messageId") && opts.messageId !== ""
+                        ? opts.messageId
+                        : uuid(),
+                    "payloadVersion": Reflect.has(opts, "payloadVersion") && opts.payloadVersion !== ""
+                        ? opts.payloadVersion
+                        : "3"
+                },
+                "endpoint": {
+                    "scope": {
+                        "type": "BearerToken",
+                        "token": Reflect.has(opts, "token") && opts.token !== "" && opts.token !== {}
+                            ? opts.token
+                            : alts.token
+                    },
+                    "endpointId": Reflect.has(opts, "endpointId") && opts.endpointId !== ""
+                        ? opts.endpointId
+                        : alts.endpointId
+                },
                 "payload": Reflect.has(opts, "payload") && opts.payload !== {}
                     ? opts.payload
                     : {}
             };
+            if (Reflect.has(alts, "correlationToken")) {
+                this.event.header.correlationToken = alts.correlationToken;
+            }
+            if (Reflect.has(opts, "correlationToken")) {
+                this.event.header.correlationToken = opts.correlationToken;
+            }
+            if (Reflect.has(opts, "instance")) {
+                this.event.header.instance = opts.instance;
+            }
+        }
+
+        // No endpoint in an AcceptGrant or Discover request
+        if (this.event.header.name === "AcceptGrant.Response" ||
+            this.event.header.name === "Discover.Response") {
+
+            Reflect.deleteProperty(this.event, "endpoint");
         }
     }
 
@@ -289,11 +143,20 @@ export class AlexaResponse {
         uncertaintyInMilliseconds?: number
     }) {
         if (!Reflect.has(this, "context")) {
-            this.context = new AlexaResponseContext({});
+            this.context = {};
         }
-        (<AlexaResponseContext>this.context).addProperty(opts);
+        if (!Reflect.has(this.context, "properties")) {
+            this.context.properties = [];
+        }
+
+        this.context.properties.push(AlexaResponse.createContextProperty(opts));
     }
 
+    /**
+     * Add an endpoint to the payload.
+     * @param {Object} [opts] Contains options for the endpoint.
+     * @returns {undefined}
+     */
     addPayloadEndpoint(opts: {
         capabilities?: any[],
         description?: string,
@@ -301,7 +164,7 @@ export class AlexaResponse {
         endpointId?: string,
         friendlyName?: string,
         manufacturerName?: string,
-        cookie?: {[x: string]: any}
+        cookie?: any
     }) {
         if (!Reflect.has(this, "event")) {
             this.event = {};
@@ -312,11 +175,163 @@ export class AlexaResponse {
         if (!Reflect.has(this.event.payload, "endpoints")) {
             this.event.payload.endpoints = [];
         }
-        const property = new AlexaPayloadEndpoint(opts);
 
-        this.event.payload.endpoints.push(property);
+        this.event.payload.endpoints.push(AlexaResponse.createPayloadEndpoint(opts));
     }
 
+    /**
+     * Creates a property for the context.
+     * @param {Object} [opts] Contains options for the property.
+     * @return {Object} A property for the Alexa Response context.
+     */
+    static createContextProperty(opts: {
+        namespace?: string,
+        name?: string,
+        instance?: string,
+        value?: any,
+        timeOfSample?: string,
+        uncertaintyInMilliseconds?: number
+    }) {
+        if (typeof opts === "undefined") {
+            // eslint-disable-next-line no-param-reassign
+            opts = {};
+        }
+
+        const property: {
+            namespace: string,
+            name: string,
+            instance?: string,
+            value: any,
+            timeOfSample: string,
+            uncertaintyInMilliseconds: number
+        } = {
+            namespace: Reflect.has(opts, "namespace") && opts.namespace !== ""
+                ? <string>opts.namespace
+                : "Alexa.EndpointHealth",
+            name: Reflect.has(opts, "name") && opts.name !== ""
+                ? <string>opts.name
+                : "connectivity",
+            value: Reflect.has(opts, "value") && opts.value !== {}
+                ? opts.value
+                : {"value": "OK"},
+            timeOfSample: new Date().toISOString(),
+            uncertaintyInMilliseconds: Reflect.has(opts, "uncertaintyInMilliseconds")
+                ? <number>opts.uncertaintyInMilliseconds
+                : 0
+        }
+        if (Reflect.has(opts, "instance")) {
+            property.instance = opts.instance;
+        }
+
+        return property;
+    }
+
+    /**
+     * Creates an endpoint for the payload.
+     * @param {Object} [opts] Contains options for the endpoint.
+     * @return {Object} An endpoint for the Alexa Reponse payload.
+     */
+    static createPayloadEndpoint(opts: {
+        capabilities?: any[],
+        description?: string,
+        displayCategories?: string[],
+        endpointId?: string,
+        friendlyName?: string,
+        manufacturerName?: string
+        cookie?: any
+    }) {
+        // Return the proper structure expected for the endpoint
+        const endpoint: {
+            capabilities: any[],
+            description: string,
+            displayCategories: string[],
+            endpointId: string,
+            friendlyName: string,
+            manufacturerName: string,
+            cookie?: any
+        } = {
+        capabilities: Reflect.has(opts, "capabilities")
+            ? <any[]>opts.capabilities
+            : [],
+        description: Reflect.has(opts, "description") && opts.description !== ""
+            ? <string>opts.description
+            : "Sample Endpoint Description",
+        displayCategories: Reflect.has(opts, "displayCategories")
+            ? <string[]>opts.displayCategories
+            : ["OTHER"],
+        endpointId: Reflect.has(opts, "endpointId") && opts.endpointId !== ""
+            ? <string>opts.endpointId
+            : "endpoint-001",
+        friendlyName: Reflect.has(opts, "friendlyName") && opts.friendlyName !== ""
+            ? <string>opts.friendlyName
+            : "Sample Endpoint",
+        manufacturerName: Reflect.has(opts, "manufacturerName") && opts.manufacturerName !== ""
+            ? <string>opts.manufacturerName
+            : "Sample Manufacturer"
+        };
+        if (Reflect.has(opts, "cookie")) {
+            endpoint.cookie = opts.cookie;
+        }
+
+        return endpoint;
+    }
+
+    /**
+     * Creates a capability for an endpoint within the payload.
+     * @param {Object} [opts] Contains options for the endpoint capability.
+     * @return {Object} A capability for Alexa Response payload.
+     */
+    static createPayloadEndpointCapability(opts: {
+        type?: string,
+        interface?: string,
+        version?: string,
+        supported?: boolean,
+        proactivelyReported?: boolean,
+        retrievable?: boolean
+    }) {
+        const capability: {
+            type: string,
+            interface: string,
+            version: string,
+            supported?: boolean,
+            properties?: {
+                supported: boolean,
+                proactivelyReported: boolean,
+                retrievable: boolean
+            }
+        } = {
+            type: Reflect.has(opts, "type") && opts.type !== ""
+                ? <string>opts.type
+                : "AlexaInterface",
+            interface: Reflect.has(opts, "interface") && opts.interface !== ""
+                ? <string>opts.interface
+                : "Alexa",
+            version: Reflect.has(opts, "version") && opts.version !== ""
+                ? <string>opts.version
+                : "3"
+        };
+        const supported = Reflect.has(opts, "supported")
+            ? opts.supported
+            : false;
+        if (supported) {
+            capability.properties = {
+                supported: true,
+                proactivelyReported: Reflect.has(opts, "proactivelyReported")
+                    ? <boolean>opts.proactivelyReported
+                    : false,
+                retrievable: Reflect.has(opts, "retrievable")
+                    ? <boolean>opts.retrievable
+                    : false
+            };
+        }
+
+        return capability;
+    }
+
+    /**
+     * Get the composed Alexa Response.
+     * @returns {Object} The Alexa Response.
+     */
     get() {
         return this;
     }

@@ -27,7 +27,7 @@ export function directiveErrorResponse(event: AlexaRequest, namespace: string): 
 
 export function errorResponse(event: AlexaRequest, type: string, message: string): AlexaResponse {
     const alexaResponse = new AlexaResponse({
-        "alexaRequest": event,
+        "request": event,
         "name": "ErrorResponse",
         "payload": {
             "type": type,
