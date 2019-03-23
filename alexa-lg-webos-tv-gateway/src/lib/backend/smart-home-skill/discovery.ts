@@ -1,4 +1,4 @@
-import {namespaceErrorResponse} from "alexa-lg-webos-tv-common";
+import {namespaceErrorResponse, AlexaResponseEventPayloadEndpoint} from "alexa-lg-webos-tv-common";
 import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
@@ -50,12 +50,13 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpointList(udns: UDN[]): Promise<{[x: string]: any}[]> {
+    async function buildEndpointList(udns: UDN[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
+
         const endpoints = await Promise.all(udns.map(buildEndpoint));
         return endpoints;
     }
 
-    async function buildEndpoint(udn: UDN): Promise<{[x: string]: any}> {
+    async function buildEndpoint(udn: UDN): Promise<AlexaResponseEventPayloadEndpoint> {
         try {
             // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
@@ -65,7 +66,7 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
                 alexaChannelController.capabilities(lgtv, alexaRequest, udn),
                 alexaInputController.capabilities(lgtv, alexaRequest, udn),
                 alexaLauncher.capabilities(lgtv, alexaRequest, udn),
-                alexaPlaybackController.capabilities(lgtv, alexaRequest, udn)
+                alexaPlaybackController.capabilities(lgtv, alexaRequest, udn),
             ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
@@ -74,7 +75,7 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
                 return null;
             }
             const {name} = lgtv.tv(udn);
-            const endpoint = AlexaResponse.createPayloadEndpoint({
+            const endpoint: AlexaResponseEventPayloadEndpoint = AlexaResponse.createPayloadEndpoint({
                 "endpointId": udn,
                 "friendlyName": name,
                 "description": "LG webOS TV",

@@ -43,8 +43,8 @@ export class AlexaRequest {
         if ((request.directive.header.payloadVersion === "3") === false) {
             throw new GenericError("error", "parameter(s) initialized 'AlexaResponse.directive.header.payloadVersion' to invalid value '3'.");
         }
-        if ((request.directive, "endpoint")) {
-            let endpoint: {[x: string]: any} = request.directive.endpoint;
+        if (Reflect.has(request.directive, "endpoint")) {
+            const endpoint: {[x: string]: any} = request.directive.endpoint;
             if (Reflect.has(endpoint, "endpointId") === false) {
                 throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive'.");
             }

@@ -1,29 +1,27 @@
 import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.PowerController",
             "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "powerState"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
+            "supported": [
+                {
+                    "name": "powerState"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": true
         }
     ];
 }
 
-function states(lgtv: BackendController, udn: UDN): {[x: string]: any}[] {
+function states(lgtv: BackendController, udn: UDN): AlexaResponseContextPropertyInput[] {
     const powerStateState = AlexaResponse.createContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",

@@ -1,7 +1,7 @@
 import {UDN} from "../../common";
 import {BackendController} from "../backend-controller";
 import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video
@@ -58,29 +58,27 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string, name: string}} = 
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.Launcher",
             "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "identifier"
-                    },
-                    {
-                        "name": "name"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
+            "supported": [
+                {
+                    "name": "identifier"
+                },
+                {
+                    "name": "name"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": true
         }
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: any}[]> {
+async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
     try {
         const lgtvInput: {appId: string, [x: string]: any} | null = await getInput();
         const alexaInput: {identifier: string, name: string} | null = mapInput(<{appId: string, [x: string]: any}>lgtvInput);
@@ -108,7 +106,7 @@ async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: 
         return lgtvToAlexa[<string>input.appId];
     }
 
-    function buildStates(target: {identifier: string, name: string} | null): {[x: string]: any}[] {
+    function buildStates(target: {identifier: string, name: string} | null): AlexaResponseContextPropertyInput[] {
         if (target === null) {
             return [];
         }

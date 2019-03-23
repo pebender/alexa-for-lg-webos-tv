@@ -1,31 +1,29 @@
 import {directiveErrorResponse, namespaceErrorResponse, errorResponse, GenericError} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.Speaker",
             "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "volume"
-                    },
-                    {
-                        "name": "muted"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
+            "supported": [
+                {
+                    "name": "volume"
+                },
+                {
+                    "name": "muted"
+                }
+            ],
+            "proactivelyReported": false,
+            "retrievable": true
         }
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: any}[]> {
+async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
     if (lgtv.getPowerState(udn) === "OFF") {
         return [];
     }

@@ -1,4 +1,3 @@
-import {AlexaRequest} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
 
 /*

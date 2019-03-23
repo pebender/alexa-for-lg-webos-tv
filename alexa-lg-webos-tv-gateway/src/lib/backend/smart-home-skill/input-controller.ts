@@ -1,5 +1,5 @@
 import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
@@ -45,26 +45,20 @@ const lgtvToAlexa: {[key: string]: string} = {
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.InputController",
             "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "input"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
+            "supported": [{"name": "input"}],
+            "proactivelyReported": false,
+            "retrievable": true
         }
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: any}[]> {
+async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
     const lgtvInputList: {[key: string]: string} = await getExternalInputList();
     const lgtvAppId: string = await getInput();
     const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
@@ -113,7 +107,7 @@ async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: 
         return input;
     }
 
-    function buildStates(input: any): {[x: string]: any}[] {
+    function buildStates(input: any): AlexaResponseContextPropertyInput[] {
         if (input === null) {
             return [];
         }

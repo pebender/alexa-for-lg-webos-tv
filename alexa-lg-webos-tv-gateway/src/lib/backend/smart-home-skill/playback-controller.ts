@@ -1,10 +1,10 @@
 import {directiveErrorResponse, namespaceErrorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -22,7 +22,7 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(_lgtv: BackendController, _udn: UDN): {[x: string]: any}[] {
+function states(_lgtv: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
