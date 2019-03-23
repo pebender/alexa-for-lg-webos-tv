@@ -76,7 +76,7 @@ export class DatabaseTable {
         });
     }
 
-    async getRecord(query: any): Promise<any> {
+    async getRecord(query: any): Promise<{[x: string]: any}> {
         this._throwIfNotInitialized("getRecord");
         const record = await new Promise<any>((resolve, reject) => {
             this._db.findOne(
@@ -93,7 +93,7 @@ export class DatabaseTable {
         return record;
     }
 
-    async getRecords(query: any): Promise<any[]> {
+    async getRecords(query: any): Promise<{[x: string]: any}[]> {
         this._throwIfNotInitialized("getRecords");
         const records = await new Promise<any[]>((resolve, reject) => {
             this._db.find(

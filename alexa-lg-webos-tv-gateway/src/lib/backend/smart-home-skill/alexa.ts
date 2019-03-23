@@ -1,11 +1,10 @@
-import {AlexaRequest} from "alexa-lg-webos-tv-common";
-import {AlexaResponse} from "alexa-lg-webos-tv-common";
-const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
+import {namespaceErrorResponse, directiveErrorResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _event: AlexaRequest, _udn: UDN) {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
     return [
         {
             "type": "AlexaInterface",
@@ -16,33 +15,32 @@ function capabilities(_lgtv: BackendController, _event: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(_lgtv: BackendController, _udn: UDN): any[] {
+function states(_lgtv: BackendController, _udn: UDN): {[x: string]: any}[] {
     return [];
 }
 
-function handler(lgtv: BackendController, event: AlexaRequest) {
-    if (event.directive.header.namespace !== "Alexa") {
-        return namespaceErrorResponse(event, "Alexa");
+function handler(lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+    if (alexaRequest.directive.header.namespace !== "Alexa") {
+        return namespaceErrorResponse(alexaRequest, "Alexa");
     }
-    switch (event.directive.header.name) {
+    switch (alexaRequest.directive.header.name) {
         case "ReportState":
-            return reportStateHandler(lgtv, event);
+            return reportStateHandler(lgtv, alexaRequest);
         default:
-            return unknownDirectiveError(lgtv, event);
+            return unknownDirectiveError(lgtv, alexaRequest);
     }
 }
 
-function reportStateHandler(_lgtv: BackendController, event: AlexaRequest): AlexaResponse {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
+function reportStateHandler(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+    return new AlexaResponse({
+        "request": alexaRequest,
         "namespace": "Alexa",
         "name": "StateReport"
     });
-    return alexaResponse.get();
 }
 
-function unknownDirectiveError(_lgtv: BackendController, event: AlexaRequest) {
-    return directiveErrorResponse(event, "Alexa");
+function unknownDirectiveError(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+    return directiveErrorResponse(alexaRequest, "Alexa");
 }
 
 module.exports = {

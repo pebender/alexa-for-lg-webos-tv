@@ -58,15 +58,15 @@ export class FrontendExternal {
             resolve();
         }));
 
-        function authorizeRoot(username: string, password: string) {
+        function authorizeRoot(username: string, password: string): boolean {
             return that._security.authorizeRoot(username, password);
         }
 
-        function authorizeUser(username: string, password: string) {
+        function authorizeUser(username: string, password: string): Promise<boolean> {
             return that._security.authorizeUser(username, password);
         }
 
-        async function httpHandler(request: exporessCore.Request, response: exporessCore.Response) {
+        async function httpHandler(request: exporessCore.Request, response: exporessCore.Response): Promise<void> {
             if (("command" in request.body) && request.body.command.name === "passwordSet") {
                 let body: {[x: string]: any} | {} = {
                     "error": {
@@ -98,7 +98,7 @@ export class FrontendExternal {
             }
         }
 
-        async function backendRunHandler(request: express.Request, response: express.Response) {
+        async function backendRunHandler(request: express.Request, response: express.Response): Promise<void> {
             const commandResponse = await that._backend.runCommand(request.body);
             response.
                 type("json").
@@ -107,7 +107,7 @@ export class FrontendExternal {
                 end();
         }
 
-        async function backendSkillHandler(request: express.Request, response: express.Response) {
+        async function backendSkillHandler(request: express.Request, response: express.Response): Promise<void> {
             if (Reflect.has(request.body, "log")) {
 console.log(JSON.stringify(request.body, null, 2));
                 response.
@@ -127,7 +127,7 @@ console.log(JSON.stringify(request.body, null, 2));
                 end();
         }
 
-        function backendPingHandler(_request: exporessCore.Request, response: exporessCore.Response) {
+        function backendPingHandler(_request: exporessCore.Request, response: exporessCore.Response): void {
             response.
                 status(200).
                 end();

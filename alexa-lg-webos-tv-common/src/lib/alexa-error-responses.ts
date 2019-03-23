@@ -26,13 +26,13 @@ export function directiveErrorResponse(event: AlexaRequest, namespace: string): 
 }
 
 export function errorResponse(event: AlexaRequest, type: string, message: string): AlexaResponse {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event,
+        "namespace": "Alexa",
         "name": "ErrorResponse",
         "payload": {
             "type": type,
             "message": message
         }
     });
-    return alexaResponse.get();
 }

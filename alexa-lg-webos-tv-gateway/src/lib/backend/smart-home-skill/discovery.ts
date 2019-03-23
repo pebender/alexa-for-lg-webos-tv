@@ -1,5 +1,5 @@
+import {namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
-const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 const alexa = require("./alexa");
@@ -10,9 +10,9 @@ const alexaInputController = require("./input-controller");
 const alexaLauncher = require("./launcher");
 const alexaPlaybackController = require("./playback-controller");
 
-async function handler(lgtv: BackendController, event: AlexaRequest) {
-    if (event.directive.header.namespace !== "Alexa.Discovery") {
-        return namespaceErrorResponse(event, "Alexa.Discovery");
+async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
+        return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
     }
 
     const udnList = await lgtv.getUDNList();
@@ -50,22 +50,22 @@ async function handler(lgtv: BackendController, event: AlexaRequest) {
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpointList(udns: UDN[]) {
+    async function buildEndpointList(udns: UDN[]): Promise<{[x: string]: any}[]> {
         const endpoints = await Promise.all(udns.map(buildEndpoint));
         return endpoints;
     }
 
-    async function buildEndpoint(udn: UDN) {
+    async function buildEndpoint(udn: UDN): Promise<{[x: string]: any}> {
         try {
             // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
-                alexa.capabilities(lgtv, event, udn),
-                alexaPowerController.capabilities(lgtv, event, udn),
-                alexaSpeaker.capabilities(lgtv, event, udn),
-                alexaChannelController.capabilities(lgtv, event, udn),
-                alexaInputController.capabilities(lgtv, event, udn),
-                alexaLauncher.capabilities(lgtv, event, udn),
-                alexaPlaybackController.capabilities(lgtv, event, udn)
+                alexa.capabilities(lgtv, alexaRequest, udn),
+                alexaPowerController.capabilities(lgtv, alexaRequest, udn),
+                alexaSpeaker.capabilities(lgtv, alexaRequest, udn),
+                alexaChannelController.capabilities(lgtv, alexaRequest, udn),
+                alexaInputController.capabilities(lgtv, alexaRequest, udn),
+                alexaLauncher.capabilities(lgtv, alexaRequest, udn),
+                alexaPlaybackController.capabilities(lgtv, alexaRequest, udn)
             ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
@@ -91,15 +91,14 @@ async function handler(lgtv: BackendController, event: AlexaRequest) {
     function buildResponse(endpoints: any): AlexaResponse {
         const alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
-            "name": "Discover.Response",
-            "token": event.directive.payload.scope.token
+            "name": "Discover.Response"
         });
         endpoints.forEach((endpoint: any) => {
             if (endpoint !== null) {
                 alexaResponse.addPayloadEndpoint(endpoint);
             }
         });
-        return alexaResponse.get();
+        return alexaResponse;
     }
 }
 

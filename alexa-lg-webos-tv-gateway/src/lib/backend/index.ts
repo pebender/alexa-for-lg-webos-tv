@@ -57,14 +57,14 @@ export class Backend extends EventEmitter {
         return this._searcher.now();
     }
 
-    runCommand(event: any): Promise<any> {
+    runCommand(event: {[x: string]: any}): Promise<any> {
         this._throwIfNotInitialized("runCommand");
         return this._controller.runCommand(event);
     }
 
-    skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
+    skillCommand(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         this._throwIfNotInitialized("skillCommand");
-        return this._controller.skillCommand(event);
+        return this._controller.skillCommand(alexaRequest);
     }
 
     getUDNList(): UDN[] {

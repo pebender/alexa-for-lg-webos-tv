@@ -1,7 +1,7 @@
 import {UDN} from "../../common";
 import {BackendController} from "../backend-controller";
+import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
 import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
-const {directiveErrorResponse, namespaceErrorResponse, errorResponse} = require("alexa-lg-webos-tv-common");
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video
@@ -58,7 +58,7 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string, name: string}} = 
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _event: AlexaRequest, _udn: UDN) {
+function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): {[x: string]: any}[] {
     return [
         {
             "type": "AlexaInterface",
@@ -80,7 +80,7 @@ function capabilities(_lgtv: BackendController, _event: AlexaRequest, _udn: UDN)
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<any[]> {
+async function states(lgtv: BackendController, udn: UDN): Promise<{[x: string]: any}[]> {
     try {
         const lgtvInput: {appId: string, [x: string]: any} | null = await getInput();
         const alexaInput: {identifier: string, name: string} | null = mapInput(<{appId: string, [x: string]: any}>lgtvInput);
@@ -108,7 +108,7 @@ async function states(lgtv: BackendController, udn: UDN): Promise<any[]> {
         return lgtvToAlexa[<string>input.appId];
     }
 
-    function buildStates(target: {identifier: string, name: string} | null) {
+    function buildStates(target: {identifier: string, name: string} | null): {[x: string]: any}[] {
         if (target === null) {
             return [];
         }
@@ -121,15 +121,15 @@ async function states(lgtv: BackendController, udn: UDN): Promise<any[]> {
     }
 }
 
-function handler(lgtv: BackendController, event: AlexaRequest) {
-    if (event.directive.header.namespace !== "Alexa.Launcher") {
-        return namespaceErrorResponse(event, "Alexa.Launcher");
+function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
     }
-    switch (event.directive.header.name) {
+    switch (alexaRequest.directive.header.name) {
         case "LaunchTarget":
-            return launchTargetHandler(lgtv, event);
+            return launchTargetHandler(lgtv, alexaRequest);
         default:
-            return directiveErrorResponse(lgtv, event);
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
     }
 }
 
@@ -139,25 +139,26 @@ function handler(lgtv: BackendController, event: AlexaRequest) {
  * A list of LG webOS TV target ids can be found bet issuing the command
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
-async function launchTargetHandler(lgtv: BackendController, event: AlexaRequest) {
-    if (Reflect.has(alexaToLGTV, event.directive.payload.identifier)) {
+async function launchTargetHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (Reflect.has(alexaToLGTV, alexaRequest.directive.payload.identifier)) {
         return errorResponse(
-            event,
+            alexaRequest,
             "INTERNAL_ERROR",
-            `I do not know the Launcher target ${event.directive.payload.identifier}`
+            `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
         );
     }
-    const {endpointId} = event.directive.endpoint;
+    const {endpointId} = alexaRequest.directive.endpoint;
     const command = {
         "uri": "ssap://system.launcher/launch",
-        "payload": alexaToLGTV[event.directive.payload.identifier]
+        "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]
     };
     // eslint-disable-next-line no-unused-vars
     await lgtv.lgtvCommand(endpointId, command);
-    const alexaResponse = new AlexaResponse({
-        "request": event
+    return new AlexaResponse({
+        "request": alexaRequest,
+        "namespace": "Alexa",
+        "name": "Response"
     });
-    return alexaResponse.get();
 }
 
 export {capabilities, states, handler};

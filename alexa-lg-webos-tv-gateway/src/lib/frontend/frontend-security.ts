@@ -86,7 +86,7 @@ export class FrontendSecurity {
         return record.value;
     }
 
-    setHostname(hostname: string) {
+    setHostname(hostname: string): {[x: string]: any} {
         this._throwIfNotInitialized("setHostname");
         return this._db.updateOrInsertRecord(
             {"name": "hostname"},
