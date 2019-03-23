@@ -3,7 +3,7 @@ import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapability
 import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -23,8 +23,8 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
-    if (lgtv.getPowerState(udn) === "OFF") {
+async function states(backendController: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
+    if (backendController.getPowerState(udn) === "OFF") {
         return [];
     }
 
@@ -32,7 +32,7 @@ async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseC
         "uri": "ssap://audio/getVolume"
     };
     try {
-        const lgtvResponse = await lgtv.lgtvCommand(udn, command);
+        const lgtvResponse = await backendController.lgtvCommand(udn, command);
         const volumeState = AlexaResponse.createContextProperty({
             "namespace": "Alexa.Speaker",
             "name": "volume",
@@ -52,23 +52,23 @@ async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseC
     }
 }
 
-function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.Speaker") {
         namespaceErrorResponse(alexaRequest, "Alexa.Speaker");
     }
     switch (alexaRequest.directive.header.name) {
         case "SetVolume":
-            return setVolumeHandler(lgtv, alexaRequest);
+            return setVolumeHandler(backendController, alexaRequest);
         case "AdjustVolume":
-            return adjustVolumeHandler(lgtv, alexaRequest);
+            return adjustVolumeHandler(backendController, alexaRequest);
         case "SetMute":
-            return setMuteHandler(lgtv, alexaRequest);
+            return setMuteHandler(backendController, alexaRequest);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Speaker"));
     }
 }
 
-async function setVolumeHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function setVolumeHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     let lgtvVolume: number;
     try {
         lgtvVolume = await getVolume()
@@ -94,12 +94,12 @@ async function setVolumeHandler(lgtv: BackendController, alexaRequest: AlexaRequ
     }
 
     async function setVolume(volume: number) {
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         const command = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
-        await lgtv.lgtvCommand(endpointId, command);
+        await backendController.lgtvCommand(udn, command);
         return new AlexaResponse({
             "request": alexaRequest,
             "namespace": "Alexa",
@@ -108,7 +108,7 @@ async function setVolumeHandler(lgtv: BackendController, alexaRequest: AlexaRequ
     }
 }
 
-async function adjustVolumeHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function adjustVolumeHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     let lgtvVolume: number;
     try {
         lgtvVolume = await getVolume()
@@ -122,12 +122,12 @@ async function adjustVolumeHandler(lgtv: BackendController, alexaRequest: AlexaR
     return setVolume(lgtvVolume);
 
     async function getVolume(): Promise<number> {
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
 
         const command = {
             "uri": "ssap://audio/getVolume"
         };
-        const lgtvResponse = await lgtv.lgtvCommand(endpointId, command);
+        const lgtvResponse = await backendController.lgtvCommand(udn, command);
         if (Reflect.has(lgtvResponse, "volume") === false) {
             throw new GenericError("error", "The T.V. did not return it's volume.");
         }
@@ -151,12 +151,12 @@ async function adjustVolumeHandler(lgtv: BackendController, alexaRequest: AlexaR
     }
 
     async function setVolume(volume: number): Promise<AlexaResponse> {
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         const command = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
-        await lgtv.lgtvCommand(endpointId, command);
+        await backendController.lgtvCommand(udn, command);
         return new AlexaResponse({
             "request": alexaRequest,
             "namespace": "Alexa",
@@ -165,16 +165,16 @@ async function adjustVolumeHandler(lgtv: BackendController, alexaRequest: AlexaR
     }
 }
 
-function setMuteHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function setMuteHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     return setMute();
 
     async function setMute(): Promise<AlexaResponse> {
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         const command = {
             "uri": "ssap://audio/setMute",
             "payload": {"mute": alexaRequest.directive.payload.mute}
         };
-        await lgtv.lgtvCommand(endpointId, command);
+        await backendController.lgtvCommand(udn, command);
         return new AlexaResponse({
             "request": alexaRequest,
             "namespace": "Alexa",

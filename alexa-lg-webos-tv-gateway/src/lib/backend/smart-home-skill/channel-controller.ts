@@ -16,25 +16,25 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(_lgtv: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
-function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.ChannelController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "ChangeChannel":
-            return changeChannelHandler(lgtv, alexaRequest);
+            return changeChannelHandler(backendController, alexaRequest);
         case "SkipChannels":
-            return skipChannelsHandler(lgtv, alexaRequest);
+            return skipChannelsHandler(backendController, alexaRequest);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }
 }
 
-async function changeChannelHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function changeChannelHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     const channelCommand = await getCommand();
     return setChannel(channelCommand);
 
@@ -87,11 +87,11 @@ async function changeChannelHandler(lgtv: BackendController, alexaRequest: Alexa
 
     async function setChannel(command: {uri: string, payload: any} | null): Promise<AlexaResponse> {
         if (command === null) {
-            return unknownChannelError(lgtv, alexaRequest);
+            return unknownChannelError(backendController, alexaRequest);
         }
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         try {
-            await lgtv.lgtvCommand(endpointId, command);
+            await backendController.lgtvCommand(udn, command);
         } catch (error) {
             return errorToErrorResponse(alexaRequest, error);
         }

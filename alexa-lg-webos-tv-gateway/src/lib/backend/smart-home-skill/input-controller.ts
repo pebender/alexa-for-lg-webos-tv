@@ -45,7 +45,7 @@ const lgtvToAlexa: {[key: string]: string} = {
 };
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -58,21 +58,21 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
     ];
 }
 
-async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
+async function states(backendController: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
     const lgtvInputList: {[key: string]: string} = await getExternalInputList();
     const lgtvAppId: string = await getInput();
     const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
     return buildStates(alexaInput);
 
     async function getExternalInputList() {
-        if (lgtv.getPowerState(udn) === "OFF") {
+        if (backendController.getPowerState(udn) === "OFF") {
             return [];
         }
 
         const command = {
             "uri": "ssap://tv/getExternalInputList"
         };
-        const lgtvResponse = await lgtv.lgtvCommand(udn, command);
+        const lgtvResponse = await backendController.lgtvCommand(udn, command);
         if (Reflect.has(lgtvResponse, "devices") === false) {
             return [];
         }
@@ -80,13 +80,13 @@ async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseC
     }
 
     async function getInput(): Promise<string> {
-        if (lgtv.getPowerState(udn) === "OFF") {
+        if (backendController.getPowerState(udn) === "OFF") {
             return null;
         }
         const command = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const lgtvResponse = await lgtv.lgtvCommand(udn, command);
+        const lgtvResponse = await backendController.lgtvCommand(udn, command);
         return lgtvResponse.appId;
     }
 
@@ -120,34 +120,34 @@ async function states(lgtv: BackendController, udn: UDN): Promise<AlexaResponseC
     }
 }
 
-function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.InputController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.InputController"));
     }
     switch (alexaRequest.directive.header.name) {
     case "SelectInput":
-        return selectInputHandler(lgtv, alexaRequest);
+        return selectInputHandler(backendController, alexaRequest);
     default:
         return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.InputController"));
     }
 }
 
-async function selectInputHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function selectInputHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     const lgtvInputList = await getExternalInputList();
     const lgtvAppId = await getInput();
     const lgtvInput = mapInput(lgtvInputList, lgtvAppId);
     return setExternalInput(lgtvInput);
 
     async function getExternalInputList(): Promise<{id: string, label: string, [x: string]: any}[]> {
-        const {endpointId} = alexaRequest.directive.endpoint;
-        if (lgtv.getPowerState(endpointId) === "OFF") {
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+        if (backendController.getPowerState(udn) === "OFF") {
             return [];
         }
 
         const command = {
             "uri": "ssap://tv/getExternalInputList"
         };
-        const lgtvResponse = await lgtv.lgtvCommand(endpointId, command);
+        const lgtvResponse = await backendController.lgtvCommand(udn, command);
         if (!Reflect.has(lgtvResponse, "devices")) {
             return [];
         }
@@ -192,9 +192,9 @@ async function selectInputHandler(lgtv: BackendController, alexaRequest: AlexaRe
             );
         }
 
-        const {endpointId} = alexaRequest.directive.endpoint;
+        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
 
-        if (lgtv.getPowerState(endpointId) === "OFF") {
+        if (backendController.getPowerState(udn) === "OFF") {
             return new AlexaResponse({
                 "request": alexaRequest,
                 "namespace": "Alexa",
@@ -206,7 +206,7 @@ async function selectInputHandler(lgtv: BackendController, alexaRequest: AlexaRe
             "uri": "ssap://tv/switchInput",
             "payload": {"inputId": input}
         };
-        await lgtv.lgtvCommand(endpointId, command);
+        await backendController.lgtvCommand(udn, command);
         return new AlexaResponse({
             "request": alexaRequest,
             "namespace": "Alexa",

@@ -10,12 +10,12 @@ const alexaInputController = require("./input-controller");
 const alexaLauncher = require("./launcher");
 const alexaPlaybackController = require("./playback-controller");
 
-async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
         return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
     }
 
-    const udnList = await lgtv.getUDNList();
+    const udnList = await backendController.getUDNList();
     const endpointList = await buildEndpointList(udnList);
     const response = await buildResponse(endpointList);
     return response;
@@ -60,13 +60,13 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
         try {
             // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
-                alexa.capabilities(lgtv, alexaRequest, udn),
-                alexaPowerController.capabilities(lgtv, alexaRequest, udn),
-                alexaSpeaker.capabilities(lgtv, alexaRequest, udn),
-                alexaChannelController.capabilities(lgtv, alexaRequest, udn),
-                alexaInputController.capabilities(lgtv, alexaRequest, udn),
-                alexaLauncher.capabilities(lgtv, alexaRequest, udn),
-                alexaPlaybackController.capabilities(lgtv, alexaRequest, udn),
+                alexa.capabilities(backendController, alexaRequest, udn),
+                alexaPowerController.capabilities(backendController, alexaRequest, udn),
+                alexaSpeaker.capabilities(backendController, alexaRequest, udn),
+                alexaChannelController.capabilities(backendController, alexaRequest, udn),
+                alexaInputController.capabilities(backendController, alexaRequest, udn),
+                alexaLauncher.capabilities(backendController, alexaRequest, udn),
+                alexaPlaybackController.capabilities(backendController, alexaRequest, udn),
             ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
@@ -74,7 +74,7 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
             if (capabilities.length === 0) {
                 return null;
             }
-            const {name} = lgtv.tv(udn);
+            const {name} = backendController.tv(udn);
             const endpoint: AlexaResponseEventPayloadEndpoint = AlexaResponse.createPayloadEndpoint({
                 "endpointId": udn,
                 "friendlyName": name,

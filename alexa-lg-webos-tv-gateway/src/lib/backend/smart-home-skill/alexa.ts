@@ -4,7 +4,7 @@ import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -15,23 +15,23 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(_lgtv: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
-function handler(lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     if (alexaRequest.directive.header.namespace !== "Alexa") {
         return namespaceErrorResponse(alexaRequest, "Alexa");
     }
     switch (alexaRequest.directive.header.name) {
         case "ReportState":
-            return reportStateHandler(lgtv, alexaRequest);
+            return reportStateHandler(backendController, alexaRequest);
         default:
-            return unknownDirectiveError(lgtv, alexaRequest);
+            return unknownDirectiveError(backendController, alexaRequest);
     }
 }
 
-function reportStateHandler(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+function reportStateHandler(_backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
         "request": alexaRequest,
         "namespace": "Alexa",
@@ -39,7 +39,7 @@ function reportStateHandler(_lgtv: BackendController, alexaRequest: AlexaRequest
     });
 }
 
-function unknownDirectiveError(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+function unknownDirectiveError(_backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     return directiveErrorResponse(alexaRequest, "Alexa");
 }
 

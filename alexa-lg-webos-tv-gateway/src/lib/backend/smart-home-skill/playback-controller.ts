@@ -4,7 +4,7 @@ import {UDN} from "../../common";
 import {BackendController} from "../../backend";
 
 // eslint-disable-next-line no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_lbackendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -22,56 +22,56 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
 }
 
 // eslint-disable-next-line no-unused-vars
-function states(_lgtv: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
-function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "Play":
-            return playHandler(lgtv, alexaRequest);
+            return playHandler(backendController, alexaRequest);
         case "Pause":
-            return pauseHandler(lgtv, alexaRequest);
+            return pauseHandler(backendController, alexaRequest);
         case "Stop":
-            return stopHandler(lgtv, alexaRequest);
+            return stopHandler(backendController, alexaRequest);
         case "Rewind":
-            return rewindHandler(lgtv, alexaRequest);
+            return rewindHandler(backendController, alexaRequest);
         case "FastForward":
-            return fastForwardHandler(lgtv, alexaRequest);
+            return fastForwardHandler(backendController, alexaRequest);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
 }
 
-function playHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(lgtv, alexaRequest, "ssap://media.controls/play");
+function playHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backendController, alexaRequest, "ssap://media.controls/play");
 }
 
-function pauseHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(lgtv, alexaRequest, "ssap://media.controls/pause");
+function pauseHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backendController, alexaRequest, "ssap://media.controls/pause");
 }
 
-function stopHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(lgtv, alexaRequest, "ssap://media.controls/stop");
+function stopHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backendController, alexaRequest, "ssap://media.controls/stop");
 }
 
-function rewindHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(lgtv, alexaRequest, "ssap://media.controls/rewind");
+function rewindHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backendController, alexaRequest, "ssap://media.controls/rewind");
 }
 
-function fastForwardHandler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(lgtv, alexaRequest, "ssap://media.controls/fastForward");
+function fastForwardHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backendController, alexaRequest, "ssap://media.controls/fastForward");
 }
 
-async function genericHandler(lgtv: BackendController, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
-    const {endpointId} = alexaRequest.directive.endpoint;
+async function genericHandler(backendController: BackendController, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
+    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
     const command = {
         "uri": commandURI
     };
-    await lgtv.lgtvCommand(endpointId, command);
+    await backendController.lgtvCommand(udn, command);
     return new AlexaResponse({
         "request": alexaRequest,
         "namespace": "Alexa",

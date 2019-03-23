@@ -21,8 +21,8 @@ const alexaPlaybackController = require("./playback-controller");
  */
 /*
 // eslint-disable-next-line no-unused-vars
-async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const response = await handlerWithoutValidation(lgtv, alexaRequest);
+async function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    const response = await handlerWithoutValidation(backendController, alexaRequest);
     const ajv = new Ajv({"allErrors": true});
     const validateSchemaFunction = await ajv.compile(alexaSmartHomeMessageSchema);
     const valid = await validateSchemaFunction(response);
@@ -38,7 +38,7 @@ async function handler(lgtv: BackendController, alexaRequest: AlexaRequest): Pro
 }
 */
 
-async function handlerWithoutValidation(lgtv: BackendController, event: any): Promise<AlexaResponse> {
+async function handlerWithoutValidation(backendController: BackendController, event: any): Promise<AlexaResponse> {
     let alexaRequest: AlexaRequest;
     try {
         alexaRequest = new AlexaRequest(event);
@@ -56,23 +56,23 @@ async function handlerWithoutValidation(lgtv: BackendController, event: any): Pr
     try {
         switch (alexaRequest.directive.header.namespace) {
             case "Alexa.Authorization":
-                return alexaAuthorization.handler(lgtv, alexaRequest);
+                return alexaAuthorization.handler(backendController, alexaRequest);
             case "Alexa.Discovery":
-                return alexaDiscovery.handler(lgtv, alexaRequest);
+                return alexaDiscovery.handler(backendController, alexaRequest);
             case "Alexa":
-                return stateHandler(await alexa.handler(lgtv, alexaRequest));
+                return stateHandler(await alexa.handler(backendController, alexaRequest));
             case "Alexa.PowerController":
-                return stateHandler(await alexaPowerController.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaPowerController.handler(backendController, alexaRequest));
             case "Alexa.Speaker":
-                return stateHandler(await alexaSpeaker.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaSpeaker.handler(backendController, alexaRequest));
             case "Alexa.ChannelController":
-                return stateHandler(await alexaChannelController.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaChannelController.handler(backendController, alexaRequest));
             case "Alexa.InputController":
-                return stateHandler(await alexaInputController.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaInputController.handler(backendController, alexaRequest));
             case "Alexa.Launcher":
-                return stateHandler(await alexaLauncher.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaLauncher.handler(backendController, alexaRequest));
             case "Alexa.PlaybackController":
-                return stateHandler(await alexaPlaybackController.handler(lgtv, alexaRequest));
+                return stateHandler(await alexaPlaybackController.handler(backendController, alexaRequest));
             default:
                 return unknownNamespaceError();
         }
@@ -85,13 +85,13 @@ async function handlerWithoutValidation(lgtv: BackendController, event: any): Pr
             const udn: UDN = alexaRequest.directive.endpoint.endpointId;
             const startTime: Date = new Date();
             const statesList = await Promise.all([
-                alexa.states(lgtv, udn),
-                alexaPowerController.states(lgtv, udn),
-                alexaSpeaker.states(lgtv, udn),
-                alexaChannelController.states(lgtv, udn),
-                alexaInputController.states(lgtv, udn),
-                alexaLauncher.states(lgtv, udn),
-                alexaPlaybackController.states(lgtv, udn)
+                alexa.states(backendController, udn),
+                alexaPowerController.states(backendController, udn),
+                alexaSpeaker.states(backendController, udn),
+                alexaChannelController.states(backendController, udn),
+                alexaInputController.states(backendController, udn),
+                alexaLauncher.states(backendController, udn),
+                alexaPlaybackController.states(backendController, udn)
             ].map((value) => Promise.resolve(value)));
             const endTime = new Date();
             const states = [].concat(...statesList);

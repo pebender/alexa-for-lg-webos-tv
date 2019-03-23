@@ -1,5 +1,5 @@
 const LGTV = require("lgtv2");
-import {Client as SsdpClient, ClientOptions as SsdpClientOptions, SsdpHeaders} from "node-ssdp";
+import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
 const wol = require("wol");
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
