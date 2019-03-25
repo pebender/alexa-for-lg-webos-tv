@@ -48,13 +48,13 @@ export class BackendSearcher extends EventEmitter {
         const that: BackendSearcher = this;
 
         // Periodicly scan for TVs.
-        function periodicSearch() {
+        function periodicSearch(): void {
             // Search every 1800s as that is the UPnP recommended time.
             that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
             setTimeout(periodicSearch, 1800000);
         }
 
-        function ssdpProcessCallback(error: Error | null, tv: TV | null) {
+        function ssdpProcessCallback(error: Error | null, tv: TV | null): void {
             if (error) {
                 that.emit("error", error);
                 return;
@@ -65,7 +65,7 @@ export class BackendSearcher extends EventEmitter {
             that.emit("found", tv);
         }
 
-        function ssdpProcess(messageName: string, headers: SsdpHeaders, rinfo: dgram.RemoteInfo, callback: (error: Error | null, tv: TV | null) => void) {
+        function ssdpProcess(messageName: string, headers: SsdpHeaders, rinfo: dgram.RemoteInfo, callback: (error: Error | null, tv: TV | null) => void): void {
             const tv: {
                 udn?: UDN;
                 name?: string;
@@ -210,7 +210,7 @@ export class BackendSearcher extends EventEmitter {
         }));
     }
 
-    public now() {
+    public now(): void {
         this._throwIfNotInitialized("now");
         this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }

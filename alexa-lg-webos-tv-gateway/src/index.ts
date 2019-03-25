@@ -19,7 +19,7 @@ let backendDb = null;
 let frontend = null;
 let frontendDb = null;
 
-async function startGateway() {
+async function startGateway(): Promise<void> {
 
     /*
      * This operation is synchronous. It is both expected and desired because it

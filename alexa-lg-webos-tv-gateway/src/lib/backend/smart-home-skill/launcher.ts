@@ -62,7 +62,7 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
     }
 };
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {

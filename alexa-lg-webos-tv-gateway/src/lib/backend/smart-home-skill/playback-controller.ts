@@ -7,7 +7,7 @@ import {AlexaRequest,
 import {BackendController} from "../../backend";
 import {UDN} from "../../common";
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_lbackendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
@@ -25,7 +25,7 @@ function capabilities(_lbackendController: BackendController, _alexaRequest: Ale
     ];
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }

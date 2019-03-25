@@ -54,7 +54,7 @@ export class FrontendInternal {
             processPassword();
         }
 
-        async function createForm(): Promise<any> {
+        async function createForm(): Promise<string> {
             const hostname = await that._security.getHostname();
             const passwordIsNull = await that._security.userPasswordIsNull();
 
@@ -112,7 +112,7 @@ export class FrontendInternal {
             return form;
         }
 
-        function sendForm(form: any, response: expressCore.Response): void {
+        function sendForm(form: string, response: expressCore.Response): void {
             response.
                 type("html").
                 status(200).

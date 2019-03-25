@@ -86,9 +86,9 @@ export class FrontendSecurity {
         return record.value;
     }
 
-    public setHostname(hostname: string): {[x: string]: any} {
+    public async setHostname(hostname: string): Promise<void> {
         this._throwIfNotInitialized("setHostname");
-        return this._db.updateOrInsertRecord(
+        await this._db.updateOrInsertRecord(
             {"name": "hostname"},
             {
                 "name": "hostname",

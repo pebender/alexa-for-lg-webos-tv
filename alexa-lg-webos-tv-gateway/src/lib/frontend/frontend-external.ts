@@ -36,7 +36,7 @@ export class FrontendExternal {
         };
     }
 
-    public initialize() {
+    public initialize(): Promise<void> {
         const that = this;
 
         function authorizeRoot(username: string, password: string): boolean {
@@ -135,7 +135,7 @@ console.log(JSON.stringify(commandResponse, null, 2));
         }));
     }
 
-    public start() {
+    public start(): void {
         this._throwIfNotInitialized("start");
         this._server.listen(25391, "localhost");
     }

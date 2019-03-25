@@ -10,7 +10,7 @@ import {BackendController} from "../../backend";
 import {UDN} from "../../common";
 const isNumeric = require("isnumeric");
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
@@ -21,16 +21,18 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
     ];
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function skipChannelsHandler(_lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     return Promise.resolve(errorResponse(alexaRequest, "UNKNOWN_ERROR", "'Alexa.ChannelController.SkipChannels' is not supported."));
 }
 
-function unknownChannelError(_lgtv: BackendController, alexaRequest: AlexaRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function unknownChannelError(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     return errorResponse(alexaRequest, "INVALID_VALUE", "The gateway doesn't recognize channel.");
 }
 

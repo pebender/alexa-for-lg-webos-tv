@@ -83,12 +83,12 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
         return endpoints;
     }
 
-    function buildResponse(endpoints: any): AlexaResponse {
+    function buildResponse(endpoints: AlexaResponseEventPayloadEndpoint[]): AlexaResponse {
         const alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
-        endpoints.forEach((endpoint: any) => {
+        endpoints.forEach((endpoint: AlexaResponseEventPayloadEndpoint) => {
             if (endpoint !== null) {
                 alexaResponse.addPayloadEndpoint(endpoint);
             }

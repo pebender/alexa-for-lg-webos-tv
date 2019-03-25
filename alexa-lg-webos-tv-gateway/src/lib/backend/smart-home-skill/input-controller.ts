@@ -49,7 +49,7 @@ const lgtvToAlexa: {[key: string]: string} = {
     "AV_3": "VIDEO 3"
 };
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
@@ -64,7 +64,7 @@ function capabilities(_backendController: BackendController, _alexaRequest: Alex
 }
 
 async function states(backendController: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
-    async function getExternalInputList() {
+    async function getExternalInputList(): Promise<{[x: string]: any}[]> {
         if (backendController.getPowerState(udn) === "OFF") {
             return [];
         }
@@ -119,7 +119,7 @@ async function states(backendController: BackendController, udn: UDN): Promise<A
         return [inputState];
     }
 
-    const lgtvInputList: {[key: string]: string} = await getExternalInputList();
+    const lgtvInputList = await getExternalInputList();
     const lgtvAppId: string = await getInput();
     const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
     return buildStates(alexaInput);

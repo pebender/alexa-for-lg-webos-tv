@@ -10,6 +10,13 @@ import {TV} from "../common";
 import uuid from "uuid/v4";
 const wol = require("wol");
 
+export interface LGTVRequest {
+    uri: string;
+    payload?: any;
+}
+
+export type LGTVResponse = any;
+
 export class BackendControl extends EventEmitter {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
@@ -54,7 +61,7 @@ export class BackendControl extends EventEmitter {
     public initialize(): Promise<void> {
         const that: BackendControl = this;
 
-        function saveKey(key: string, callback: (error: any) => void) {
+        function saveKey(key: string, callback: (error: any) => void): void {
             that._db.updateRecord(
                 {"udn": that._tv.udn},
                 {"$set": {"key": key}}
@@ -252,14 +259,14 @@ export class BackendControl extends EventEmitter {
             : "OFF";
     }
 
-    public async lgtvCommand(command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
+    public async lgtvCommand(lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
         this._throwIfNotInitialized("lgtvCommand");
         let lgtvResponse = null;
-        if (command.payload === null) {
-            lgtvResponse = await new Promise<any>((resolve, reject) => {
+        if (lgtvRequest.payload === null) {
+            lgtvResponse = await new Promise<LGTVResponse>((resolve, reject) => {
                 this._connection.request(
-                    command.uri,
-                    (error: any, response: any) => {
+                    lgtvRequest.uri,
+                    (error: any, response: LGTVResponse) => {
                         if (error) {
                             reject(error);
                             return;
@@ -271,9 +278,9 @@ export class BackendControl extends EventEmitter {
         } else {
             lgtvResponse = await new Promise((resolve, reject) => {
                 this._connection.request(
-                    command.uri,
-                    command.payload,
-                    (error: any, response: any) => {
+                    lgtvRequest.uri,
+                    lgtvRequest.payload,
+                    (error: any, response: LGTVResponse) => {
                         if (error) {
                             reject(error);
                             return;

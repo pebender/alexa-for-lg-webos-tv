@@ -2,14 +2,18 @@ import {AlexaRequest,
     AlexaResponse,
     GenericError,
     UninitializedClassError} from "alexa-lg-webos-tv-common";
+import {BackendControl,
+    LGTVRequest,
+    LGTVResponse} from "./backend-control";
 import {TV,
     UDN} from "../common";
-import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
+
+export {LGTVRequest, LGTVResponse} from "./backend-control";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
@@ -73,7 +77,7 @@ export class BackendController extends EventEmitter {
     public async tvUpsert(tv: TV): Promise<void> {
         const that: BackendController = this;
 
-        function eventsAdd(udn: UDN) {
+        function eventsAdd(udn: UDN): void {
             that._controls[udn].on("error", (error: any) => {
                 that.emit("error", error, udn);
             });
@@ -152,9 +156,9 @@ export class BackendController extends EventEmitter {
         return this._controls[udn].getPowerState();
     }
 
-    public lgtvCommand(udn: UDN, command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
+    public lgtvCommand(udn: UDN, lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
         this._throwIfNotInitialized("lgtvCommand");
         this._throwIfNotKnownTV("lgtvCommand", udn);
-        return this._controls[udn].lgtvCommand(command);
+        return this._controls[udn].lgtvCommand(lgtvRequest);
     }
 }

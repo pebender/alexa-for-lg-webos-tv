@@ -1,13 +1,17 @@
 import {AlexaRequest,
     AlexaResponse,
     UninitializedClassError} from "alexa-lg-webos-tv-common";
+import {BackendController,
+    LGTVRequest,
+    LGTVResponse} from "./backend-controller";
 import {TV,
     UDN} from "../common";
-import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
+
+export {LGTVRequest, LGTVResponse} from "./backend-controller";
 
 export class Backend extends EventEmitter {
     private _initialized: boolean;
@@ -59,7 +63,7 @@ export class Backend extends EventEmitter {
         return this._searcher.now();
     }
 
-    public runCommand(event: {[x: string]: any}): Promise<any> {
+    public runCommand(event: {[x: string]: any}): Promise<LGTVResponse> {
         this._throwIfNotInitialized("runCommand");
         return this._controller.runCommand(event);
     }
@@ -74,14 +78,14 @@ export class Backend extends EventEmitter {
         return this._controller.getUDNList();
     }
 
-    public tv(udn: UDN) {
+    public tv(udn: UDN): TV {
         this._throwIfNotInitialized("tv");
         return this._controller.tv(udn);
     }
 
-    public lgtvCommand(udn: UDN, command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
+    public lgtvCommand(udn: UDN, lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
         this._throwIfNotInitialized("lgtvCommand");
-        return this._controller.lgtvCommand(udn, command);
+        return this._controller.lgtvCommand(udn, lgtvRequest);
     }
 
     public getPowerState(udn: UDN): "OFF" | "ON" {
@@ -89,12 +93,12 @@ export class Backend extends EventEmitter {
         return this._controller.getPowerState(udn);
     }
 
-    public turnOff(udn: UDN) {
+    public turnOff(udn: UDN): boolean {
         this._throwIfNotInitialized("turnOff");
         return this._controller.turnOff(udn);
     }
 
-    public turnOn(udn: UDN) {
+    public turnOn(udn: UDN): Promise<boolean> {
         this._throwIfNotInitialized("turnOn");
         return this._controller.turnOn(udn);
     }
