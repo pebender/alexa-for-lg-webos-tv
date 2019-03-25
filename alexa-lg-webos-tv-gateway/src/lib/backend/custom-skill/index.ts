@@ -1,4 +1,5 @@
 import {Backend,
+    LGTVRequest,
     LGTVResponse} from "../../backend";
 
 /*
@@ -9,69 +10,9 @@ import {Backend,
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-async function handler(lgtv: Backend, event: any): Promise<LGTVResponse> {
-    const udn = event.body.television;
-    const controllerMessage = event.body.command;
-
-    const lgtvMessage: {
-        uri: string;
-        payload?: any;
-    } = {
-        "uri": ""
-    };
-    switch (controllerMessage.name) {
-        case "launchApplication":
-            lgtvMessage.uri = "ssap://system.launcher/launch";
-            switch (controllerMessage.value) {
-                case "amazon":
-                    lgtvMessage.payload = {"id": "amazon"};
-                    break;
-                case "netflix":
-                    lgtvMessage.payload = {"id": "netflix"};
-                    break;
-                case "plex":
-                    lgtvMessage.payload = {"id": "cdp-30"};
-                    break;
-                case "youtube":
-                    lgtvMessage.payload = {"id": "youtube.leanback.v4"};
-                    break;
-                default:
-                    lgtvMessage.uri = "";
-                    break;
-            }
-            break;
-        case "closeApplication":
-            lgtvMessage.uri = "ssap://system.launcher/close";
-            switch (controllerMessage.value) {
-                case "amazon":
-                    lgtvMessage.payload = {"id": "amazon"};
-                    break;
-                case "netflix":
-                    lgtvMessage.payload = {"id": "netflix"};
-                    break;
-                case "plex":
-                    lgtvMessage.payload = {"id": "cdp-30"};
-                    break;
-                case "youtube":
-                    lgtvMessage.payload = {"id": "youtube.leanback.v4"};
-                    break;
-                default:
-                    lgtvMessage.uri = "";
-                    break;
-            }
-            break;
-        case "showMessage":
-            lgtvMessage.uri = "ssap://system.notifications/createToast";
-            lgtvMessage.payload = {"message": controllerMessage.value};
-            break;
-        default:
-            break;
-    }
-    if (lgtvMessage.uri === "") {
-        return {};
-    }
+export async function handler(backend: Backend, event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
     try {
-        const commandResponse = await lgtv.lgtvCommand(udn, lgtvMessage);
+        const commandResponse = await backend.lgtvCommand(event.udn, event.lgtvRequest);
         return commandResponse;
     } catch (error) {
         const body = {
@@ -83,7 +24,3 @@ async function handler(lgtv: Backend, event: any): Promise<LGTVResponse> {
         return body;
     }
 }
-
-module.exports = {
-    "handler": handler
-};

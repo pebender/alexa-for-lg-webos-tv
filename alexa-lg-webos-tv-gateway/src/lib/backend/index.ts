@@ -1,21 +1,23 @@
 import {AlexaRequest,
     AlexaResponse,
     UninitializedClassError} from "alexa-lg-webos-tv-common";
-import {BackendController,
+import {BackendControl,
     LGTVRequest,
-    LGTVResponse} from "./backend-controller";
+    LGTVResponse} from "./backend-control";
 import {TV,
     UDN} from "../common";
-import {BackendControl} from "./backend-control";
+import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-const customSkill = require("./custom-skill");
-const smartHomeSkill = require("./smart-home-skill");
+import {handler as rawHandler} from "./custom-skill";
+import {handler as smartHomeSkillHandler} from "./smart-home-skill";
 
-export {BackendControl} from "./backend-control";
-export {LGTVRequest, LGTVResponse} from "./backend-controller";
+export {BackendControl,
+    LGTVRequest,
+    LGTVRequestPayload,
+    LGTVResponse} from "./backend-control";
 
 export class Backend extends EventEmitter {
     private _initialized: boolean;
@@ -67,14 +69,14 @@ export class Backend extends EventEmitter {
         return this._searcher.now();
     }
 
-    public runCommand(event: any): Promise<LGTVResponse> {
+    public runCommand(event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
         this._throwIfNotInitialized("runCommand");
-        return customSkill.handler(this, event);
+        return rawHandler(this, event);
     }
 
     public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
         this._throwIfNotInitialized("skillCommand");
-        return smartHomeSkill.handler(this, event);
+        return smartHomeSkillHandler(this, event);
     }
 
     public getUDNList(): UDN[] {

@@ -1,19 +1,12 @@
-import {AlexaRequest,
-    AlexaResponse,
-    GenericError,
+import {DatabaseRecord,
+    DatabaseTable} from "../database";
+import {GenericError,
     UninitializedClassError} from "alexa-lg-webos-tv-common";
-import {BackendControl,
-    LGTVRequest,
-    LGTVResponse} from "./backend-control";
 import {TV,
     UDN} from "../common";
-import {DatabaseTable} from "../database";
+import {BackendControl} from "./backend-control";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-const customSkill = require("./custom-skill");
-const smartHomeSkill = require("./smart-home-skill");
-
-export {LGTVRequest, LGTVResponse} from "./backend-control";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
@@ -61,7 +54,7 @@ export class BackendController extends EventEmitter {
                 return;
             }
 
-            const records: any[] = await that._db.getRecords({});
+            const records: TV[] = (await that._db.getRecords({}) as TV[]);
             await records.forEach((record) => {
                 if (Reflect.has(that._controls, record.udn) === false) {
                     that._controls[record.udn] = new BackendControl(that._db, record);

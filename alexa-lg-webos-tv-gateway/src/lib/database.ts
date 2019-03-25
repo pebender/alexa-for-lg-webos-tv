@@ -2,6 +2,10 @@ import Datastore from "nedb";
 import {Mutex} from "async-mutex";
 import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 
+export type DatabaseUpdate = any;
+export type DatabaseQuery = any;
+export type DatabaseRecord = any;
+
 export class DatabaseTable {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
@@ -9,7 +13,7 @@ export class DatabaseTable {
     private _key: string;
     private _db: Datastore;
     private _throwIfNotInitialized: (methodName: string) => void;
-    public constructor(path: string, name: string, indexes: any, key: string) {
+    public constructor(path: string, name: string, indexes: string[], key: string) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._indexes = indexes;
@@ -54,18 +58,18 @@ export class DatabaseTable {
 
     public async clean(): Promise<void> {
         this._throwIfNotInitialized("clean");
-        const query1: {[x: string]: any} = {};
+        const query1: DatabaseQuery | null = {};
         query1[this._key] = {"$exists": false};
-        const query2: {[x: string]: any} = {};
+        const query2: DatabaseQuery | null = {};
         query2[this._key] = null;
         // eslint-disable-next-line array-element-newline
-        const query = {"$or": [query1, query2]};
+        const query: DatabaseQuery = {"$or": [query1, query2]};
         await new Promise<void>((resolve, reject) => {
             this._db.remove(
                 query,
                 {"multi": true},
                 // eslint-disable-next-line no-unused-vars
-                (error, _numRemoved) => {
+                (error) => {
                     if (error) {
                         reject(error);
                         return;
@@ -76,12 +80,12 @@ export class DatabaseTable {
         });
     }
 
-    public async getRecord(query: any): Promise<{[x: string]: any}> {
+    public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
         this._throwIfNotInitialized("getRecord");
-        const record = await new Promise<any>((resolve, reject) => {
+        const record = await new Promise<DatabaseRecord>((resolve, reject) => {
             this._db.findOne(
                 query,
-                (err, doc) => {
+                (err, doc: DatabaseRecord) => {
                     if (err) {
                         reject(err);
                         return;
@@ -93,12 +97,12 @@ export class DatabaseTable {
         return record;
     }
 
-    public async getRecords(query: any): Promise<{[x: string]: any}[]> {
+    public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
         this._throwIfNotInitialized("getRecords");
-        const records = await new Promise<any[]>((resolve, reject) => {
+        const records = await new Promise<DatabaseRecord[]>((resolve, reject) => {
             this._db.find(
                 query,
-                (error: Error, docs: any) => {
+                (error: Error, docs: DatabaseRecord[]) => {
                     if (error) {
                         reject(error);
                         return;
@@ -110,7 +114,7 @@ export class DatabaseTable {
         return records;
     }
 
-    public async insertRecord(record: any): Promise<void> {
+    public async insertRecord(record: DatabaseRecord): Promise<void> {
         this._throwIfNotInitialized("insertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.insert(record, (error) => {
@@ -125,7 +129,7 @@ export class DatabaseTable {
         });
     }
 
-    public async updateRecord(query: any, update: any): Promise<void> {
+    public async updateRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
         this._throwIfNotInitialized("updateRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(
@@ -143,7 +147,7 @@ export class DatabaseTable {
         });
     }
 
-    public async updateOrInsertRecord(query: any, update: any): Promise<void> {
+    public async updateOrInsertRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
         this._throwIfNotInitialized("updateOrInsertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(

@@ -12,10 +12,12 @@ const wol = require("wol");
 
 export interface LGTVRequest {
     uri: string;
-    payload?: any;
+    payload?: LGTVRequestPayload;
 }
 
 export type LGTVResponse = any;
+
+export type LGTVRequestPayload = any;
 
 export class BackendControl extends EventEmitter {
     private _initialized: boolean;
