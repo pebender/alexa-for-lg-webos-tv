@@ -10,7 +10,7 @@
 import {Backend} from "../backend";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
-import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 const basicAuth = require("express-basic-auth");
 import express from "express";
 import expressCore from "express-serve-static-core";
@@ -31,7 +31,7 @@ export class FrontendExternal {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("FrontendExternal", methodName);
+                throw new UninitializedClassError("FrontendExternal", methodName);
             }
         };
     }

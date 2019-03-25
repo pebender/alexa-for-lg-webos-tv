@@ -18,7 +18,7 @@ import {IP, MAC, TV, UDN} from "../common";
 import {Client as SsdpClient, ClientOptions as SsdpClientOptions, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 const arp = require("node-arp");
 const http = require("axios");
 const xml2js = require("xml2js").parseString;
@@ -39,7 +39,7 @@ export class BackendSearcher extends EventEmitter {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("BackendSearcher", methodName);
+                throw new UninitializedClassError("BackendSearcher", methodName);
             }
         };
     }

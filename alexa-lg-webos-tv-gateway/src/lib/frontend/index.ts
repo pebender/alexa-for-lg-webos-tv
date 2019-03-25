@@ -4,7 +4,7 @@ import {FrontendExternal} from "./frontend-external";
 import {FrontendInternal} from "./frontend-internal";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
-import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 
 export class Frontend {
     private _initialized: boolean;
@@ -22,7 +22,7 @@ export class Frontend {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("Frontend", methodName);
+                throw new UninitializedClassError("Frontend", methodName);
             }
         };
     }

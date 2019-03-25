@@ -1,6 +1,6 @@
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
-import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 import express from "express";
 import expressCore from "express-serve-static-core";
 
@@ -18,7 +18,7 @@ export class FrontendInternal {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("FrontendInternal", methodName);
+                throw new UninitializedClassError("FrontendInternal", methodName);
             }
         };
     }

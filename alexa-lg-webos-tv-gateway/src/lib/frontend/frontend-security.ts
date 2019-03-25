@@ -1,4 +1,5 @@
-import {UnititializedClassError, constants} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError,
+    constants} from "alexa-lg-webos-tv-common";
 import {DatabaseTable} from "../database";
 import {Mutex} from "async-mutex";
 
@@ -14,7 +15,7 @@ export class FrontendSecurity {
 
         this._throwIfNotInitialized = (methodName: string): void => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("FrontendSecurity", methodName);
+                throw new UninitializedClassError("FrontendSecurity", methodName);
             }
         };
     }

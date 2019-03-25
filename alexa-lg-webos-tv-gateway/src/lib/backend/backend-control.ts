@@ -1,5 +1,5 @@
 import {GenericError,
-    UnititializedClassError} from "alexa-lg-webos-tv-common";
+    UninitializedClassError} from "alexa-lg-webos-tv-common";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
 import {DatabaseTable} from "../database";
@@ -46,7 +46,7 @@ export class BackendControl extends EventEmitter {
 
         this._throwIfNotInitialized = (methodName: string) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("BackendControl", methodName);
+                throw new UninitializedClassError("BackendControl", methodName);
             }
         };
     }

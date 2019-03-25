@@ -163,11 +163,13 @@ function setMuteHandler(backendController: BackendController, alexaRequest: Alex
             "payload": {"mute": alexaRequest.directive.payload.mute}
         };
         await backendController.lgtvCommand(udn, command);
-        return new AlexaResponse({
+        const alexaResponse = new AlexaResponse({
             "request": alexaRequest,
             "namespace": "Alexa",
             "name": "Response"
         });
+
+        return alexaResponse;
     }
 
     return setMute();

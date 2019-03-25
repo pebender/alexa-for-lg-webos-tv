@@ -1,6 +1,6 @@
 import Datastore from "nedb";
 import {Mutex} from "async-mutex";
-import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {UninitializedClassError} from "alexa-lg-webos-tv-common";
 
 export class DatabaseTable {
     private _initialized: boolean;
@@ -33,7 +33,7 @@ export class DatabaseTable {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("ServerSecurity", methodName);
+                throw new UninitializedClassError("ServerSecurity", methodName);
             }
         };
     }

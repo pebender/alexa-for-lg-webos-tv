@@ -1,5 +1,8 @@
-import {AlexaRequest, AlexaResponse, UnititializedClassError} from "alexa-lg-webos-tv-common";
-import {TV, UDN} from "../common";
+import {AlexaRequest,
+    AlexaResponse,
+    UninitializedClassError} from "alexa-lg-webos-tv-common";
+import {TV,
+    UDN} from "../common";
 import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
@@ -22,7 +25,7 @@ export class Backend extends EventEmitter {
 
         this._throwIfNotInitialized = (methodName: string) => {
             if (this._initialized === false) {
-                throw new UnititializedClassError("Backend", methodName);
+                throw new UninitializedClassError("Backend", methodName);
             }
         };
     }
