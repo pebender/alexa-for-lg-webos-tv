@@ -108,18 +108,16 @@ export class AlexaResponse {
             if (original instanceof Array) {
                 copy = [];
                 (copy as any[]).forEach((item) => {
-                    copy.push(item);
+                    copy.push(copyElement(item));
                 });
                 return copy;
             }
 
             if (original instanceof Object) {
                 copy = {};
-                for (const property in original) {
-                    if (original.hasOwnProperty(property)) {
-                        copy[property] = copyElement(original[property]);
-                    }
-                }
+                Object.keys(original).forEach((property) => {
+                    copy[property] = copyElement(original[property]);
+                });
                 return copy;
             }
 
