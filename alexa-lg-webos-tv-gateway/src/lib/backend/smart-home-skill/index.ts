@@ -12,22 +12,22 @@ import {AlexaRequest,
     errorResponse,
     errorToErrorResponse} from "alexa-lg-webos-tv-common";
 // import Ajv from "ajv";
-import {BackendController} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../common";
 // const {alexaSmartHomeMessageSchema} = require("alexa-lg-webos-tv-common");
 
-async function stateHandler(backendController: BackendController, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
+async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
         const udn: UDN = alexaResponse.event.endpoint.endpointId;
         const startTime: Date = new Date();
         const statesList = await Promise.all([
-            alexa.states(backendController, udn),
-            alexaPowerController.states(backendController, udn),
-            alexaSpeaker.states(backendController, udn),
-            alexaChannelController.states(backendController, udn),
-            alexaInputController.states(backendController, udn),
-            alexaLauncher.states(backendController, udn),
-            alexaPlaybackController.states(backendController, udn)
+            alexa.states(backend, udn),
+            alexaPowerController.states(backend, udn),
+            alexaSpeaker.states(backend, udn),
+            alexaChannelController.states(backend, udn),
+            alexaInputController.states(backend, udn),
+            alexaLauncher.states(backend, udn),
+            alexaPlaybackController.states(backend, udn)
         ].map((value) => Promise.resolve(value)));
         const endTime = new Date();
         const states = [].concat(...statesList);
@@ -57,8 +57,8 @@ async function stateHandler(backendController: BackendController, alexaResponse:
  */
 /*
 // eslint-disable-next-line no-unused-vars
-async function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const response = await handlerWithoutValidation(backendController, alexaRequest);
+async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    const response = await handlerWithoutValidation(backend, alexaRequest);
     const ajv = new Ajv({"allErrors": true});
     const validateSchemaFunction = await ajv.compile(alexaSmartHomeMessageSchema);
     const valid = await validateSchemaFunction(response);
@@ -74,7 +74,7 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
 }
 */
 
-async function handlerWithoutValidation(backendController: BackendController, event: any): Promise<AlexaResponse> {
+async function handlerWithoutValidation(backend: Backend, event: any): Promise<AlexaResponse> {
     let alexaRequest: AlexaRequest | null = null;
     try {
         alexaRequest = new AlexaRequest(event);
@@ -100,23 +100,23 @@ async function handlerWithoutValidation(backendController: BackendController, ev
     try {
         switch (alexaRequest.directive.header.namespace) {
             case "Alexa.Authorization":
-                return alexaAuthorization.handler(backendController, alexaRequest);
+                return alexaAuthorization.handler(backend, alexaRequest);
             case "Alexa.Discovery":
-                return alexaDiscovery.handler(backendController, alexaRequest);
+                return alexaDiscovery.handler(backend, alexaRequest);
             case "Alexa":
-                return stateHandler(backendController, await alexa.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexa.handler(backend, alexaRequest));
             case "Alexa.PowerController":
-                return stateHandler(backendController, await alexaPowerController.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaPowerController.handler(backend, alexaRequest));
             case "Alexa.Speaker":
-                return stateHandler(backendController, await alexaSpeaker.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaSpeaker.handler(backend, alexaRequest));
             case "Alexa.ChannelController":
-                return stateHandler(backendController, await alexaChannelController.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaChannelController.handler(backend, alexaRequest));
             case "Alexa.InputController":
-                return stateHandler(backendController, await alexaInputController.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaInputController.handler(backend, alexaRequest));
             case "Alexa.Launcher":
-                return stateHandler(backendController, await alexaLauncher.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaLauncher.handler(backend, alexaRequest));
             case "Alexa.PlaybackController":
-                return stateHandler(backendController, await alexaPlaybackController.handler(backendController, alexaRequest));
+                return stateHandler(backend, await alexaPlaybackController.handler(backend, alexaRequest));
             default:
                 return unknownNamespaceError();
         }

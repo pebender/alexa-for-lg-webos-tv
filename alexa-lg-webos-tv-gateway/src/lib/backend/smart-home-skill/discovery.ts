@@ -9,10 +9,10 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
-import {BackendController} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../common";
 
-async function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
 
     /*
      * This looks strange at first. However, once it is explained, this
@@ -48,13 +48,13 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
         try {
             // Determine capabilities in parallel.
             const capabilitiesList = await Promise.all([
-                alexa.capabilities(backendController, alexaRequest, udn),
-                alexaPowerController.capabilities(backendController, alexaRequest, udn),
-                alexaSpeaker.capabilities(backendController, alexaRequest, udn),
-                alexaChannelController.capabilities(backendController, alexaRequest, udn),
-                alexaInputController.capabilities(backendController, alexaRequest, udn),
-                alexaLauncher.capabilities(backendController, alexaRequest, udn),
-                alexaPlaybackController.capabilities(backendController, alexaRequest, udn)
+                alexa.capabilities(backend, alexaRequest, udn),
+                alexaPowerController.capabilities(backend, alexaRequest, udn),
+                alexaSpeaker.capabilities(backend, alexaRequest, udn),
+                alexaChannelController.capabilities(backend, alexaRequest, udn),
+                alexaInputController.capabilities(backend, alexaRequest, udn),
+                alexaLauncher.capabilities(backend, alexaRequest, udn),
+                alexaPlaybackController.capabilities(backend, alexaRequest, udn)
             ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
@@ -62,7 +62,7 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
             if (capabilities.length === 0) {
                 return null;
             }
-            const {name} = backendController.tv(udn);
+            const {name} = backend.tv(udn);
             const endpoint: AlexaResponseEventPayloadEndpoint = AlexaResponse.createPayloadEndpoint({
                 "endpointId": udn,
                 "friendlyName": name,
@@ -100,7 +100,7 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
         return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
     }
 
-    const udnList = await backendController.getUDNList();
+    const udnList = await backend.getUDNList();
     const endpointList = await buildEndpointList(udnList);
     const response = await buildResponse(endpointList);
     return response;

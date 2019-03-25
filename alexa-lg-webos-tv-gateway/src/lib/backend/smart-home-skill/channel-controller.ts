@@ -6,12 +6,12 @@ import {AlexaRequest,
     errorResponse,
     errorToErrorResponse,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
-import {BackendController} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../common";
 const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -22,21 +22,21 @@ function capabilities(_lgtv: BackendController, _alexaRequest: AlexaRequest, _ud
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backend: Backend, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function skipChannelsHandler(_lgtv: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function skipChannelsHandler(_lgtv: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     return Promise.resolve(errorResponse(alexaRequest, "UNKNOWN_ERROR", "'Alexa.ChannelController.SkipChannels' is not supported."));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function unknownChannelError(_lgtv: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+function unknownChannelError(_lgtv: Backend, alexaRequest: AlexaRequest): AlexaResponse {
     return errorResponse(alexaRequest, "INVALID_VALUE", "The gateway doesn't recognize channel.");
 }
 
-async function changeChannelHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     function getCommand(): {uri: string; payload: string} | null {
         const command: {
             uri?: string;
@@ -86,11 +86,11 @@ async function changeChannelHandler(backendController: BackendController, alexaR
 
     async function setChannel(command: {uri: string; payload: any} | null): Promise<AlexaResponse> {
         if (command === null) {
-            return unknownChannelError(backendController, alexaRequest);
+            return unknownChannelError(backend, alexaRequest);
         }
         const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         try {
-            await backendController.lgtvCommand(udn, command);
+            await backend.lgtvCommand(udn, command);
         } catch (error) {
             return errorToErrorResponse(alexaRequest, error);
         }
@@ -121,15 +121,15 @@ async function changeChannelHandler(backendController: BackendController, alexaR
     return setChannel(channelCommand);
 }
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.ChannelController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "ChangeChannel":
-            return changeChannelHandler(backendController, alexaRequest);
+            return changeChannelHandler(backend, alexaRequest);
         case "SkipChannels":
-            return skipChannelsHandler(backendController, alexaRequest);
+            return skipChannelsHandler(backend, alexaRequest);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }

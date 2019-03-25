@@ -118,47 +118,14 @@ export class BackendController extends EventEmitter {
         }
     }
 
-    public runCommand(event: any): Promise<any> {
-        this._throwIfNotInitialized("runCommand");
-        return customSkill.handler(this, event);
-    }
-
-    public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
-        this._throwIfNotInitialized("skillCommand");
-        return smartHomeSkill.handler(this, event);
-    }
-
     public getUDNList(): UDN[] {
         this._throwIfNotInitialized("getUDNList");
         return Object.keys(this._controls);
     }
 
-    public tv(udn: UDN): TV {
-        this._throwIfNotInitialized("tv");
-        this._throwIfNotKnownTV("tv", udn);
-        return this._controls[udn].tv;
-    }
-
-    public turnOff(udn: UDN): boolean {
-        this._throwIfNotInitialized("turnOff");
-        this._throwIfNotKnownTV("turnOff", udn);
-        return this._controls[udn].turnOff();
-    }
-
-    public turnOn(udn: UDN): Promise<boolean> {
-        this._throwIfNotInitialized("turnOn");
-        return this._controls[udn].turnOn();
-    }
-
-    public getPowerState(udn: UDN): "OFF" | "ON" {
-        this._throwIfNotInitialized("getPowerState");
-        this._throwIfNotKnownTV("getPowerState", udn);
-        return this._controls[udn].getPowerState();
-    }
-
-    public lgtvCommand(udn: UDN, lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
-        this._throwIfNotInitialized("lgtvCommand");
-        this._throwIfNotKnownTV("lgtvCommand", udn);
-        return this._controls[udn].lgtvCommand(lgtvRequest);
+    public control(udn: UDN): BackendControl {
+        this._throwIfNotInitialized("control");
+        this._throwIfNotKnownTV("control", udn);
+        return this._controls[udn];
     }
 }

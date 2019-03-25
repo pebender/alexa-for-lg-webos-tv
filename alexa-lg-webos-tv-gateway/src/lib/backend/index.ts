@@ -6,11 +6,15 @@ import {BackendController,
     LGTVResponse} from "./backend-controller";
 import {TV,
     UDN} from "../common";
+import {BackendControl} from "./backend-control";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
+const customSkill = require("./custom-skill");
+const smartHomeSkill = require("./smart-home-skill");
 
+export {BackendControl} from "./backend-control";
 export {LGTVRequest, LGTVResponse} from "./backend-controller";
 
 export class Backend extends EventEmitter {
@@ -47,7 +51,7 @@ export class Backend extends EventEmitter {
             });
             await that._controller.initialize();
             that._searcher.on("error", (error) => {
-                that.emit("error", error, "BackendController");
+                that.emit("error", error, "BackendSearcher");
             });
             that._searcher.on("found", (tv: TV) => {
                 that._controller.tvUpsert(tv);
@@ -63,14 +67,14 @@ export class Backend extends EventEmitter {
         return this._searcher.now();
     }
 
-    public runCommand(event: {[x: string]: any}): Promise<LGTVResponse> {
+    public runCommand(event: any): Promise<LGTVResponse> {
         this._throwIfNotInitialized("runCommand");
-        return this._controller.runCommand(event);
+        return customSkill.handler(this, event);
     }
 
-    public skillCommand(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
         this._throwIfNotInitialized("skillCommand");
-        return this._controller.skillCommand(alexaRequest);
+        return smartHomeSkill.handler(this, event);
     }
 
     public getUDNList(): UDN[] {
@@ -78,30 +82,33 @@ export class Backend extends EventEmitter {
         return this._controller.getUDNList();
     }
 
+    public control(udn: UDN): BackendControl {
+        this._throwIfNotInitialized("tv");
+        return this._controller.control(udn);
+    }
+
     public tv(udn: UDN): TV {
         this._throwIfNotInitialized("tv");
-        return this._controller.tv(udn);
+        return this._controller.control(udn).tv;
     }
 
     public lgtvCommand(udn: UDN, lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
         this._throwIfNotInitialized("lgtvCommand");
-        return this._controller.lgtvCommand(udn, lgtvRequest);
+        return this._controller.control(udn).lgtvCommand(lgtvRequest);
     }
 
     public getPowerState(udn: UDN): "OFF" | "ON" {
         this._throwIfNotInitialized("getPowerState");
-        return this._controller.getPowerState(udn);
+        return this._controller.control(udn).getPowerState();
     }
 
     public turnOff(udn: UDN): boolean {
         this._throwIfNotInitialized("turnOff");
-        return this._controller.turnOff(udn);
+        return this._controller.control(udn).turnOff();
     }
 
     public turnOn(udn: UDN): Promise<boolean> {
         this._throwIfNotInitialized("turnOn");
-        return this._controller.turnOn(udn);
+        return this._controller.control(udn).turnOn();
     }
 }
-
-export {BackendController} from "./backend-controller";

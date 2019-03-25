@@ -4,11 +4,11 @@ import {AlexaRequest,
     AlexaResponseEventPayloadEndpointCapabilityInput,
     directiveErrorResponse,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
-import {BackendController} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../common";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_lbackendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
         {
             "type": "AlexaInterface",
@@ -26,16 +26,16 @@ function capabilities(_lbackendController: BackendController, _alexaRequest: Ale
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backendController: BackendController, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backend: Backend, _udn: UDN): AlexaResponseContextPropertyInput[] {
     return [];
 }
 
-async function genericHandler(backendController: BackendController, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
+async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
     const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
     const command = {
         "uri": commandURI
     };
-    await backendController.lgtvCommand(udn, command);
+    await backend.lgtvCommand(udn, command);
     return new AlexaResponse({
         "request": alexaRequest,
         "namespace": "Alexa",
@@ -43,41 +43,41 @@ async function genericHandler(backendController: BackendController, alexaRequest
     });
 }
 
-function playHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backendController, alexaRequest, "ssap://media.controls/play");
+function playHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backend, alexaRequest, "ssap://media.controls/play");
 }
 
-function pauseHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backendController, alexaRequest, "ssap://media.controls/pause");
+function pauseHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backend, alexaRequest, "ssap://media.controls/pause");
 }
 
-function stopHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backendController, alexaRequest, "ssap://media.controls/stop");
+function stopHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backend, alexaRequest, "ssap://media.controls/stop");
 }
 
-function rewindHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backendController, alexaRequest, "ssap://media.controls/rewind");
+function rewindHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backend, alexaRequest, "ssap://media.controls/rewind");
 }
 
-function fastForwardHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backendController, alexaRequest, "ssap://media.controls/fastForward");
+function fastForwardHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return genericHandler(backend, alexaRequest, "ssap://media.controls/fastForward");
 }
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "Play":
-            return playHandler(backendController, alexaRequest);
+            return playHandler(backend, alexaRequest);
         case "Pause":
-            return pauseHandler(backendController, alexaRequest);
+            return pauseHandler(backend, alexaRequest);
         case "Stop":
-            return stopHandler(backendController, alexaRequest);
+            return stopHandler(backend, alexaRequest);
         case "Rewind":
-            return rewindHandler(backendController, alexaRequest);
+            return rewindHandler(backend, alexaRequest);
         case "FastForward":
-            return fastForwardHandler(backendController, alexaRequest);
+            return fastForwardHandler(backend, alexaRequest);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
