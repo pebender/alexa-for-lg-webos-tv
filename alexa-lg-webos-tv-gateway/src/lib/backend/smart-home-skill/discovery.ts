@@ -1,24 +1,18 @@
-import {namespaceErrorResponse, AlexaResponseEventPayloadEndpoint} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
-import {UDN} from "../../common";
+import * as alexa from "./alexa";
+import * as alexaChannelController from "./channel-controller";
+import * as alexaInputController from "./input-controller";
+import * as alexaLauncher from "./launcher";
+import * as alexaPlaybackController from "./playback-controller";
+import * as alexaPowerController from "./power-controller";
+import * as alexaSpeaker from "./speaker";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseEventPayloadEndpoint,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
-const alexa = require("./alexa");
-const alexaPowerController = require("./power-controller");
-const alexaSpeaker = require("./speaker");
-const alexaChannelController = require("./channel-controller");
-const alexaInputController = require("./input-controller");
-const alexaLauncher = require("./launcher");
-const alexaPlaybackController = require("./playback-controller");
+import {UDN} from "../../common";
 
 async function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
-        return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
-    }
-
-    const udnList = await backendController.getUDNList();
-    const endpointList = await buildEndpointList(udnList);
-    const response = await buildResponse(endpointList);
-    return response;
 
     /*
      * This looks strange at first. However, once it is explained, this
@@ -50,12 +44,6 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpointList(udns: UDN[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
-
-        const endpoints = await Promise.all(udns.map(buildEndpoint));
-        return endpoints;
-    }
-
     async function buildEndpoint(udn: UDN): Promise<AlexaResponseEventPayloadEndpoint> {
         try {
             // Determine capabilities in parallel.
@@ -66,7 +54,7 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
                 alexaChannelController.capabilities(backendController, alexaRequest, udn),
                 alexaInputController.capabilities(backendController, alexaRequest, udn),
                 alexaLauncher.capabilities(backendController, alexaRequest, udn),
-                alexaPlaybackController.capabilities(backendController, alexaRequest, udn),
+                alexaPlaybackController.capabilities(backendController, alexaRequest, udn)
             ].map((value) => Promise.resolve(value)));
             // Convert from a two dimensional array to a one dimensional array.
             const capabilities = [].concat(...capabilitiesList);
@@ -89,6 +77,12 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
         }
     }
 
+    async function buildEndpointList(udns: UDN[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
+
+        const endpoints = await Promise.all(udns.map(buildEndpoint));
+        return endpoints;
+    }
+
     function buildResponse(endpoints: any): AlexaResponse {
         const alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
@@ -101,6 +95,15 @@ async function handler(backendController: BackendController, alexaRequest: Alexa
         });
         return alexaResponse;
     }
+
+    if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
+        return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
+    }
+
+    const udnList = await backendController.getUDNList();
+    const endpointList = await buildEndpointList(udnList);
+    const response = await buildResponse(endpointList);
+    return response;
 }
 
 export {handler};

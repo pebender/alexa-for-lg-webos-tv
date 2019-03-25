@@ -3,9 +3,14 @@ module.exports = {
         "es6": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
     "parserOptions": {
-		"ecmaVersion": "2017",
+		"ecmaVersion": "2018",
         "sourceType": "module"
     },
     "rules": {
@@ -94,7 +99,7 @@ module.exports = {
         ],
         "lines-around-comment": "error",
         "lines-around-directive": "error",
-        "lines-between-class-members": "error",
+        "lines-between-class-members": "off",
         "max-depth": "error",
         "max-len": "off",
         "max-lines": "error",
@@ -182,7 +187,7 @@ module.exports = {
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
         "no-undefined": "error",
-        "no-underscore-dangle": "error",
+        "no-underscore-dangle": "off",
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": "error",
         "no-unused-expressions": "error",

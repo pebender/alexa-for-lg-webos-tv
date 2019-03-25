@@ -1,13 +1,15 @@
-const EventEmitter = require("events");
-const {Mutex} = require("async-mutex");
-import {AlexaRequest} from "alexa-lg-webos-tv-common";
-import {AlexaResponse} from "alexa-lg-webos-tv-common";
-import {GenericError, UnititializedClassError} from "alexa-lg-webos-tv-common";
-import {UDN, TV} from "../common";
+import {AlexaRequest,
+    AlexaResponse,
+    GenericError,
+    UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {TV,
+    UDN} from "../common";
+import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
+import EventEmitter from "events";
+import {Mutex} from "async-mutex";
 const customSkill = require("./custom-skill");
 const smartHomeSkill = require("./smart-home-skill");
-import {BackendControl} from "./backend-control";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
@@ -16,7 +18,7 @@ export class BackendController extends EventEmitter {
     private _controls: {[x: string]: BackendControl};
     private _throwIfNotInitialized: (methodName: string) => void
     private _throwIfNotKnownTV: (methodName: string, udn: UDN) => void
-    constructor (db: DatabaseTable) {
+    public constructor (db: DatabaseTable) {
         super();
 
         this._initialized = false;
@@ -40,8 +42,15 @@ export class BackendController extends EventEmitter {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that: BackendController = this;
+
+        function eventsAdd(udn: UDN): void {
+            that._controls[udn].on("error", (error: any) => {
+                that.emit("error", error, udn);
+            });
+        }
+
         return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve, reject) => {
             if (that._initialized === true) {
                 resolve();
@@ -59,16 +68,17 @@ export class BackendController extends EventEmitter {
             that._initialized = true;
             resolve();
         }));
+    }
 
-        function eventsAdd(udn: UDN): void {
+    public async tvUpsert(tv: TV): Promise<void> {
+        const that: BackendController = this;
+
+        function eventsAdd(udn: UDN) {
             that._controls[udn].on("error", (error: any) => {
                 that.emit("error", error, udn);
             });
         }
-    }
 
-    async tvUpsert(tv: TV): Promise<void> {
-        const that: BackendController = this;
         that._throwIfNotInitialized("tvUpsert");
         try {
             const record = await this._db.getRecord({"$and": [
@@ -102,53 +112,47 @@ export class BackendController extends EventEmitter {
         } catch (error) {
             this.emit("error", error, tv.udn);
         }
-
-        function eventsAdd(udn: UDN) {
-            that._controls[udn].on("error", (error: any) => {
-                that.emit("error", error, udn);
-            });
-        }
     }
 
-    runCommand(event: any): Promise<any> {
+    public runCommand(event: any): Promise<any> {
         this._throwIfNotInitialized("runCommand");
         return customSkill.handler(this, event);
     }
 
-    skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
+    public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
         this._throwIfNotInitialized("skillCommand");
         return smartHomeSkill.handler(this, event);
     }
 
-    getUDNList(): UDN[] {
+    public getUDNList(): UDN[] {
         this._throwIfNotInitialized("getUDNList");
         return Object.keys(this._controls);
     }
 
-    tv(udn: UDN): TV {
+    public tv(udn: UDN): TV {
         this._throwIfNotInitialized("tv");
         this._throwIfNotKnownTV("tv", udn);
         return this._controls[udn].tv;
     }
 
-    turnOff(udn: UDN): boolean {
+    public turnOff(udn: UDN): boolean {
         this._throwIfNotInitialized("turnOff");
         this._throwIfNotKnownTV("turnOff", udn);
         return this._controls[udn].turnOff();
     }
 
-    turnOn(udn: UDN): Promise<boolean> {
+    public turnOn(udn: UDN): Promise<boolean> {
         this._throwIfNotInitialized("turnOn");
         return this._controls[udn].turnOn();
     }
 
-    getPowerState(udn: UDN): "OFF" | "ON" {
+    public getPowerState(udn: UDN): "OFF" | "ON" {
         this._throwIfNotInitialized("getPowerState");
         this._throwIfNotKnownTV("getPowerState", udn);
         return this._controls[udn].getPowerState();
     }
 
-    lgtvCommand(udn: UDN, command: {uri: string, payload?: any}): Promise<{[x: string]: any}> {
+    public lgtvCommand(udn: UDN, command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
         this._throwIfNotInitialized("lgtvCommand");
         this._throwIfNotKnownTV("lgtvCommand", udn);
         return this._controls[udn].lgtvCommand(command);

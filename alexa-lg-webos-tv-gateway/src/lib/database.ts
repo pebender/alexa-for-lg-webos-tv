@@ -1,6 +1,6 @@
-import {Mutex} from "async-mutex";
 import Datastore from "nedb";
-const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
+import {Mutex} from "async-mutex";
+import {UnititializedClassError} from "alexa-lg-webos-tv-common";
 
 export class DatabaseTable {
     private _initialized: boolean;
@@ -9,7 +9,7 @@ export class DatabaseTable {
     private _key: string;
     private _db: Datastore;
     private _throwIfNotInitialized: (methodName: string) => void;
-    constructor(path: string, name:string, indexes: any, key: string) {
+    public constructor(path: string, name: string, indexes: any, key: string) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._indexes = indexes;
@@ -38,7 +38,7 @@ export class DatabaseTable {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that = this;
         return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
             that._indexes.forEach((record) => {
@@ -52,7 +52,7 @@ export class DatabaseTable {
         }));
     }
 
-    async clean(): Promise<void> {
+    public async clean(): Promise<void> {
         this._throwIfNotInitialized("clean");
         const query1: {[x: string]: any} = {};
         query1[this._key] = {"$exists": false};
@@ -76,7 +76,7 @@ export class DatabaseTable {
         });
     }
 
-    async getRecord(query: any): Promise<{[x: string]: any}> {
+    public async getRecord(query: any): Promise<{[x: string]: any}> {
         this._throwIfNotInitialized("getRecord");
         const record = await new Promise<any>((resolve, reject) => {
             this._db.findOne(
@@ -93,7 +93,7 @@ export class DatabaseTable {
         return record;
     }
 
-    async getRecords(query: any): Promise<{[x: string]: any}[]> {
+    public async getRecords(query: any): Promise<{[x: string]: any}[]> {
         this._throwIfNotInitialized("getRecords");
         const records = await new Promise<any[]>((resolve, reject) => {
             this._db.find(
@@ -110,7 +110,7 @@ export class DatabaseTable {
         return records;
     }
 
-    async insertRecord(record: any): Promise<void> {
+    public async insertRecord(record: any): Promise<void> {
         this._throwIfNotInitialized("insertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.insert(record, (error) => {
@@ -125,7 +125,7 @@ export class DatabaseTable {
         });
     }
 
-    async updateRecord(query: any, update: any): Promise<void> {
+    public async updateRecord(query: any, update: any): Promise<void> {
         this._throwIfNotInitialized("updateRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(
@@ -143,7 +143,7 @@ export class DatabaseTable {
         });
     }
 
-    async updateOrInsertRecord(query: any, update: any): Promise<void> {
+    public async updateOrInsertRecord(query: any, update: any): Promise<void> {
         this._throwIfNotInitialized("updateOrInsertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(

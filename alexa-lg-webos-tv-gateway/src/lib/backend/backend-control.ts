@@ -1,12 +1,14 @@
-const LGTV = require("lgtv2");
-import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
-const wol = require("wol");
-import EventEmitter from "events";
-import {Mutex} from "async-mutex";
-const uuid = require("uuid/v4");
-import {GenericError, UnititializedClassError} from "alexa-lg-webos-tv-common";
-import {TV} from "../common";
+import {GenericError,
+    UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {Client as SsdpClient,
+    SsdpHeaders} from "node-ssdp";
 import {DatabaseTable} from "../database";
+import EventEmitter from "events";
+const LGTV = require("lgtv2");
+import {Mutex} from "async-mutex";
+import {TV} from "../common";
+import uuid from "uuid/v4";
+const wol = require("wol");
 
 export class BackendControl extends EventEmitter {
     private _initialized: boolean;
@@ -19,7 +21,7 @@ export class BackendControl extends EventEmitter {
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
     private _throwIfNotInitialized: (methodName: string) => void
-    constructor(db: DatabaseTable, tv: TV) {
+    public constructor(db: DatabaseTable, tv: TV) {
         super();
 
         this._initialized = false;
@@ -28,13 +30,13 @@ export class BackendControl extends EventEmitter {
         this._connecting = false;
         this._powerOn = false;
         this._tv = {
-            udn: tv.udn,
-            name: tv.name,
-            ip: tv.ip,
-            url: tv.url,
-            mac: tv.mac,
-            key: ""
-        }
+            "udn": tv.udn,
+            "name": tv.name,
+            "ip": tv.ip,
+            "url": tv.url,
+            "mac": tv.mac,
+            "key": ""
+        };
         if (("key" in tv) && tv.key !== null) {
             this._tv.key = tv.key;
         }
@@ -49,17 +51,44 @@ export class BackendControl extends EventEmitter {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that: BackendControl = this;
+
+        function saveKey(key: string, callback: (error: any) => void) {
+            that._db.updateRecord(
+                {"udn": that._tv.udn},
+                {"$set": {"key": key}}
+            ).
+                catch((error: any) => {
+                    callback(error);
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                });
+        }
+
+        function ssdpConnectHandler(headers: SsdpHeaders): void {
+            if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
+                if (that._connecting === false) {
+                    that._connection.connect(that._tv.url);
+                }
+            }
+        }
+
+        function ssdpDisconnectHandler(headers: SsdpHeaders): void {
+            if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
+                that._powerOn = false;
+                that._connection.disconnect();
+            }
+        }
         return that._initializeMutex.runExclusive(() => new Promise<void>((resolve, reject) => {
             if (that._initialized === true) {
                 resolve();
                 return;
             }
 
-            let clientKey: string = "";
+            let clientKey = "";
             if (Reflect.has(that._tv, "key")) {
-                clientKey = <string>that._tv.key;
+                clientKey = (that._tv.key as string);
                 Reflect.deleteProperty(that._tv, "key");
             } else {
                 reject(new GenericError("error", "initial LGTV key not set"));
@@ -95,36 +124,9 @@ export class BackendControl extends EventEmitter {
             that._ssdpResponse.on("response", ssdpConnectHandler);
             that._initialized = true;
         }));
-
-        function saveKey(key: string, callback: (error: any) => void) {
-            that._db.updateRecord(
-                {"udn": that._tv.udn},
-                {"$set": {"key": key}}
-            ).
-            catch((error: any) => {
-                callback(error);
-                // eslint-disable-next-line no-useless-return
-                return;
-            });
-        }
-
-        function ssdpConnectHandler(headers: SsdpHeaders): void {
-            if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
-                if (that._connecting === false) {
-                    that._connection.connect(that._tv.url);
-                }
-            }
-        }
-
-        function ssdpDisconnectHandler(headers: SsdpHeaders): void {
-            if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
-                that._powerOn = false;
-                that._connection.disconnect();
-            }
-        }
     }
 
-    get tv(): TV {
+    public get tv(): TV {
         this._throwIfNotInitialized("get+tv");
         const tv = {
             "udn": this._tv.udn,
@@ -136,7 +138,7 @@ export class BackendControl extends EventEmitter {
         return tv;
     }
 
-    turnOff(): boolean {
+    public turnOff(): boolean {
         this._throwIfNotInitialized("turnOff");
         const command = {
             "uri": "ssap://system/turnOff"
@@ -155,32 +157,23 @@ export class BackendControl extends EventEmitter {
      * of 7 seconds in an attempt to ensure that Alexa has the chance for a
      * response before its 8 second timeout.
      */
-    turnOn(): Promise<boolean> {
-        this._throwIfNotInitialized("turnOn");
+    public turnOn(): Promise<boolean> {
         const that = this;
+
+        function startInterval(milliseconds: number, handler: (...args: any[]) => void, ...args: any[]): NodeJS.Timeout {
+            handler(...args);
+            return setInterval(handler, milliseconds, ...args);
+        }
+
+        that._throwIfNotInitialized("turnOn");
+
         return new Promise<boolean>((resolveTurnOn) => {
             that._powerOn = false;
             that._connection.disconnect();
-
-            let finishTimeoutObject: NodeJS.Timeout | null = setTimeout(finish, 7000, false);
-
-            let monitorTimeoutObject: NodeJS.Timeout | null = startInterval(100, () => {
-                if (that._powerOn === true) {
-                    finish(true);
-                }
-            });
-            let wolTimeoutObject: NodeJS.Timeout | null = startInterval(250, () => {
-                wol.wake(that._tv.mac);
-            });
-            let searchTimeoutObject: NodeJS.Timeout | null = startInterval(1000, () => {
-                if (that._ssdpResponse !== null) {
-                    that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
-                }
-            });
-            function startInterval(milliseconds: number, handler: (...args: any[]) => void, ...args: any[]): NodeJS.Timeout {
-                handler(...args);
-                return setInterval(handler, milliseconds, ...args);
-            }
+            let finishTimeoutObject: NodeJS.Timeout | null = null;
+            let monitorTimeoutObject: NodeJS.Timeout | null = null;
+            let wolTimeoutObject: NodeJS.Timeout | null = null;
+            let searchTimeoutObject: NodeJS.Timeout | null = null;
 
             /*
              * The function cleans up and then resolves the function's promise.
@@ -223,27 +216,43 @@ export class BackendControl extends EventEmitter {
                     }
                     resolveFinish(finishUUID);
                 })).
-                then((currentUUID: string | null) => {
-                    if (finished === false) {
-                        if (currentUUID !== null && currentUUID === finishUUID) {
-                            finishUUID = null;
-                            finished = true;
-                            resolveTurnOn(poweredOn);
+                    then((currentUUID: string | null) => {
+                        if (finished === false) {
+                            if (currentUUID !== null && currentUUID === finishUUID) {
+                                finishUUID = null;
+                                finished = true;
+                                resolveTurnOn(poweredOn);
+                            }
                         }
-                    }
-                });
+                    });
             }
+
+            finishTimeoutObject = setTimeout(finish, 7000, false);
+
+            monitorTimeoutObject = startInterval(100, () => {
+                if (that._powerOn === true) {
+                    finish(true);
+                }
+            });
+            wolTimeoutObject = startInterval(250, () => {
+                wol.wake(that._tv.mac);
+            });
+            searchTimeoutObject = startInterval(1000, () => {
+                if (that._ssdpResponse !== null) {
+                    that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+                }
+            });
         });
     }
 
-    getPowerState(): "OFF" | "ON" {
+    public getPowerState(): "OFF" | "ON" {
         this._throwIfNotInitialized("getPowerState");
         return this._powerOn
             ? "ON"
             : "OFF";
     }
 
-    async lgtvCommand(command: {uri: string, payload?: any}): Promise<{[x: string]: any}> {
+    public async lgtvCommand(command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
         this._throwIfNotInitialized("lgtvCommand");
         let lgtvResponse = null;
         if (command.payload === null) {

@@ -1,7 +1,11 @@
-import {namespaceErrorResponse, directiveErrorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
-import {UDN} from "../../common";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextPropertyInput,
+    AlexaResponseEventPayloadEndpointCapabilityInput,
+    directiveErrorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
+import {UDN} from "../../common";
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
@@ -19,18 +23,6 @@ function states(_backendController: BackendController, _udn: UDN): AlexaResponse
     return [];
 }
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
-    if (alexaRequest.directive.header.namespace !== "Alexa") {
-        return namespaceErrorResponse(alexaRequest, "Alexa");
-    }
-    switch (alexaRequest.directive.header.name) {
-        case "ReportState":
-            return reportStateHandler(backendController, alexaRequest);
-        default:
-            return unknownDirectiveError(backendController, alexaRequest);
-    }
-}
-
 function reportStateHandler(_backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
         "request": alexaRequest,
@@ -41,6 +33,18 @@ function reportStateHandler(_backendController: BackendController, alexaRequest:
 
 function unknownDirectiveError(_backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
     return directiveErrorResponse(alexaRequest, "Alexa");
+}
+
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): AlexaResponse {
+    if (alexaRequest.directive.header.namespace !== "Alexa") {
+        return namespaceErrorResponse(alexaRequest, "Alexa");
+    }
+    switch (alexaRequest.directive.header.name) {
+        case "ReportState":
+            return reportStateHandler(backendController, alexaRequest);
+        default:
+            return unknownDirectiveError(backendController, alexaRequest);
+    }
 }
 
 module.exports = {

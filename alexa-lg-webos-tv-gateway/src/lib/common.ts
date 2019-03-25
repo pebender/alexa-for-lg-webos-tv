@@ -1,10 +1,10 @@
 export interface TV {
-    udn: UDN,
-    name: string,
-    ip: IP,
-    url: string,
-    mac: MAC,
-    key?: string
+    udn: UDN;
+    name: string;
+    ip: IP;
+    url: string;
+    mac: MAC;
+    key?: string;
 }
 
 export type UDN = string;

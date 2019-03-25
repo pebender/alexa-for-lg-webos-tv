@@ -1,8 +1,8 @@
+import {FrontendSecurity} from "./frontend-security";
+import {Mutex} from "async-mutex";
+import {UnititializedClassError} from "alexa-lg-webos-tv-common";
 import express from "express";
 import expressCore from "express-serve-static-core";
-import {Mutex} from "async-mutex";
-import {FrontendSecurity} from "./frontend-security";
-const {unititializedClassError} = require("alexa-lg-webos-tv-common");
 
 export class FrontendInternal {
     private _initialized: boolean;
@@ -10,7 +10,7 @@ export class FrontendInternal {
     private _security: FrontendSecurity;
     private _server: expressCore.Express;
     private _throwIfNotInitialized: (methodName: string) => void;
-    constructor(serverSecurity: FrontendSecurity) {
+    public constructor(serverSecurity: FrontendSecurity) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = serverSecurity;
@@ -18,49 +18,21 @@ export class FrontendInternal {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new unititializedClassError("FrontendInternal", methodName);
+                throw new UnititializedClassError("FrontendInternal", methodName);
             }
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that = this;
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
-            if (that._initialized === true) {
-                resolve();
-                return;
-            }
 
-            this._server.use(express.urlencoded({
-                "extended": false
-            }));
-            this._server.get("/", getHandler);
-            this._server.post("/", postHandler);
-            this._initialized = true;
-            resolve();
-        }));
-
-        async function getHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
-            const form = await createForm();
-            await sendForm(form, response);
-        }
-
-        async function postHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
-            await processForm(request.body);
-            const form = await createForm();
-            await sendForm(form, response);
-        }
-
-        function processForm(formAttributes: {hostname?: string, deletePassword?: string}): void {
-            processHostname();
-            processPassword();
-
+        function processForm(formAttributes: {hostname?: string; deletePassword?: string}): void {
             function processHostname(): void {
                 let hostname = "";
                 if (formAttributes !== null &&
                     Reflect.has(formAttributes, "hostname")
                 ) {
-                    hostname = <string>formAttributes.hostname;
+                    hostname = (formAttributes.hostname as string);
                 }
                 that._security.setHostname(hostname);
             }
@@ -69,7 +41,7 @@ export class FrontendInternal {
                 let deletePassword = false;
                 if (formAttributes !== null &&
                     Reflect.has(formAttributes, "deletePassword") &&
-                    (<string>formAttributes.deletePassword).toUpperCase() === "ON"
+                    (formAttributes.deletePassword as string).toUpperCase() === "ON"
                 ) {
                     deletePassword = true;
                 }
@@ -77,6 +49,9 @@ export class FrontendInternal {
                     that._security.setUserPassword(null);
                 }
             }
+
+            processHostname();
+            processPassword();
         }
 
         async function createForm(): Promise<any> {
@@ -144,9 +119,35 @@ export class FrontendInternal {
                 send(form).
                 end();
         }
+
+        async function getHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
+            const form = await createForm();
+            await sendForm(form, response);
+        }
+
+        async function postHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
+            await processForm(request.body);
+            const form = await createForm();
+            await sendForm(form, response);
+        }
+
+        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
+            if (that._initialized === true) {
+                resolve();
+                return;
+            }
+
+            this._server.use(express.urlencoded({
+                "extended": false
+            }));
+            this._server.get("/", getHandler);
+            this._server.post("/", postHandler);
+            this._initialized = true;
+            resolve();
+        }));
     }
 
-    start(): void {
+    public start(): void {
         this._throwIfNotInitialized("start");
         this._server.listen(25393);
     }

@@ -1,7 +1,12 @@
-import {UDN} from "../../common";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextPropertyInput,
+    AlexaResponseEventPayloadEndpointCapabilityInput,
+    directiveErrorResponse,
+    errorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../backend-controller";
-import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
+import {UDN} from "../../common";
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video
@@ -30,7 +35,7 @@ const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     }
 };
 
-const lgtvToAlexa: {[AlexaInput: string]: {identifier: string, name: string}} = {
+const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = {
     "amazon": {
         "identifier": "amzn1.alexa-ask-target.app.72095",
         "name": "Amazon Video"
@@ -79,15 +84,7 @@ function capabilities(_backendController: BackendController, _alexaRequest: Alex
 }
 
 async function states(backendController: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
-    try {
-        const lgtvInput: {appId: string, [x: string]: any} | null = await getInput();
-        const alexaInput: {identifier: string, name: string} | null = mapInput(<{appId: string, [x: string]: any}>lgtvInput);
-        return buildStates(alexaInput);
-    } catch (error) {
-        return [];
-    }
-
-    async function getInput(): Promise<{appId: string, [x: string]: any} | null> {
+    async function getInput(): Promise<{appId: string; [x: string]: any} | null> {
         if (backendController.getPowerState(udn) === "OFF") {
             return null;
         }
@@ -96,17 +93,17 @@ async function states(backendController: BackendController, udn: UDN): Promise<A
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
         const input = await backendController.lgtvCommand(udn, command);
-        return <{appId: string, [x: string]: any}>input;
+        return (input as {appId: string; [x: string]: any});
     }
 
-    function mapInput(input: {appId: string, [x: string]: any}): {identifier: string, name: string} | null {
+    function mapInput(input: {appId: string; [x: string]: any}): {identifier: string; name: string} | null {
         if (Reflect.has(lgtvToAlexa, input.appId) === false) {
             return null;
         }
-        return lgtvToAlexa[<string>input.appId];
+        return lgtvToAlexa[(input.appId as string)];
     }
 
-    function buildStates(target: {identifier: string, name: string} | null): AlexaResponseContextPropertyInput[] {
+    function buildStates(target: {identifier: string; name: string} | null): AlexaResponseContextPropertyInput[] {
         if (target === null) {
             return [];
         }
@@ -117,17 +114,13 @@ async function states(backendController: BackendController, udn: UDN): Promise<A
         });
         return [targetState];
     }
-}
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
-    }
-    switch (alexaRequest.directive.header.name) {
-        case "LaunchTarget":
-            return launchTargetHandler(backendController, alexaRequest);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
+    try {
+        const lgtvInput: {appId: string; [x: string]: any} | null = await getInput();
+        const alexaInput: {identifier: string; name: string} | null = mapInput(lgtvInput as {appId: string; [x: string]: any});
+        return buildStates(alexaInput);
+    } catch (error) {
+        return [];
     }
 }
 
@@ -157,6 +150,18 @@ async function launchTargetHandler(backendController: BackendController, alexaRe
         "namespace": "Alexa",
         "name": "Response"
     });
+}
+
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
+    }
+    switch (alexaRequest.directive.header.name) {
+        case "LaunchTarget":
+            return launchTargetHandler(backendController, alexaRequest);
+        default:
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
+    }
 }
 
 export {capabilities, states, handler};

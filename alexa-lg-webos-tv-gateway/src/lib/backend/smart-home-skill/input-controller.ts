@@ -1,7 +1,12 @@
-import {directiveErrorResponse, namespaceErrorResponse, errorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
-import {UDN} from "../../common";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextPropertyInput,
+    AlexaResponseEventPayloadEndpointCapabilityInput,
+    directiveErrorResponse,
+    errorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
+import {UDN} from "../../common";
 
 const alexaToLGTV: {[key: string]: string} = {
     "HDMI 1": "HDMI_1",
@@ -59,11 +64,6 @@ function capabilities(_backendController: BackendController, _alexaRequest: Alex
 }
 
 async function states(backendController: BackendController, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
-    const lgtvInputList: {[key: string]: string} = await getExternalInputList();
-    const lgtvAppId: string = await getInput();
-    const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
-    return buildStates(alexaInput);
-
     async function getExternalInputList() {
         if (backendController.getPowerState(udn) === "OFF") {
             return [];
@@ -118,27 +118,15 @@ async function states(backendController: BackendController, udn: UDN): Promise<A
         });
         return [inputState];
     }
-}
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa.InputController") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.InputController"));
-    }
-    switch (alexaRequest.directive.header.name) {
-    case "SelectInput":
-        return selectInputHandler(backendController, alexaRequest);
-    default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.InputController"));
-    }
+    const lgtvInputList: {[key: string]: string} = await getExternalInputList();
+    const lgtvAppId: string = await getInput();
+    const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
+    return buildStates(alexaInput);
 }
 
 async function selectInputHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const lgtvInputList = await getExternalInputList();
-    const lgtvAppId = await getInput();
-    const lgtvInput = mapInput(lgtvInputList, lgtvAppId);
-    return setExternalInput(lgtvInput);
-
-    async function getExternalInputList(): Promise<{id: string, label: string, [x: string]: any}[]> {
+    async function getExternalInputList(): Promise<{id: string; label: string; [x: string]: any}[]> {
         const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         if (backendController.getPowerState(udn) === "OFF") {
             return [];
@@ -158,7 +146,7 @@ async function selectInputHandler(backendController: BackendController, alexaReq
         return alexaRequest.directive.payload.input.toUpperCase();
     }
 
-    function mapInput(inputList: {id: string, label: string, [x: string]: any}[], inputItem: string): string {
+    function mapInput(inputList: {id: string; label: string; [x: string]: any}[], inputItem: string): string {
         let input = inputItem;
         if (Reflect.has(alexaToLGTV, inputItem)) {
             input = alexaToLGTV[inputItem];
@@ -212,6 +200,23 @@ async function selectInputHandler(backendController: BackendController, alexaReq
             "namespace": "Alexa",
             "name": "Response"
         });
+    }
+
+    const lgtvInputList = await getExternalInputList();
+    const lgtvAppId = await getInput();
+    const lgtvInput = mapInput(lgtvInputList, lgtvAppId);
+    return setExternalInput(lgtvInput);
+}
+
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.InputController") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.InputController"));
+    }
+    switch (alexaRequest.directive.header.name) {
+        case "SelectInput":
+            return selectInputHandler(backendController, alexaRequest);
+        default:
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.InputController"));
     }
 }
 

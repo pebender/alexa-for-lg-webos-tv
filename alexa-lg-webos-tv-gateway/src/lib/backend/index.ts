@@ -1,11 +1,10 @@
-import EventEmitter from "events";
-import {Mutex} from "async-mutex";
-const {UnititializedClassError} = require("alexa-lg-webos-tv-common");
-import {AlexaRequest, AlexaResponse} from "alexa-lg-webos-tv-common";
+import {AlexaRequest, AlexaResponse, UnititializedClassError} from "alexa-lg-webos-tv-common";
+import {TV, UDN} from "../common";
 import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
-import {TV, UDN} from "../common";
+import EventEmitter from "events";
+import {Mutex} from "async-mutex";
 
 export class Backend extends EventEmitter {
     private _initialized: boolean;
@@ -13,7 +12,7 @@ export class Backend extends EventEmitter {
     private _controller: BackendController;
     private _searcher: BackendSearcher;
     private _throwIfNotInitialized: (methodName: string) => void;
-    constructor(db: DatabaseTable) {
+    public constructor(db: DatabaseTable) {
         super();
 
         this._initialized = false;
@@ -28,7 +27,7 @@ export class Backend extends EventEmitter {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that = this;
         return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve) => {
             if (that._initialized === true) {
@@ -52,47 +51,47 @@ export class Backend extends EventEmitter {
         }));
     }
 
-    start(): void {
+    public start(): void {
         this._throwIfNotInitialized("start");
         return this._searcher.now();
     }
 
-    runCommand(event: {[x: string]: any}): Promise<any> {
+    public runCommand(event: {[x: string]: any}): Promise<any> {
         this._throwIfNotInitialized("runCommand");
         return this._controller.runCommand(event);
     }
 
-    skillCommand(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    public skillCommand(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         this._throwIfNotInitialized("skillCommand");
         return this._controller.skillCommand(alexaRequest);
     }
 
-    getUDNList(): UDN[] {
+    public getUDNList(): UDN[] {
         this._throwIfNotInitialized("getUDNList");
         return this._controller.getUDNList();
     }
 
-    tv(udn: UDN) {
+    public tv(udn: UDN) {
         this._throwIfNotInitialized("tv");
         return this._controller.tv(udn);
     }
 
-    lgtvCommand(udn: UDN, command: {uri: string, payload?: any}): Promise<{[x: string]: any}> {
+    public lgtvCommand(udn: UDN, command: {uri: string; payload?: any}): Promise<{[x: string]: any}> {
         this._throwIfNotInitialized("lgtvCommand");
         return this._controller.lgtvCommand(udn, command);
     }
 
-    getPowerState(udn: UDN): "OFF" | "ON" {
+    public getPowerState(udn: UDN): "OFF" | "ON" {
         this._throwIfNotInitialized("getPowerState");
         return this._controller.getPowerState(udn);
     }
 
-    turnOff(udn: UDN) {
+    public turnOff(udn: UDN) {
         this._throwIfNotInitialized("turnOff");
         return this._controller.turnOff(udn);
     }
 
-    turnOn(udn: UDN) {
+    public turnOn(udn: UDN) {
         this._throwIfNotInitialized("turnOn");
         return this._controller.turnOn(udn);
     }

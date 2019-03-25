@@ -1,7 +1,11 @@
-import {directiveErrorResponse, namespaceErrorResponse} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
-import {UDN} from "../../common";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextPropertyInput,
+    AlexaResponseEventPayloadEndpointCapabilityInput,
+    directiveErrorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
+import {UDN} from "../../common";
 
 // eslint-disable-next-line no-unused-vars
 function capabilities(_lbackendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
@@ -26,24 +30,17 @@ function states(_backendController: BackendController, _udn: UDN): AlexaResponse
     return [];
 }
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
-    }
-    switch (alexaRequest.directive.header.name) {
-        case "Play":
-            return playHandler(backendController, alexaRequest);
-        case "Pause":
-            return pauseHandler(backendController, alexaRequest);
-        case "Stop":
-            return stopHandler(backendController, alexaRequest);
-        case "Rewind":
-            return rewindHandler(backendController, alexaRequest);
-        case "FastForward":
-            return fastForwardHandler(backendController, alexaRequest);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
-    }
+async function genericHandler(backendController: BackendController, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
+    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    const command = {
+        "uri": commandURI
+    };
+    await backendController.lgtvCommand(udn, command);
+    return new AlexaResponse({
+        "request": alexaRequest,
+        "namespace": "Alexa",
+        "name": "Response"
+    });
 }
 
 function playHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
@@ -66,17 +63,24 @@ function fastForwardHandler(backendController: BackendController, alexaRequest: 
     return genericHandler(backendController, alexaRequest, "ssap://media.controls/fastForward");
 }
 
-async function genericHandler(backendController: BackendController, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
-    const command = {
-        "uri": commandURI
-    };
-    await backendController.lgtvCommand(udn, command);
-    return new AlexaResponse({
-        "request": alexaRequest,
-        "namespace": "Alexa",
-        "name": "Response"
-    });
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
+    }
+    switch (alexaRequest.directive.header.name) {
+        case "Play":
+            return playHandler(backendController, alexaRequest);
+        case "Pause":
+            return pauseHandler(backendController, alexaRequest);
+        case "Stop":
+            return stopHandler(backendController, alexaRequest);
+        case "Rewind":
+            return rewindHandler(backendController, alexaRequest);
+        case "FastForward":
+            return fastForwardHandler(backendController, alexaRequest);
+        default:
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
+    }
 }
 
 export {capabilities, states, handler};

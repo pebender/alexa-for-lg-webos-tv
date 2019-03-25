@@ -7,22 +7,17 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
+import {Backend} from "./lib/backend";
+import {DatabaseTable} from "./lib/database";
+import {Frontend} from "./lib/frontend";
 import fs from "fs-extra";
 const ppath = require("persist-path");
-import {DatabaseTable} from "./lib/database";
-import {Backend} from "./lib/backend";
-import {Frontend} from "./lib/frontend";
 
 let configurationDir = null;
 let backend = null;
 let backendDb = null;
 let frontend = null;
 let frontendDb = null;
-
-startGateway().
-catch((error) => {
-    console.log(error);
-});
 
 async function startGateway() {
 
@@ -63,3 +58,8 @@ async function startGateway() {
     await frontend.start();
     await backend.start();
 }
+
+startGateway().
+    catch((error) => {
+        console.log(error);
+    });

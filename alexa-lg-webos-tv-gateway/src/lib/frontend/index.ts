@@ -1,11 +1,10 @@
-
+import {Backend} from "../backend";
+import {DatabaseTable} from "../database";
+import {FrontendExternal} from "./frontend-external";
+import {FrontendInternal} from "./frontend-internal";
+import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {UnititializedClassError} from "alexa-lg-webos-tv-common";
-import {FrontendSecurity} from "./frontend-security";
-import {FrontendInternal} from "./frontend-internal";
-import {FrontendExternal} from "./frontend-external";
-import {DatabaseTable} from "../database";
-import {Backend} from "../backend";
 
 export class Frontend {
     private _initialized: boolean;
@@ -14,7 +13,7 @@ export class Frontend {
     private _internal: FrontendInternal;
     private _external: FrontendExternal;
     private _throwIfNotInitialized: (methodName: string) => void;
-    constructor(db: DatabaseTable, backend: Backend) {
+    public constructor(db: DatabaseTable, backend: Backend) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = new FrontendSecurity(db);
@@ -28,7 +27,7 @@ export class Frontend {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that = this;
         return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve) => {
             if (that._initialized === true) {
@@ -43,23 +42,23 @@ export class Frontend {
         }));
     }
 
-    start(): void {
+    public start(): void {
         this._throwIfNotInitialized("start");
         this._internal.start();
         this._external.start();
     }
 
-    get security(): FrontendSecurity {
+    public get security(): FrontendSecurity {
         this._throwIfNotInitialized("get+security");
         return this._security;
     }
 
-    get internal(): FrontendInternal {
+    public get internal(): FrontendInternal {
         this._throwIfNotInitialized("get+internal");
         return this._internal;
     }
 
-    get external(): FrontendExternal {
+    public get external(): FrontendExternal {
         this._throwIfNotInitialized("get+external");
         return this._external;
     }

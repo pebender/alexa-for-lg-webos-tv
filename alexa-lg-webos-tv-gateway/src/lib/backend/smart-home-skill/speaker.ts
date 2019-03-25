@@ -1,7 +1,13 @@
-import {directiveErrorResponse, namespaceErrorResponse, errorResponse, GenericError} from "alexa-lg-webos-tv-common";
-import {AlexaRequest, AlexaResponse, AlexaResponseEventPayloadEndpointCapabilityInput, AlexaResponseContextPropertyInput} from "alexa-lg-webos-tv-common";
-import {UDN} from "../../common";
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextPropertyInput,
+    AlexaResponseEventPayloadEndpointCapabilityInput,
+    GenericError,
+    directiveErrorResponse,
+    errorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {BackendController} from "../../backend";
+import {UDN} from "../../common";
 // eslint-disable-next-line no-unused-vars
 function capabilities(_backendController: BackendController, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
     return [
@@ -52,35 +58,7 @@ async function states(backendController: BackendController, udn: UDN): Promise<A
     }
 }
 
-function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa.Speaker") {
-        namespaceErrorResponse(alexaRequest, "Alexa.Speaker");
-    }
-    switch (alexaRequest.directive.header.name) {
-        case "SetVolume":
-            return setVolumeHandler(backendController, alexaRequest);
-        case "AdjustVolume":
-            return adjustVolumeHandler(backendController, alexaRequest);
-        case "SetMute":
-            return setMuteHandler(backendController, alexaRequest);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Speaker"));
-    }
-}
-
 async function setVolumeHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    let lgtvVolume: number;
-    try {
-        lgtvVolume = await getVolume()
-    } catch (error) {
-        return Promise.resolve(errorResponse(
-            alexaRequest,
-            "INTERNAL_ERROR",
-            error.name
-        ));
-    }
-    return setVolume(lgtvVolume);
-
     function getVolume() {
         const {volume} = alexaRequest.directive.payload;
         if ((volume < 0) || (volume > 100)) {
@@ -106,12 +84,10 @@ async function setVolumeHandler(backendController: BackendController, alexaReque
             "name": "Response"
         });
     }
-}
 
-async function adjustVolumeHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    let lgtvVolume: number;
+    let lgtvVolume: number = -1;
     try {
-        lgtvVolume = await getVolume()
+        lgtvVolume = await getVolume();
     } catch (error) {
         return Promise.resolve(errorResponse(
             alexaRequest,
@@ -120,7 +96,9 @@ async function adjustVolumeHandler(backendController: BackendController, alexaRe
         ));
     }
     return setVolume(lgtvVolume);
+}
 
+async function adjustVolumeHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     async function getVolume(): Promise<number> {
         const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
 
@@ -163,11 +141,21 @@ async function adjustVolumeHandler(backendController: BackendController, alexaRe
             "name": "Response"
         });
     }
+
+    let lgtvVolume: number = -1;
+    try {
+        lgtvVolume = await getVolume();
+    } catch (error) {
+        return Promise.resolve(errorResponse(
+            alexaRequest,
+            "INTERNAL_ERROR",
+            error.name
+        ));
+    }
+    return setVolume(lgtvVolume);
 }
 
 function setMuteHandler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return setMute();
-
     async function setMute(): Promise<AlexaResponse> {
         const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
         const command = {
@@ -180,6 +168,24 @@ function setMuteHandler(backendController: BackendController, alexaRequest: Alex
             "namespace": "Alexa",
             "name": "Response"
         });
+    }
+
+    return setMute();
+}
+
+function handler(backendController: BackendController, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.Speaker") {
+        namespaceErrorResponse(alexaRequest, "Alexa.Speaker");
+    }
+    switch (alexaRequest.directive.header.name) {
+        case "SetVolume":
+            return setVolumeHandler(backendController, alexaRequest);
+        case "AdjustVolume":
+            return adjustVolumeHandler(backendController, alexaRequest);
+        case "SetMute":
+            return setMuteHandler(backendController, alexaRequest);
+        default:
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Speaker"));
     }
 }
 

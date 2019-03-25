@@ -7,21 +7,22 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-import express from "express";
-const basicAuth = require("express-basic-auth");
-import {Mutex} from "async-mutex";
-const {unititializedClassError} = require("alexa-lg-webos-tv-common");
-import {FrontendSecurity} from "./frontend-security";
 import {Backend} from "../backend";
-import exporessCore from "express-serve-static-core";
+import {FrontendSecurity} from "./frontend-security";
+import {Mutex} from "async-mutex";
+import {UnititializedClassError} from "alexa-lg-webos-tv-common";
+const basicAuth = require("express-basic-auth");
+import express from "express";
+import expressCore from "express-serve-static-core";
+
 export class FrontendExternal {
-    _initialized: boolean;
-    _initializeMutex: Mutex;
-    _security: FrontendSecurity;
-    _backend: Backend;
-    _server: exporessCore.Express;
-    _throwIfNotInitialized: (methodName: string) => void;
-    constructor(serverSecurity: FrontendSecurity, backend: Backend) {
+    private _initialized: boolean;
+    private _initializeMutex: Mutex;
+    private _security: FrontendSecurity;
+    private _backend: Backend;
+    private _server: expressCore.Express;
+    private _throwIfNotInitialized: (methodName: string) => void;
+    public constructor(serverSecurity: FrontendSecurity, backend: Backend) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = serverSecurity;
@@ -30,33 +31,13 @@ export class FrontendExternal {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new unititializedClassError("FrontendInternal", methodName);
+                throw new UnititializedClassError("FrontendExternal", methodName);
             }
         };
     }
 
-    initialize() {
+    public initialize() {
         const that = this;
-
-        return that._initializeMutex.runExclusive(() => new Promise((resolve) => {
-            if (this._initialized === true) {
-                resolve();
-                return;
-            }
-
-            this._server.use("/", express.json());
-            this._server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
-            this._server.post("/HTTP", httpHandler);
-            this._server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
-            this._server.post("/LGTV/RUN", backendRunHandler);
-            this._server.post("/LGTV/SKILL", backendSkillHandler);
-            this._server.get("/LGTV/PING", backendPingHandler);
-            this._server.post("/", (_request: exporessCore.Request, response: exporessCore.Response) => {
-                response.status(401).end();
-            });
-            this._initialized = true;
-            resolve();
-        }));
 
         function authorizeRoot(username: string, password: string): boolean {
             return that._security.authorizeRoot(username, password);
@@ -66,7 +47,7 @@ export class FrontendExternal {
             return that._security.authorizeUser(username, password);
         }
 
-        async function httpHandler(request: exporessCore.Request, response: exporessCore.Response): Promise<void> {
+        async function httpHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
             if (("command" in request.body) && request.body.command.name === "passwordSet") {
                 let body: {[x: string]: any} | {} = {
                     "error": {
@@ -98,15 +79,6 @@ export class FrontendExternal {
             }
         }
 
-        async function backendRunHandler(request: express.Request, response: express.Response): Promise<void> {
-            const commandResponse = await that._backend.runCommand(request.body);
-            response.
-                type("json").
-                status(200).
-                json(commandResponse).
-                end();
-        }
-
         async function backendSkillHandler(request: express.Request, response: express.Response): Promise<void> {
             if (Reflect.has(request.body, "log")) {
 console.log(JSON.stringify(request.body, null, 2));
@@ -127,14 +99,43 @@ console.log(JSON.stringify(commandResponse, null, 2));
                 end();
         }
 
-        function backendPingHandler(_request: exporessCore.Request, response: exporessCore.Response): void {
+        function backendPingHandler(_request: expressCore.Request, response: expressCore.Response): void {
             response.
                 status(200).
                 end();
         }
+
+        async function backendRunHandler(request: express.Request, response: express.Response): Promise<void> {
+            const commandResponse = await that._backend.runCommand(request.body);
+            response.
+                type("json").
+                status(200).
+                json(commandResponse).
+                end();
+        }
+
+        return that._initializeMutex.runExclusive(() => new Promise((resolve) => {
+            if (that._initialized === true) {
+                resolve();
+                return;
+            }
+
+            that._server.use("/", express.json());
+            that._server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
+            that._server.post("/HTTP", httpHandler);
+            that._server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
+            that._server.post("/LGTV/RUN", backendRunHandler);
+            that._server.post("/LGTV/SKILL", backendSkillHandler);
+            that._server.get("/LGTV/PING", backendPingHandler);
+            that._server.post("/", (_req: expressCore.Request, res: expressCore.Response) => {
+                res.status(401).end();
+            });
+            that._initialized = true;
+            resolve();
+        }));
     }
 
-    start() {
+    public start() {
         this._throwIfNotInitialized("start");
         this._server.listen(25391, "localhost");
     }

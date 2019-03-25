@@ -13,16 +13,15 @@
  * <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
  *******************************************************************************
  */
-
-const http = require("axios");
+import * as dgram from "dgram";
+import {IP, MAC, TV, UDN} from "../common";
+import {Client as SsdpClient, ClientOptions as SsdpClientOptions, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-const arp = require("node-arp");
-import {Client as SsdpClient, ClientOptions as SsdpClientOptions, SsdpHeaders} from "node-ssdp";
-import * as dgram from 'dgram';
-const xml2js = require("xml2js").parseString;
 import {UnititializedClassError} from "alexa-lg-webos-tv-common";
-import {TV, UDN, IP, MAC} from "../common";
+const arp = require("node-arp");
+const http = require("axios");
+const xml2js = require("xml2js").parseString;
 
 export class BackendSearcher extends EventEmitter {
     private _initialized: boolean;
@@ -30,7 +29,7 @@ export class BackendSearcher extends EventEmitter {
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
     private _throwIfNotInitialized: (methodName: string) => void;
-    constructor() {
+    public constructor() {
         super();
 
         this._initialized = false;
@@ -45,28 +44,8 @@ export class BackendSearcher extends EventEmitter {
         };
     }
 
-    initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         const that: BackendSearcher = this;
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
-            if (that._initialized === true) {
-                resolve();
-                return;
-            }
-
-            that._ssdpNotify.on("advertise-alive", (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
-                ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
-            });
-            that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo) => {
-                if (statusCode !== 200) {
-                    return;
-                }
-                ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
-            });
-            that._ssdpNotify.start();
-            setImmediate(periodicSearch);
-            that._initialized = true;
-            resolve();
-        }));
 
         // Periodicly scan for TVs.
         function periodicSearch() {
@@ -88,18 +67,18 @@ export class BackendSearcher extends EventEmitter {
 
         function ssdpProcess(messageName: string, headers: SsdpHeaders, rinfo: dgram.RemoteInfo, callback: (error: Error | null, tv: TV | null) => void) {
             const tv: {
-                udn?: UDN,
-                name?: string,
-                ip?: IP,
-                url?: string,
-                mac?: MAC,
-                key?: string
+                udn?: UDN;
+                name?: string;
+                ip?: IP;
+                url?: string;
+                mac?: MAC;
+                key?: string;
             } = {};
             if (Reflect.has(headers, "USN") === false) {
                 callback(null, null);
                 return;
             }
-            if ((<string>headers.USN).endsWith("::urn:lge-com:service:webos-second-screen:1") === false) {
+            if ((headers.USN as string).endsWith("::urn:lge-com:service:webos-second-screen:1") === false) {
                 callback(null, null);
                 return;
             }
@@ -129,7 +108,7 @@ export class BackendSearcher extends EventEmitter {
             }
             // Make sure it is webOS and UPnP 1.0 or 1.1.
             if (!("SERVER" in headers) ||
-                !(<string>headers.SERVER).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
+                !(headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
                 callback(null, null);
                 return;
             }
@@ -201,16 +180,37 @@ export class BackendSearcher extends EventEmitter {
                             return;
                         }
                         tv.mac = mac;
-                        callback(null, <TV>tv);
+                        callback(null, (tv as TV));
                         // eslint-disable-next-line no-useless-return
                         return;
                     });
                 });
             });
         }
+
+        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
+            if (that._initialized === true) {
+                resolve();
+                return;
+            }
+
+            that._ssdpNotify.on("advertise-alive", (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
+                ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+            });
+            that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo) => {
+                if (statusCode !== 200) {
+                    return;
+                }
+                ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+            });
+            that._ssdpNotify.start();
+            setImmediate(periodicSearch);
+            that._initialized = true;
+            resolve();
+        }));
     }
 
-    now() {
+    public now() {
         this._throwIfNotInitialized("now");
         this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
