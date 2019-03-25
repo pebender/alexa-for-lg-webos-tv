@@ -1,3 +1,4 @@
+import * as wol from "wake_on_lan";
 import {GenericError,
     UninitializedClassError} from "alexa-lg-webos-tv-common";
 import {Client as SsdpClient,
@@ -8,7 +9,6 @@ const LGTV = require("lgtv2");
 import {Mutex} from "async-mutex";
 import {TV} from "../common";
 import uuid from "uuid/v4";
-const wol = require("wol");
 
 export interface LGTVRequest {
     uri: string;
