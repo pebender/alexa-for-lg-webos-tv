@@ -45,17 +45,15 @@ function handler(event) {
 }
 
 function turnOffHandler(event) {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event
     });
-    return alexaResponse.get();
 }
 
 function turnOnHandler(event) {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event
     });
-    return alexaResponse.get();
 }
 
 module.exports = {

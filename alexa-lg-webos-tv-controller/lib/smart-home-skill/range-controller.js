@@ -148,21 +148,19 @@ function adjustRangeValueHandler(event) {
 }
 
 function setRangeValueInstanceHandler(event) {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event
     });
-    return alexaResponse.get();
 }
 
 function adjustRangeValueInstanceHandler(event) {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event
     });
-    return alexaResponse.get();
 }
 
 function unknownInstanceError(event) {
-    const alexaResponse = new AlexaResponse({
+    return new AlexaResponse({
         "request": event,
         "name": "ErrorResponse",
         "payload": {
@@ -170,7 +168,6 @@ function unknownInstanceError(event) {
             "message": `I do not know the Range Controller instance ${event.directive.header.instance}`
         }
     });
-    return alexaResponse.get();
 }
 
 module.exports = {

@@ -23,14 +23,14 @@ async function handler(event) {
             response.event.header.name === "Discover.Response") {
             const alexaResponse = new AlexaResponse(response);
             alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-            return alexaResponse.get();
+            return alexaResponse;
         }
         const alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
         alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-        return alexaResponse.get();
+        return alexaResponse;
     } catch (_error) {
         if (lgtvGatewayEndpoint === null) {
             return null;
@@ -40,7 +40,7 @@ async function handler(event) {
             "name": "Discover.Response"
         });
         alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
-        return alexaResponse.get();
+        return alexaResponse;
     }
 }
 

@@ -85,9 +85,9 @@ async function stateHandler(response) {
             contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
             alexaResponse.addContextProperty(contextProperty);
         });
-        return alexaResponse.get();
+        return alexaResponse;
     } catch (_error) {
-        return alexaResponse.get();
+        return alexaResponse;
     }
 }
 
