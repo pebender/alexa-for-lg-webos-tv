@@ -1,12 +1,11 @@
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {namespaceErrorResponse} = require("alexa-lg-webos-tv-common");
-const Gateway = require("../gateway-api");
-const alexa = require("./alexa");
-const alexaEndpointHealth = require("./endpoint-health");
-const alexaPowerController = require("./power-controller");
-const alexaRangeController = require("./range-controller");
+import * as alexa from "./alexa";
+import * as alexaEndpointHealth from "./endpoint-health";
+import * as alexaPowerController from "./power-controller";
+import * as alexaRangeController from "./range-controller";
+import {AlexaResponse, namespaceErrorResponse} from "alexa-lg-webos-tv-common";
+import {Gateway} from "../gateway-api";
 
-async function handler(event) {
+async function handler(event): Promise<any> {
     let lgtvGatewayEndpoint = null;
     try {
         if (event.directive.header.namespace !== "Alexa.Discovery") {
@@ -45,7 +44,7 @@ async function handler(event) {
 }
 
 // eslint-disable-next-line no-unused-vars
-async function gatewayEndpoint(event) {
+async function gatewayEndpoint(event): Promise<any> {
     try {
         const capabilitiesList = await Promise.all([
             Promise.resolve(alexa.capabilities(event)),
@@ -72,4 +71,4 @@ async function gatewayEndpoint(event) {
     }
 }
 
-module.exports = {"handler": handler};
+export {handler};

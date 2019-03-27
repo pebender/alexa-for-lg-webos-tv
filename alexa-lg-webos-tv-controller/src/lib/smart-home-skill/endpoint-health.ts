@@ -1,9 +1,10 @@
-const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
-const Gateway = require("../gateway-api");
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+import {AlexaResponse,
+    directiveErrorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
+import {Gateway} from "../gateway-api";
 
-// eslint-disable-next-line no-unused-vars
-function capabilities(event) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function capabilities(_event): any[] {
     return [
         {
             "type": "AlexaInterface",
@@ -22,8 +23,8 @@ function capabilities(event) {
     ];
 }
 
-async function states() {
-    const gateway = new Gateway("x");
+async function states(): Promise<any[]> {
+    const gateway = new Gateway("");
     try {
         await gateway.ping();
         const connectivityState = AlexaResponse.createContextProperty({
@@ -42,19 +43,14 @@ async function states() {
     }
 }
 
-function handler(event) {
+function handler(event): Promise<any> {
     if (event.directive.header.namespace !== "Alexa.EndpointHealth") {
-        return namespaceErrorResponse(event, event.directive.header.namespace);
-
+        return Promise.resolve(namespaceErrorResponse(event, event.directive.header.namespace));
     }
     switch (event.directive.header.name) {
         default:
-            return directiveErrorResponse(event, event.directive.header.namespace);
+            return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
     }
 }
 
-module.exports = {
-    "capabilities": capabilities,
-    "states": states,
-    "handler": handler
-};
+export {capabilities, states, handler};

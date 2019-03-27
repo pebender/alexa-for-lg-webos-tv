@@ -1,8 +1,9 @@
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
-const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
+import {AlexaResponse,
+    directiveErrorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 
-// eslint-disable-next-line no-unused-vars
-function capabilities(_event) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function capabilities(_event): any[] {
     return [
         {
             "type": "AlexaInterface",
@@ -21,7 +22,7 @@ function capabilities(_event) {
     ];
 }
 
-function states() {
+function states(): any[] {
     const powerStateState = AlexaResponse.createContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
@@ -30,7 +31,7 @@ function states() {
     return [powerStateState];
 }
 
-function handler(event) {
+function handler(event): any {
     if (event.directive.header.namespace !== "Alexa.PowerController") {
         return namespaceErrorResponse(event, event.directive.header.namespace);
     }
@@ -44,20 +45,16 @@ function handler(event) {
     }
 }
 
-function turnOffHandler(event) {
+function turnOffHandler(event): any {
     return new AlexaResponse({
         "request": event
     });
 }
 
-function turnOnHandler(event) {
+function turnOnHandler(event): any {
     return new AlexaResponse({
         "request": event
     });
 }
 
-module.exports = {
-    "capabilities": capabilities,
-    "states": states,
-    "handler": handler
-};
+export {capabilities, states, handler};

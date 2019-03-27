@@ -1,43 +1,48 @@
-const https = require("https");
-const {constants} = require("alexa-lg-webos-tv-common");
+import {GenericError, constants} from "alexa-lg-webos-tv-common";
+import http from "http";
+import https from "https";
 
 class Gateway {
-    constructor(userId) {
-        this.private = {
-            "userId": userId,
-            "hostname": null,
-            "username": null,
-            "password": null
-        };
+    private _userId: string;
+    private _hostname: string;
+    private _username: string;
+    private _password: string;
+    private _null: string;
+    public constructor(userId) {
+
+        this._userId = userId;
+        this._hostname = null;
+        this._username = null;
+        this._password = null;
+
 
         // These will be in a database indexed by userId.
-        this.private.hostname = constants.gatewayHostname;
-        this.private.username = "LGTV";
-        this.private.password = constants.gatewayUserPassword;
+        this._hostname = constants.gatewayHostname;
+        this._username = "LGTV";
+        this._password = constants.gatewayUserPassword;
     }
 
-    set hostname(hostname) {
-        this.private.null = hostname;
+    public set hostname(hostname) {
+        this._null = hostname;
     }
 
-    get hostname() {
-        return this.private.hostname;
+    public get hostname(): string {
+        return this._hostname;
     }
 
-    set password(password) {
-        this.private.null = password;
+    public set password(password) {
+        this._null = password;
     }
 
-    get password() {
-        return this.private.password;
+    public get password(): string {
+        return this._password;
     }
 
-    get username() {
-        return this.private.username;
+    public get username(): string {
+        return this._username;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    sendSkillDirective(request) {
+    public sendSkillDirective(request): Promise<any> {
         const options = {
             "hostname": this.hostname,
             "username": this.username,
@@ -47,7 +52,31 @@ class Gateway {
         return sendHandler(options, request);
     }
 
-    ping() {
+    public send(
+        sendOptions: {
+            hostname?: string;
+            username?: string;
+            password?: string;
+            path: string;
+        },
+        request: any
+    ): any {
+        const options = {
+            "hostname": Reflect.has(sendOptions, "hostname")
+                ? sendOptions.hostname
+                : this.hostname,
+            "username": Reflect.has(sendOptions, "username")
+                ? sendOptions.username
+                : this.hostname,
+            "password": Reflect.has(sendOptions, "password")
+                ? sendOptions.password
+                : this.password,
+            "path": sendOptions.path
+        };
+        return sendHandler(options, request);
+    }
+
+    public ping(): Promise<boolean> {
         const options = {
             "hostname": this.hostname,
             "username": this.username,
@@ -58,7 +87,7 @@ class Gateway {
     }
 }
 
-function pingHandler(requestOptions) {
+function pingHandler(requestOptions): Promise<boolean> {
     return new Promise((resolve, reject) => {
         let options = null;
         try {
@@ -77,11 +106,11 @@ function pingHandler(requestOptions) {
                 if (response.statusCode === 200) {
                     resolve(true);
                 }
-                if (Reflect.has(https.STATUS_CODES, response.statusCode)) {
+                if (Reflect.has(http.STATUS_CODES, response.statusCode)) {
                     const error = new Error();
                     error.name = "HTTP_SERVER_ERROR";
                     error.message = "The gateway returned HTTP/1.1 status " +
-                        ` '${https.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
+                        ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
                     reject(error);
                 }
                 const error = new Error();
@@ -96,7 +125,7 @@ function pingHandler(requestOptions) {
     });
 }
 
-function sendHandler(requestOptions, requestBody) {
+function sendHandler(requestOptions, requestBody): Promise<any> {
     return new Promise((resolve, reject) => {
         let options = null;
         try {
@@ -110,7 +139,7 @@ function sendHandler(requestOptions, requestBody) {
         options.headers["Content-Length"] = Buffer.byteLength(content);
         const request = https.request(options);
         request.once("response", (response) => {
-            let body = {};
+            let body: {[x: string]: any} = {};
             let data = "";
             response.setEncoding("utf8");
             response.on("data", (chunk) => {
@@ -118,24 +147,24 @@ function sendHandler(requestOptions, requestBody) {
             });
             response.on("end", () => {
                 if (response.statusCode !== 200) {
-                    if (!Reflect.has(https.STATUS_CODES, response.statusCode)) {
+                    if (!Reflect.has(http.STATUS_CODES, response.statusCode)) {
                         const message = "The gateway returned HTTP/1.1 status code" +
                             ` '${response.statusCode}'.`;
-                        return reject(new GatewayAPIError(message));
+                        return reject(new GenericError("GatewayAPIError", message));
                     }
                     const message = "The gateway returned HTTP/1.1 status message" +
-                        ` '${https.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
-                    return reject(new GatewayAPIError(message));
+                        ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
+                    return reject(new GenericError("GatewayAPIError", message));
                 }
                 if (!(/^application\/json/).test(response.headers["content-type"])) {
                     const message = "The gateway returned the wrong content type.";
-                    return reject(new GatewayAPIError(message));
+                    return reject(new GenericError("GatewayAPIError", message));
                 }
                 try {
                     body = JSON.parse(data);
                 } catch (error) {
                     const message = "The gateway returned corrupted content.";
-                    return reject(new GatewayAPIError(message));
+                    return reject(new GenericError("GatewayAPIError", message));
                 }
                 if (Reflect.has(body, "error")) {
                     let message = "The gateway returned the error";
@@ -144,27 +173,27 @@ function sendHandler(requestOptions, requestBody) {
                     } else {
                         message += ` ${body.error.message}`;
                     }
-                    return reject(new GatewayAPIError(message));
+                    return reject(new GenericError("GatewayAPIError", message));
                 }
                 return resolve(body);
             });
             response.on("error", (error) => {
                 const message = "There was a problem talking to the gateway." +
                     ` The error was [${error.name}: ${error.message}].`;
-                return reject(new GatewayAPIError(message));
+                return reject(new GenericError("GatewayAPIError", message));
             });
         });
         request.on("error", (error) => {
             const message = "There was a problem talking to the gateway." +
                 ` The error was [${error.name}: ${error.message}].`;
-            return reject(new GatewayAPIError(message));
+            return reject(new GenericError("GatewayAPIError", message));
         });
         request.write(content);
         request.end();
     });
 }
 
-function createBasicOptions(requestOptions) {
+function createBasicOptions(requestOptions): any {
     if (Reflect.has(requestOptions, "hostname") === false || requestOptions.hostname === null) {
         throw new GenericError("HOSTNAME_NOT_SET", "The gateway hostname has not been set.");
     }
@@ -194,19 +223,4 @@ function createBasicOptions(requestOptions) {
     return options;
 }
 
-
-class GenericError extends Error {
-    constructor(name, message, ...args) {
-        super(message, ...args);
-        this.name = name;
-        Error.captureStackTrace(this, this.constructor);
-    }
-}
-
-class GatewayAPIError extends GenericError {
-    constructor(message, ...args) {
-        super("GatewayAPIError", message, ...args);
-    }
-}
-
-module.exports = Gateway;
+export {Gateway};

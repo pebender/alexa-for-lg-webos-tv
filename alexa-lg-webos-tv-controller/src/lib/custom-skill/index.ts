@@ -1,10 +1,10 @@
-const Alexa = require("ask-sdk");
-const authorization = require("./authorization");
+import * as Alexa from "ask-sdk";
+import * as authorization from "./authorization";
+import {DynamoDbPersistenceAdapter} from "ask-sdk-dynamodb-persistence-adapter";
 
-const {DynamoDbPersistenceAdapter} = require("ask-sdk-dynamodb-persistence-adapter");
 const persistenceAdapter = new DynamoDbPersistenceAdapter({
-  "tableName": "LGwebOSTVController",
-  "createTable": true
+    "tableName": "LGwebOSTVController",
+    "createTable": true
 });
 
 const HelpIntentHandler = {
@@ -63,7 +63,7 @@ const handlers = [
 
 const ErrorHandler = {
     canHandle() {
-      return true;
+        return true;
     },
     // eslint-disable-next-line no-unused-vars
     handle(handlerInput, _error) {

@@ -1,8 +1,9 @@
-const {namespaceErrorResponse, directiveErrorResponse} = require("alexa-lg-webos-tv-common");
-const {AlexaResponse} = require("alexa-lg-webos-tv-common");
+import {AlexaResponse,
+    directiveErrorResponse,
+    namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 
-// eslint-disable-next-line no-unused-vars
-function capabilities(event) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function capabilities(_event): any[] {
     return [
         ipAddressOctetCapability("A"),
         ipAddressOctetCapability("B"),
@@ -11,7 +12,7 @@ function capabilities(event) {
     ];
 }
 
-function ipAddressOctetCapability(octet) {
+function ipAddressOctetCapability(octet): any {
     const textsList = {
         "A": [
             "Alpha",
@@ -70,7 +71,7 @@ function ipAddressOctetCapability(octet) {
     };
 }
 
-function states() {
+function states(): any {
     const rangeValueStateA = AlexaResponse.createContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "A",
@@ -103,63 +104,63 @@ function states() {
     ];
 }
 
-function handler(event) {
+function handler(event): Promise<any> {
     if (event.directive.header.namespace !== "Alexa.RangeController") {
-        return namespaceErrorResponse(event, event.directive.header.namespace);
+        return Promise.resolve(namespaceErrorResponse(event, event.directive.header.namespace));
     }
     switch (event.directive.header.name) {
         case "SetRangeValue":
-            return setRangeValueHandler(event);
+            return Promise.resolve(setRangeValueHandler(event));
         case "AdjustRangeValue":
-            return adjustRangeValueHandler(event);
+            return Promise.resolve(adjustRangeValueHandler(event));
         default:
-            return directiveErrorResponse(event, event.directive.header.namespace);
+            return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
     }
 }
 
-function setRangeValueHandler(event) {
-        switch (event.directive.header.instance) {
-            case "A":
-                return setRangeValueInstanceHandler(event);
-            case "B":
-                return setRangeValueInstanceHandler(event);
-            case "C":
-                return setRangeValueInstanceHandler(event);
-            case "D":
-                return setRangeValueInstanceHandler(event);
-            default:
-                return unknownInstanceError(event);
-        }
+function setRangeValueHandler(event): Promise<AlexaResponse> {
+    switch (event.directive.header.instance) {
+        case "A":
+            return setRangeValueInstanceHandler(event);
+        case "B":
+            return setRangeValueInstanceHandler(event);
+        case "C":
+            return setRangeValueInstanceHandler(event);
+        case "D":
+            return setRangeValueInstanceHandler(event);
+        default:
+            return Promise.resolve(unknownInstanceError(event));
+    }
 }
 
-function adjustRangeValueHandler(event) {
-        switch (event.directive.header.instance) {
-            case "A":
-                return adjustRangeValueInstanceHandler(event);
-            case "B":
-                return adjustRangeValueInstanceHandler(event);
-            case "C":
-                return adjustRangeValueInstanceHandler(event);
-            case "D":
-                return adjustRangeValueInstanceHandler(event);
-            default:
-                return unknownInstanceError(event);
-        }
+function adjustRangeValueHandler(event): Promise<AlexaResponse> {
+    switch (event.directive.header.instance) {
+        case "A":
+            return adjustRangeValueInstanceHandler(event);
+        case "B":
+            return adjustRangeValueInstanceHandler(event);
+        case "C":
+            return adjustRangeValueInstanceHandler(event);
+        case "D":
+            return adjustRangeValueInstanceHandler(event);
+        default:
+            return Promise.resolve(unknownInstanceError(event));
+    }
 }
 
-function setRangeValueInstanceHandler(event) {
-    return new AlexaResponse({
+function setRangeValueInstanceHandler(event): Promise<AlexaResponse> {
+    return Promise.resolve(new AlexaResponse({
         "request": event
-    });
+    }));
 }
 
-function adjustRangeValueInstanceHandler(event) {
-    return new AlexaResponse({
+function adjustRangeValueInstanceHandler(event): Promise<AlexaResponse> {
+    return Promise.resolve(new AlexaResponse({
         "request": event
-    });
+    }));
 }
 
-function unknownInstanceError(event) {
+function unknownInstanceError(event): AlexaResponse {
     return new AlexaResponse({
         "request": event,
         "name": "ErrorResponse",
@@ -170,8 +171,4 @@ function unknownInstanceError(event) {
     });
 }
 
-module.exports = {
-    "capabilities": capabilities,
-    "states": states,
-    "handler": handler
-};
+export {capabilities, states, handler};

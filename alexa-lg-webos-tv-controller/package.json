@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "11.11.0",
-    "eslint": "5.15.1",
+    "typescript": "3.3.4000",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
@@ -30,6 +30,8 @@
     "certnames"
   ],
   "scripts": {
+    "build": "node_modules/.bin/tsc",
+    "watch": "node_modules/.bin/tsc --watch",
     "pack": "npm-pack-zip",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

@@ -1,8 +1,8 @@
-const tls = require("tls");
-const crypto = require("crypto");
+import {Gateway} from "../gateway-api";
+import {constants} from "alexa-lg-webos-tv-common";
+import crypto from "crypto";
+import tls from "tls";
 const certnames = require("certnames");
-const {constants} = require("alexa-lg-webos-tv-common");
-const gateway = require("../gateway-api");
 
 const SetHostnameIntentHandler = {
     canHandle(handlerInput) {
@@ -125,7 +125,9 @@ const SetHostnameIntentHandler = {
             }
         } else if (handlerInput.requestEnvelope.request.dialogState === "COMPLETED") {
             if (handlerInput.requestEnvelope.request.intent.confirmationStatus === "CONFIRMED") {
-                let persistentAttributes = {};
+                let persistentAttributes: {
+                    hostname?: string;
+                } = {};
                 try {
                     persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
                 } catch (error) {
@@ -170,7 +172,7 @@ const SetHostnameIntentHandler = {
             addDelegateDirective().
             getResponse();
 
-        function getHostnames(ipAddress, ipPort) {
+        function getHostnames(ipAddress, ipPort): Promise<string[]> {
             return new Promise((resolve, reject) => {
                 const sock = tls.connect(ipPort, ipAddress, {"rejectUnauthorized": false});
                 sock.on("secureConnect", () => {
@@ -192,7 +194,10 @@ const SetPasswordIntentHandler = {
             handlerInput.requestEnvelope.request.intent.name === "Authorization_SetPasswordIntent";
     },
     async handle(handlerInput) {
-        let persistentAttributes = {};
+        let persistentAttributes: {
+            hostname?: string;
+            password?: string;
+        } = {};
         try {
             persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes();
         } catch (error) {
@@ -218,6 +223,7 @@ const SetPasswordIntentHandler = {
                         "value": password
                     }
                 };
+                const gateway = new Gateway("");
                 await gateway.send(options, request);
             } catch (error) {
                 return handlerInput.responseBuilder.
@@ -254,4 +260,4 @@ const handlers = [
     SetPasswordIntentHandler
 ];
 
-module.exports = {"handlers": handlers};
+export {handlers};
