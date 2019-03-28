@@ -1,10 +1,13 @@
-import {AlexaResponse,
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 import {Gateway} from "../gateway-api";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_event): any[] {
+function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -23,7 +26,7 @@ function capabilities(_event): any[] {
     ];
 }
 
-async function states(): Promise<any[]> {
+async function states(): Promise<AlexaResponseContextProperty[]> {
     const gateway = new Gateway("");
     try {
         await gateway.ping();
@@ -43,13 +46,13 @@ async function states(): Promise<any[]> {
     }
 }
 
-function handler(event): Promise<any> {
-    if (event.directive.header.namespace !== "Alexa.EndpointHealth") {
-        return Promise.resolve(namespaceErrorResponse(event, event.directive.header.namespace));
+function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa.EndpointHealth") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
-    switch (event.directive.header.name) {
+    switch (alexaRequest.directive.header.name) {
         default:
-            return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
+            return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
 }
 

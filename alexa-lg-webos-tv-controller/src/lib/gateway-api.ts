@@ -1,90 +1,51 @@
-import {GenericError, constants} from "alexa-lg-webos-tv-common";
+import {AlexaRequest,
+    AlexaResponse,
+    GenericError,
+    constants} from "alexa-lg-webos-tv-common";
 import http from "http";
 import https from "https";
 
-class Gateway {
-    private _userId: string;
-    private _hostname: string;
-    private _username: string;
-    private _password: string;
-    private _null: string;
-    public constructor(userId) {
-
-        this._userId = userId;
-        this._hostname = null;
-        this._username = null;
-        this._password = null;
-
-
-        // These will be in a database indexed by userId.
-        this._hostname = constants.gatewayHostname;
-        this._username = "LGTV";
-        this._password = constants.gatewayUserPassword;
+function createBasicOptions(requestOptions: {
+    hostname: string;
+    username: string;
+    password: string;
+    path: string;
+    rejectUnauthorized?: boolean;
+}): {
+        hostname: string;
+        port: number;
+        path: string;
+        headers: {[x: string]: string};
+        rejectUnauthorized: boolean;
+        // eslint-disable-next-line @typescript-eslint/indent
+} {
+    if (Reflect.has(requestOptions, "hostname") === false || requestOptions.hostname === null) {
+        throw new GenericError("HOSTNAME_NOT_SET", "The gateway hostname has not been set.");
+    }
+    if (Reflect.has(requestOptions, "username") === false || requestOptions.username === null) {
+        throw new GenericError("USERNAME_NOT_SET", "The gateway username has not been set.");
+    }
+    if (Reflect.has(requestOptions, "password") === false || requestOptions.password === null) {
+        throw new GenericError("PASSWORD_NOT_SET", "The gateway password has not been set.");
+    }
+    if (Reflect.has(requestOptions, "path") === false || requestOptions.path === null) {
+        throw new GenericError("PATH_NOT_SET", "The gateway path has not been set.");
     }
 
-    public set hostname(hostname) {
-        this._null = hostname;
-    }
-
-    public get hostname(): string {
-        return this._hostname;
-    }
-
-    public set password(password) {
-        this._null = password;
-    }
-
-    public get password(): string {
-        return this._password;
-    }
-
-    public get username(): string {
-        return this._username;
-    }
-
-    public sendSkillDirective(request): Promise<any> {
-        const options = {
-            "hostname": this.hostname,
-            "username": this.username,
-            "password": this.password,
-            "path": "/LGTV/SKILL"
-        };
-        return sendHandler(options, request);
-    }
-
-    public send(
-        sendOptions: {
-            hostname?: string;
-            username?: string;
-            password?: string;
-            path: string;
+    const authorization = Buffer.from(`${requestOptions.username}:${requestOptions.password}`).toString("base64");
+    const options = {
+        "hostname": requestOptions.hostname,
+        "port": 25392,
+        "path": requestOptions.path,
+        "headers": {
+            "Authorization": `Basic ${authorization}`
         },
-        request: any
-    ): any {
-        const options = {
-            "hostname": Reflect.has(sendOptions, "hostname")
-                ? sendOptions.hostname
-                : this.hostname,
-            "username": Reflect.has(sendOptions, "username")
-                ? sendOptions.username
-                : this.hostname,
-            "password": Reflect.has(sendOptions, "password")
-                ? sendOptions.password
-                : this.password,
-            "path": sendOptions.path
-        };
-        return sendHandler(options, request);
-    }
-
-    public ping(): Promise<boolean> {
-        const options = {
-            "hostname": this.hostname,
-            "username": this.username,
-            "password": this.password,
-            "path": "/LGTV/PING"
-        };
-        return pingHandler(options);
-    }
+        "rejectUnauthorized":
+            Reflect.has(requestOptions, "rejectUnauthorized")
+                ? requestOptions.rejectUnauthorized
+                : true
+    };
+    return options;
 }
 
 function pingHandler(requestOptions): Promise<boolean> {
@@ -99,8 +60,8 @@ function pingHandler(requestOptions): Promise<boolean> {
         request.once("response", (response) => {
             response.setEncoding("utf8");
             response.on("data", (chunk) => {
-                // eslint-disable-next-line no-unused-vars
-                const nothing = chunk;
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const _nothing = chunk;
             });
             response.on("end", () => {
                 if (response.statusCode === 200) {
@@ -193,34 +154,89 @@ function sendHandler(requestOptions, requestBody): Promise<any> {
     });
 }
 
-function createBasicOptions(requestOptions): any {
-    if (Reflect.has(requestOptions, "hostname") === false || requestOptions.hostname === null) {
-        throw new GenericError("HOSTNAME_NOT_SET", "The gateway hostname has not been set.");
-    }
-    if (Reflect.has(requestOptions, "username") === false || requestOptions.username === null) {
-        throw new GenericError("USERNAME_NOT_SET", "The gateway username has not been set.");
-    }
-    if (Reflect.has(requestOptions, "password") === false || requestOptions.password === null) {
-        throw new GenericError("PASSWORD_NOT_SET", "The gateway password has not been set.");
-    }
-    if (Reflect.has(requestOptions, "path") === false || requestOptions.path === null) {
-        throw new GenericError("PATH_NOT_SET", "The gateway path has not been set.");
+class Gateway {
+    private _userId: string;
+    private _hostname: string;
+    private _username: string;
+    private _password: string;
+    private _null: string;
+    public constructor(userId) {
+
+        this._userId = userId;
+        this._hostname = null;
+        this._username = null;
+        this._password = null;
+
+
+        // These will be in a database indexed by userId.
+        this._hostname = constants.gatewayHostname;
+        this._username = "LGTV";
+        this._password = constants.gatewayUserPassword;
     }
 
-    const authorization = Buffer.from(`${requestOptions.username}:${requestOptions.password}`).toString("base64");
-    const options = {
-        "hostname": requestOptions.hostname,
-        "port": 25392,
-        "path": requestOptions.path,
-        "headers": {
-            "Authorization": `Basic ${authorization}`
+    public set hostname(hostname: string) {
+        this._null = hostname;
+    }
+
+    public get hostname(): string {
+        return this._hostname;
+    }
+
+    public set password(password: string) {
+        this._null = password;
+    }
+
+    public get password(): string {
+        return this._password;
+    }
+
+    public get username(): string {
+        return this._username;
+    }
+
+    public sendSkillDirective(request: AlexaRequest | {log: AlexaRequest} | {log: AlexaResponse}): Promise<AlexaResponse> {
+        const options = {
+            "hostname": this.hostname,
+            "username": this.username,
+            "password": this.password,
+            "path": "/LGTV/SKILL"
+        };
+        return sendHandler(options, request);
+    }
+
+    public send(
+        sendOptions: {
+            hostname?: string;
+            username?: string;
+            password?: string;
+            path: string;
         },
-        "rejectUnauthorized":
-            Reflect.has(requestOptions, "rejectUnauthorized")
-                ? requestOptions.rejectUnauthorized
-                : true
-    };
-    return options;
+        request: any
+    ): any {
+        const options = {
+            "hostname": Reflect.has(sendOptions, "hostname")
+                ? sendOptions.hostname
+                : this.hostname,
+            "username": Reflect.has(sendOptions, "username")
+                ? sendOptions.username
+                : this.hostname,
+            "password": Reflect.has(sendOptions, "password")
+                ? sendOptions.password
+                : this.password,
+            "path": sendOptions.path
+        };
+        return sendHandler(options, request);
+    }
+
+    public ping(): Promise<boolean> {
+        const options = {
+            "hostname": this.hostname,
+            "username": this.username,
+            "password": this.password,
+            "path": "/LGTV/PING"
+        };
+        return pingHandler(options);
+    }
 }
 
 export {Gateway};

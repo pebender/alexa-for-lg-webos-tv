@@ -11,10 +11,8 @@ import {AlexaRequest,
     AlexaResponse,
     errorResponse,
     errorToErrorResponse} from "alexa-lg-webos-tv-common";
-// import Ajv from "ajv";
 import {Backend} from "../../backend";
 import {UDN} from "../../common";
-// const {alexaSmartHomeMessageSchema} = require("alexa-lg-webos-tv-common");
 
 async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
@@ -50,29 +48,6 @@ async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Pro
         return alexaResponse;
     }
 }
-
-/*
- * We skip the validation function as the schema file does not support
- * Alexa.Launch or Alexa.PlaybackController.
- */
-/*
-// eslint-disable-next-line no-unused-vars
-async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const response = await handlerWithoutValidation(backend, alexaRequest);
-    const ajv = new Ajv({"allErrors": true});
-    const validateSchemaFunction = await ajv.compile(alexaSmartHomeMessageSchema);
-    const valid = await validateSchemaFunction(response);
-    if (valid === true) {
-        return response;
-    }
-    const schemaErrors = JSON.stringify(validateSchemaFunction.errors, null, 2);
-    return errorResponse(
-        alexaRequest,
-        "INTERNAL_ERROR",
-        `The generated response message was invalid. Schema errors: ${schemaErrors}.`
-    );
-}
-*/
 
 async function handlerWithoutValidation(backend: Backend, event: any): Promise<AlexaResponse> {
     let alexaRequest: AlexaRequest | null = null;

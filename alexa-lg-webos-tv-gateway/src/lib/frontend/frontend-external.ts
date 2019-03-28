@@ -89,9 +89,9 @@ console.log(JSON.stringify(request.body, null, 2));
                     end();
                 return;
             }
-// onsole.log(JSON.stringify(request.body, null, 2));
+console.log(JSON.stringify(request.body, null, 2));
             const commandResponse = await that._backend.skillCommand(request.body);
-// console.log(JSON.stringify(commandResponse, null, 2));
+console.log(JSON.stringify(commandResponse, null, 2));
             response.
                 type("json").
                 status(200).

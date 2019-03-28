@@ -4,71 +4,13 @@ import * as alexaDiscovery from "./discovery";
 import * as alexaEndpointHealth from "./endpoint-health";
 import * as alexaPowerController from "./power-controller";
 import * as alexaRangeController from "./range-controller";
-import {AlexaResponse,
+import {AlexaRequest,
+    AlexaResponse,
     directiveErrorResponse,
     errorToErrorResponse} from "alexa-lg-webos-tv-common";
 import {Gateway} from "../gateway-api";
 
-async function handlerWithLogging(event, context): Promise<any> {
-    const response = await handler(event, context);
-
-    const gateway = new Gateway("x");
-    const logRequest = {
-        "log": event
-    };
-    const logResponse = {
-        "log": response
-    };
-    await gateway.sendSkillDirective(logRequest);
-    await gateway.sendSkillDirective(logResponse);
-    return response;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handler(event, _context): Promise<any> {
-    try {
-        if (!(Reflect.has(event.directive, "endpoint") && Reflect.has(event.directive.endpoint, "endpointId"))) {
-            switch (event.directive.header.namespace) {
-                case "Alexa.Authorization":
-                    return alexaAuthorization.handler(event);
-                case "Alexa.Discovery":
-                    return alexaDiscovery.handler(event);
-                default:
-                    return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
-            }
-        } else if (event.directive.endpoint.endpointId === "lg-webos-tv-gateway") {
-            switch (event.directive.header.namespace) {
-                case "Alexa":
-                    return stateHandler(alexa.handler(event));
-                case "Alexa.EndpointHealth":
-                    return stateHandler(alexaEndpointHealth.handler(event));
-                case "Alexa.PowerController":
-                    return stateHandler(alexaPowerController.handler(event));
-                case "Alexa.RangeController":
-                    return stateHandler(alexaRangeController.handler(event));
-                default:
-                    return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
-            }
-        } else {
-            return remoteResponse(event);
-        }
-    } catch (error) {
-        return Promise.resolve(errorToErrorResponse(error, event));
-    }
-}
-
-async function remoteResponse(event): Promise<any> {
-    const gateway = new Gateway("x");
-    try {
-        const response = await gateway.sendSkillDirective(event);
-        return response;
-    } catch (error) {
-        return errorToErrorResponse(error, event);
-    }
-}
-
-async function stateHandler(response): Promise<any> {
-    const alexaResponse = new AlexaResponse(response);
+async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
         const startTime = new Date();
         const statesList = await Promise.all([
@@ -90,6 +32,60 @@ async function stateHandler(response): Promise<any> {
     } catch (_error) {
         return alexaResponse;
     }
+}
+
+async function remoteResponse(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    const gateway = new Gateway("x");
+    try {
+        const alexaResponse = await gateway.sendSkillDirective(alexaRequest);
+        return alexaResponse;
+    } catch (error) {
+        return errorToErrorResponse(alexaRequest, error);
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function handler(event: AlexaRequest, _context: any): Promise<AlexaResponse> {
+    try {
+        const alexaRequest = new AlexaRequest(event);
+        if (!(Reflect.has(alexaRequest.directive, "endpoint") && Reflect.has(alexaRequest.directive.endpoint, "endpointId"))) {
+            switch (alexaRequest.directive.header.namespace) {
+                case "Alexa.Authorization":
+                    return alexaAuthorization.handler(alexaRequest);
+                case "Alexa.Discovery":
+                    return alexaDiscovery.handler(alexaRequest);
+                default:
+                    return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+            }
+        } else if (alexaRequest.directive.endpoint.endpointId === "lg-webos-tv-gateway") {
+            switch (alexaRequest.directive.header.namespace) {
+                case "Alexa":
+                    return stateHandler(await alexa.handler(alexaRequest));
+                case "Alexa.EndpointHealth":
+                    return stateHandler(await alexaEndpointHealth.handler(alexaRequest));
+                case "Alexa.PowerController":
+                    return stateHandler(await alexaPowerController.handler(alexaRequest));
+                case "Alexa.RangeController":
+                    return stateHandler(await alexaRangeController.handler(alexaRequest));
+                default:
+                    return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+            }
+        } else {
+            return remoteResponse(alexaRequest);
+        }
+    } catch (error) {
+        return Promise.resolve(errorToErrorResponse(event, error));
+    }
+}
+
+async function handlerWithLogging(event: AlexaRequest, context: any): Promise<AlexaResponse> {
+    const alexaResponse = await handler(event, context);
+
+    const gateway = new Gateway("x");
+    await gateway.sendSkillDirective({"log": event});
+    await gateway.sendSkillDirective({"log": alexaResponse});
+
+    return alexaResponse;
 }
 
 export {handlerWithLogging as handler};

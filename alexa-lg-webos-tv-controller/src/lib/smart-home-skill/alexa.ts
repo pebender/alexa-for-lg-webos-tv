@@ -1,9 +1,12 @@
-import {AlexaResponse,
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 
-// eslint-disable-next-line @typescript-eslin/no-unused-vars
-function capabilities(_event): any[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -13,30 +16,29 @@ function capabilities(_event): any[] {
     ];
 }
 
-function states(): any[] {
+function states(): AlexaResponseContextProperty[] {
     return [];
 }
 
-function handler(event): Promise<any> {
-    if (event.directive.header.namespace !== "Alexa") {
-        return Promise.resolve(namespaceErrorResponse(event, event.directive.header.namespace));
-    }
-
-    switch (event.directive.header.name) {
-        case "ReportState":
-            return Promise.resolve(reportStateHandler(event));
-        default:
-            return Promise.resolve(directiveErrorResponse(event, event.directive.header.namespace));
-    }
-}
-
-function reportStateHandler(event): any {
-    const alexaResponse = new AlexaResponse({
-        "request": event,
+function reportStateHandler(alexaRequest: AlexaRequest): AlexaResponse {
+    return new AlexaResponse({
+        "request": alexaRequest,
         "namespace": "Alexa",
         "name": "StateReport"
     });
-    return alexaResponse;
+}
+
+function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    if (alexaRequest.directive.header.namespace !== "Alexa") {
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+    }
+
+    switch (alexaRequest.directive.header.name) {
+        case "ReportState":
+            return Promise.resolve(reportStateHandler(alexaRequest));
+        default:
+            return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+    }
 }
 
 export {capabilities, states, handler};

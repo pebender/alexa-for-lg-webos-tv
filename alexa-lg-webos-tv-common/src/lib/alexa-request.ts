@@ -17,7 +17,7 @@ export class AlexaRequest {
                 type: "BearerToken";
                 token: string;
             };
-            cookie: {[x: string]: any};
+            cookie?: {[x: string]: string};
         };
         payload: {[x: string]: any};
     };

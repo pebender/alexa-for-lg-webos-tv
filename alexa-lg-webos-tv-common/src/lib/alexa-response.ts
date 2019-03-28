@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import uuid = require("uuid/v4");
 import {AlexaRequest} from "./alexa-request";
 import {GenericError} from "./error-classes";
@@ -8,29 +9,40 @@ export interface AlexaResponseEventPayloadEndpoint {
     endpointId: string;
     friendlyName: string;
     manufacturerName: string;
-    cookie?: any;
-    capabilities?: any[];
+    cookie?: {[x: string]: string};
+    capabilities?: AlexaResponseEventPayloadEndpointCapability[];
 }
 
 export interface AlexaResponseEventPayloadEndpointInput {
-    capabilities?: any[];
+    capabilities?: AlexaResponseEventPayloadEndpointCapability[];
     description?: string;
     displayCategories?: string[];
     endpointId?: string;
     friendlyName?: string;
     manufacturerName?: string;
-    cookie?: any;
+    cookie?: {[x: string]: string};
 }
 
 export interface AlexaResponseEventPayloadEndpointCapability {
     type: string;
     interface: string;
     version: string;
+    instance?: string;
     properties?: {
         supported: {[x: string]: any};
         proactivelyReported: boolean;
         retrievable: boolean;
-        supportedOperations?: string[];
+    };
+    supportedOperations?: string[];
+    configuration?: any;
+    capabilityResources?: {
+        friendlyNames: {
+            "@type": "text";
+            value: {
+                text: string;
+                locale: "en-US";
+            };
+        }[];
     };
 }
 
@@ -38,10 +50,27 @@ export interface AlexaResponseEventPayloadEndpointCapabilityInput {
     type?: string;
     interface?: string;
     version?: string;
+    instance?: string;
+    properties?: {
+        supported: {[x: string]: any};
+        proactivelyReported: boolean;
+        retrievable: boolean;
+        supportedOperations?: string[];
+    };
+    supportedOperations?: string[];
+    configuration?: any;
+    capabilityResources?: {
+        friendlyNames: {
+            "@type": "text";
+            value: {
+                text: string;
+                locale: "en-US";
+            };
+        }[];
+    };
     supported?: {[x: string]: any};
     proactivelyReported?: boolean;
     retrievable?: boolean;
-    supportedOperations?: string[];
 }
 
 export interface AlexaResponseContextProperty {
@@ -62,6 +91,32 @@ export interface AlexaResponseContextPropertyInput {
     uncertaintyInMilliseconds?: number;
 }
 
+function copyElement(original: any): any {
+    let copy: any = null;
+
+    if (original === null || (typeof original === "object") === false) {
+        return original;
+    }
+
+    if (original instanceof Array) {
+        copy = [];
+        (copy as any[]).forEach((item) => {
+            copy.push(copyElement(item));
+        });
+        return copy;
+    }
+
+    if (original instanceof Object) {
+        copy = {};
+        Object.keys(original).forEach((property) => {
+            copy[property] = copyElement(original[property]);
+        });
+        return copy;
+    }
+
+    throw new GenericError("error", "failed to copy AlexaResponse");
+}
+
 export class AlexaResponse {
     public event: {
         header: {
@@ -79,7 +134,7 @@ export class AlexaResponse {
                 token: string;
                 [x: string]: any;
             };
-            cookie?: {[x: string]: any};
+            cookie?: {[x: string]: string};
             [x: string]: any;
         };
         payload: {[x: string]: any};
@@ -98,32 +153,6 @@ export class AlexaResponse {
         token?: any;
         payload?: {[x: string]: any};
     }) {
-        function copyElement(original: any): any {
-            let copy: any = null;
-
-            if (original === null || (typeof original === "object") === false) {
-                return original;
-            }
-
-            if (original instanceof Array) {
-                copy = [];
-                (copy as any[]).forEach((item) => {
-                    copy.push(copyElement(item));
-                });
-                return copy;
-            }
-
-            if (original instanceof Object) {
-                copy = {};
-                Object.keys(original).forEach((property) => {
-                    copy[property] = copyElement(original[property]);
-                });
-                return copy;
-            }
-
-            throw new GenericError("error", "failed to copy AlexaResponse");
-        }
-
         const response: {[x: string]: any} = {};
         if (Reflect.has(opts, "event")) {
             response.event = copyElement(opts.event);
@@ -329,6 +358,18 @@ export class AlexaResponse {
                 ? (opts.version as string)
                 : "3"
         };
+        if (Reflect.has(opts, "instance")) {
+            capability.instance = opts.instance;
+        }
+        if (Reflect.has(opts, "properties")) {
+            capability.properties = copyElement(opts.properties);
+        }
+        if (Reflect.has(opts, "capabilityResources")) {
+            capability.capabilityResources = copyElement(opts.capabilityResources);
+        }
+        if (Reflect.has(opts, "configuration")) {
+            capability.configuration = copyElement(opts.configuration);
+        }
         const supported = Reflect.has(opts, "supported");
         if (supported) {
             capability.properties = {

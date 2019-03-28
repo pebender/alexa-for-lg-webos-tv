@@ -1,9 +1,12 @@
-import {AlexaResponse,
+import {AlexaRequest,
+    AlexaResponse,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "alexa-lg-webos-tv-common";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_event): any[] {
+function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -22,7 +25,7 @@ function capabilities(_event): any[] {
     ];
 }
 
-function states(): any[] {
+function states(): AlexaResponseContextProperty[] {
     const powerStateState = AlexaResponse.createContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
@@ -31,30 +34,30 @@ function states(): any[] {
     return [powerStateState];
 }
 
-function handler(event): any {
-    if (event.directive.header.namespace !== "Alexa.PowerController") {
-        return namespaceErrorResponse(event, event.directive.header.namespace);
+function turnOffHandler(alexaRequest: AlexaRequest): AlexaResponse {
+    return new AlexaResponse({
+        "request": alexaRequest
+    });
+}
+
+function turnOnHandler(alexaRequest: AlexaRequest): AlexaResponse {
+    return new AlexaResponse({
+        "request": alexaRequest
+    });
+}
+
+function handler(alexaRequest: AlexaRequest): AlexaResponse {
+    if (alexaRequest.directive.header.namespace !== "Alexa.PowerController") {
+        return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
-    switch (event.directive.header.name) {
+    switch (alexaRequest.directive.header.name) {
         case "TurnOff":
-            return turnOffHandler(event);
+            return turnOffHandler(alexaRequest);
         case "TurnOn":
-            return turnOnHandler(event);
+            return turnOnHandler(alexaRequest);
         default:
-            return directiveErrorResponse(event, event.directive.header.namespace);
+            return directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
-}
-
-function turnOffHandler(event): any {
-    return new AlexaResponse({
-        "request": event
-    });
-}
-
-function turnOnHandler(event): any {
-    return new AlexaResponse({
-        "request": event
-    });
 }
 
 export {capabilities, states, handler};

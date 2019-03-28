@@ -1,8 +1,8 @@
+import * as certnames from "certnames";
 import {Gateway} from "../gateway-api";
 import {constants} from "alexa-lg-webos-tv-common";
 import crypto from "crypto";
 import tls from "tls";
-const certnames = require("certnames");
 
 const SetHostnameIntentHandler = {
     canHandle(handlerInput) {
@@ -10,6 +10,21 @@ const SetHostnameIntentHandler = {
                handlerInput.requestEnvelope.request.intent.name === "Authorization_SetHostnameIntent";
     },
     async handle(handlerInput) {
+        function getHostnames(ipAddress, ipPort): Promise<string[]> {
+            return new Promise((resolve, reject) => {
+                const sock = tls.connect(ipPort, ipAddress, {"rejectUnauthorized": false});
+                sock.on("secureConnect", () => {
+                    const cert = sock.getPeerCertificate().raw;
+                    sock.on("close", () => {
+                        const hostnames = certnames.getCommonNames(cert);
+                        return resolve(hostnames);
+                    });
+                    sock.end();
+                });
+                sock.on("error", (error) => reject(error));
+            });
+        }
+
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
         const {slots} = handlerInput.requestEnvelope.request.intent;
         if (handlerInput.requestEnvelope.request.dialogState === "STARTED") {
@@ -171,21 +186,6 @@ const SetHostnameIntentHandler = {
         return handlerInput.responseBuilder.
             addDelegateDirective().
             getResponse();
-
-        function getHostnames(ipAddress, ipPort): Promise<string[]> {
-            return new Promise((resolve, reject) => {
-                const sock = tls.connect(ipPort, ipAddress, {"rejectUnauthorized": false});
-                sock.on("secureConnect", () => {
-                    const cert = sock.getPeerCertificate().raw;
-                    sock.on("close", () => {
-                        const hostnames = certnames.getCommonNames(cert);
-                        return resolve(hostnames);
-                    });
-                    sock.end();
-                });
-                sock.on("error", (error) => reject(error));
-            });
-        }
     }
 };
 const SetPasswordIntentHandler = {
