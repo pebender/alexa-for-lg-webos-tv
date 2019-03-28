@@ -1,6 +1,7 @@
 {
     "include": [
-        "src/**/*"
+        "../source/controller/**/*",
+        "../source/control/**/*"
     ],
     "exclude": [
 
@@ -16,13 +17,15 @@
         "noImplicitAny": false,
         "moduleResolution": "node", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
         "sourceMap": true, /* Generates corresponding '.map' file. */
-        "outDir": ".", /* Redirect output structure to the directory. */
-        "rootDir": "./src", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+        "outDir": "./lib", /* Redirect output structure to the directory. */
+        "rootDir": "../source", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
         "baseUrl": ".",
         "paths": {
             "*": [
+                "../source/controller/types/*",
+                "../source/control/types/*",
                 "node_modules/*",
-                "src/types/*"
+				"../node_modules/*",
             ]
         }
     }

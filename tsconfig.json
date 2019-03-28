@@ -1,7 +1,6 @@
 {
     "include": [
-        "../source/gateway/**/*",
-        "../source/common/**/*"
+        "./source/**/*"
     ],
     "exclude": [
 
@@ -18,14 +17,14 @@
         "moduleResolution": "node", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
         "sourceMap": true, /* Generates corresponding '.map' file. */
         "outDir": "./lib", /* Redirect output structure to the directory. */
-        "rootDir": "../source", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+        "rootDir": "./source", /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../source/gateway/types/*",
-                "../source/common/types/*",
+                "source/*/types/*"
                 "node_modules/*",
-                "../node_modules/*"
+                "controller/node_modules/*",
+                "gateway/node_modules/*",
             ]
         }
     }

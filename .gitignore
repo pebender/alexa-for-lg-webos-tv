@@ -1,15 +1,5 @@
 @eaDir/
 .DS_Store
 node_modules/
-/conttoller/alexa-lg-webos-tv-*.tgz
-/controller/alexa-lg-webos-tv-*.zip
 /controller/lib
-/controller/index.*
-/gateway/alexa-lg-webos-tv-*.tgz
-/gateway/alexa-lg-webos-tv-*.zip
 /gateway/lib
-/gateway/index.*
-/common/alexa-lg-webos-tv-*.tgz
-/common/alexa-lg-webos-tv-*.zip
-/common/lib
-/common/index.*
