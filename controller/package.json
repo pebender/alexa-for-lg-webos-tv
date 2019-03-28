@@ -1,0 +1,38 @@
+{
+  "name": "alexa-lg-webos-tv-controller",
+  "version": "0.0.1",
+  "description": "The code behind the the LG webOS TV Controller Alexa Skill.",
+  "main": "index.js",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
+  "license": "ISC",
+  "alexa": {
+    "applicationId": "amzn1.ask.skill.933ee8a1-2ae8-4a35-88b8-57281e0648e2"
+  },
+  "files": [
+    "lib",
+    "TODO.txt"
+  ],
+  "dependencies": {
+    "ask-sdk": "2.5.1",
+    "ask-sdk-dynamodb-persistence-adapter": "2.5.1",
+    "certnames": "1.0.4",
+    "uuid": "3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "11.11.0",
+    "@types/uuid": "3.4.4",
+    "typescript": "3.3.4000",
+    "npm-pack-zip": "1.2.7"
+  },
+  "bundledDependencies": [
+    "ask-sdk",
+    "ask-sdk-dynamodb-persistence-adapter",
+    "certnames"
+  ],
+  "scripts": {
+    "build": "node_modules/.bin/tsc",
+    "watch": "node_modules/.bin/tsc --watch",
+    "pack": "npm-pack-zip",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
