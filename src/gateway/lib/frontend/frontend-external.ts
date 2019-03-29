@@ -11,6 +11,7 @@ import {Backend} from "../backend";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {UninitializedClassError} from "../../../common";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require("express-basic-auth");
 import express from "express";
 import expressCore from "express-serve-static-core";
@@ -81,7 +82,7 @@ export class FrontendExternal {
 
         async function backendSkillHandler(request: express.Request, response: express.Response): Promise<void> {
             if (Reflect.has(request.body, "log")) {
-console.log(JSON.stringify(request.body, null, 2));
+                console.log(JSON.stringify(request.body, null, 2));
                 response.
                     type("json").
                     status(200).
@@ -89,9 +90,9 @@ console.log(JSON.stringify(request.body, null, 2));
                     end();
                 return;
             }
-console.log(JSON.stringify(request.body, null, 2));
+            console.log(JSON.stringify(request.body, null, 2));
             const commandResponse = await that._backend.skillCommand(request.body);
-console.log(JSON.stringify(commandResponse, null, 2));
+            console.log(JSON.stringify(commandResponse, null, 2));
             response.
                 type("json").
                 status(200).
