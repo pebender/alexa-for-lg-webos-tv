@@ -15,7 +15,7 @@
  */
 import * as dgram from "dgram";
 import {IP, MAC, TV, UDN} from "../tv";
-import {Client as SsdpClient, ClientOptions as SsdpClientOptions, SsdpHeaders} from "node-ssdp";
+import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
 import {UninitializedClassError} from "../../../common";

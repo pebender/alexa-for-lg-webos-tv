@@ -11,7 +11,6 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "ajv": "6.10.0",
     "async-mutex": "0.1.3",
     "axios": "0.18.0",
     "express": "4.16.4",
@@ -38,16 +37,19 @@
     "typescript": "3.3.4000"
   },
   "bundledDependencies": [
+    "async-mutex",
     "axios",
     "express",
     "express-basic-auth",
     "fs-extra",
+    "isnumeric",
     "lgtv2",
     "nedb",
     "node-arp",
     "node-ssdp",
     "persist-path",
-    "wol",
+    "uuid",
+    "wake_on_lan",
     "xml2js"
   ],
   "scripts": {

@@ -1,10 +1,9 @@
-import {DatabaseRecord,
-    DatabaseTable} from "../database";
 import {GenericError,
     UninitializedClassError} from "../../../common";
 import {TV,
     UDN} from "../tv";
 import {BackendControl} from "./backend-control";
+import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
 

@@ -27,11 +27,12 @@
   "bundledDependencies": [
     "ask-sdk",
     "ask-sdk-dynamodb-persistence-adapter",
-    "certnames"
+    "certnames",
+    "uuid"
   ],
   "scripts": {
-    "build": "node_modules/.bin/tsc",
-    "watch": "node_modules/.bin/tsc --watch",
+    "build": "tsc",
+    "watch": "tsc --watch",
     "pack": "npm-pack-zip",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

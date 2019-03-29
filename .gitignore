@@ -3,3 +3,4 @@
 node_modules/
 /controller/lib
 /gateway/lib
+/controller/alexa-lg-webos-tv-controller.zip

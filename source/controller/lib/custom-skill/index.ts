@@ -81,4 +81,4 @@ const skillHandler = Alexa.SkillBuilders.custom().
     withPersistenceAdapter(persistenceAdapter).
     lambda();
 
-module.exports = {"handler": skillHandler};
+export {skillHandler as handler};

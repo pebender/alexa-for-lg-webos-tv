@@ -1,0 +1,33 @@
+{
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+
+    ],
+    "compilerOptions": {
+        "lib": [
+            "es2017"
+        ],
+        /* Basic Options */
+        "module": "commonjs"
+        "esModuleInterop": true,
+        "target": "es6"
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "./lib",
+        "rootDir": ".",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "../controller/node_modules/*",
+                "../gateway/node_modules/*",
+                "../controller/node_modules/@types/*",
+                "../gateway/node_modules/@types/*",
+                "../source/controller/types/*",
+                "../source/gateway/types/*"
+            ]
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import Datastore from "nedb";
 import {Mutex} from "async-mutex";
-import {UninitializedClassError} from "../common";
+import {UninitializedClassError} from "../../common";
 
 export type DatabaseUpdate = any;
 export type DatabaseQuery = any;

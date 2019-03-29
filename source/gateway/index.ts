@@ -19,7 +19,7 @@ let backendDb = null;
 let frontend = null;
 let frontendDb = null;
 
-async function startGateway(): Promise<void> {
+export async function startGateway(): Promise<void> {
 
     /*
      * This operation is synchronous. It is both expected and desired because it
@@ -58,8 +58,3 @@ async function startGateway(): Promise<void> {
     await frontend.start();
     await backend.start();
 }
-
-startGateway().
-    catch((error) => {
-        console.log(error);
-    });
