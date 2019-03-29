@@ -10,9 +10,9 @@
             "es2017"
         ],
         /* Basic Options */
-        "module": "commonjs"
+        "module": "commonjs",
         "esModuleInterop": true,
-        "target": "es6"
+        "target": "es6",
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": true,
@@ -21,12 +21,13 @@
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../controller/node_modules/*",
-                "../gateway/node_modules/*",
-                "../controller/node_modules/@types/*",
-                "../gateway/node_modules/@types/*",
-                "../source/controller/types/*",
-                "../source/gateway/types/*"
+                "../src/controller/types/*",
+                "../src/gateway/types/*",
+                "../src/common/types/*",
+                "../pkg/controller/node_modules/*",
+                "../pkg/gateway/node_modules/*",
+                "../pkg/controller/node_modules/@types/*",
+                "../pkg/gateway/node_modules/@types/*"
             ]
         }
     }

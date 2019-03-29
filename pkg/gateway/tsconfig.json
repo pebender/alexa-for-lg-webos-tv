@@ -1,7 +1,7 @@
 {
     "include": [
-        "../source/controller/**/*",
-        "../source/common/**/*"
+        "../../src/gateway/**/*",
+        "../../src/common/**/*"
     ],
     "exclude": [
 
@@ -17,13 +17,14 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "./lib",
-        "rootDir": "../source",
+        "rootDir": "../../src",
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../source/controller/types/*",
-                "../source/common/types/*",
+                "../../src/gateway/types/*",
+                "../../src/common/types/*",
                 "node_modules/*",
+                "node_modules/@types/*"
             ]
         }
     }
