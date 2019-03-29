@@ -2,13 +2,13 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextPropertyInput,
     AlexaResponseEventPayloadEndpointCapabilityInput,
+    LGTVRequest,
+    LGTVRequestPayload,
     directiveErrorResponse,
     errorResponse,
     errorToErrorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend,
-    LGTVRequest,
-    LGTVRequestPayload} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require("isnumeric");

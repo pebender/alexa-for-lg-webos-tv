@@ -3,11 +3,11 @@ import {AlexaRequest,
     AlexaResponseContextPropertyInput,
     AlexaResponseEventPayloadEndpointCapabilityInput,
     GenericError,
+    LGTVRequest,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend,
-    LGTVRequest} from "../../backend";
+import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {

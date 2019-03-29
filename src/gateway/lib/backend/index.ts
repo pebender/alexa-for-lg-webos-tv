@@ -1,11 +1,11 @@
 import {AlexaRequest,
     AlexaResponse,
-    UninitializedClassError} from "../../../common";
-import {BackendControl,
     LGTVRequest,
-    LGTVResponse} from "./backend-control";
+    LGTVResponse,
+    UninitializedClassError} from "../../../common";
 import {TV,
     UDN} from "../tv";
+import {BackendControl} from "./backend-control";
 import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
@@ -14,10 +14,7 @@ import {Mutex} from "async-mutex";
 import {handler as rawHandler} from "./custom-skill";
 import {handler as smartHomeSkillHandler} from "./smart-home-skill";
 
-export {BackendControl,
-    LGTVRequest,
-    LGTVRequestPayload,
-    LGTVResponse} from "./backend-control";
+export {BackendControl} from "./backend-control";
 
 export class Backend extends EventEmitter {
     private _initialized: boolean;

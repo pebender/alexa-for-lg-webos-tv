@@ -1,6 +1,8 @@
 /* eslint-disable max-lines */
 import * as wol from "wake_on_lan";
 import {GenericError,
+    LGTVRequest,
+    LGTVResponse,
     UninitializedClassError} from "../../../common";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
@@ -11,15 +13,6 @@ const LGTV = require("lgtv2");
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";
 import uuid from "uuid/v4";
-
-export interface LGTVRequest {
-    uri: string;
-    payload?: LGTVRequestPayload;
-}
-
-export type LGTVResponse = any;
-
-export type LGTVRequestPayload = any;
 
 export class BackendControl extends EventEmitter {
     private _initialized: boolean;

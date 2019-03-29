@@ -1,6 +1,6 @@
-import {Backend,
-    LGTVRequest,
-    LGTVResponse} from "../../backend";
+import {LGTVRequest,
+    LGTVResponse} from "../../../../common";
+import {Backend} from "../../backend";
 
 /*
  *******************************************************************************
