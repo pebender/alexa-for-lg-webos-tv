@@ -6,8 +6,11 @@ import {AlexaRequest,
     errorResponse,
     errorToErrorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
+import {Backend,
+    LGTVRequest,
+    LGTVRequestPayload} from "../../backend";
 import {UDN} from "../../tv";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,11 +40,13 @@ function unknownChannelError(_lgtv: Backend, alexaRequest: AlexaRequest): AlexaR
 }
 
 async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    function getCommand(): {uri: string; payload: string} | null {
+    function getCommand(): LGTVRequest | null {
         const command: {
             uri?: string;
-            payload?: any;
-        } = {};
+            payload?: LGTVRequestPayload;
+        } = {
+            "uri": null
+        };
         if (Reflect.has(alexaRequest.directive, "payload")) {
             const {payload} = alexaRequest.directive;
             if (Reflect.has(payload, "channel") && Reflect.has(payload.channel, "number")) {
@@ -81,10 +86,10 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
         if (Reflect.has(command, "uri") === false || Reflect.has(command, "payload") === false) {
             return null;
         }
-        return (command as {uri: string; payload: any});
+        return (command as LGTVRequest);
     }
 
-    async function setChannel(command: {uri: string; payload: any} | null): Promise<AlexaResponse> {
+    async function setChannel(command: LGTVRequest | null): Promise<AlexaResponse> {
         if (command === null) {
             return unknownChannelError(backend, alexaRequest);
         }

@@ -1,4 +1,5 @@
-import * as Alexa from "ask-sdk";
+import * as ASK from "ask-sdk";
+import * as ASKModel from "ask-sdk-model";
 import * as authorization from "./authorization";
 import {DynamoDbPersistenceAdapter} from "ask-sdk-dynamodb-persistence-adapter";
 
@@ -8,42 +9,42 @@ const persistenceAdapter = new DynamoDbPersistenceAdapter({
 });
 
 const HelpIntentHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
             handlerInput.requestEnvelope.request.intent.name === "AMAZON.HelpIntent";
     },
-    handle(handlerInput) {
+    handle(handlerInput: ASK.HandlerInput): ASKModel.Response {
         const speechText = "There is a manual around here somewhere.";
         return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
 };
 const CancelIntentHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
             handlerInput.requestEnvelope.request.intent.name === "AMAZON.CancelIntent";
     },
-    handle(handlerInput) {
+    handle(handlerInput: ASK.HandlerInput): ASKModel.Response {
         const speechText = "There is a big red button around here somewhere.";
         return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
 };
 
 const StopIntentHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
             handlerInput.requestEnvelope.request.intent.name === "AMAZON.StopIntent";
     },
-    handle(handlerInput) {
+    handle(handlerInput: ASK.HandlerInput): ASKModel.Response {
         const speechText = "But I don't want to stop.";
         return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
 };
 
 const SessionEndedRequestHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "SessionEndedRequest";
     },
-    async handle(handlerInput) {
+    async handle(handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
         try {
             await handlerInput.attributesManager.savePersistentAttributes();
         } catch (error) {
@@ -65,8 +66,8 @@ const ErrorHandler = {
     canHandle() {
         return true;
     },
-    // eslint-disable-next-line no-unused-vars
-    handle(handlerInput, _error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    handle(handlerInput: ASK.HandlerInput, _error: Error): ASKModel.Response {
         return handlerInput.responseBuilder.
             speak("Sorry, I can't understand the command. Please say again.").
             reprompt("Sorry, I can't understand the command. Please say again.").
@@ -75,7 +76,7 @@ const ErrorHandler = {
 };
 
 // Function has three arguments skillHandler(event, context, callback).
-const skillHandler = Alexa.SkillBuilders.custom().
+const skillHandler = ASK.SkillBuilders.custom().
     addRequestHandlers(...handlers).
     addErrorHandlers(ErrorHandler).
     withPersistenceAdapter(persistenceAdapter).

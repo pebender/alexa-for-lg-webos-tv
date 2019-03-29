@@ -6,7 +6,8 @@ import {AlexaRequest,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
+import {Backend,
+    LGTVRequest} from "../../backend";
 import {UDN} from "../../tv";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
@@ -59,11 +60,10 @@ async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextP
 }
 
 async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    function getVolume() {
+    function getVolume(): number {
         const {volume} = alexaRequest.directive.payload;
         if ((volume < 0) || (volume > 100)) {
-            return errorResponse(
-                alexaRequest,
+            throw new GenericError(
                 "VALUE_OUT_OF_RANGE",
                 "volume must be between 0 and 100 inclusive."
             );
@@ -71,9 +71,9 @@ async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): P
         return volume;
     }
 
-    async function setVolume(volume: number) {
+    async function setVolume(volume: number): Promise<AlexaResponse> {
         const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
-        const command = {
+        const command: LGTVRequest = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
@@ -91,8 +91,8 @@ async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): P
     } catch (error) {
         return Promise.resolve(errorResponse(
             alexaRequest,
-            "INTERNAL_ERROR",
-            error.name
+            error.name,
+            error.message
         ));
     }
     return setVolume(lgtvVolume);

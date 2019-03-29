@@ -19,9 +19,9 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "@types/node": "11.11.0",
+    "@types/node": "11.12.1",
     "@types/uuid": "3.4.4",
-    "typescript": "3.3.4000",
+    "typescript": "3.4.1",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
@@ -31,6 +31,7 @@
     "uuid"
   ],
   "scripts": {
+    "clean": "rm -rf lib node_modules alexa-lg-webos-tv-controller.zip",
     "build": "tsc",
     "watch": "tsc --watch",
     "pack": "npm-pack-zip",

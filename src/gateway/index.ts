@@ -11,6 +11,7 @@ import {Backend} from "./lib/backend";
 import {DatabaseTable} from "./lib/database";
 import {Frontend} from "./lib/frontend";
 import fs from "fs-extra";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ppath = require("persist-path");
 
 let configurationDir = null;

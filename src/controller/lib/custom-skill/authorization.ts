@@ -1,16 +1,19 @@
-import * as certnames from "certnames";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const certnames = require("certnames");
+import ASK from "ask-sdk";
+import ASKModel from "ask-sdk-model";
 import {Gateway} from "../gateway-api";
 import {constants} from "../../../common";
 import crypto from "crypto";
 import tls from "tls";
 
 const SetHostnameIntentHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
                handlerInput.requestEnvelope.request.intent.name === "Authorization_SetHostnameIntent";
     },
-    async handle(handlerInput) {
-        function getHostnames(ipAddress, ipPort): Promise<string[]> {
+    async handle(handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
+        function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {
             return new Promise((resolve, reject) => {
                 const sock = tls.connect(ipPort, ipAddress, {"rejectUnauthorized": false});
                 sock.on("secureConnect", () => {
@@ -26,8 +29,8 @@ const SetHostnameIntentHandler = {
         }
 
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const {slots} = handlerInput.requestEnvelope.request.intent;
-        if (handlerInput.requestEnvelope.request.dialogState === "STARTED") {
+        const {slots} = (handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent;
+        if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === "STARTED") {
             Reflect.deleteProperty(sessionAttributes, "ipAddress");
             Reflect.deleteProperty(sessionAttributes, "hostnames");
             handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -35,12 +38,12 @@ const SetHostnameIntentHandler = {
             return handlerInput.responseBuilder.
                 addDelegateDirective().
                 getResponse();
-        } else if (handlerInput.requestEnvelope.request.dialogState === "IN_PROGRESS") {
+        } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === "IN_PROGRESS") {
             if (!Reflect.has(slots.ipAddressA, "value")) {
                 return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (slots.ipAddressA.value < 0 || slots.ipAddressA.value > 255) {
+            } else if (((slots.ipAddressA.value as unknown) as number) < 0 || ((slots.ipAddressA.value as unknown) as number) > 255) {
                 return handlerInput.responseBuilder.
                     speak("I think I misheard you." +
                         " I.P. v four address numbers need to be betwen 0 and 255." +
@@ -51,7 +54,7 @@ const SetHostnameIntentHandler = {
                 return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (slots.ipAddressB.value < 0 || slots.ipAddressB.value > 255) {
+            } else if (((slots.ipAddressB.value as unknown) as number) < 0 || ((slots.ipAddressB.value as unknown) as number) > 255) {
                 return handlerInput.responseBuilder.
                     speak("I think I misheard you." +
                         " I.P. v four address numbers need to be betwen 0 and 255." +
@@ -62,7 +65,7 @@ const SetHostnameIntentHandler = {
                 return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (slots.ipAddressC.value < 0 || slots.ipAddressC.value > 255) {
+            } else if (((slots.ipAddressC.value as unknown) as number) < 0 || ((slots.ipAddressC.value as unknown) as number) > 255) {
                 return handlerInput.responseBuilder.
                     speak("I think I misheard you." +
                         " I.P. v four address numbers need to be betwen 0 and 255." +
@@ -73,7 +76,7 @@ const SetHostnameIntentHandler = {
                 return handlerInput.responseBuilder.
                     addDelegateDirective().
                     getResponse();
-            } else if (slots.ipAddressD.value < 0 || slots.ipAddressD.value > 255) {
+            } else if (((slots.ipAddressD.value as unknown) as number) < 0 || ((slots.ipAddressD.value as unknown) as number) > 255) {
                 return handlerInput.responseBuilder.
                     speak("I think I misheard you." +
                         " I.P. v four address numbers need to be betwen 0 and 255." +
@@ -116,7 +119,7 @@ const SetHostnameIntentHandler = {
                     addElicitSlotDirective("hostnameIndex").
                     getResponse();
             } else if ((slots.hostnameIndex.value >= sessionAttributes.hostnames.length + 2) ||
-                       (slots.hostnameIndex.value < 0)) {
+                       (((slots.hostnameIndex.value as unknown) as number) < 0)) {
                 return handlerInput.responseBuilder.
                     speak("I think I misheard you." +
                         ` I heard ${slots.hostnameIndex.value}, which is not an index on the card.` +
@@ -132,14 +135,14 @@ const SetHostnameIntentHandler = {
                 return handlerInput.responseBuilder.
                     speak("I'm sorry I could not discover your gateway's hostname.").
                     getResponse();
-            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === "NONE") {
+            } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === "NONE") {
                 return handlerInput.responseBuilder.
                     speak(`Is your hostname ${sessionAttributes.hostnames[slots.hostnameIndex.value]}?`).
                     addConfirmIntentDirective().
                     getResponse();
             }
-        } else if (handlerInput.requestEnvelope.request.dialogState === "COMPLETED") {
-            if (handlerInput.requestEnvelope.request.intent.confirmationStatus === "CONFIRMED") {
+        } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === "COMPLETED") {
+            if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === "CONFIRMED") {
                 let persistentAttributes: {
                     hostname?: string;
                 } = {};
@@ -171,7 +174,7 @@ const SetHostnameIntentHandler = {
                 return handlerInput.responseBuilder.
                     speak("Your gateway's hostname has been set.").
                     getResponse();
-            } else if (handlerInput.requestEnvelope.request.intent.confirmationStatus === "DENIED") {
+            } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === "DENIED") {
                 Reflect.deleteProperty(sessionAttributes, "ipAddress");
                 Reflect.deleteProperty(sessionAttributes, "hostnames");
                 handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -189,11 +192,11 @@ const SetHostnameIntentHandler = {
     }
 };
 const SetPasswordIntentHandler = {
-    canHandle(handlerInput) {
+    canHandle(handlerInput: ASK.HandlerInput): boolean {
         return handlerInput.requestEnvelope.request.type === "IntentRequest" &&
             handlerInput.requestEnvelope.request.intent.name === "Authorization_SetPasswordIntent";
     },
-    async handle(handlerInput) {
+    async handle(handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
         let persistentAttributes: {
             hostname?: string;
             password?: string;

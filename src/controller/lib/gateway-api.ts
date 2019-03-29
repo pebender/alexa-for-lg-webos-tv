@@ -48,9 +48,23 @@ function createBasicOptions(requestOptions: {
     return options;
 }
 
-function pingHandler(requestOptions): Promise<boolean> {
+function pingHandler(requestOptions: {
+    hostname: string;
+    username: string;
+    password: string;
+    path: string;
+    rejectUnauthorized?: boolean;
+}): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        let options = null;
+        let options: {
+            hostname: string;
+            port: number;
+            path: string;
+            headers: {
+                [x: string]: string;
+            };
+            rejectUnauthorized?: boolean;
+        } = null;
         try {
             options = createBasicOptions(requestOptions);
         } catch (error) {
@@ -59,9 +73,9 @@ function pingHandler(requestOptions): Promise<boolean> {
         const request = https.get(options);
         request.once("response", (response) => {
             response.setEncoding("utf8");
-            response.on("data", (chunk) => {
+            response.on("data", (chunk: string) => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const _nothing = chunk;
+                const _nothing: string = chunk;
             });
             response.on("end", () => {
                 if (response.statusCode === 200) {
@@ -80,15 +94,30 @@ function pingHandler(requestOptions): Promise<boolean> {
                     ` '${response.statusCode}'.`;
                 reject(error);
             });
-            response.on("error", (error) => reject(error));
+            response.on("error", (error: Error) => reject(error));
         });
-        request.on("error", (error) => reject(error));
+        request.on("error", (error: Error) => reject(error));
     });
 }
 
-function sendHandler(requestOptions, requestBody): Promise<any> {
+function sendHandler(requestOptions: {
+    hostname: string;
+    username: string;
+    password: string;
+    path: string;
+    rejectUnauthorized?: boolean;
+}, requestBody: any): Promise<any> {
     return new Promise((resolve, reject) => {
-        let options = null;
+        let options: {
+            method?: "POST";
+            hostname: string;
+            port: number;
+            path: string;
+            headers: {
+                [x: string]: string;
+            };
+            rejectUnauthorized?: boolean;
+        } = null;
         try {
             options = createBasicOptions(requestOptions);
         } catch (error) {
@@ -97,13 +126,13 @@ function sendHandler(requestOptions, requestBody): Promise<any> {
         const content = JSON.stringify(requestBody);
         options.method = "POST";
         options.headers["Content-Type"] = "application/json";
-        options.headers["Content-Length"] = Buffer.byteLength(content);
+        options.headers["Content-Length"] = Buffer.byteLength(content).toString();
         const request = https.request(options);
         request.once("response", (response) => {
             let body: {[x: string]: any} = {};
             let data = "";
             response.setEncoding("utf8");
-            response.on("data", (chunk) => {
+            response.on("data", (chunk: string) => {
                 data += chunk;
             });
             response.on("end", () => {
@@ -138,13 +167,13 @@ function sendHandler(requestOptions, requestBody): Promise<any> {
                 }
                 return resolve(body);
             });
-            response.on("error", (error) => {
+            response.on("error", (error: Error) => {
                 const message = "There was a problem talking to the gateway." +
                     ` The error was [${error.name}: ${error.message}].`;
                 return reject(new GenericError("GatewayAPIError", message));
             });
         });
-        request.on("error", (error) => {
+        request.on("error", (error: Error) => {
             const message = "There was a problem talking to the gateway." +
                 ` The error was [${error.name}: ${error.message}].`;
             return reject(new GenericError("GatewayAPIError", message));
@@ -160,7 +189,7 @@ class Gateway {
     private _username: string;
     private _password: string;
     private _null: string;
-    public constructor(userId) {
+    public constructor(userId: string) {
 
         this._userId = userId;
         this._hostname = null;

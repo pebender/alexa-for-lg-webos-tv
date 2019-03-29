@@ -6,6 +6,7 @@ import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const LGTV = require("lgtv2");
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";

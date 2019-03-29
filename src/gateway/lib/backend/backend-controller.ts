@@ -42,7 +42,7 @@ export class BackendController extends EventEmitter {
         const that: BackendController = this;
 
         function eventsAdd(udn: UDN): void {
-            that._controls[udn].on("error", (error: any) => {
+            that._controls[udn].on("error", (error: Error) => {
                 that.emit("error", error, udn);
             });
         }
@@ -70,7 +70,7 @@ export class BackendController extends EventEmitter {
         const that: BackendController = this;
 
         function eventsAdd(udn: UDN): void {
-            that._controls[udn].on("error", (error: any) => {
+            that._controls[udn].on("error", (error: Error) => {
                 that.emit("error", error, udn);
             });
         }

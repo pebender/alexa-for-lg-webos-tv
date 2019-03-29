@@ -19,9 +19,10 @@ import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
 import {UninitializedClassError} from "../../../common";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require("node-arp");
-const http = require("axios");
-const xml2js = require("xml2js").parseString;
+import http from "axios";
+import {parseString as xml2js} from "xml2js";
 
 export class BackendSearcher extends EventEmitter {
     private _initialized: boolean;
