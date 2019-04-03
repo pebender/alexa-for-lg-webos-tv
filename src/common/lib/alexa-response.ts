@@ -101,7 +101,9 @@ function copyElement(original: any): any {
     if (Array.isArray(original)) {
         copy = [];
         (original as any[]).forEach((item) => {
-            copy.push(copyElement(item));
+            if (typeof item !== "undefined") {
+                copy.push(copyElement(item));
+            }
         });
         return copy;
     }
@@ -109,7 +111,9 @@ function copyElement(original: any): any {
     if (original instanceof Object) {
         copy = {};
         Object.keys(original).forEach((property) => {
-            copy[property] = copyElement(original[property]);
+            if (original[property] !== "undefined") {
+                copy[property] = copyElement(original[property]);
+            }
         });
         return copy;
     }

@@ -32,7 +32,9 @@ export class AlexaRequest {
             if (Array.isArray(original)) {
                 copy = [];
                 (original as any[]).forEach((item) => {
-                    copy.push(copyElement(item));
+                    if (typeof item !== "undefined") {
+                        copy.push(copyElement(item));
+                    }
                 });
                 return copy;
             }
@@ -40,7 +42,9 @@ export class AlexaRequest {
             if (original instanceof Object) {
                 copy = {};
                 Object.keys(original).forEach((property) => {
-                    copy[property] = copyElement(original[property]);
+                    if (original[property] !== "undefined") {
+                        copy[property] = copyElement(original[property]);
+                    }
                 });
                 return copy;
             }
