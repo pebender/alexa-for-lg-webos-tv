@@ -1,7 +1,7 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -63,27 +63,29 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.Launcher",
             "version": "3",
-            "supported": [
-                {
-                    "name": "identifier"
-                },
-                {
-                    "name": "name"
-                }
-            ],
-            "proactivelyReported": false,
-            "retrievable": true
+            "properties": {
+                "supported": [
+                    {
+                        "name": "identifier"
+                    },
+                    {
+                        "name": "name"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
         }
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
+async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
     async function getInput(): Promise<{appId: string; [x: string]: any} | null> {
         if (backend.getPowerState(udn) === "OFF") {
             return null;
@@ -103,7 +105,7 @@ async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextP
         return lgtvToAlexa[(input.appId as string)];
     }
 
-    function buildStates(target: {identifier: string; name: string} | null): AlexaResponseContextPropertyInput[] {
+    function buildStates(target: {identifier: string; name: string} | null): AlexaResponseContextProperty[] {
         if (target === null) {
             return [];
         }
@@ -146,9 +148,10 @@ async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest)
     // eslint-disable-next-line no-unused-vars
     await backend.lgtvCommand(udn, command);
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "Response"
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

@@ -78,12 +78,33 @@ async function handler(event: AlexaRequest, _context: any): Promise<AlexaRespons
     }
 }
 
-async function handlerWithLogging(event: AlexaRequest, context: any): Promise<AlexaResponse> {
-    const alexaResponse = await handler(event, context);
-
+async function handlerWithLogging(alexaRequest: AlexaRequest, context: any): Promise<AlexaResponse> {
     const gateway = new Gateway("x");
-    await gateway.sendSkillDirective({"log": event});
-    await gateway.sendSkillDirective({"log": alexaResponse});
+    try {
+        await gateway.send({"path": Gateway.skillPath()}, {"log": alexaRequest});
+    } catch (error) {
+        //
+    }
+
+    let response: any = null;
+    try {
+        response = await handler(alexaRequest, context);
+    } catch (error) {
+        return errorToErrorResponse(alexaRequest, error);
+    }
+
+    let alexaResponse: AlexaResponse = null;
+    try {
+        alexaResponse = new AlexaResponse(response);
+    } catch (error) {
+        return errorToErrorResponse(alexaRequest, error);
+    }
+
+    try {
+        await gateway.send({"path": Gateway.skillPath()}, {"log": alexaResponse});
+    } catch (error) {
+        //
+    }
 
     return alexaResponse;
 }

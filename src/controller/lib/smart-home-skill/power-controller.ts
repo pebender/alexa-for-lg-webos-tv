@@ -36,13 +36,19 @@ function states(): AlexaResponseContextProperty[] {
 
 function turnOffHandler(alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
-        "request": alexaRequest
+        "namespace": "Alexa",
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 
 function turnOnHandler(alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
-        "request": alexaRequest
+        "namespace": "Alexa",
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

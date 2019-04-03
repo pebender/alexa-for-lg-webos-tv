@@ -63,14 +63,14 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
                 return null;
             }
             const {name} = backend.tv(udn);
-            const endpoint: AlexaResponseEventPayloadEndpoint = AlexaResponse.createPayloadEndpoint({
+            const endpoint: AlexaResponseEventPayloadEndpoint = {
                 "endpointId": udn,
                 "friendlyName": name,
                 "description": "LG webOS TV",
                 "manufacturerName": "LG Electronics",
                 "displayCategories": ["TV"],
                 "capabilities": capabilities
-            });
+            };
             return endpoint;
         } catch (error) {
             return null;

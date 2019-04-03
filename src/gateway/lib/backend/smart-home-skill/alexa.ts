@@ -1,14 +1,14 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -19,16 +19,17 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backend: Backend, _udn: UDN): AlexaResponseContextProperty[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function reportStateHandler(_backend: Backend, alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "StateReport"
+        "name": "StateReport",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

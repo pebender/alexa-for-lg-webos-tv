@@ -1,14 +1,14 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -26,7 +26,7 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backend: Backend, _udn: UDN): AlexaResponseContextProperty[] {
     return [];
 }
 
@@ -37,9 +37,10 @@ async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, comm
     };
     await backend.lgtvCommand(udn, command);
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "Response"
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

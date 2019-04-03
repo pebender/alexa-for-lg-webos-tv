@@ -29,9 +29,9 @@ export class AlexaRequest {
                 return original;
             }
 
-            if (original instanceof Array) {
+            if (Array.isArray(original)) {
                 copy = [];
-                (copy as any[]).forEach((item) => {
+                (original as any[]).forEach((item) => {
                     copy.push(copyElement(item));
                 });
                 return copy;
@@ -45,7 +45,7 @@ export class AlexaRequest {
                 return copy;
             }
 
-            throw new GenericError("error", "failed to copy AlexaRequest");
+            throw new GenericError("error", "failed to copy AlexaResponse");
         }
 
         if (Reflect.has(request, "directive") === false) {
@@ -76,5 +76,21 @@ export class AlexaRequest {
             }
         }
         this.directive = copyElement(request.directive);
+    }
+
+    public getCorrelationToken(): string {
+        if (Reflect.has(this.directive.header, "correlationToken")) {
+            return this.directive.header.correlationToken;
+        }
+        // eslint-disable-next-line no-undefined
+        return undefined;
+    }
+
+    public getEndpointId(): string {
+        if (Reflect.has(this.directive, "endpoint") && Reflect.has(this.directive.endpoint, "endpointId")) {
+            return this.directive.endpoint.endpointId;
+        }
+        // eslint-disable-next-line no-undefined
+        return undefined;
     }
 }

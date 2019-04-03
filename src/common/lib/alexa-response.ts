@@ -98,9 +98,9 @@ function copyElement(original: any): any {
         return original;
     }
 
-    if (original instanceof Array) {
+    if (Array.isArray(original)) {
         copy = [];
-        (copy as any[]).forEach((item) => {
+        (original as any[]).forEach((item) => {
             copy.push(copyElement(item));
         });
         return copy;

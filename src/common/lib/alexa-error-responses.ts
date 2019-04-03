@@ -3,9 +3,10 @@ import {AlexaResponse} from "./alexa-response";
 
 export function errorResponse(event: AlexaRequest, type: string, message: string): AlexaResponse {
     return new AlexaResponse({
-        "request": event,
         "namespace": "Alexa",
         "name": "ErrorResponse",
+        "correlationToken": event.getCorrelationToken(),
+        "endpointId": event.getEndpointId(),
         "payload": {
             "type": type,
             "message": message

@@ -1,7 +1,7 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -50,20 +50,26 @@ const lgtvToAlexa: {[key: string]: string} = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.InputController",
             "version": "3",
-            "supported": [{"name": "input"}],
-            "proactivelyReported": false,
-            "retrievable": true
+            "properties": {
+                "supported": [
+                    {
+                        "name": "input"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
         }
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
+async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
     async function getExternalInputList(): Promise<{[x: string]: any}[]> {
         if (backend.getPowerState(udn) === "OFF") {
             return [];
@@ -107,7 +113,7 @@ async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextP
         return input;
     }
 
-    function buildStates(input: any): AlexaResponseContextPropertyInput[] {
+    function buildStates(input: any): AlexaResponseContextProperty[] {
         if (input === null) {
             return [];
         }
@@ -184,9 +190,10 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
 
         if (backend.getPowerState(udn) === "OFF") {
             return new AlexaResponse({
-                "request": alexaRequest,
                 "namespace": "Alexa",
-                "name": "Response"
+                "name": "Response",
+                "correlationToken": alexaRequest.getCorrelationToken(),
+                "endpointId": alexaRequest.getEndpointId()
             });
         }
 
@@ -196,9 +203,10 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
         };
         await backend.lgtvCommand(udn, command);
         return new AlexaResponse({
-            "request": alexaRequest,
             "namespace": "Alexa",
-            "name": "Response"
+            "name": "Response",
+            "correlationToken": alexaRequest.getCorrelationToken(),
+            "endpointId": alexaRequest.getEndpointId()
         });
     }
 

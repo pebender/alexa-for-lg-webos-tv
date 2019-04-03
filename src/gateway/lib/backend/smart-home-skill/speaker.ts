@@ -1,7 +1,7 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     GenericError,
     LGTVRequest,
     directiveErrorResponse,
@@ -10,27 +10,29 @@ import {AlexaRequest,
 import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.Speaker",
             "version": "3",
-            "supported": [
-                {
-                    "name": "volume"
-                },
-                {
-                    "name": "muted"
-                }
-            ],
-            "proactivelyReported": false,
-            "retrievable": true
+            "properties": {
+                "supported": [
+                    {
+                        "name": "volume"
+                    },
+                    {
+                        "name": "muted"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
         }
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropertyInput[]> {
+async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
     if (backend.getPowerState(udn) === "OFF") {
         return [];
     }
@@ -79,9 +81,10 @@ async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): P
         };
         await backend.lgtvCommand(udn, command);
         return new AlexaResponse({
-            "request": alexaRequest,
             "namespace": "Alexa",
-            "name": "Response"
+            "name": "Response",
+            "correlationToken": alexaRequest.getCorrelationToken(),
+            "endpointId": alexaRequest.getEndpointId()
         });
     }
 
@@ -136,9 +139,10 @@ async function adjustVolumeHandler(backend: Backend, alexaRequest: AlexaRequest)
         };
         await backend.lgtvCommand(udn, command);
         return new AlexaResponse({
-            "request": alexaRequest,
             "namespace": "Alexa",
-            "name": "Response"
+            "name": "Response",
+            "correlationToken": alexaRequest.getCorrelationToken(),
+            "endpointId": alexaRequest.getEndpointId()
         });
     }
 
@@ -164,9 +168,10 @@ function setMuteHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<A
         };
         await backend.lgtvCommand(udn, command);
         const alexaResponse = new AlexaResponse({
-            "request": alexaRequest,
             "namespace": "Alexa",
-            "name": "Response"
+            "name": "Response",
+            "correlationToken": alexaRequest.getCorrelationToken(),
+            "endpointId": alexaRequest.getEndpointId()
         });
 
         return alexaResponse;

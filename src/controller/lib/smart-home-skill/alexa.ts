@@ -22,9 +22,10 @@ function states(): AlexaResponseContextProperty[] {
 
 function reportStateHandler(alexaRequest: AlexaRequest): AlexaResponse {
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "StateReport"
+        "name": "StateReport",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

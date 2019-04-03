@@ -116,13 +116,19 @@ function states(): AlexaResponseContextProperty[] {
 
 function setRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     return Promise.resolve(new AlexaResponse({
-        "request": alexaRequest
+        "namespace": "Alexa",
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     }));
 }
 
 function adjustRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     return Promise.resolve(new AlexaResponse({
-        "request": alexaRequest
+        "namespace": "Alexa",
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     }));
 }
 

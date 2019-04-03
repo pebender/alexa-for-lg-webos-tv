@@ -1,7 +1,8 @@
 import {AlexaRequest,
     AlexaResponse,
     GenericError,
-    constants} from "../../common";
+    constants,
+    errorToErrorResponse} from "../../common";
 import http from "http";
 import https from "https";
 
@@ -203,6 +204,10 @@ class Gateway {
         this._password = constants.gatewayUserPassword;
     }
 
+    public static skillPath(): string {
+        return "/LGTV/SKILL";
+    }
+
     public set hostname(hostname: string) {
         this._null = hostname;
     }
@@ -223,14 +228,20 @@ class Gateway {
         return this._username;
     }
 
-    public sendSkillDirective(request: AlexaRequest | {log: AlexaRequest} | {log: AlexaResponse}): Promise<AlexaResponse> {
+    public async sendSkillDirective(request: AlexaRequest): Promise<AlexaResponse> {
         const options = {
             "hostname": this.hostname,
             "username": this.username,
             "password": this.password,
             "path": "/LGTV/SKILL"
         };
-        return sendHandler(options, request);
+        try {
+            const response = await sendHandler(options, request);
+            const alexaResponse = new AlexaResponse(response);
+            return alexaResponse;
+        } catch (error) {
+            return errorToErrorResponse(request, error);
+        }
     }
 
     public send(
@@ -262,7 +273,7 @@ class Gateway {
             "hostname": this.hostname,
             "username": this.username,
             "password": this.password,
-            "path": "/LGTV/PING"
+            "path": Gateway.skillPath()
         };
         return pingHandler(options);
     }

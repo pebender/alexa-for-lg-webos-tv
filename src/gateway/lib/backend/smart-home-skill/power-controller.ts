@@ -1,7 +1,7 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -9,24 +9,26 @@ import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
             "interface": "Alexa.PowerController",
             "version": "3",
-            "supported": [
-                {
-                    "name": "powerState"
-                }
-            ],
-            "proactivelyReported": false,
-            "retrievable": true
+            "properties": {
+                "supported": [
+                    {
+                        "name": "powerState"
+                    }
+                ],
+                "proactivelyReported": false,
+                "retrievable": true
+            }
         }
     ];
 }
 
-function states(backend: Backend, udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(backend: Backend, udn: UDN): AlexaResponseContextProperty[] {
     const powerStateState = AlexaResponse.createContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
@@ -44,9 +46,10 @@ async function turnOffHandler(backend: Backend, alexaRequest: AlexaRequest): Pro
 
     }
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "Response"
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 
@@ -57,9 +60,10 @@ async function turnOnHandler(backend: Backend, alexaRequest: AlexaRequest): Prom
         return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${udn} failed.`);
     }
     return new AlexaResponse({
-        "request": alexaRequest,
         "namespace": "Alexa",
-        "name": "Response"
+        "name": "Response",
+        "correlationToken": alexaRequest.getCorrelationToken(),
+        "endpointId": alexaRequest.getEndpointId()
     });
 }
 

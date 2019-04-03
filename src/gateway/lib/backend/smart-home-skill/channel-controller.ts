@@ -1,7 +1,7 @@
 import {AlexaRequest,
     AlexaResponse,
-    AlexaResponseContextPropertyInput,
-    AlexaResponseEventPayloadEndpointCapabilityInput,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     LGTVRequest,
     LGTVRequestPayload,
     directiveErrorResponse,
@@ -14,7 +14,7 @@ import {UDN} from "../../tv";
 const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapabilityInput[] {
+function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
     return [
         {
             "type": "AlexaInterface",
@@ -25,7 +25,7 @@ function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): A
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): AlexaResponseContextPropertyInput[] {
+function states(_backend: Backend, _udn: UDN): AlexaResponseContextProperty[] {
     return [];
 }
 
@@ -114,9 +114,10 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
             }
         });
         const alexaResponse = new AlexaResponse({
-            "request": alexaRequest,
             "namespace": "Alexa",
-            "name": "Response"
+            "name": "Response",
+            "correlationToken": alexaRequest.getCorrelationToken(),
+            "endpointId": alexaRequest.getEndpointId()
         });
         alexaResponse.addContextProperty(state);
         return alexaResponse;

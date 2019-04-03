@@ -5,6 +5,7 @@ import * as alexaRangeController from "./range-controller";
 import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
+    errorToErrorResponse,
     namespaceErrorResponse} from "../../../common";
 import {Gateway} from "../gateway-api";
 
@@ -21,14 +22,14 @@ async function gatewayEndpoint(alexaRequest: AlexaRequest): Promise<AlexaRespons
         if (capabilities.length === 0) {
             return null;
         }
-        const endpoint = AlexaResponse.createPayloadEndpoint({
+        const endpoint: AlexaResponseEventPayloadEndpoint = {
             "endpointId": "lg-webos-tv-gateway",
             "friendlyName": "LGTV Gateway",
             "description": "LG webOS TV Gateway",
             "manufacturerName": "Paul Bender",
             "displayCategories": ["OTHER"],
             "capabilities": capabilities
-        });
+        };
         return endpoint;
     } catch (_error) {
         return null;
@@ -40,21 +41,27 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
 
+    const gateway = new Gateway("");
+
     let alexaResponse = null;
     let lgtvGatewayEndpoint = null;
 
     try {
-        const gateway = new Gateway("");
         alexaResponse = await gateway.sendSkillDirective(alexaRequest);
     } catch (error) {
         alexaResponse = null;
+        return errorToErrorResponse(alexaRequest, error);
     }
+    await gateway.send({"path": Gateway.skillPath()}, {"log": alexaResponse});
 
     try {
         lgtvGatewayEndpoint = await gatewayEndpoint(alexaRequest);
     } catch (error) {
         lgtvGatewayEndpoint = null;
+        return errorToErrorResponse(alexaRequest, error);
     }
+    await gateway.send({"path": Gateway.skillPath()}, {"log": alexaResponse});
+    await gateway.send({"path": Gateway.skillPath()}, {"log": lgtvGatewayEndpoint});
 
     if (lgtvGatewayEndpoint === null) {
         return alexaResponse;
@@ -62,13 +69,19 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
 
     if ((alexaResponse.event.header.namespace === "Alexa.Discovery" &&
         alexaResponse.event.header.name === "Discover.Response") === false) {
+        await gateway.send({"path": Gateway.skillPath()}, {"log": alexaResponse});
         alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
     }
 
-    alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
+    try {
+        await alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
+    } catch (error) {
+        return errorToErrorResponse(alexaRequest, error);
+    }
+
     return alexaResponse;
 }
 
