@@ -12,21 +12,17 @@ import {Gateway} from "../gateway-api";
 
 async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
-        const startTime = new Date();
-        const statesList = await Promise.all([
-            Promise.resolve(alexa.states()),
-            Promise.resolve(alexaEndpointHealth.states()),
-            Promise.resolve(alexaPowerController.states()),
-            Promise.resolve(alexaRangeController.states())
+        const states = await Promise.all([
+            ...alexa.states(),
+            ...alexaEndpointHealth.states(),
+            ...alexaPowerController.states(),
+            ...alexaRangeController.states()
         ]);
-        const endTime = new Date();
-        const states = [].concat(...statesList);
-        const timeOfSample = endTime.toISOString();
-        const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-        states.forEach((contextProperty) => {
-            contextProperty.timeOfSample = timeOfSample;
-            contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-            alexaResponse.addContextProperty(contextProperty);
+        states.forEach((state) => {
+            if (typeof state === "undefined" || typeof state.value === "undefined" || state.value === null) {
+                return;
+            }
+            alexaResponse.addContextProperty(state);
         });
         return alexaResponse;
     } catch (_error) {
@@ -35,7 +31,7 @@ async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse
 }
 
 async function remoteResponse(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const gateway = new Gateway("x");
+    const gateway = new Gateway("");
     try {
         const alexaResponse = await gateway.sendSkillDirective(alexaRequest);
         return alexaResponse;

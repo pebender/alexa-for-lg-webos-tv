@@ -25,11 +25,14 @@ function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEnd
     ];
 }
 
-function states(): AlexaResponseContextProperty[] {
-    const powerStateState = AlexaResponse.createContextProperty({
+function states(): Promise<AlexaResponseContextProperty>[] {
+    function value(): "ON" | "OFF" {
+        return "OFF";
+    }
+    const powerStateState = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
-        "value": "OFF"
+        "value": value
     });
     return [powerStateState];
 }

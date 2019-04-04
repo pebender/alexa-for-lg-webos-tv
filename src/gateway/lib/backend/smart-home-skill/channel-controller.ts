@@ -25,7 +25,7 @@ function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): A
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): AlexaResponseContextProperty[] {
+function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
@@ -104,22 +104,35 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
          * X const [state] = await states(lgtv, null);
          * Dummy 'value' values.
          */
-        const state = AlexaResponse.createContextProperty({
+        const state: AlexaResponseContextProperty = {
             "namespace": "Alexa.ChannelController",
             "name": "channel",
             "value": {
                 "number": "1234",
                 "callSign": "callsign1",
                 "affiliateCallSign": "callsign2"
-            }
-        });
+            },
+            "timeOfSample": new Date().toISOString(),
+            "uncertaintyInMilliseconds": 0
+        };
         const alexaResponse = new AlexaResponse({
             "namespace": "Alexa",
             "name": "Response",
             "correlationToken": alexaRequest.getCorrelationToken(),
             "endpointId": alexaRequest.getEndpointId()
         });
-        alexaResponse.addContextProperty(state);
+        alexaResponse.addContextProperty(await AlexaResponse.buildContextProperty({
+            "namespace": "Alexa.ChannelController",
+            "name": "channel",
+            "value": () => {
+                const value = {
+                    "number": "1234",
+                    "callSign": "callsign1",
+                    "affiliateCallSign": "callsign2"
+                };
+                return value;
+            }
+        }));
         return alexaResponse;
     }
 

@@ -26,24 +26,23 @@ function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEnd
     ];
 }
 
-async function states(): Promise<AlexaResponseContextProperty[]> {
-    const gateway = new Gateway("");
-    try {
-        await gateway.ping();
-        const connectivityState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.EndpointHealth",
-            "name": "connectivity",
-            "value": "OK"
-        });
-        return [connectivityState];
-    } catch (_error) {
-        const connectivityState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.EndpointHealth",
-            "name": "connectivity",
-            "value": "UNREACHABLE"
-        });
-        return [connectivityState];
+function states(): Promise<AlexaResponseContextProperty>[] {
+    async function value(): Promise<"OK" | "UNREACHABLE"> {
+        try {
+            const gateway = new Gateway("");
+            await gateway.ping();
+            return "OK";
+        } catch (_error) {
+            return "UNREACHABLE";
+        }
     }
+
+    const connectivityState = AlexaResponse.buildContextProperty({
+        "namespace": "Alexa.EndpointHealth",
+        "name": "connectivity",
+        "value": value
+    });
+    return [connectivityState];
 }
 
 function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {

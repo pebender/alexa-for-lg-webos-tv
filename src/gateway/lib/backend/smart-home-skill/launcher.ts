@@ -2,6 +2,7 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
+    GenericError,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -85,45 +86,31 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
-    async function getInput(): Promise<{appId: string; [x: string]: any} | null> {
-        if (backend.getPowerState(udn) === "OFF") {
-            return null;
-        }
+function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
+    if (backend.getPowerState(udn) === "OFF") {
+        return null;
+    }
 
+    async function value(): Promise<{identifier: string; name: string}> {
         const command = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const input = await backend.lgtvCommand(udn, command);
-        return (input as {appId: string; [x: string]: any});
-    }
-
-    function mapInput(input: {appId: string; [x: string]: any}): {identifier: string; name: string} | null {
+        const input: {
+            appId: string;
+            [x: string]: any;
+        } = await backend.lgtvCommand(udn, command);
         if (Reflect.has(lgtvToAlexa, input.appId) === false) {
             return null;
         }
-        return lgtvToAlexa[(input.appId as string)];
+        return lgtvToAlexa[input.appId];
     }
 
-    function buildStates(target: {identifier: string; name: string} | null): AlexaResponseContextProperty[] {
-        if (target === null) {
-            return [];
-        }
-        const targetState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.Launcher",
-            "name": "target",
-            "value": target
-        });
-        return [targetState];
-    }
-
-    try {
-        const lgtvInput: {appId: string; [x: string]: any} | null = await getInput();
-        const alexaInput: {identifier: string; name: string} | null = mapInput(lgtvInput as {appId: string; [x: string]: any});
-        return buildStates(alexaInput);
-    } catch (error) {
-        return [];
-    }
+    const targetState = AlexaResponse.buildContextProperty({
+        "namespace": "Alexa.Launcher",
+        "name": "target",
+        "value": value
+    });
+    return [targetState];
 }
 
 /*

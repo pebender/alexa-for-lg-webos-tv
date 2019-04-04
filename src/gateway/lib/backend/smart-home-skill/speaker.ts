@@ -32,33 +32,57 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
+function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
+    function getVolumeState(): Promise<AlexaResponseContextProperty> {
+        if (backend.getPowerState(udn) === "OFF") {
+            return null;
+        }
+
+        async function value(): Promise<string> {
+            const command = {
+                "uri": "ssap://audio/getVolume"
+            };
+            const lgtvResponse = await backend.lgtvCommand(udn, command);
+            return lgtvResponse.volume;
+        }
+
+        const volumeState = AlexaResponse.buildContextProperty({
+            "namespace": "Alexa.Speaker",
+            "name": "volume",
+            "value": value
+        });
+        return volumeState;
+    }
+
+    function getMutedState(): Promise<AlexaResponseContextProperty> {
+        if (backend.getPowerState(udn) === "OFF") {
+            return null;
+        }
+
+        async function value(): Promise<string> {
+            const command = {
+                "uri": "ssap://audio/getVolume"
+            };
+            const lgtvResponse = await backend.lgtvCommand(udn, command);
+            return lgtvResponse.muted;
+        }
+
+        const mutedState = AlexaResponse.buildContextProperty({
+            "namespace": "Alexa.Speaker",
+            "name": "muted",
+            "value": value
+        });
+        return mutedState;
+    }
+
     if (backend.getPowerState(udn) === "OFF") {
         return [];
     }
 
-    const command = {
-        "uri": "ssap://audio/getVolume"
-    };
-    try {
-        const lgtvResponse = await backend.lgtvCommand(udn, command);
-        const volumeState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.Speaker",
-            "name": "volume",
-            "value": lgtvResponse.volume
-        });
-        const mutedState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.Speaker",
-            "name": "muted",
-            "value": lgtvResponse.muted
-        });
-        return [
-            volumeState,
-            mutedState
-        ];
-    } catch (error) {
-        return [];
-    }
+    return [
+        getVolumeState(),
+        getMutedState()
+    ];
 }
 
 async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {

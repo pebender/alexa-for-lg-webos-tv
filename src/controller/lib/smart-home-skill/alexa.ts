@@ -16,7 +16,7 @@ function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEnd
     ];
 }
 
-function states(): AlexaResponseContextProperty[] {
+function states(): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 

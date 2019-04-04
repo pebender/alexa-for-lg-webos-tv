@@ -26,7 +26,7 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): AlexaResponseContextProperty[] {
+function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 

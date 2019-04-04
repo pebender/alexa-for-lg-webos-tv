@@ -81,30 +81,42 @@ function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEnd
     ];
 }
 
-function states(): AlexaResponseContextProperty[] {
-    const rangeValueStateA = AlexaResponse.createContextProperty({
+function states(): Promise<AlexaResponseContextProperty>[] {
+    function valueA(): string {
+        return "0";
+    }
+    function valueB(): string {
+        return "0";
+    }
+    function valueC(): string {
+        return "0";
+    }
+    function valueD(): string {
+        return "0";
+    }
+    const rangeValueStateA = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "A",
         "name": "rangeValue",
-        "value": "0"
+        "value": valueA
     });
-    const rangeValueStateB = AlexaResponse.createContextProperty({
+    const rangeValueStateB = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "B",
         "name": "rangeValue",
-        "value": "0"
+        "value": valueB
     });
-    const rangeValueStateC = AlexaResponse.createContextProperty({
+    const rangeValueStateC = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "C",
         "name": "rangeValue",
-        "value": "0"
+        "value": valueC
     });
-    const rangeValueStateD = AlexaResponse.createContextProperty({
+    const rangeValueStateD = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "D",
         "name": "rangeValue",
-        "value": "0"
+        "value": valueD
     });
     return [
         rangeValueStateA,

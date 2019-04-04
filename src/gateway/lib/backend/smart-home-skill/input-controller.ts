@@ -69,39 +69,46 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty[]> {
-    async function getExternalInputList(): Promise<{[x: string]: any}[]> {
-        if (backend.getPowerState(udn) === "OFF") {
-            return [];
+function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
+    async function value(): Promise<string> {
+        async function getExternalInputList(): Promise<{[x: string]: any}[]> {
+            if (backend.getPowerState(udn) === "OFF") {
+                return [];
+            }
+
+            const command = {
+                "uri": "ssap://tv/getExternalInputList"
+            };
+            const lgtvResponse = await backend.lgtvCommand(udn, command);
+            if (Reflect.has(lgtvResponse, "devices") === false) {
+                return [];
+            }
+            return lgtvResponse.devices;
         }
 
-        const command = {
-            "uri": "ssap://tv/getExternalInputList"
-        };
-        const lgtvResponse = await backend.lgtvCommand(udn, command);
-        if (Reflect.has(lgtvResponse, "devices") === false) {
-            return [];
+        async function getInput(): Promise<string> {
+            if (backend.getPowerState(udn) === "OFF") {
+                return null;
+            }
+            const command = {
+                "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
+            };
+            const lgtvResponse = await backend.lgtvCommand(udn, command);
+            return lgtvResponse.appId;
         }
-        return lgtvResponse.devices;
-    }
+        const [
+            inputList,
+            appId
+        ] = await Promise.all([
+            getExternalInputList(),
+            getInput()
+        ]);
 
-    async function getInput(): Promise<string> {
-        if (backend.getPowerState(udn) === "OFF") {
-            return null;
-        }
-        const command = {
-            "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
-        };
-        const lgtvResponse = await backend.lgtvCommand(udn, command);
-        return lgtvResponse.appId;
-    }
-
-    function mapInput(inputList: any, appId: string): string {
         let input = null;
         if (appId !== null) {
-            inputList.forEach((value: any) => {
-                if (value.appId === appId) {
-                    input = value.id;
+            inputList.forEach((item: any) => {
+                if (item.appId === appId) {
+                    input = item.id;
                     if (Reflect.has(lgtvToAlexa, input)) {
                         input = lgtvToAlexa[input];
                     } else {
@@ -113,22 +120,12 @@ async function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextP
         return input;
     }
 
-    function buildStates(input: any): AlexaResponseContextProperty[] {
-        if (input === null) {
-            return [];
-        }
-        const inputState = AlexaResponse.createContextProperty({
-            "namespace": "Alexa.InputController",
-            "name": "input",
-            "value": input
-        });
-        return [inputState];
-    }
-
-    const lgtvInputList = await getExternalInputList();
-    const lgtvAppId: string = await getInput();
-    const alexaInput: string | null = mapInput(lgtvInputList, lgtvAppId);
-    return buildStates(alexaInput);
+    const inputState = AlexaResponse.buildContextProperty({
+        "namespace": "Alexa.InputController",
+        "name": "input",
+        "value": value
+    });
+    return [inputState];
 }
 
 async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {

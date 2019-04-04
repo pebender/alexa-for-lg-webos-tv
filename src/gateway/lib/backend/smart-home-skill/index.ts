@@ -9,6 +9,7 @@ import * as alexaPowerController from "./power-controller";
 import * as alexaSpeaker from "./speaker";
 import {AlexaRequest,
     AlexaResponse,
+    AlexaResponseContextProperty,
     errorResponse,
     errorToErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
@@ -17,31 +18,20 @@ import {UDN} from "../../tv";
 async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
         const udn: UDN = alexaResponse.event.endpoint.endpointId;
-        const startTime: Date = new Date();
-        const statesList = await Promise.all([
-            alexa.states(backend, udn),
-            alexaPowerController.states(backend, udn),
-            alexaSpeaker.states(backend, udn),
-            alexaChannelController.states(backend, udn),
-            alexaInputController.states(backend, udn),
-            alexaLauncher.states(backend, udn),
-            alexaPlaybackController.states(backend, udn)
-        ].map((value) => Promise.resolve(value)));
-        const endTime = new Date();
-        const states = [].concat(...statesList);
-        const timeOfSample = endTime.toISOString();
-        const uncertaintyInMilliseconds = endTime.getTime() - startTime.getTime();
-        states.forEach((contextProperty: {
-            namespace: string;
-            name: string;
-            instance: string;
-            value: any;
-            timeOfSample: string;
-            uncertaintyInMilliseconds: number;
-        }) => {
-            contextProperty.timeOfSample = timeOfSample;
-            contextProperty.uncertaintyInMilliseconds = uncertaintyInMilliseconds;
-            alexaResponse.addContextProperty(contextProperty);
+        const states: AlexaResponseContextProperty[] = await Promise.all([
+            ...alexa.states(backend, udn),
+            ...alexaPowerController.states(backend, udn),
+            ...alexaSpeaker.states(backend, udn),
+            ...alexaChannelController.states(backend, udn),
+            ...alexaInputController.states(backend, udn),
+            ...alexaLauncher.states(backend, udn),
+            ...alexaPlaybackController.states(backend, udn)
+        ]);
+        states.forEach((state) => {
+            if (typeof state === "undefined" || typeof state.value === "undefined" || state.value === null) {
+                return;
+            }
+            alexaResponse.addContextProperty(state);
         });
         return alexaResponse;
     } catch (error) {

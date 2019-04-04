@@ -28,11 +28,15 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-function states(backend: Backend, udn: UDN): AlexaResponseContextProperty[] {
-    const powerStateState = AlexaResponse.createContextProperty({
+function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
+    function value(): "ON" | "OFF" {
+        return backend.getPowerState(udn);
+    }
+
+    const powerStateState = AlexaResponse.buildContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
-        "value": backend.getPowerState(udn)
+        "value": value
     });
     return [powerStateState];
 }
