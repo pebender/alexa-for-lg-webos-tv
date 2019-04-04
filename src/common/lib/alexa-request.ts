@@ -27,7 +27,7 @@ export function copyElement(original: any): any {
         return copy;
     }
 
-    throw new GenericError("error", "failed to copy AlexaResponse");
+    throw new GenericError("error", "failed to copy element");
 }
 
 export interface AlexaHeader {
