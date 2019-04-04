@@ -1,16 +1,9 @@
 /* eslint-disable max-lines */
-import uuid = require("uuid/v4");
+import {AlexaEndpoint,
+    AlexaHeader} from "./alexa-request";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const uuid = require("uuid/v4");
 import {GenericError} from "./error-classes";
-
-export interface AlexaResponseEventPayloadEndpoint {
-    description: string;
-    displayCategories: string[];
-    endpointId: string;
-    friendlyName: string;
-    manufacturerName: string;
-    cookie?: {[x: string]: string};
-    capabilities?: AlexaResponseEventPayloadEndpointCapability[];
-}
 
 export interface AlexaResponseEventPayloadEndpointCapability {
     type: string;
@@ -35,6 +28,28 @@ export interface AlexaResponseEventPayloadEndpointCapability {
     };
 }
 
+export interface AlexaResponseEventPayloadEndpoint {
+    description: string;
+    displayCategories: string[];
+    endpointId: string;
+    friendlyName: string;
+    manufacturerName: string;
+    cookie?: {[x: string]: string};
+    capabilities?: AlexaResponseEventPayloadEndpointCapability[];
+}
+
+export interface AlexaResponseEventPayload {
+    endpoints?: AlexaResponseEventPayloadEndpoint[];
+    type?: string;
+    message?: string;
+}
+
+export interface AlexaResponseEvent {
+    header: AlexaHeader;
+    endpoint?: AlexaEndpoint;
+    payload: AlexaResponseEventPayload;
+}
+
 export interface AlexaResponseContextProperty {
     namespace: string;
     name: string;
@@ -42,6 +57,10 @@ export interface AlexaResponseContextProperty {
     value: any;
     timeOfSample: string;
     uncertaintyInMilliseconds: number;
+}
+
+export interface AlexaResponseContext {
+    properties?: AlexaResponseContextProperty[];
 }
 
 function copyElement(original: any): any {
@@ -75,72 +94,18 @@ function copyElement(original: any): any {
 }
 
 export class AlexaResponse {
-    public event: {
-        header: {
-            namespace: string;
-            name: string;
-            instance?: string;
-            messageId: string;
-            correlationToken?: string;
-            payloadVersion: "3";
-        };
-        endpoint?: {
-            endpointId: string;
-            scope?: {
-                type: "BearerToken";
-                token: string;
-                [x: string]: any;
-            };
-            cookie?: {[x: string]: string};
-        };
-        payload: {
-            endpoints?: AlexaResponseEventPayloadEndpoint[];
-            type?: string;
-            message?: string;
-        };
-    };
-    public context?: {
-        properties?: AlexaResponseContextProperty[];
-    };
+    public event: AlexaResponseEvent;
+    public context?: AlexaResponseContext;
     public constructor(opts: {
-        event?: {
-            header: {
-                namespace: string;
-                name: string;
-                instance?: string;
-                messageId: string;
-                correlationToken?: string;
-                payloadVersion: "3";
-            };
-            endpoint?: {
-                endpointId: string;
-                scope?: {
-                    type: "BearerToken";
-                    token: string;
-                    [x: string]: any;
-                };
-                cookie?: {[x: string]: string};
-            };
-            payload: {
-                endpoints?: AlexaResponseEventPayloadEndpoint[];
-                type?: string;
-                message?: string;
-            };
-        };
-        context?: {
-            properties?: AlexaResponseContextProperty[];
-        };
+        event?: AlexaResponseEvent;
+        context?: AlexaResponseContext;
         namespace?: string;
         name?: string;
         instance?: string;
         correlationToken?: string;
         endpointId?: string;
         token?: any;
-        payload?: {
-            endpoints?: AlexaResponseEventPayloadEndpoint;
-            type?: string;
-            message?: string;
-        };
+        payload?: AlexaResponseEventPayload;
     }) {
         const response: {[x: string]: any} = {};
         if (Reflect.has(opts, "event")) {
@@ -251,7 +216,7 @@ export class AlexaResponse {
         this.context.properties.push(contextProperty);
     }
 
-    public addPayloadEndpoint(opts: AlexaResponseEventPayloadEndpoint): void {
+    public addPayloadEndpoint(payloadEndpoint: AlexaResponseEventPayloadEndpoint): void {
         if (Reflect.has(this.event, "payload") === false) {
             this.event.payload = {};
         }
@@ -259,7 +224,7 @@ export class AlexaResponse {
             (this.event.payload as {[x: string]: any}).endpoints = [];
         }
 
-        this.event.payload.endpoints.push(opts);
+        this.event.payload.endpoints.push(payloadEndpoint);
     }
 
     public static async buildContextProperty(opts: {

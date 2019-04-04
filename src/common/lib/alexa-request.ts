@@ -1,26 +1,34 @@
 import {GenericError} from "./error-classes";
 
-export class AlexaRequest {
-    public directive: {
-        header: {
-            namespace: string;
-            name: string;
-            instance?: string;
-            messageId: string;
-            correlationToken?: string;
-            payloadVersion: "3";
-            [x: string]: any;
-        };
-        endpoint?: {
-            endpointId: string;
-            scope?: {
-                type: "BearerToken";
-                token: string;
-            };
-            cookie?: {[x: string]: string};
-        };
-        payload: {[x: string]: any};
+export interface AlexaHeader {
+    namespace: string;
+    name: string;
+    instance?: string;
+    messageId: string;
+    correlationToken?: string;
+    payloadVersion: "3";
+}
+
+export interface AlexaEndpoint {
+    endpointId: string;
+    scope?: {
+        type: "BearerToken";
+        token: string;
+        [x: string]: any;
     };
+    cookie?: {[x: string]: string};
+}
+
+export interface AlexaRequestDirective {
+    header: AlexaHeader;
+    endpoint?: AlexaEndpoint;
+    payload: {
+        [x: string]: any;
+    };
+}
+
+export class AlexaRequest {
+    public directive: AlexaRequestDirective;
     public constructor(request: {[x: string]: any}) {
         function copyElement(original: any): any {
             let copy: any = null;
