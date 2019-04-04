@@ -28,7 +28,8 @@ async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Pro
             ...alexaPlaybackController.states(backend, udn)
         ]);
         states.forEach((state) => {
-            if (typeof state === "undefined" || typeof state.value === "undefined" || state.value === null) {
+            if (typeof state === "undefined" || state === null ||
+                typeof state.value === "undefined" || state.value === null) {
                 return;
             }
             alexaResponse.addContextProperty(state);

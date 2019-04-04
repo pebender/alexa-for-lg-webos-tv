@@ -6,13 +6,13 @@ import {AlexaRequest,
     namespaceErrorResponse} from "../../../common";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
+function capabilities(_alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
-        {
+        Promise.resolve({
             "type": "AlexaInterface",
             "interface": "Alexa",
             "version": "3"
-        }
+        })
     ];
 }
 

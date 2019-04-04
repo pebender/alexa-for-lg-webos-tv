@@ -19,7 +19,8 @@ async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse
             ...alexaRangeController.states()
         ]);
         states.forEach((state) => {
-            if (typeof state === "undefined" || typeof state.value === "undefined" || state.value === null) {
+            if (typeof state === "undefined" || state === null ||
+                typeof state.value === "undefined" || state.value === null) {
                 return;
             }
             alexaResponse.addContextProperty(state);

@@ -8,13 +8,13 @@ import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
+function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
-        {
+        Promise.resolve({
             "type": "AlexaInterface",
             "interface": "Alexa",
             "version": "3"
-        }
+        })
     ];
 }
 

@@ -7,9 +7,9 @@ import {AlexaRequest,
 import {Gateway} from "../gateway-api";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
+function capabilities(_alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
-        {
+        Promise.resolve({
             "type": "AlexaInterface",
             "interface": "Alexa.EndpointHealth",
             "version": "3",
@@ -22,7 +22,7 @@ function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEnd
                 "proactivelyReported": false,
                 "retrievable": true
             }
-        }
+        })
     ];
 }
 

@@ -14,13 +14,13 @@ import {UDN} from "../../tv";
 const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): AlexaResponseEventPayloadEndpointCapability[] {
+function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
-        {
+        Promise.resolve({
             "type": "AlexaInterface",
             "interface": "Alexa.ChannelController",
             "version": "3"
-        }
+        })
     ];
 }
 

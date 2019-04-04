@@ -47,18 +47,15 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
     async function buildEndpoint(udn: UDN): Promise<AlexaResponseEventPayloadEndpoint> {
         try {
             // Determine capabilities in parallel.
-            const capabilitiesList = await Promise.all([
-                alexa.capabilities(backend, alexaRequest, udn),
-                alexaPowerController.capabilities(backend, alexaRequest, udn),
-                alexaSpeaker.capabilities(backend, alexaRequest, udn),
-                alexaChannelController.capabilities(backend, alexaRequest, udn),
-                alexaInputController.capabilities(backend, alexaRequest, udn),
-                alexaLauncher.capabilities(backend, alexaRequest, udn),
-                alexaPlaybackController.capabilities(backend, alexaRequest, udn)
-            ].map((value) => Promise.resolve(value)));
-            // Convert from a two dimensional array to a one dimensional array.
-            const capabilities = [].concat(...capabilitiesList);
-
+            const capabilities = await Promise.all([
+                ...alexa.capabilities(backend, alexaRequest, udn),
+                ...alexaPowerController.capabilities(backend, alexaRequest, udn),
+                ...alexaSpeaker.capabilities(backend, alexaRequest, udn),
+                ...alexaChannelController.capabilities(backend, alexaRequest, udn),
+                ...alexaInputController.capabilities(backend, alexaRequest, udn),
+                ...alexaLauncher.capabilities(backend, alexaRequest, udn),
+                ...alexaPlaybackController.capabilities(backend, alexaRequest, udn)
+            ]);
             if (capabilities.length === 0) {
                 return null;
             }
@@ -71,6 +68,12 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
                 "displayCategories": ["TV"],
                 "capabilities": capabilities
             };
+            capabilities.forEach((capability) => {
+                if (typeof capability === "undefined" || capability === null) {
+                    return;
+                }
+                endpoint.capabilities.push(capability);
+            });
             return endpoint;
         } catch (error) {
             return null;

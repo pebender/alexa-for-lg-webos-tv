@@ -6,7 +6,7 @@ import {AlexaRequest,
     errorResponse,
     namespaceErrorResponse} from "../../../common";
 
-function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): AlexaResponseEventPayloadEndpointCapability {
+function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<AlexaResponseEventPayloadEndpointCapability> {
     const textsList: {[x: string]: string[]} = {
         "A": [
             "Alpha",
@@ -44,7 +44,7 @@ function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): AlexaResponseEv
         return friendlyName;
     });
 
-    return {
+    return Promise.resolve({
         "type": "AlexaInterface",
         "interface": "Alexa.RangeController",
         "version": "3",
@@ -68,11 +68,11 @@ function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): AlexaResponseEv
                 "precision": 1
             }
         }
-    };
+    });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_alexaRequest: AlexaRequest): AlexaResponseEventPayloadEndpointCapability[] {
+function capabilities(_alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         ipAddressOctetCapability("A"),
         ipAddressOctetCapability("B"),
