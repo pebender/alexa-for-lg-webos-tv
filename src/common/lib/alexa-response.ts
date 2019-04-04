@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import {AlexaEndpoint,
-    AlexaHeader} from "./alexa-request";
+    AlexaHeader,
+    copyElement} from "./alexa-request";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const uuid = require("uuid/v4");
 import {GenericError} from "./error-classes";
@@ -61,36 +62,6 @@ export interface AlexaResponseContextProperty {
 
 export interface AlexaResponseContext {
     properties?: AlexaResponseContextProperty[];
-}
-
-function copyElement(original: any): any {
-    let copy: any = null;
-
-    if (original === null || (typeof original === "object") === false) {
-        return original;
-    }
-
-    if (Array.isArray(original)) {
-        copy = [];
-        (original as any[]).forEach((item) => {
-            if (typeof item !== "undefined") {
-                copy.push(copyElement(item));
-            }
-        });
-        return copy;
-    }
-
-    if (original instanceof Object) {
-        copy = {};
-        Object.keys(original).forEach((property) => {
-            if (original[property] !== "undefined") {
-                copy[property] = copyElement(original[property]);
-            }
-        });
-        return copy;
-    }
-
-    throw new GenericError("error", "failed to copy AlexaResponse");
 }
 
 export class AlexaResponse {

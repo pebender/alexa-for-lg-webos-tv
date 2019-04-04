@@ -1,5 +1,35 @@
 import {GenericError} from "./error-classes";
 
+export function copyElement(original: any): any {
+    let copy: any = null;
+
+    if (original === null || (typeof original === "object") === false) {
+        return original;
+    }
+
+    if (Array.isArray(original)) {
+        copy = [];
+        (original as any[]).forEach((item) => {
+            if (typeof item !== "undefined") {
+                copy.push(copyElement(item));
+            }
+        });
+        return copy;
+    }
+
+    if (original instanceof Object) {
+        copy = {};
+        Object.keys(original).forEach((property) => {
+            if (original[property] !== "undefined") {
+                copy[property] = copyElement(original[property]);
+            }
+        });
+        return copy;
+    }
+
+    throw new GenericError("error", "failed to copy AlexaResponse");
+}
+
 export interface AlexaHeader {
     namespace: string;
     name: string;
@@ -30,36 +60,6 @@ export interface AlexaRequestDirective {
 export class AlexaRequest {
     public directive: AlexaRequestDirective;
     public constructor(request: {[x: string]: any}) {
-        function copyElement(original: any): any {
-            let copy: any = null;
-
-            if (original === null || (typeof original === "object") === false) {
-                return original;
-            }
-
-            if (Array.isArray(original)) {
-                copy = [];
-                (original as any[]).forEach((item) => {
-                    if (typeof item !== "undefined") {
-                        copy.push(copyElement(item));
-                    }
-                });
-                return copy;
-            }
-
-            if (original instanceof Object) {
-                copy = {};
-                Object.keys(original).forEach((property) => {
-                    if (original[property] !== "undefined") {
-                        copy[property] = copyElement(original[property]);
-                    }
-                });
-                return copy;
-            }
-
-            throw new GenericError("error", "failed to copy AlexaResponse");
-        }
-
         if (Reflect.has(request, "directive") === false) {
             throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive'.");
         }
