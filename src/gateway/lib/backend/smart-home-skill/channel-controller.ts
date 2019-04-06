@@ -40,14 +40,8 @@ function unknownChannelError(_lgtv: Backend, alexaRequest: AlexaRequest): AlexaR
 
 async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     function getCommand(): LGTVRequest | null {
-        const command: {
-            uri: string;
-            payload?: {
-                channelNumber?: number;
-                channelId?: string;
-            };
-        } = {
-            "uri": ""
+        const lgtvRequest: LGTVRequest = {
+            "uri": "ssap://tv/openChannel"
         };
         if (typeof alexaRequest.directive.payload !== "undefined") {
             // eslint-disable-next-line prefer-destructuring
@@ -64,46 +58,38 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
             } = alexaRequest.directive.payload;
             if (typeof payload.channel !== "undefined" && typeof payload.channel.number !== "undefined") {
                 if (isNumeric(payload.channel.number)) {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelNumber": (payload.channel.number as number)};
+                    lgtvRequest.payload = {"channelNumber": (payload.channel.number as number)};
                 } else {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelId": (payload.channel.number as string)};
+                    lgtvRequest.payload = {"channelId": (payload.channel.number as string)};
                 }
             } else if (typeof payload.channel !== "undefined" && typeof payload.channel.callSign !== "undefined") {
                 if (isNumeric(payload.channel.callSign)) {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelNumber": (payload.channel.callSign as number)};
+                    lgtvRequest.payload = {"channelNumber": (payload.channel.callSign as number)};
                 } else {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelId": (payload.channel.callSign as string)};
+                    lgtvRequest.payload = {"channelId": (payload.channel.callSign as string)};
                 }
             } else if (typeof payload.channel !== "undefined" && typeof payload.channel.affiliateCallSign !== "undefined") {
                 if (isNumeric(payload.channel.affiliateCallSign)) {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelNumber": (payload.channel.affiliateCallSign as number)};
+                    lgtvRequest.payload = {"channelNumber": (payload.channel.affiliateCallSign as number)};
                 } else {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelId": (payload.channel.affiliateCallSign as string)};
+                    lgtvRequest.payload = {"channelId": (payload.channel.affiliateCallSign as string)};
                 }
             } else if (typeof payload.channelMetadata !== "undefined" && typeof payload.channelMetadata.name !== "undefined") {
                 if (isNumeric(payload.channelMetadata.name)) {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelNumber": (payload.channelMetadata.name as number)};
+                    lgtvRequest.payload = {"channelNumber": (payload.channelMetadata.name as number)};
                 } else {
-                    command.uri = "ssap://tv/openChannel";
-                    command.payload = {"channelId": (payload.channelMetadata.name as string)};
+                    lgtvRequest.payload = {"channelId": (payload.channelMetadata.name as string)};
                 }
             }
         }
-        if (typeof command.uri === "undefined" || typeof command.payload === "undefined") {
+        if (typeof lgtvRequest.payload === "undefined") {
             return null;
         }
-        return (command as LGTVRequest);
+        return (lgtvRequest as LGTVRequest);
     }
 
-    async function setChannel(command: LGTVRequest | null): Promise<AlexaResponse> {
-        if (command === null) {
+    async function setChannel(lgtvRequest: LGTVRequest | null): Promise<AlexaResponse> {
+        if (lgtvRequest === null) {
             return unknownChannelError(backend, alexaRequest);
         }
         const udn: UDN | undefined = alexaRequest.getEndpointId();
@@ -111,7 +97,7 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
             return errorResponse(alexaRequest, "INTERNAL_ERROR", "invalid code path");
         }
         try {
-            await backend.lgtvCommand(udn, command);
+            await backend.lgtvCommand(udn, lgtvRequest);
         } catch (error) {
             return errorToErrorResponse(alexaRequest, error);
         }

@@ -144,10 +144,10 @@ export class BackendControl extends EventEmitter {
 
     public turnOff(): boolean {
         this._throwIfNotInitialized("turnOff");
-        const command = {
+        const lgtvCommand = {
             "uri": "ssap://system/turnOff"
         };
-        this._connection.request(command.uri);
+        this._connection.request(lgtvCommand.uri);
         this._powerOn = false;
         return true;
     }

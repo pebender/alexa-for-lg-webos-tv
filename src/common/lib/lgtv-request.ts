@@ -1,7 +1,7 @@
 export interface LGTVRequestPayload {
-    [x: string]: undefined | boolean | number | string | object |
+    [x: string]: boolean | number | string | object |
     {
-        [x: string]: undefined | boolean | number | string | object;
+        [x: string]: boolean | number | string | object;
     };
 }
 

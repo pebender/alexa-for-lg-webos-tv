@@ -31,15 +31,15 @@ function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextPrope
     return [];
 }
 
-async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
+async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, lgtvRequestURI: string): Promise<AlexaResponse> {
     const udn: UDN | undefined = alexaRequest.getEndpointId();
     if (typeof udn === "undefined") {
         throw new GenericError("error", "invalid code path");
     }
-    const command = {
-        "uri": commandURI
+    const lgtvRequest = {
+        "uri": lgtvRequestURI
     };
-    await backend.lgtvCommand(udn, command);
+    await backend.lgtvCommand(udn, lgtvRequest);
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "Response",

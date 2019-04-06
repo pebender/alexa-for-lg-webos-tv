@@ -81,10 +81,10 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
                 return [];
             }
 
-            const command = {
+            const lgtvRequest = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            const lgtvResponse = (await backend.lgtvCommand(udn, command) as LGTVResponseExternalInputList);
+            const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
             if (typeof lgtvResponse.devices === "undefined") {
                 return [];
             }
@@ -98,10 +98,10 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
             if (backend.getPowerState(udn) === "OFF") {
                 return null;
             }
-            const command = {
+            const lgtvRequest = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            const lgtvResponse = (await backend.lgtvCommand(udn, command) as LGTVResponseForgroundAppInfo);
+            const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseForgroundAppInfo);
             if (typeof lgtvResponse.appId === "undefined") {
                 throw new GenericError("error", "invalid LGTVResponse message");
             }
@@ -214,11 +214,11 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
             });
         }
 
-        const command = {
+        const lgtvRequest = {
             "uri": "ssap://tv/switchInput",
             "payload": {"inputId": input}
         };
-        await backend.lgtvCommand(udn, command);
+        await backend.lgtvCommand(udn, lgtvRequest);
         return new AlexaResponse({
             "namespace": "Alexa",
             "name": "Response",

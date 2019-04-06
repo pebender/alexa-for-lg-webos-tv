@@ -93,10 +93,10 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
     }
 
     async function value(): Promise<{identifier: string; name: string} | null> {
-        const command = {
+        const lgtvRequest = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const input: LGTVResponse = await backend.lgtvCommand(udn, command);
+        const input: LGTVResponse = await backend.lgtvCommand(udn, lgtvRequest);
         if (typeof input.appId !== "string" ||
             typeof lgtvToAlexa[input.appId] === "undefined") {
             return null;
@@ -131,12 +131,12 @@ async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest)
     if (typeof udn === "undefined") {
         throw new GenericError("error", "invalid code path");
     }
-    const command = {
+    const lgtvRequest = {
         "uri": "ssap://system.launcher/launch",
         "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]
     };
     // eslint-disable-next-line no-unused-vars
-    await backend.lgtvCommand(udn, command);
+    await backend.lgtvCommand(udn, lgtvRequest);
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "Response",
