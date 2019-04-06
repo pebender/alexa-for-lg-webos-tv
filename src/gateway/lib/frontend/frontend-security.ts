@@ -43,9 +43,7 @@ export class FrontendSecurity {
     public async authorizeUser(username: string, password: string): Promise<boolean> {
         this._throwIfNotInitialized("authorizeUser");
         const record = await this._db.getRecord({"name": "password"});
-        if (record === null ||
-            Reflect.has(record, "value") === false ||
-            record.value === null) {
+        if (record === null || typeof record.value === "undefined" || record.value === null) {
             return false;
         }
         if (username === "LGTV" && password === record.value) {
@@ -57,10 +55,7 @@ export class FrontendSecurity {
     public async userPasswordIsNull(): Promise<boolean> {
         this._throwIfNotInitialized("userPasswordIsNull");
         const record = await this._db.getRecord({"name": "password"});
-        if (record === null ||
-            Reflect.has(record, "value") === false ||
-            record.value === null
-        ) {
+        if (record === null || typeof record.value === "undefined" || record.value === null) {
             return true;
         }
         return false;
@@ -80,7 +75,7 @@ export class FrontendSecurity {
     public async getHostname(): Promise<string> {
         this._throwIfNotInitialized("getHostname");
         const record = await this._db.getRecord({"name": "hostname"});
-        if (record === null || Reflect.has(record, "value") === false) {
+        if (typeof record.value !== "string") {
             return "";
         }
         return record.value;

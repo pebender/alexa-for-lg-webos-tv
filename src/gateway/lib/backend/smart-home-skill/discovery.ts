@@ -8,6 +8,7 @@ import * as alexaSpeaker from "./speaker";
 import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
+    AlexaResponseEventPayloadEndpointCapability,
     namespaceErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
 import {UDN} from "../../tv";
@@ -45,9 +46,10 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
      * use 'await' to ensure we have the values from the resolved promises.
      */
     async function buildEndpoint(udn: UDN): Promise<AlexaResponseEventPayloadEndpoint> {
+        let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
         try {
             // Determine capabilities in parallel.
-            const capabilities = await Promise.all([
+            capabilities = await Promise.all([
                 ...alexa.capabilities(backend, alexaRequest, udn),
                 ...alexaPowerController.capabilities(backend, alexaRequest, udn),
                 ...alexaSpeaker.capabilities(backend, alexaRequest, udn),
@@ -56,28 +58,25 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
                 ...alexaLauncher.capabilities(backend, alexaRequest, udn),
                 ...alexaPlaybackController.capabilities(backend, alexaRequest, udn)
             ]);
-            if (capabilities.length === 0) {
-                return null;
-            }
-            const {name} = backend.tv(udn);
-            const endpoint: AlexaResponseEventPayloadEndpoint = {
-                "endpointId": udn,
-                "friendlyName": name,
-                "description": "LG webOS TV",
-                "manufacturerName": "LG Electronics",
-                "displayCategories": ["TV"],
-                "capabilities": capabilities
-            };
-            capabilities.forEach((capability) => {
-                if (typeof capability === "undefined" || capability === null) {
-                    return;
-                }
-                endpoint.capabilities.push(capability);
-            });
-            return endpoint;
         } catch (error) {
-            return null;
+            capabilities = [];
         }
+        const {name} = backend.tv(udn);
+        const endpoint: AlexaResponseEventPayloadEndpoint = {
+            "endpointId": udn,
+            "friendlyName": name,
+            "description": "LG webOS TV",
+            "manufacturerName": "LG Electronics",
+            "displayCategories": ["TV"],
+            "capabilities": capabilities
+        };
+        capabilities.forEach((capability) => {
+            if (typeof capability === "undefined" || capability === null) {
+                return;
+            }
+            endpoint.capabilities.push(capability);
+        });
+        return endpoint;
     }
 
     async function buildEndpointList(udns: UDN[]): Promise<AlexaResponseEventPayloadEndpoint[]> {

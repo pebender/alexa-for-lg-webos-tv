@@ -58,12 +58,12 @@ export class BackendControl extends EventEmitter {
     public initialize(): Promise<void> {
         const that: BackendControl = this;
 
-        function saveKey(key: string, callback: (error: any) => void): void {
+        function saveKey(key: string, callback: (error: Error) => void): void {
             that._db.updateRecord(
                 {"udn": that._tv.udn},
                 {"$set": {"key": key}}
             ).
-                catch((error: any) => {
+                catch((error) => {
                     callback(error);
                     // eslint-disable-next-line no-useless-return
                     return;
@@ -91,8 +91,8 @@ export class BackendControl extends EventEmitter {
             }
 
             let clientKey = "";
-            if (Reflect.has(that._tv, "key")) {
-                clientKey = (that._tv.key as string);
+            if (typeof that._tv.key === "string") {
+                clientKey = that._tv.key;
                 Reflect.deleteProperty(that._tv, "key");
             } else {
                 reject(new GenericError("error", "initial LGTV key not set"));
@@ -105,7 +105,7 @@ export class BackendControl extends EventEmitter {
                 "clientKey": clientKey,
                 "saveKey": saveKey
             });
-            that._connection.on("error", (error: any) => {
+            that._connection.on("error", (error: NodeJS.ErrnoException) => {
                 that._connecting = false;
                 if (error && error.code !== "EHOSTUNREACH") {
                     that.emit("error", error, that._tv.udn);
@@ -164,9 +164,9 @@ export class BackendControl extends EventEmitter {
     public turnOn(): Promise<boolean> {
         const that = this;
 
-        function startInterval(milliseconds: number, handler: (...args: any[]) => void, ...args: any[]): NodeJS.Timeout {
-            handler(...args);
-            return setInterval(handler, milliseconds, ...args);
+        function startInterval(milliseconds: number, handler: () => void): NodeJS.Timeout {
+            handler();
+            return setInterval(handler, milliseconds);
         }
 
         that._throwIfNotInitialized("turnOn");
@@ -258,12 +258,14 @@ export class BackendControl extends EventEmitter {
 
     public async lgtvCommand(lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
         this._throwIfNotInitialized("lgtvCommand");
-        let lgtvResponse = null;
+        let lgtvResponse: LGTVResponse = {
+            "returnValue": false
+        };
         if (lgtvRequest.payload === null) {
             lgtvResponse = await new Promise<LGTVResponse>((resolve, reject) => {
                 this._connection.request(
                     lgtvRequest.uri,
-                    (error: any, response: LGTVResponse) => {
+                    (error: Error, response: LGTVResponse) => {
                         if (error) {
                             reject(error);
                             return;
@@ -277,7 +279,7 @@ export class BackendControl extends EventEmitter {
                 this._connection.request(
                     lgtvRequest.uri,
                     lgtvRequest.payload,
-                    (error: any, response: LGTVResponse) => {
+                    (error: Error, response: LGTVResponse) => {
                         if (error) {
                             reject(error);
                             return;
@@ -287,13 +289,12 @@ export class BackendControl extends EventEmitter {
                 );
             });
         }
-        if (Reflect.has(lgtvResponse, "returnValue") === false) {
+        if (typeof lgtvResponse.returnValue === "undefined") {
             throw new GenericError("lgtvCommand:failed", "The LGTV response did not contain 'returnValue'.");
         }
         if (lgtvResponse.returnValue !== true) {
             throw new GenericError("lgtvCommand:failed", "The LGTV response value 'returnValue' is not true.");
         }
-        Reflect.deleteProperty(lgtvResponse, "returnValue");
         return lgtvResponse;
     }
 }

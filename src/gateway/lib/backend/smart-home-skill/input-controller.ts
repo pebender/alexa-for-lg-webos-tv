@@ -2,6 +2,11 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
+    GenericError,
+    LGTVRequest,
+    LGTVResponseExternalInputList,
+    LGTVResponseExternalInputListDevice,
+    LGTVResponseForgroundAppInfo,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -70,8 +75,8 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
-    async function value(): Promise<string> {
-        async function getExternalInputList(): Promise<{[x: string]: any}[]> {
+    async function value(): Promise<string | null> {
+        async function getExternalInputList(): Promise<LGTVResponseExternalInputListDevice[]> {
             if (backend.getPowerState(udn) === "OFF") {
                 return [];
             }
@@ -79,21 +84,27 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
             const command = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            const lgtvResponse = await backend.lgtvCommand(udn, command);
-            if (Reflect.has(lgtvResponse, "devices") === false) {
+            const lgtvResponse = (await backend.lgtvCommand(udn, command) as LGTVResponseExternalInputList);
+            if (typeof lgtvResponse.devices === "undefined") {
                 return [];
+            }
+            if (typeof lgtvResponse.devices === "undefined") {
+                throw new GenericError("error", "invalid LGTVResponse message");
             }
             return lgtvResponse.devices;
         }
 
-        async function getInput(): Promise<string> {
+        async function getInput(): Promise<string | null> {
             if (backend.getPowerState(udn) === "OFF") {
                 return null;
             }
             const command = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            const lgtvResponse = await backend.lgtvCommand(udn, command);
+            const lgtvResponse = (await backend.lgtvCommand(udn, command) as LGTVResponseForgroundAppInfo);
+            if (typeof lgtvResponse.appId === "undefined") {
+                throw new GenericError("error", "invalid LGTVResponse message");
+            }
             return lgtvResponse.appId;
         }
         const [
@@ -104,12 +115,12 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
             getInput()
         ]);
 
-        let input = null;
+        let input: string | null = null;
         if (appId !== null) {
-            inputList.forEach((item: any) => {
+            inputList.forEach((item) => {
                 if (item.appId === appId) {
                     input = item.id;
-                    if (Reflect.has(lgtvToAlexa, input)) {
+                    if (typeof lgtvToAlexa.input !== "undefined") {
                         input = lgtvToAlexa[input];
                     } else {
                         input = input.replace("_", " ");
@@ -129,33 +140,39 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
 }
 
 async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    async function getExternalInputList(): Promise<{id: string; label: string; [x: string]: any}[]> {
-        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    async function getExternalInputList(): Promise<LGTVResponseExternalInputListDevice[]> {
+        const udn: UDN | undefined = alexaRequest.getEndpointId();
+        if (typeof udn === "undefined") {
+            throw new GenericError("error", "invalid code path");
+        }
         if (backend.getPowerState(udn) === "OFF") {
             return [];
         }
 
-        const command = {
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://tv/getExternalInputList"
         };
-        const lgtvResponse = await backend.lgtvCommand(udn, command);
-        if (!Reflect.has(lgtvResponse, "devices")) {
+        const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
+        if (typeof lgtvResponse.devices === "undefined") {
             return [];
         }
         return lgtvResponse.devices;
     }
 
     function getInput(): string {
+        if (typeof alexaRequest.directive.payload.input !== "string") {
+            return "";
+        }
         return alexaRequest.directive.payload.input.toUpperCase();
     }
 
-    function mapInput(inputList: {id: string; label: string; [x: string]: any}[], inputItem: string): string {
+    function mapInput(inputList: LGTVResponseExternalInputListDevice[], inputItem: string): string | null {
         let input = inputItem;
-        if (Reflect.has(alexaToLGTV, inputItem)) {
+        if (typeof alexaToLGTV[inputItem] !== "undefined") {
             input = alexaToLGTV[inputItem];
         }
-        let device = null;
-        inputList.forEach((value: any) => {
+        let device: string | null = null;
+        inputList.forEach((value) => {
             const id = value.id.toUpperCase();
             const label = value.label.toUpperCase();
             if (id === input) {
@@ -174,7 +191,7 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
         return device;
     }
 
-    async function setExternalInput(input: any | null): Promise<AlexaResponse> {
+    async function setExternalInput(input: string | null): Promise<AlexaResponse> {
         if (input === null) {
             return errorResponse(
                 alexaRequest,
@@ -183,7 +200,10 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
             );
         }
 
-        const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+        const udn: UDN | undefined = alexaRequest.getEndpointId();
+        if (typeof udn === "undefined") {
+            throw new GenericError("error", "invalid code path");
+        }
 
         if (backend.getPowerState(udn) === "OFF") {
             return new AlexaResponse({

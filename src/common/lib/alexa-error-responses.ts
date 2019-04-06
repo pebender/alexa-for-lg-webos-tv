@@ -1,12 +1,22 @@
 import {AlexaRequest} from "./alexa-request";
 import {AlexaResponse} from "./alexa-response";
 
-export function errorResponse(event: AlexaRequest, type: string, message: string): AlexaResponse {
+export function errorResponse(event: AlexaRequest | null, type: string, message: string): AlexaResponse {
+    if (event !== null) {
+        return new AlexaResponse({
+            "namespace": "Alexa",
+            "name": "ErrorResponse",
+            "correlationToken": event.getCorrelationToken(),
+            "endpointId": event.getEndpointId(),
+            "payload": {
+                "type": type,
+                "message": message
+            }
+        });
+    }
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "ErrorResponse",
-        "correlationToken": event.getCorrelationToken(),
-        "endpointId": event.getEndpointId(),
         "payload": {
             "type": type,
             "message": message

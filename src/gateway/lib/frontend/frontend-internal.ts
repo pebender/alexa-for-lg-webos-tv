@@ -29,10 +29,8 @@ export class FrontendInternal {
         function processForm(formAttributes: {hostname?: string; deletePassword?: string}): void {
             function processHostname(): void {
                 let hostname = "";
-                if (formAttributes !== null &&
-                    Reflect.has(formAttributes, "hostname")
-                ) {
-                    hostname = (formAttributes.hostname as string);
+                if (typeof formAttributes !== "undefined" && typeof formAttributes.hostname === "string") {
+                    ({hostname} = formAttributes);
                 }
                 that._security.setHostname(hostname);
             }
@@ -40,8 +38,8 @@ export class FrontendInternal {
             function processPassword(): void {
                 let deletePassword = false;
                 if (formAttributes !== null &&
-                    Reflect.has(formAttributes, "deletePassword") &&
-                    (formAttributes.deletePassword as string).toUpperCase() === "ON"
+                    typeof formAttributes.deletePassword === "string" &&
+                    formAttributes.deletePassword.toUpperCase() === "ON"
                 ) {
                     deletePassword = true;
                 }

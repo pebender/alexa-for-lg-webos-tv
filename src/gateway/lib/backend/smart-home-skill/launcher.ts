@@ -3,6 +3,7 @@ import {AlexaRequest,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
     GenericError,
+    LGTVResponse,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -88,18 +89,16 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 
 function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
     if (backend.getPowerState(udn) === "OFF") {
-        return null;
+        return [];
     }
 
-    async function value(): Promise<{identifier: string; name: string}> {
+    async function value(): Promise<{identifier: string; name: string} | null> {
         const command = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const input: {
-            appId: string;
-            [x: string]: any;
-        } = await backend.lgtvCommand(udn, command);
-        if (Reflect.has(lgtvToAlexa, input.appId) === false) {
+        const input: LGTVResponse = await backend.lgtvCommand(udn, command);
+        if (typeof input.appId !== "string" ||
+            typeof lgtvToAlexa[input.appId] === "undefined") {
             return null;
         }
         return lgtvToAlexa[input.appId];
@@ -120,14 +119,18 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
 async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    if (Reflect.has(alexaToLGTV, alexaRequest.directive.payload.identifier)) {
+    if (typeof alexaRequest.directive.payload.identifier !== "string" ||
+        typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === "undefined") {
         return errorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
         );
     }
-    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    const udn: UDN | undefined = alexaRequest.getEndpointId();
+    if (typeof udn === "undefined") {
+        throw new GenericError("error", "invalid code path");
+    }
     const command = {
         "uri": "ssap://system.launcher/launch",
         "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]

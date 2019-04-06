@@ -19,6 +19,7 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.23",
     "@types/node": "11.12.1",
     "@types/uuid": "3.4.4",
     "typescript": "3.4.1",

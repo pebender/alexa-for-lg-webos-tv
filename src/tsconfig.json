@@ -10,6 +10,7 @@
             "es2017"
         ],
         /* Basic Options */
+        "strict": true,
         "module": "commonjs",
         "esModuleInterop": true,
         "target": "es6",

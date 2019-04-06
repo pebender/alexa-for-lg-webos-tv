@@ -2,6 +2,7 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
+    GenericError,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
@@ -42,7 +43,10 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
 }
 
 async function turnOffHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    const udn: UDN | undefined = alexaRequest.getEndpointId();
+    if (typeof udn === "undefined") {
+        throw new GenericError("error", "invalid code path");
+    }
 
     const poweredOff = await backend.turnOff(udn);
     if (poweredOff === false) {
@@ -58,7 +62,10 @@ async function turnOffHandler(backend: Backend, alexaRequest: AlexaRequest): Pro
 }
 
 async function turnOnHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    const udn: UDN | undefined = alexaRequest.getEndpointId();
+    if (typeof udn === "undefined") {
+        throw new GenericError("error", "invalid code path");
+    }
     const poweredOn = await backend.turnOn(udn);
     if (poweredOn === false) {
         return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${udn} failed.`);

@@ -9,7 +9,7 @@ import {AlexaRequest,
     namespaceErrorResponse} from "../../../common";
 import {Gateway} from "../gateway-api";
 
-async function gatewayEndpoint(alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpoint> {
+async function gatewayEndpoint(alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpoint | null> {
     try {
         const capabilities = await Promise.all([
             ...alexa.capabilities(alexaRequest),
@@ -45,15 +45,15 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
 
-    const gateway = new Gateway("");
+    const gateway: Gateway = new Gateway("");
 
-    let alexaResponse = null;
-    let lgtvGatewayEndpoint = null;
+    let alexaResponse: AlexaResponse | null = null;
+    let lgtvGatewayEndpoint: AlexaResponseEventPayloadEndpoint | null = null;
 
     try {
         alexaResponse = await gateway.sendSkillDirective(alexaRequest);
     } catch (error) {
-        alexaResponse = null;
+        alexaResponse = errorToErrorResponse(alexaRequest, error);
     }
 
     try {
@@ -66,8 +66,8 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         return alexaResponse;
     }
 
-    if ((alexaResponse.event.header.namespace === "Alexa.Discovery" &&
-        alexaResponse.event.header.name === "Discover.Response") === false) {
+    if (alexaResponse.event.header.namespace !== "Alexa.Discovery" ||
+        alexaResponse.event.header.name !== "Discover.Response") {
         alexaResponse = new AlexaResponse({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"

@@ -50,7 +50,7 @@ export class FrontendExternal {
 
         async function httpHandler(request: expressCore.Request, response: expressCore.Response): Promise<void> {
             if (("command" in request.body) && request.body.command.name === "passwordSet") {
-                let body: {[x: string]: any} | {} = {
+                let body: {[x: string]: boolean | number | string | object} = {
                     "error": {
                         "message": "The password is already set."
                     }
@@ -81,7 +81,7 @@ export class FrontendExternal {
         }
 
         async function backendSkillHandler(request: express.Request, response: express.Response): Promise<void> {
-            if (Reflect.has(request.body, "log")) {
+            if (typeof request.body.log !== "undefined") {
                 console.log(JSON.stringify(request.body, null, 2));
                 response.
                     type("json").
@@ -90,9 +90,9 @@ export class FrontendExternal {
                     end();
                 return;
             }
-            console.log(JSON.stringify(request.body, null, 2));
+            // X    console.log(JSON.stringify(request.body, null, 2));
             const commandResponse = await that._backend.skillCommand(request.body);
-            console.log(JSON.stringify(commandResponse, null, 2));
+            // X    console.log(JSON.stringify(commandResponse, null, 2));
             response.
                 type("json").
                 status(200).

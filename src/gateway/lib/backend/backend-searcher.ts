@@ -24,6 +24,17 @@ const arp = require("node-arp");
 import http from "axios";
 import {parseString as xml2js} from "xml2js";
 
+export interface UPnPDevice {
+    root?: {
+        device?: {
+            manufacturer: string[];
+            friendlyName: string[];
+            UDN: string[];
+        }[];
+    };
+}
+
+
 export class BackendSearcher extends EventEmitter {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
@@ -75,7 +86,7 @@ export class BackendSearcher extends EventEmitter {
                 mac?: MAC;
                 key?: string;
             } = {};
-            if (Reflect.has(headers, "USN") === false) {
+            if (typeof headers.USN === "undefined") {
                 callback(null, null);
                 return;
             }
@@ -88,33 +99,33 @@ export class BackendSearcher extends EventEmitter {
                 "advertise-bye": "NT",
                 "response": "ST"
             };
-            if (Reflect.has(messageTypeMap, messageName) === false) {
+            if (typeof messageTypeMap[messageName] === "undefined") {
                 callback(null, null);
                 return;
             }
             // Make sure it is the webOS second screen service.
-            if (Reflect.has(headers, messageTypeMap[messageName]) === false) {
+            if (typeof headers[messageTypeMap[messageName]] === "undefined") {
                 callback(null, null);
                 return;
             }
-            if ((headers[messageTypeMap[messageName]] === "urn:lge-com:service:webos-second-screen:1") === false) {
+            if (headers[messageTypeMap[messageName]] !== "urn:lge-com:service:webos-second-screen:1") {
                 callback(null, null);
                 return;
             }
             // Make sure that if it is a advertise (NT) message then it is "ssdp:alive".
             if ((messageTypeMap[messageName] === "NT") &&
-                (Reflect.has(headers, "NTS") === false || (headers.NTS === "ssdp:alive") === false)) {
+                (typeof headers.NTS === "undefined" || headers.NTS !== "ssdp:alive")) {
                 callback(null, null);
                 return;
             }
             // Make sure it is webOS and UPnP 1.0 or 1.1.
-            if (!("SERVER" in headers) ||
+            if (typeof headers.SERVER === "undefined" ||
                 !(headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
                 callback(null, null);
                 return;
             }
             // Get the IP address associated with the TV.
-            if (!("address" in rinfo)) {
+            if (typeof rinfo.address === "undefined") {
                 callback(null, null);
                 return;
             }
@@ -126,12 +137,12 @@ export class BackendSearcher extends EventEmitter {
              * LG Electronics webOS TV as well as to obtain the TV's friendly name
              * and Unique Device Name (UDN).
              */
-            if (!("LOCATION" in headers)) {
+            if (typeof headers.LOCATION === "undefined") {
                 callback(null, null);
                 return;
             }
-            http.get(headers.LOCATION).then((descriptionXml: any) => {
-                xml2js(descriptionXml.data, (error: Error | null, description: any) => {
+            http.get(headers.LOCATION).then((descriptionXml) => {
+                xml2js(descriptionXml.data, (error: Error | null, description: UPnPDevice) => {
                     if (error) {
                         callback(error, null);
                         return;
@@ -145,14 +156,14 @@ export class BackendSearcher extends EventEmitter {
                      * These properties are required by the UPnP specification but
                      * check anyway.
                      */
-                    if (!("root" in description) ||
-                        !("device" in description.root) ||
+                    if (typeof description.root === "undefined" ||
+                        typeof description.root.device === "undefined" ||
                         description.root.device.length !== 1 ||
-                        !("manufacturer" in description.root.device[0]) ||
+                        typeof description.root.device[0].manufacturer === "undefined" ||
                         description.root.device[0].manufacturer.length !== 1 ||
-                        !("friendlyName" in description.root.device[0]) ||
+                        typeof description.root.device[0].friendlyName === "undefined" ||
                         description.root.device[0].friendlyName.length !== 1 ||
-                        !("UDN" in description.root.device[0]) ||
+                        typeof description.root.device[0].UDN === "undefined" ||
                         description.root.device[0].UDN.length !== 1) {
                         callback(null, null);
                         return;

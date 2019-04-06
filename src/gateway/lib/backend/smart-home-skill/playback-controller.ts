@@ -2,6 +2,7 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
+    GenericError,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
@@ -31,7 +32,10 @@ function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextPrope
 }
 
 async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, commandURI: string): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.directive.endpoint.endpointId as UDN);
+    const udn: UDN | undefined = alexaRequest.getEndpointId();
+    if (typeof udn === "undefined") {
+        throw new GenericError("error", "invalid code path");
+    }
     const command = {
         "uri": commandURI
     };

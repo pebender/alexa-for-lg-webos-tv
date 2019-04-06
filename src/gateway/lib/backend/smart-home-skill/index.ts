@@ -15,9 +15,12 @@ import {AlexaRequest,
 import {Backend} from "../../backend";
 import {UDN} from "../../tv";
 
-async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
+async function stateHandler(backend: Backend, alexaRequest: AlexaRequest, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
-        const udn: UDN = alexaResponse.event.endpoint.endpointId;
+        const udn: UDN | undefined = alexaRequest.getEndpointId();
+        if (typeof udn === "undefined") {
+            return errorResponse(alexaRequest, "INTERNAL_ERROR", "invalid code path");
+        }
         const states: AlexaResponseContextProperty[] = await Promise.all([
             ...alexa.states(backend, udn),
             ...alexaPowerController.states(backend, udn),
@@ -40,7 +43,7 @@ async function stateHandler(backend: Backend, alexaResponse: AlexaResponse): Pro
     }
 }
 
-async function handlerWithoutValidation(backend: Backend, event: any): Promise<AlexaResponse> {
+async function handlerWithoutValidation(backend: Backend, event: AlexaRequest): Promise<AlexaResponse> {
     let alexaRequest: AlexaRequest | null = null;
     try {
         alexaRequest = new AlexaRequest(event);
@@ -55,14 +58,6 @@ async function handlerWithoutValidation(backend: Backend, event: any): Promise<A
         });
     }
 
-    function unknownNamespaceError(): AlexaResponse {
-        return errorResponse(
-            alexaRequest,
-            "INTERNAL_ERROR",
-            `Unknown namespace ${alexaRequest.directive.header.namespace}`
-        );
-    }
-
     try {
         switch (alexaRequest.directive.header.namespace) {
             case "Alexa.Authorization":
@@ -70,21 +65,25 @@ async function handlerWithoutValidation(backend: Backend, event: any): Promise<A
             case "Alexa.Discovery":
                 return alexaDiscovery.handler(backend, alexaRequest);
             case "Alexa":
-                return stateHandler(backend, await alexa.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexa.handler(backend, alexaRequest));
             case "Alexa.PowerController":
-                return stateHandler(backend, await alexaPowerController.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaPowerController.handler(backend, alexaRequest));
             case "Alexa.Speaker":
-                return stateHandler(backend, await alexaSpeaker.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaSpeaker.handler(backend, alexaRequest));
             case "Alexa.ChannelController":
-                return stateHandler(backend, await alexaChannelController.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaChannelController.handler(backend, alexaRequest));
             case "Alexa.InputController":
-                return stateHandler(backend, await alexaInputController.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaInputController.handler(backend, alexaRequest));
             case "Alexa.Launcher":
-                return stateHandler(backend, await alexaLauncher.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaLauncher.handler(backend, alexaRequest));
             case "Alexa.PlaybackController":
-                return stateHandler(backend, await alexaPlaybackController.handler(backend, alexaRequest));
+                return stateHandler(backend, alexaRequest, await alexaPlaybackController.handler(backend, alexaRequest));
             default:
-                return unknownNamespaceError();
+                return errorResponse(
+                    alexaRequest,
+                    "INTERNAL_ERROR",
+                    `Unknown namespace ${alexaRequest.directive.header.namespace}`
+                );
         }
     } catch (error) {
         return errorToErrorResponse(alexaRequest, error);

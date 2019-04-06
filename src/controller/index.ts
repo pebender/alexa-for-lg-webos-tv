@@ -1,9 +1,11 @@
+import * as ASKModel from "ask-sdk-model";
+import * as AWSLambda from "aws-lambda";
 import * as customSkill from "./lib/custom-skill";
 import * as smartHomeSkill from "./lib/smart-home-skill";
 import {AlexaRequest,
     AlexaResponse} from "../common";
 
-async function smartHomeSkillHandler(event: AlexaRequest, context: any, callback: (error: Error, response: AlexaResponse) => void): Promise<void> {
+async function smartHomeSkillHandler(event: AlexaRequest, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | null) => void): Promise<void> {
     try {
         const response = await smartHomeSkill.handler(event, context);
         callback(null, response);
@@ -15,11 +17,11 @@ async function smartHomeSkillHandler(event: AlexaRequest, context: any, callback
     }
 }
 
-function skilllHandler(event: any, context: any, callback: (error: Error, response: any) => void): Promise<void> {
-    if (Reflect.has(event, "directive")) {
-        return smartHomeSkillHandler(event, context, (error, response) => callback(error, response));
+function skilllHandler(request: any, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | ASKModel.ResponseEnvelope | null) => void): Promise<void> {
+    if (typeof request.directive !== "undefined") {
+        return smartHomeSkillHandler((request as AlexaRequest), context, (error, response) => callback(error, response));
     }
-    return Promise.resolve(customSkill.handler(event, context, (error, response) => callback(error, response)));
+    return Promise.resolve(customSkill.handler((request as ASKModel.RequestEnvelope), context, (error: Error, response: ASKModel.ResponseEnvelope) => callback(error, response)));
 }
 
 

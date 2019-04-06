@@ -1,3 +1,4 @@
+import * as AWSLambda from "aws-lambda";
 import * as alexa from "./alexa";
 import * as alexaAuthorization from "./authorization";
 import * as alexaDiscovery from "./discovery";
@@ -42,10 +43,11 @@ async function remoteResponse(alexaRequest: AlexaRequest): Promise<AlexaResponse
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function handler(event: AlexaRequest, _context: any): Promise<AlexaResponse> {
+async function handler(event: AlexaRequest, _context: AWSLambda.Context): Promise<AlexaResponse> {
     try {
         const alexaRequest = new AlexaRequest(event);
-        if (!(Reflect.has(alexaRequest.directive, "endpoint") && Reflect.has(alexaRequest.directive.endpoint, "endpointId"))) {
+        if (typeof alexaRequest.directive.endpoint === "undefined" ||
+            typeof alexaRequest.directive.endpoint.endpointId === "undefined") {
             switch (alexaRequest.directive.header.namespace) {
                 case "Alexa.Authorization":
                     return alexaAuthorization.handler(alexaRequest);
@@ -75,7 +77,7 @@ async function handler(event: AlexaRequest, _context: any): Promise<AlexaRespons
     }
 }
 
-async function handlerWithLogging(alexaRequest: AlexaRequest, context: any): Promise<AlexaResponse> {
+async function handlerWithLogging(alexaRequest: AlexaRequest, context: AWSLambda.Context): Promise<AlexaResponse> {
     const gateway = new Gateway("x");
     try {
         await gateway.send({"path": Gateway.skillPath()}, {"log": alexaRequest});
@@ -83,18 +85,11 @@ async function handlerWithLogging(alexaRequest: AlexaRequest, context: any): Pro
         //
     }
 
-    let response: any = null;
+    let alexaResponse: AlexaResponse | null = null;
     try {
-        response = await handler(alexaRequest, context);
+        alexaResponse = await handler(alexaRequest, context);
     } catch (error) {
-        return errorToErrorResponse(alexaRequest, error);
-    }
-
-    let alexaResponse: AlexaResponse = null;
-    try {
-        alexaResponse = new AlexaResponse(response);
-    } catch (error) {
-        return errorToErrorResponse(alexaRequest, error);
+        alexaResponse = errorToErrorResponse(alexaRequest, error);
     }
 
     try {

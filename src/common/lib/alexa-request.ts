@@ -1,15 +1,16 @@
 import {GenericError} from "./error-classes";
 
-export function copyElement(original: any): any {
-    let copy: any = null;
+type copyElementType = boolean | number | string | object | null | undefined;
 
-    if (original === null || (typeof original === "object") === false) {
+export function copyElement(original: copyElementType): copyElementType {
+    if (typeof original === "undefined" || original === null || typeof original !== "object") {
         return original;
     }
 
     if (Array.isArray(original)) {
-        copy = [];
-        (original as any[]).forEach((item) => {
+        const originalArray = (original as copyElementType[]);
+        const copy: copyElementType[] = [];
+        originalArray.forEach((item) => {
             if (typeof item !== "undefined") {
                 copy.push(copyElement(item));
             }
@@ -18,10 +19,13 @@ export function copyElement(original: any): any {
     }
 
     if (original instanceof Object) {
-        copy = {};
-        Object.keys(original).forEach((property) => {
-            if (original[property] !== "undefined") {
-                copy[property] = copyElement(original[property]);
+        const originalObject = (original as {[x: string]: copyElementType});
+        const copy: {
+            [x: string]: copyElementType;
+        } = {};
+        Object.keys(originalObject).forEach((property) => {
+            if (typeof originalObject[property] !== "undefined") {
+                copy[property] = copyElement(originalObject[property]);
             }
         });
         return copy;
@@ -37,6 +41,7 @@ export interface AlexaHeader {
     messageId: string;
     correlationToken?: string;
     payloadVersion: "3";
+    [x: string]: string | undefined;
 }
 
 export interface AlexaEndpoint {
@@ -44,65 +49,62 @@ export interface AlexaEndpoint {
     scope?: {
         type: "BearerToken";
         token: string;
-        [x: string]: any;
+        [x: string]: string;
     };
     cookie?: {[x: string]: string};
+    [x: string]: string | object | undefined;
 }
 
 export interface AlexaRequestDirective {
     header: AlexaHeader;
     endpoint?: AlexaEndpoint;
     payload: {
-        [x: string]: any;
+        [x: string]: boolean | number | string | object;
     };
+    [x: string]: object | undefined;
 }
 
 export class AlexaRequest {
     public directive: AlexaRequestDirective;
-    public constructor(request: {[x: string]: any}) {
-        if (Reflect.has(request, "directive") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive'.");
+    [x: string]: string | object | undefined;
+    public constructor(request: {
+        directive?: {
+            header?: {
+                [x: string]: string | undefined;
+            };
+            endpoint?: object;
+            [x: string]: object | undefined;
+        };
+    }) {
+        if (typeof request.directive === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive'.");
         }
-        if (Reflect.has(request.directive, "header") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.header'.");
+        if (typeof request.directive.header === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header'.");
         }
-        if (Reflect.has(request.directive.header, "namespace") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.header.namespace'.");
+        if (typeof request.directive.header.namespace === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.namespace'.");
         }
-        if (Reflect.has(request.directive.header, "name") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.header.name'.");
+        if (typeof request.directive.header.name === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.name'.");
         }
-        if (Reflect.has(request.directive.header, "messageId") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.header.messageId'.");
+        if (typeof request.directive.header.messageId === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.messageId'.");
         }
-        if (Reflect.has(request.directive.header, "payloadVersion") === false) {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.header.payloadVersion'.");
+        if (typeof request.directive.header.payloadVersion === "undefined") {
+            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.payloadVersion'.");
         }
         if ((request.directive.header.payloadVersion === "3") === false) {
-            throw new GenericError("error", "parameter(s) initialized 'AlexaResponse.directive.header.payloadVersion' to invalid value '3'.");
+            throw new GenericError("error", "parameter(s) initialized 'AlexaRequest.directive.header.payloadVersion' to invalid value '3'.");
         }
-        if (Reflect.has(request.directive, "endpoint")) {
-            const {endpoint} = request.directive;
-            if (Reflect.has(endpoint, "endpointId") === false) {
-                throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.directive.endpoint.endpointId'.");
-            }
-        }
-        this.directive = copyElement(request.directive);
+        this.directive = (copyElement(request.directive) as AlexaRequestDirective);
     }
 
-    public getCorrelationToken(): string {
-        if (Reflect.has(this.directive.header, "correlationToken")) {
-            return this.directive.header.correlationToken;
-        }
-        // eslint-disable-next-line no-undefined
-        return undefined;
+    public getCorrelationToken(): string | undefined {
+        return this.directive.header.correlationToken;
     }
 
-    public getEndpointId(): string {
-        if (Reflect.has(this.directive, "endpoint") && Reflect.has(this.directive.endpoint, "endpointId")) {
-            return this.directive.endpoint.endpointId;
-        }
-        // eslint-disable-next-line no-undefined
-        return undefined;
+    public getEndpointId(): string | undefined {
+        return this.directive.endpoint && this.directive.endpoint.endpointId;
     }
 }

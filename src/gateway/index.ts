@@ -14,22 +14,15 @@ import fs from "fs-extra";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ppath = require("persist-path");
 
-let configurationDir = null;
-let backend = null;
-let backendDb = null;
-let frontend = null;
-let frontendDb = null;
-
 export async function startGateway(): Promise<void> {
+    const configurationDir = ppath("LGwebOSTVGateway");
 
     /*
      * This operation is synchronous. It is both expected and desired because it
      * occures once at startup and because the directory is needed before the LG
      * webOS TV gateway can run.
      */
-    configurationDir = ppath("LGwebOSTVGateway");
     try {
-
         // eslint-disable-next-line no-sync
         fs.mkdirSync(configurationDir);
     } catch (error) {
@@ -44,17 +37,17 @@ export async function startGateway(): Promise<void> {
      * (name), Internet Protocol address (ip), media access control address (mac)
      * and client key (key).
      */
-    backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
+    const backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
     await backendDb.initialize();
-    frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
+    const frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
     await frontendDb.initialize();
-    backend = new Backend(backendDb);
+    const backend = new Backend(backendDb);
     backend.on("error", (error: Error, id: string) => {
         console.log(id);
         console.log(error);
     });
     await backend.initialize();
-    frontend = new Frontend(frontendDb, backend);
+    const frontend = new Frontend(frontendDb, backend);
     await frontend.initialize();
     await frontend.start();
     await backend.start();

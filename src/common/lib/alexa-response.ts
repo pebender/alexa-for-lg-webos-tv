@@ -12,12 +12,14 @@ export interface AlexaResponseEventPayloadEndpointCapability {
     version: string;
     instance?: string;
     properties?: {
-        supported: {[x: string]: any};
+        supported: {
+            name: string;
+        }[];
         proactivelyReported: boolean;
         retrievable: boolean;
     };
     supportedOperations?: string[];
-    configuration?: any;
+    configuration?: object;
     capabilityResources?: {
         friendlyNames: {
             "@type": "text";
@@ -27,6 +29,7 @@ export interface AlexaResponseEventPayloadEndpointCapability {
             };
         }[];
     };
+    [x: string]: string | object | undefined;
 }
 
 export interface AlexaResponseEventPayloadEndpoint {
@@ -35,38 +38,46 @@ export interface AlexaResponseEventPayloadEndpoint {
     endpointId: string;
     friendlyName: string;
     manufacturerName: string;
-    cookie?: {[x: string]: string};
-    capabilities?: AlexaResponseEventPayloadEndpointCapability[];
+    cookie?: {
+        [x: string]: string;
+    };
+    capabilities: AlexaResponseEventPayloadEndpointCapability[];
+    [x: string]: string | object | undefined;
 }
 
 export interface AlexaResponseEventPayload {
     endpoints?: AlexaResponseEventPayloadEndpoint[];
     type?: string;
     message?: string;
+    [x: string]: string | object | undefined;
 }
 
 export interface AlexaResponseEvent {
     header: AlexaHeader;
     endpoint?: AlexaEndpoint;
     payload: AlexaResponseEventPayload;
+    [x: string]: object | undefined;
 }
 
 export interface AlexaResponseContextProperty {
     namespace: string;
     name: string;
     instance?: string;
-    value: any;
+    value: number | string | object;
     timeOfSample: string;
     uncertaintyInMilliseconds: number;
+    [x: string]: number | string | object | undefined;
 }
 
 export interface AlexaResponseContext {
     properties?: AlexaResponseContextProperty[];
+    [x: string]: AlexaResponseContextProperty[] | undefined;
 }
 
 export class AlexaResponse {
     public event: AlexaResponseEvent;
     public context?: AlexaResponseContext;
+    [x: string]: object | undefined;
     public constructor(opts: {
         event?: AlexaResponseEvent;
         context?: AlexaResponseContext;
@@ -75,112 +86,143 @@ export class AlexaResponse {
         instance?: string;
         correlationToken?: string;
         endpointId?: string;
-        token?: any;
+        token?: string;
         payload?: AlexaResponseEventPayload;
     }) {
-        const response: {[x: string]: any} = {};
-        if (Reflect.has(opts, "event")) {
-            response.event = copyElement(opts.event);
+        const response: {
+            event?: {
+                header?: {
+                    [x: string]: string | undefined;
+                };
+                endpoint?: {
+                    endpointId?: string;
+                    scope?: {
+                        type?: "BearerToken";
+                        token?: string;
+                        [x: string]: number | string | object | undefined;
+                    };
+                };
+                payload?: object;
+            };
+            context?: object;
+        } = {};
+        if (typeof opts.event !== "undefined") {
+            response.event = (copyElement(opts.event) as AlexaResponseEvent);
         }
-        if (Reflect.has(opts, "context")) {
-            response.context = copyElement(opts.context);
+        if (typeof opts.context !== "undefined") {
+            response.context = (copyElement(opts.context) as AlexaResponseContext);
         }
-        if (Reflect.has(opts, "namespace")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.namespace !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "header") === false) {
+            if (typeof response.event.header === "undefined") {
                 response.event.header = {};
             }
             response.event.header.namespace = opts.namespace;
         }
-        if (Reflect.has(opts, "name")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.name !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "header") === false) {
+            if (typeof response.event.header === "undefined") {
                 response.event.header = {};
             }
             response.event.header.name = opts.name;
         }
-        if (Reflect.has(opts, "instance")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.instance !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "header") === false) {
+            if (typeof response.event.header === "undefined") {
                 response.event.header = {};
             }
             response.event.header.instance = opts.instance;
         }
-        if (Reflect.has(opts, "correlationToken")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.correlationToken !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "header") === false) {
+            if (typeof response.event.header === "undefined") {
                 response.event.header = {};
             }
             response.event.header.correlationToken = opts.correlationToken;
         }
-        if (Reflect.has(opts, "endpointId")) {
-            if (Reflect.has(response, "event") === false) {
+
+        if (typeof opts.endpointId !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "endpoint") === false) {
+            if (typeof response.event.endpoint === "undefined") {
                 response.event.endpoint = {};
             }
             response.event.endpoint.endpointId = opts.endpointId;
         }
-        if (Reflect.has(opts, "token")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.endpointId !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            if (Reflect.has(response.event, "endpoint") === false) {
+            if (typeof response.event.endpoint === "undefined") {
                 response.event.endpoint = {};
             }
-            if (Reflect.has(response.event.endpoint, "scope") === false) {
-                response.event.endpoint.scope = {};
-            }
-            response.event.endpoint.scope.token = opts.token;
+            response.event.endpoint.endpointId = opts.endpointId;
         }
-        if (Reflect.has(opts, "payload")) {
-            if (Reflect.has(response, "event") === false) {
+        if (typeof opts.token !== "undefined") {
+            if (typeof response.event === "undefined") {
                 response.event = {};
             }
-            response.event.payload = copyElement(opts.payload);
+            if (typeof response.event.endpoint === "undefined") {
+                response.event.endpoint = {};
+            }
+            if (typeof response.event.endpoint.scope === "undefined") {
+                response.event.endpoint.scope = {};
+            }
+            response.event.endpoint.scope.type = "BearerToken";
+            response.event.endpoint.scope.token = opts.token;
         }
 
-        if (Reflect.has(response, "event") === false) {
+        if (typeof opts.payload !== "undefined") {
+            if (typeof response.event === "undefined") {
+                response.event = {};
+            }
+            if (typeof response.event.endpoint === "undefined") {
+                response.event.endpoint = {};
+            }
+            response.event.payload = (copyElement(opts.payload) as AlexaResponseEventPayload);
+        }
+
+        if (typeof response.event === "undefined") {
             throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.event'.");
         }
-        if (Reflect.has(response.event, "header") === false) {
+        if (typeof response.event.header === "undefined") {
             throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.event.header'.");
         }
-        if (Reflect.has(response.event.header, "namespace") === false) {
+        if (typeof response.event.header.namespace === "undefined") {
             throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.event.header.namespace'.");
         }
-        if (Reflect.has(response.event.header, "name") === false) {
+        if (typeof response.event.header.name === "undefined") {
             throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaResponse.event.header.name'.");
         }
-        if (Reflect.has(response.event.header, "messageId") === false) {
+        if (typeof response.event.header.messageId === "undefined") {
             response.event.header.messageId = uuid();
         }
-        if (Reflect.has(response.event.header, "payloadVersion") === false) {
+        if (typeof response.event.header.payloadVersion === "undefined") {
             response.event.header.payloadVersion = "3";
         }
-        if (Reflect.has(response.event, "payload") === false) {
+        if (typeof response.event.payload === "undefined") {
             response.event.payload = {};
         }
-        this.event = response.event;
-        if (Reflect.has(response, "context")) {
-            this.context = response.context;
+        this.event = (response.event as AlexaResponseEvent);
+        if (typeof response.context !== "undefined") {
+            this.context = (response.context as AlexaResponseContext);
         }
     }
 
     public addContextProperty(contextProperty: AlexaResponseContextProperty): void {
-        if (Reflect.has(this, "context") === false) {
+        if (typeof this.context === "undefined") {
             this.context = {};
         }
-        if (Reflect.has(this.context, "properties") === false) {
+        if (typeof this.context.properties === "undefined") {
             this.context.properties = [];
         }
 
@@ -188,11 +230,11 @@ export class AlexaResponse {
     }
 
     public addPayloadEndpoint(payloadEndpoint: AlexaResponseEventPayloadEndpoint): void {
-        if (Reflect.has(this.event, "payload") === false) {
+        if (typeof this.event.payload === "undefined") {
             this.event.payload = {};
         }
-        if (Reflect.has(this.event.payload, "endpoints") === false) {
-            (this.event.payload as {[x: string]: any}).endpoints = [];
+        if (typeof this.event.payload.endpoints === "undefined") {
+            this.event.payload.endpoints = [];
         }
 
         this.event.payload.endpoints.push(payloadEndpoint);
@@ -202,7 +244,7 @@ export class AlexaResponse {
         "namespace": string;
         "name": string;
         "instance"?: string;
-        "value": () => any;
+        "value": () => number | string | object;
     }): Promise<AlexaResponseContextProperty> {
         const startTime = new Date();
         const value = await opts.value();

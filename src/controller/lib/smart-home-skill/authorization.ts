@@ -1,9 +1,9 @@
 import {AlexaRequest,
-    AlexaResponse} from "../../../common";
+    AlexaResponse,
+    errorResponse} from "../../../common";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handler(_alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return Promise.resolve(null);
+function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return Promise.resolve(errorResponse(alexaRequest, "INTERNAL_ERROR", "'Alexa.Authorization' is not supported."));
 }
 
 export {handler};

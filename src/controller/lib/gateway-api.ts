@@ -6,6 +6,18 @@ import {AlexaRequest,
 import http from "http";
 import https from "https";
 
+export interface GatewayRequest {
+    [x: string]: number | string | object | undefined;
+}
+
+export interface GatewayResponse {
+    error?: {
+        name?: string;
+        message?: string;
+    };
+    [x: string]: number | string | object | undefined;
+}
+
 function createBasicOptions(requestOptions: {
     hostname: string;
     username: string;
@@ -16,20 +28,22 @@ function createBasicOptions(requestOptions: {
         hostname: string;
         port: number;
         path: string;
-        headers: {[x: string]: string};
+        headers: {
+            [x: string]: string;
+        };
         rejectUnauthorized: boolean;
         // eslint-disable-next-line @typescript-eslint/indent
 } {
-    if (Reflect.has(requestOptions, "hostname") === false || requestOptions.hostname === null) {
+    if (typeof requestOptions.hostname === "undefined" || requestOptions.hostname === null) {
         throw new GenericError("HOSTNAME_NOT_SET", "The gateway hostname has not been set.");
     }
-    if (Reflect.has(requestOptions, "username") === false || requestOptions.username === null) {
+    if (typeof requestOptions.username === "undefined" || requestOptions.username === null) {
         throw new GenericError("USERNAME_NOT_SET", "The gateway username has not been set.");
     }
-    if (Reflect.has(requestOptions, "password") === false || requestOptions.password === null) {
+    if (typeof requestOptions.password === "undefined" || requestOptions.password === null) {
         throw new GenericError("PASSWORD_NOT_SET", "The gateway password has not been set.");
     }
-    if (Reflect.has(requestOptions, "path") === false || requestOptions.path === null) {
+    if (typeof requestOptions.path === "undefined" || requestOptions.path === null) {
         throw new GenericError("PATH_NOT_SET", "The gateway path has not been set.");
     }
 
@@ -42,7 +56,7 @@ function createBasicOptions(requestOptions: {
             "Authorization": `Basic ${authorization}`
         },
         "rejectUnauthorized":
-            Reflect.has(requestOptions, "rejectUnauthorized")
+            typeof requestOptions.rejectUnauthorized !== "undefined"
                 ? requestOptions.rejectUnauthorized
                 : true
     };
@@ -64,12 +78,13 @@ function pingHandler(requestOptions: {
             headers: {
                 [x: string]: string;
             };
-            rejectUnauthorized?: boolean;
-        } = null;
+            rejectUnauthorized: boolean;
+        } | null = null;
         try {
             options = createBasicOptions(requestOptions);
         } catch (error) {
             reject(error);
+            return;
         }
         const request = https.get(options);
         request.once("response", (response) => {
@@ -82,7 +97,7 @@ function pingHandler(requestOptions: {
                 if (response.statusCode === 200) {
                     resolve(true);
                 }
-                if (Reflect.has(http.STATUS_CODES, response.statusCode)) {
+                if (typeof http.STATUS_CODES[response.statusCode] !== "undefined") {
                     const error = new Error();
                     error.name = "HTTP_SERVER_ERROR";
                     error.message = "The gateway returned HTTP/1.1 status " +
@@ -107,7 +122,7 @@ function sendHandler(requestOptions: {
     password: string;
     path: string;
     rejectUnauthorized?: boolean;
-}, requestBody: any): Promise<any> {
+}, requestBody: GatewayRequest): Promise<GatewayResponse> {
     return new Promise((resolve, reject) => {
         let options: {
             method?: "POST";
@@ -117,12 +132,16 @@ function sendHandler(requestOptions: {
             headers: {
                 [x: string]: string;
             };
-            rejectUnauthorized?: boolean;
-        } = null;
+            rejectUnauthorized: boolean;
+        } | null = null;
         try {
             options = createBasicOptions(requestOptions);
         } catch (error) {
             reject(error);
+        }
+        if (options === null) {
+            reject(new GenericError("error", "invalid code path."));
+            return;
         }
         const content = JSON.stringify(requestBody);
         options.method = "POST";
@@ -130,7 +149,7 @@ function sendHandler(requestOptions: {
         options.headers["Content-Length"] = Buffer.byteLength(content).toString();
         const request = https.request(options);
         request.once("response", (response) => {
-            let body: {[x: string]: any} = {};
+            let body: GatewayResponse = {};
             let data = "";
             response.setEncoding("utf8");
             response.on("data", (chunk: string) => {
@@ -138,7 +157,7 @@ function sendHandler(requestOptions: {
             });
             response.on("end", () => {
                 if (response.statusCode !== 200) {
-                    if (!Reflect.has(http.STATUS_CODES, response.statusCode)) {
+                    if (typeof http.STATUS_CODES[response.statusCode] !== "undefined") {
                         const message = "The gateway returned HTTP/1.1 status code" +
                             ` '${response.statusCode}'.`;
                         return reject(new GenericError("GatewayAPIError", message));
@@ -157,9 +176,9 @@ function sendHandler(requestOptions: {
                     const message = "The gateway returned corrupted content.";
                     return reject(new GenericError("GatewayAPIError", message));
                 }
-                if (Reflect.has(body, "error")) {
+                if (typeof body.error !== "undefined") {
                     let message = "The gateway returned the error";
-                    if (Reflect.has(body.error, "name")) {
+                    if (typeof body.error.name !== "undefined") {
                         message += ` [${body.error.name}: ${body.error.message}]`;
                     } else {
                         message += ` ${body.error.message}`;
@@ -193,15 +212,11 @@ class Gateway {
     public constructor(userId: string) {
 
         this._userId = userId;
-        this._hostname = null;
-        this._username = null;
-        this._password = null;
-
-
         // These will be in a database indexed by userId.
         this._hostname = constants.gatewayHostname;
         this._username = "LGTV";
         this._password = constants.gatewayUserPassword;
+        this._null = "";
     }
 
     public static skillPath(): string {
@@ -236,7 +251,7 @@ class Gateway {
             "path": "/LGTV/SKILL"
         };
         try {
-            const response = await sendHandler(options, request);
+            const response = ((await sendHandler(options, request)) as AlexaResponse);
             const alexaResponse = new AlexaResponse(response);
             return alexaResponse;
         } catch (error) {
@@ -251,16 +266,16 @@ class Gateway {
             password?: string;
             path: string;
         },
-        request: any
-    ): any {
+        request: GatewayRequest
+    ): Promise<GatewayResponse> {
         const options = {
-            "hostname": Reflect.has(sendOptions, "hostname")
+            "hostname": typeof sendOptions.hostname !== "undefined"
                 ? sendOptions.hostname
                 : this.hostname,
-            "username": Reflect.has(sendOptions, "username")
+            "username": typeof sendOptions.username !== "undefined"
                 ? sendOptions.username
-                : this.hostname,
-            "password": Reflect.has(sendOptions, "password")
+                : this.username,
+            "password": typeof sendOptions.password !== "undefined"
                 ? sendOptions.password
                 : this.password,
             "path": sendOptions.path

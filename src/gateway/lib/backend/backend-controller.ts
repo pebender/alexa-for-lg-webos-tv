@@ -29,7 +29,7 @@ export class BackendController extends EventEmitter {
         };
 
         this._throwIfNotKnownTV = (methodName: string, udn: UDN) => {
-            if (Reflect.has(this._controls, udn) === false) {
+            if (typeof this._controls[udn] === "undefined") {
                 throw new GenericError(
                     "UnknownTVError",
                     `the requested television '${udn}' is not known in 'BackendController.${methodName}'`
@@ -53,9 +53,9 @@ export class BackendController extends EventEmitter {
                 return;
             }
 
-            const records: TV[] = (await that._db.getRecords({}) as TV[]);
+            const records: TV[] = ((await that._db.getRecords({}) as unknown) as TV[]);
             await records.forEach((record) => {
-                if (Reflect.has(that._controls, record.udn) === false) {
+                if (typeof that._controls[record.udn] === "undefined") {
                     that._controls[record.udn] = new BackendControl(that._db, record);
                     that._controls[record.udn].initialize().catch(reject);
                     eventsAdd(record.udn);
@@ -100,7 +100,7 @@ export class BackendController extends EventEmitter {
                     }
                 );
             }
-            if (Reflect.has(this._controls, tv.udn) === false) {
+            if (typeof this._controls[tv.udn] === "undefined") {
                 this._controls[tv.udn] = new BackendControl(this._db, tv);
                 await this._controls[tv.udn].initialize();
                 eventsAdd(tv.udn);

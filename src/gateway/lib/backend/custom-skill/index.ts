@@ -15,7 +15,8 @@ export async function handler(backend: Backend, event: {udn: string; lgtvRequest
         const commandResponse = await backend.lgtvCommand(event.udn, event.lgtvRequest);
         return commandResponse;
     } catch (error) {
-        const body = {
+        const body: LGTVResponse = {
+            "returnValue": false,
             "error": {
                 "name": error.name,
                 "message": error.message

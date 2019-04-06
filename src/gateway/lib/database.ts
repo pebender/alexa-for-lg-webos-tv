@@ -2,9 +2,15 @@ import Datastore from "nedb";
 import {Mutex} from "async-mutex";
 import {UninitializedClassError} from "../../common";
 
-export type DatabaseUpdate = any;
-export type DatabaseQuery = any;
-export type DatabaseRecord = any;
+export interface DatabaseUpdate {
+    [x: string]: boolean | number | string | object | null;
+}
+export interface DatabaseQuery {
+    [x: string]: boolean | number | string | object | null;
+}
+export interface DatabaseRecord {
+    [x: string]: boolean | number | string | object | null;
+}
 
 export class DatabaseTable {
     private _initialized: boolean;
@@ -58,9 +64,9 @@ export class DatabaseTable {
 
     public async clean(): Promise<void> {
         this._throwIfNotInitialized("clean");
-        const query1: DatabaseQuery | null = {};
+        const query1: DatabaseQuery = {};
         query1[this._key] = {"$exists": false};
-        const query2: DatabaseQuery | null = {};
+        const query2: DatabaseQuery = {};
         query2[this._key] = null;
         // eslint-disable-next-line array-element-newline
         const query: DatabaseQuery = {"$or": [query1, query2]};
