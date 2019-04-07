@@ -35,16 +35,16 @@ function createBasicOptions(requestOptions: {
         // eslint-disable-next-line @typescript-eslint/indent
 } {
     if (typeof requestOptions.hostname === "undefined" || requestOptions.hostname === null) {
-        throw new GenericError("HOSTNAME_NOT_SET", "The gateway hostname has not been set.");
+        throw new RangeError("Gateway hostname not set.");
     }
     if (typeof requestOptions.username === "undefined" || requestOptions.username === null) {
-        throw new GenericError("USERNAME_NOT_SET", "The gateway username has not been set.");
+        throw new RangeError("Gateway username not set.");
     }
     if (typeof requestOptions.password === "undefined" || requestOptions.password === null) {
-        throw new GenericError("PASSWORD_NOT_SET", "The gateway password has not been set.");
+        throw new RangeError("Gateway password not set.");
     }
     if (typeof requestOptions.path === "undefined" || requestOptions.path === null) {
-        throw new GenericError("PATH_NOT_SET", "The gateway path has not been set.");
+        throw new RangeError("Gateway path not set.");
     }
 
     const authorization = Buffer.from(`${requestOptions.username}:${requestOptions.password}`).toString("base64");

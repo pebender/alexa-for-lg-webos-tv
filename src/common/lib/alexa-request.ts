@@ -67,37 +67,56 @@ export interface AlexaRequestDirective {
 export class AlexaRequest {
     public directive: AlexaRequestDirective;
     [x: string]: string | object | undefined;
-    public constructor(request: {
-        directive?: {
+    public constructor(opts: {
+        directive: {
             header?: {
                 [x: string]: string | undefined;
             };
             endpoint?: object;
             [x: string]: object | undefined;
+            payload: {
+                [x: string]: boolean | number | string | object;
+            };
         };
     }) {
-        if (typeof request.directive === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive'.");
+        if (!(typeof opts.directive === "object")) {
+            throw new TypeError("'opts.direct' must be type 'object'");
         }
-        if (typeof request.directive.header === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header'.");
+        if (!(typeof opts.directive.header === "object")) {
+            throw new TypeError("'opts.directive.header' must be type 'object'");
         }
-        if (typeof request.directive.header.namespace === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.namespace'.");
+        if (!(typeof opts.directive.header.namespace === "string")) {
+            throw new TypeError("'opts.directive.header.namespace' must be type 'string'");
         }
-        if (typeof request.directive.header.name === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.name'.");
+        if (!(typeof opts.directive.header.name === "string")) {
+            throw new TypeError("'opts.directive.header.name' must be type 'string'");
         }
-        if (typeof request.directive.header.messageId === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.messageId'.");
+        if (!(typeof opts.directive.header.instance === "string" ||
+              typeof opts.directive.header.instance === "undefined")) {
+            throw new TypeError("'opts.directive.header.instance' must be type 'string'");
         }
-        if (typeof request.directive.header.payloadVersion === "undefined") {
-            throw new GenericError("error", "missing parameter(s) needed to initialize 'AlexaRequest.directive.header.payloadVersion'.");
+        if (!(typeof opts.directive.header.messageId === "string")) {
+            throw new TypeError("'opts.directive.header.messageId' must be type 'string'");
         }
-        if ((request.directive.header.payloadVersion === "3") === false) {
-            throw new GenericError("error", "parameter(s) initialized 'AlexaRequest.directive.header.payloadVersion' to invalid value '3'.");
+        if (!(typeof opts.directive.header.correlationToken === "string" ||
+              typeof opts.directive.header.correlationToken === "undefined")) {
+            throw new TypeError("'opts.directive.header.correlationToken' must be type 'string' when set");
         }
-        this.directive = (copyElement(request.directive) as AlexaRequestDirective);
+        if (!(typeof opts.directive.header.payloadVersion === "string")) {
+            throw new TypeError("'opts.directive.header.payloadVersion' must be type 'string'");
+        }
+        if (!(opts.directive.header.payloadVersion === "3")) {
+            throw new RangeError("'opts.directive.header.payloadVersion' must be a 'string' of '3'.");
+        }
+        if (!(typeof opts.directive.endpoint === "object" ||
+              typeof opts.directive.endpoint === "undefined")) {
+            throw new TypeError("'opts.directive.endpoint' requires type 'object' when set");
+        }
+        if (!(typeof opts.directive.payload === "object")) {
+            throw new TypeError("'opts.directive.payload' requires type 'object'");
+        }
+
+        this.directive = (copyElement(opts.directive) as AlexaRequestDirective);
     }
 
     public getCorrelationToken(): string | undefined {
