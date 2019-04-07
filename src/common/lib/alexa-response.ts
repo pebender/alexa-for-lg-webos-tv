@@ -79,38 +79,52 @@ export class AlexaResponse {
     public context?: AlexaResponseContext;
     [x: string]: object | undefined;
     public constructor(opts: {
-        event?: AlexaResponseEvent;
+        event: AlexaResponseEvent;
         context?: AlexaResponseContext;
-        namespace?: string;
-        name?: string;
+    } | {
+        namespace: string;
+        name: string;
         instance?: string;
         correlationToken?: string;
         endpointId?: string;
         token?: string;
         payload?: AlexaResponseEventPayload;
     }) {
+        const optsA = (opts as {
+            event: AlexaResponseEvent;
+            context?: AlexaResponseContext;
+        });
+        const optsB = (opts as {
+            namespace: string;
+            name: string;
+            instance?: string;
+            correlationToken?: string;
+            endpointId?: string;
+            token?: string;
+            payload?: AlexaResponseEventPayload;
+        });
+
         const response = {
-            "event": (copyElement(opts.event) as AlexaResponseEvent) || {
+            "event": (copyElement(optsA.event) as AlexaResponseEvent) || {
                 "header": {
-                    "namespace": opts.namespace,
-                    "name": opts.name,
-                    "instance": opts.instance,
+                    "namespace": optsB.namespace,
+                    "name": optsB.name,
+                    "instance": optsB.instance,
                     "messageId": uuid(),
-                    "correlationToken": opts.correlationToken,
+                    "correlationToken": optsB.correlationToken,
                     "payloadVersion": "3"
                 },
                 "endpoint": {
-                    "endpointId": opts.endpointId,
+                    "endpointId": optsB.endpointId,
                     "scope": {
-                        "type": opts.token && "BearerToken",
-                        "token": opts.token
+                        "type": optsB.token && "BearerToken",
+                        "token": optsB.token
                     }
                 },
-                "payload": (copyElement(opts.payload) as AlexaResponseEventPayload) || {}
+                "payload": (copyElement(optsB.payload) as AlexaResponseEventPayload) || {}
             },
-            "context": opts.context
+            "context": optsA.context
         };
-
 
         if (typeof response.event.endpoint !== "undefined" &&
             typeof response.event.endpoint.scope !== "undefined" &&
@@ -178,7 +192,7 @@ export class AlexaResponse {
         "namespace": string;
         "name": string;
         "instance"?: string;
-        "value": () => number | string | object;
+        "value": () => boolean | number | string | object;
     }): Promise<AlexaResponseContextProperty> {
         const startTime = new Date();
         const value = await opts.value();
