@@ -63,10 +63,10 @@ export interface AlexaResponseContextProperty {
     namespace: string;
     name: string;
     instance?: string;
-    value: number | string | object;
+    value: boolean | number | string | object;
     timeOfSample: string;
     uncertaintyInMilliseconds: number;
-    [x: string]: number | string | object | undefined;
+    [x: string]: boolean | number | string | object | undefined;
 }
 
 export interface AlexaResponseContext {
@@ -89,106 +89,39 @@ export class AlexaResponse {
         token?: string;
         payload?: AlexaResponseEventPayload;
     }) {
-        const response: {
-            event?: {
-                header?: {
-                    [x: string]: string | undefined;
-                };
-                endpoint?: {
-                    endpointId?: string;
-                    scope?: {
-                        type?: "BearerToken";
-                        token?: string;
-                        [x: string]: number | string | object | undefined;
-                    };
-                };
-                payload?: object;
-            };
-            context?: object;
-        } = {};
-        if (typeof opts.event !== "undefined") {
-            response.event = (copyElement(opts.event) as AlexaResponseEvent);
-        }
-        if (typeof opts.context !== "undefined") {
-            response.context = (copyElement(opts.context) as AlexaResponseContext);
-        }
-        if (typeof opts.namespace !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.header === "undefined") {
-                response.event.header = {};
-            }
-            response.event.header.namespace = opts.namespace;
-        }
-        if (typeof opts.name !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.header === "undefined") {
-                response.event.header = {};
-            }
-            response.event.header.name = opts.name;
-        }
-        if (typeof opts.instance !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.header === "undefined") {
-                response.event.header = {};
-            }
-            response.event.header.instance = opts.instance;
-        }
-        if (typeof opts.correlationToken !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.header === "undefined") {
-                response.event.header = {};
-            }
-            response.event.header.correlationToken = opts.correlationToken;
-        }
+        const response = {
+            "event": (copyElement(opts.event) as AlexaResponseEvent) || {
+                "header": {
+                    "namespace": opts.namespace,
+                    "name": opts.name,
+                    "instance": opts.instance,
+                    "messageId": uuid(),
+                    "correlationToken": opts.correlationToken,
+                    "payloadVersion": "3"
+                },
+                "endpoint": {
+                    "endpointId": opts.endpointId,
+                    "scope": {
+                        "type": opts.token && "BearerToken",
+                        "token": opts.token
+                    }
+                },
+                "payload": (copyElement(opts.payload) as AlexaResponseEventPayload) || {}
+            },
+            "context": opts.context
+        };
 
-        if (typeof opts.endpointId !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.endpoint === "undefined") {
-                response.event.endpoint = {};
-            }
-            response.event.endpoint.endpointId = opts.endpointId;
-        }
-        if (typeof opts.endpointId !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.endpoint === "undefined") {
-                response.event.endpoint = {};
-            }
-            response.event.endpoint.endpointId = opts.endpointId;
-        }
-        if (typeof opts.token !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.endpoint === "undefined") {
-                response.event.endpoint = {};
-            }
-            if (typeof response.event.endpoint.scope === "undefined") {
-                response.event.endpoint.scope = {};
-            }
-            response.event.endpoint.scope.type = "BearerToken";
-            response.event.endpoint.scope.token = opts.token;
-        }
 
-        if (typeof opts.payload !== "undefined") {
-            if (typeof response.event === "undefined") {
-                response.event = {};
-            }
-            if (typeof response.event.endpoint === "undefined") {
-                response.event.endpoint = {};
-            }
-            response.event.payload = (copyElement(opts.payload) as AlexaResponseEventPayload);
+        if (typeof response.event.endpoint !== "undefined" &&
+            typeof response.event.endpoint.scope !== "undefined" &&
+            typeof response.event.endpoint.scope.type === "undefined" &&
+            typeof response.event.endpoint.scope.token === "undefined") {
+            Reflect.deleteProperty(response.event.endpoint, "scope");
+        }
+        if (typeof response.event.endpoint !== "undefined" &&
+            typeof response.event.endpoint.endpointId === "undefined" &&
+            typeof response.event.endpoint.scope === "undefined") {
+            Reflect.deleteProperty(response.event, "endpoint");
         }
 
         if (typeof response.event === "undefined") {
@@ -212,9 +145,10 @@ export class AlexaResponse {
         if (typeof response.event.payload === "undefined") {
             response.event.payload = {};
         }
-        this.event = (response.event as AlexaResponseEvent);
+
+        this.event = (copyElement(response.event) as AlexaResponseEvent);
         if (typeof response.context !== "undefined") {
-            this.context = (response.context as AlexaResponseContext);
+            this.response = (copyElement(response.context) as AlexaResponseContext);
         }
     }
 

@@ -17,8 +17,8 @@ async function smartHomeSkillHandler(event: AlexaRequest, context: AWSLambda.Con
     }
 }
 
-function skilllHandler(request: any, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | ASKModel.ResponseEnvelope | null) => void): Promise<void> {
-    if (typeof request.directive !== "undefined") {
+function skilllHandler(request: AlexaRequest | ASKModel.RequestEnvelope, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | ASKModel.ResponseEnvelope | null) => void): Promise<void> {
+    if (typeof (request as AlexaRequest).directive !== "undefined") {
         return smartHomeSkillHandler((request as AlexaRequest), context, (error, response) => callback(error, response));
     }
     return Promise.resolve(customSkill.handler((request as ASKModel.RequestEnvelope), context, (error: Error, response: ASKModel.ResponseEnvelope) => callback(error, response)));

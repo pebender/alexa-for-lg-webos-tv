@@ -196,9 +196,9 @@ function setMuteHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<A
         if (typeof udn === "undefined") {
             throw new GenericError("error", "invalid code path");
         }
-        const lgtvRequest = {
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://audio/setMute",
-            "payload": {"mute": alexaRequest.directive.payload.mute}
+            "payload": {"mute": (alexaRequest.directive.payload.mute as boolean)}
         };
         await backend.lgtvCommand(udn, lgtvRequest);
         const alexaResponse = new AlexaResponse({
