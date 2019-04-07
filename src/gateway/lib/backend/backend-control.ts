@@ -190,16 +190,12 @@ export class BackendControl extends EventEmitter {
             let finished = false;
             const finishMutex = new Mutex();
             let finishUUID: string | null = null;
-            function finish(poweredOn: boolean): Promise<any> {
-                if (finished === true) {
-                    return Promise.resolve(true);
-                }
-                return finishMutex.runExclusive(() => new Promise<any>((resolveFinish) => {
+            async function finish(poweredOn: boolean): Promise<void> {
+                const currentUUID = await finishMutex.runExclusive(() => new Promise<string | null>((resolve) => {
                     if (finished === true) {
-                        resolveFinish(null);
+                        resolve(null);
                         return;
                     }
-
                     finishUUID = uuid();
 
                     if (wolTimeoutObject !== null) {
@@ -218,17 +214,15 @@ export class BackendControl extends EventEmitter {
                         clearTimeout(finishTimeoutObject);
                         finishTimeoutObject = null;
                     }
-                    resolveFinish(finishUUID);
-                })).
-                    then((currentUUID: string | null) => {
-                        if (finished === false) {
-                            if (currentUUID !== null && currentUUID === finishUUID) {
-                                finishUUID = null;
-                                finished = true;
-                                resolveTurnOn(poweredOn);
-                            }
-                        }
-                    });
+                    resolve(finishUUID);
+                }));
+                if (finishUUID !== null && currentUUID === finishUUID) {
+                    if (finished === false) {
+                        finishUUID = null;
+                        finished = true;
+                        resolveTurnOn(poweredOn);
+                    }
+                }
             }
 
             finishTimeoutObject = setTimeout(finish, 7000, false);
