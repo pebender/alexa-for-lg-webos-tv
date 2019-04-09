@@ -2,7 +2,7 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    GenericError,
+    LGTVRequest,
     LGTVResponse,
     directiveErrorResponse,
     errorResponse,
@@ -93,7 +93,7 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
     }
 
     async function value(): Promise<{identifier: string; name: string} | null> {
-        const lgtvRequest = {
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
         const input: LGTVResponse = await backend.lgtvCommand(udn, lgtvRequest);
@@ -127,11 +127,8 @@ async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest)
             `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
         );
     }
-    const udn: UDN | undefined = alexaRequest.getEndpointId();
-    if (typeof udn === "undefined") {
-        throw new GenericError("error", "invalid code path");
-    }
-    const lgtvRequest = {
+    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
+    const lgtvRequest: LGTVRequest = {
         "uri": "ssap://system.launcher/launch",
         "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]
     };

@@ -43,7 +43,7 @@ export class DatabaseTable {
 
         this._throwIfNotInitialized = (methodName) => {
             if (this._initialized === false) {
-                throw new UninitializedClassError("ServerSecurity", methodName);
+                throw new UninitializedClassError("DatabaseTable", methodName);
             }
         };
     }

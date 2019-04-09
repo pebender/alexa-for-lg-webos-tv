@@ -17,10 +17,7 @@ import {UDN} from "../../tv";
 
 async function stateHandler(backend: Backend, alexaRequest: AlexaRequest, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            return errorResponse(alexaRequest, "INTERNAL_ERROR", "invalid code path");
-        }
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         const states: AlexaResponseContextProperty[] = await Promise.all([
             ...alexa.states(backend, udn),
             ...alexaPowerController.states(backend, udn),

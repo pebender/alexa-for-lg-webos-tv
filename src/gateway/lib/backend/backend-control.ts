@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
 import * as wol from "wake_on_lan";
-import {GenericError,
-    LGTVRequest,
+import {LGTVRequest,
     LGTVResponse,
     UninitializedClassError} from "../../../common";
 import {Client as SsdpClient,
@@ -87,7 +86,6 @@ export class BackendControl extends EventEmitter {
         return that._initializeMutex.runExclusive(() => new Promise<void>((resolve, reject) => {
             if (that._initialized === true) {
                 resolve();
-                return;
             }
 
             let clientKey = "";
@@ -95,7 +93,7 @@ export class BackendControl extends EventEmitter {
                 clientKey = that._tv.key;
                 Reflect.deleteProperty(that._tv, "key");
             } else {
-                reject(new GenericError("error", "initial LGTV key not set"));
+                reject(new Error("initial LGTV key not set"));
             }
 
             that._connection = new LGTV({
@@ -284,10 +282,10 @@ export class BackendControl extends EventEmitter {
             });
         }
         if (typeof lgtvResponse.returnValue === "undefined") {
-            throw new GenericError("lgtvCommand:failed", "The LGTV response did not contain 'returnValue'.");
+            throw new Error("'LGTVResponse' does not contain property 'returnValue'");
         }
         if (lgtvResponse.returnValue !== true) {
-            throw new GenericError("lgtvCommand:failed", "The LGTV response value 'returnValue' is not true.");
+            throw new Error("'LGTVResponse' property 'returnValue' is not true");
         }
         return lgtvResponse;
     }

@@ -1,6 +1,5 @@
 import {AlexaRequest,
     AlexaResponse,
-    GenericError,
     constants,
     errorToErrorResponse} from "../../common";
 import http from "http";
@@ -124,7 +123,7 @@ function sendHandler(requestOptions: {
     rejectUnauthorized?: boolean;
 }, requestBody: GatewayRequest): Promise<GatewayResponse> {
     return new Promise((resolve, reject) => {
-        let options: {
+        const options: {
             method?: "POST";
             hostname: string;
             port: number;
@@ -133,16 +132,7 @@ function sendHandler(requestOptions: {
                 [x: string]: string;
             };
             rejectUnauthorized: boolean;
-        } | null = null;
-        try {
-            options = createBasicOptions(requestOptions);
-        } catch (error) {
-            reject(error);
-        }
-        if (options === null) {
-            reject(new GenericError("error", "invalid code path."));
-            return;
-        }
+        } = createBasicOptions(requestOptions);
         const content = JSON.stringify(requestBody);
         options.method = "POST";
         options.headers["Content-Type"] = "application/json";
@@ -160,21 +150,21 @@ function sendHandler(requestOptions: {
                     if (typeof http.STATUS_CODES[response.statusCode] !== "undefined") {
                         const message = "The gateway returned HTTP/1.1 status code" +
                             ` '${response.statusCode}'.`;
-                        return reject(new GenericError("GatewayAPIError", message));
+                        return reject(new Error(message));
                     }
                     const message = "The gateway returned HTTP/1.1 status message" +
                         ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`;
-                    return reject(new GenericError("GatewayAPIError", message));
+                    return reject(new Error(message));
                 }
                 if (!(/^application\/json/).test(response.headers["content-type"])) {
                     const message = "The gateway returned the wrong content type.";
-                    return reject(new GenericError("GatewayAPIError", message));
+                    return reject(new Error(message));
                 }
                 try {
                     body = JSON.parse(data);
                 } catch (error) {
                     const message = "The gateway returned corrupted content.";
-                    return reject(new GenericError("GatewayAPIError", message));
+                    return reject(new Error(message));
                 }
                 if (typeof body.error !== "undefined") {
                     let message = "The gateway returned the error";
@@ -183,20 +173,20 @@ function sendHandler(requestOptions: {
                     } else {
                         message += ` ${body.error.message}`;
                     }
-                    return reject(new GenericError("GatewayAPIError", message));
+                    return reject(new Error(message));
                 }
                 return resolve(body);
             });
             response.on("error", (error: Error) => {
                 const message = "There was a problem talking to the gateway." +
-                    ` The error was [${error.name}: ${error.message}].`;
-                return reject(new GenericError("GatewayAPIError", message));
+                    ` The error was [${error.toString()}].`;
+                return reject(new Error(message));
             });
         });
         request.on("error", (error: Error) => {
             const message = "There was a problem talking to the gateway." +
                 ` The error was [${error.name}: ${error.message}].`;
-            return reject(new GenericError("GatewayAPIError", message));
+            return reject(new Error(message));
         });
         request.write(content);
         request.end();

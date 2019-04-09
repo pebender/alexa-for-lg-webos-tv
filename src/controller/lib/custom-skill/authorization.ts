@@ -1,10 +1,9 @@
-import {GenericError,
-    constants} from "../../../common";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const certnames = require("certnames");
 import ASK from "ask-sdk";
 import ASKModel from "ask-sdk-model";
 import {Gateway} from "../gateway-api";
+import {constants} from "../../../common";
 import crypto from "crypto";
 import tls from "tls";
 
@@ -31,11 +30,11 @@ const SetHostnameIntentHandler = {
 
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
         if (typeof handlerInput.requestEnvelope.request === "undefined") {
-            throw new GenericError("error", "invalid code path");
+            throw new Error("invalid code path");
         }
         const intentRequest = (handlerInput.requestEnvelope.request as ASKModel.IntentRequest);
         if (typeof intentRequest.intent.slots === "undefined") {
-            throw new GenericError("error", "invalid code path");
+            throw new Error("invalid code path");
         }
         const slots = (intentRequest.intent.slots as {[x: string]: ASKModel.Slot});
         if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === "STARTED") {

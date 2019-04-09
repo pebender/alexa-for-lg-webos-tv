@@ -1,11 +1,10 @@
-import {GenericError,
-    UninitializedClassError} from "../../../common";
 import {TV,
     UDN} from "../tv";
 import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
+import {UninitializedClassError} from "../../../common";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
@@ -30,10 +29,7 @@ export class BackendController extends EventEmitter {
 
         this._throwIfNotKnownTV = (methodName: string, udn: UDN) => {
             if (typeof this._controls[udn] === "undefined") {
-                throw new GenericError(
-                    "UnknownTVError",
-                    `the requested television '${udn}' is not known in 'BackendController.${methodName}'`
-                );
+                throw new Error(`the requested television '${udn}' is not known in 'BackendController.${methodName}'`);
             }
         };
     }

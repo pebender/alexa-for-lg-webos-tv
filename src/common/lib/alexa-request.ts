@@ -1,5 +1,3 @@
-import {GenericError} from "./error-classes";
-
 type copyElementType = boolean | number | string | object | null | undefined;
 
 export function copyElement(original: copyElementType): copyElementType {
@@ -31,7 +29,7 @@ export function copyElement(original: copyElementType): copyElementType {
         return copy;
     }
 
-    throw new GenericError("error", "failed to copy element");
+    throw new Error("'original' contains an object that cannot be copied.");
 }
 
 export interface AlexaHeader {

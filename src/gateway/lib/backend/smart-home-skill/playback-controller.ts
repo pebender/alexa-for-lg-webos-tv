@@ -2,7 +2,7 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    GenericError,
+    LGTVRequest,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
 import {Backend} from "../../backend";
@@ -32,11 +32,8 @@ function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextPrope
 }
 
 async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, lgtvRequestURI: string): Promise<AlexaResponse> {
-    const udn: UDN | undefined = alexaRequest.getEndpointId();
-    if (typeof udn === "undefined") {
-        throw new GenericError("error", "invalid code path");
-    }
-    const lgtvRequest = {
+    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
+    const lgtvRequest: LGTVRequest = {
         "uri": lgtvRequestURI
     };
     await backend.lgtvCommand(udn, lgtvRequest);

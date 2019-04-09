@@ -2,7 +2,6 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    GenericError,
     LGTVRequest,
     LGTVResponseVolume,
     directiveErrorResponse,
@@ -36,12 +35,12 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
     function getVolumeState(): Promise<AlexaResponseContextProperty> {
         async function value(): Promise<number> {
-            const lgtvRequest = {
+            const lgtvRequest: LGTVRequest = {
                 "uri": "ssap://audio/getVolume"
             };
-            const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseVolume);
+            const lgtvResponse: LGTVResponseVolume = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseVolume);
             if (typeof lgtvResponse.volume !== "number") {
-                throw new GenericError("error", "invalid lgtvCommand response");
+                throw new Error("invalid lgtvCommand response");
             }
             return lgtvResponse.volume;
         }
@@ -56,12 +55,12 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
 
     function getMutedState(): Promise<AlexaResponseContextProperty> {
         async function value(): Promise<boolean> {
-            const lgtvRequest = {
+            const lgtvRequest: LGTVRequest = {
                 "uri": "ssap://audio/getVolume"
             };
-            const lgtvResponse = await backend.lgtvCommand(udn, lgtvRequest);
+            const lgtvResponse: LGTVResponseVolume = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseVolume);
             if (typeof lgtvResponse.muted !== "boolean") {
-                throw new GenericError("error", "invalid lgtvCommand response");
+                throw new Error("invalid lgtvCommand response");
             }
             return lgtvResponse.muted;
         }
@@ -88,19 +87,13 @@ async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): P
     function getVolume(): number {
         const {volume} = alexaRequest.directive.payload;
         if (typeof volume !== "number" || volume < 0 || volume > 100) {
-            throw new GenericError(
-                "VALUE_OUT_OF_RANGE",
-                "volume must be between 0 and 100 inclusive."
-            );
+            throw new RangeError("volume must be between 0 and 100 inclusive");
         }
         return volume;
     }
 
     async function setVolume(volume: number): Promise<AlexaResponse> {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         const lgtvRequest: LGTVRequest = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
@@ -129,16 +122,13 @@ async function setVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): P
 
 async function adjustVolumeHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     async function getVolume(): Promise<number> {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
-        const lgtvRequest = {
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://audio/getVolume"
         };
-        const lgtvResponse = await backend.lgtvCommand(udn, lgtvRequest);
+        const lgtvResponse: LGTVResponseVolume = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseVolume);
         if (typeof lgtvResponse.volume === "undefined") {
-            throw new GenericError("error", "The T.V. did not return it's volume.");
+            throw new Error("the T.V. did not return it's volume");
         }
         let volume = (lgtvResponse.volume as number);
         if (alexaRequest.directive.payload.volumeDefault === true) {
@@ -160,11 +150,8 @@ async function adjustVolumeHandler(backend: Backend, alexaRequest: AlexaRequest)
     }
 
     async function setVolume(volume: number): Promise<AlexaResponse> {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
-        const lgtvRequest = {
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
@@ -184,7 +171,7 @@ async function adjustVolumeHandler(backend: Backend, alexaRequest: AlexaRequest)
         return Promise.resolve(errorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
-            error.name
+            error.message
         ));
     }
     return setVolume(lgtvVolume);
@@ -192,10 +179,7 @@ async function adjustVolumeHandler(backend: Backend, alexaRequest: AlexaRequest)
 
 function setMuteHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     async function setMute(): Promise<AlexaResponse> {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         const lgtvRequest: LGTVRequest = {
             "uri": "ssap://audio/setMute",
             "payload": {"mute": (alexaRequest.directive.payload.mute as boolean)}

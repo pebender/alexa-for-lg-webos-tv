@@ -92,10 +92,7 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
         if (lgtvRequest === null) {
             return unknownChannelError(backend, alexaRequest);
         }
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            return errorResponse(alexaRequest, "INTERNAL_ERROR", "invalid code path");
-        }
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         try {
             await backend.lgtvCommand(udn, lgtvRequest);
         } catch (error) {

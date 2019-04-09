@@ -187,7 +187,7 @@ export class AlexaResponse {
                 throw new TypeError("'opts.correlationToken' requires type 'string' when set");
             }
             if (!(typeof optsB.endpointId === "string" ||
-                  typeof optsB.endpointId !== "undefined")) {
+                  typeof optsB.endpointId === "undefined")) {
                 throw new TypeError("'opts.endpointId' requires type 'string' when set");
             }
             if (!(typeof optsB.token === "string" ||

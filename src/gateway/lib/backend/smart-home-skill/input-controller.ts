@@ -2,7 +2,6 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    GenericError,
     LGTVRequest,
     LGTVResponseExternalInputList,
     LGTVResponseExternalInputListDevice,
@@ -81,15 +80,15 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
                 return [];
             }
 
-            const lgtvRequest = {
+            const lgtvRequest: LGTVRequest = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
+            const lgtvResponse: LGTVResponseExternalInputList = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
             if (typeof lgtvResponse.devices === "undefined") {
                 return [];
             }
             if (typeof lgtvResponse.devices === "undefined") {
-                throw new GenericError("error", "invalid LGTVResponse message");
+                throw new Error("invalid LGTVResponse message");
             }
             return lgtvResponse.devices;
         }
@@ -98,12 +97,12 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
             if (backend.getPowerState(udn) === "OFF") {
                 return null;
             }
-            const lgtvRequest = {
+            const lgtvRequest: LGTVRequest = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseForgroundAppInfo);
+            const lgtvResponse: LGTVResponseForgroundAppInfo = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseForgroundAppInfo);
             if (typeof lgtvResponse.appId === "undefined") {
-                throw new GenericError("error", "invalid LGTVResponse message");
+                throw new Error("invalid LGTVResponse message");
             }
             return lgtvResponse.appId;
         }
@@ -141,10 +140,7 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
 
 async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     async function getExternalInputList(): Promise<LGTVResponseExternalInputListDevice[]> {
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         if (backend.getPowerState(udn) === "OFF") {
             return [];
         }
@@ -152,7 +148,7 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
         const lgtvRequest: LGTVRequest = {
             "uri": "ssap://tv/getExternalInputList"
         };
-        const lgtvResponse = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
+        const lgtvResponse: LGTVResponseExternalInputList = (await backend.lgtvCommand(udn, lgtvRequest) as LGTVResponseExternalInputList);
         if (typeof lgtvResponse.devices === "undefined") {
             return [];
         }
@@ -200,11 +196,7 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
             );
         }
 
-        const udn: UDN | undefined = alexaRequest.getEndpointId();
-        if (typeof udn === "undefined") {
-            throw new GenericError("error", "invalid code path");
-        }
-
+        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         if (backend.getPowerState(udn) === "OFF") {
             return new AlexaResponse({
                 "namespace": "Alexa",
@@ -214,7 +206,7 @@ async function selectInputHandler(backend: Backend, alexaRequest: AlexaRequest):
             });
         }
 
-        const lgtvRequest = {
+        const lgtvRequest: LGTVRequest = {
             "uri": "ssap://tv/switchInput",
             "payload": {"inputId": input}
         };
