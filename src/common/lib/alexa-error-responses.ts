@@ -28,7 +28,7 @@ export function errorToErrorResponse(event: AlexaRequest, error: Error): AlexaRe
     return errorResponse(
         event,
         "INTERNAL_ERROR",
-        `${error.name}: ${error.message}`
+        error.toString()
     );
 }
 
