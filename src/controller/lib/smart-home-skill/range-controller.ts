@@ -72,7 +72,7 @@ function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<AlexaRe
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         ipAddressOctetCapability("A"),
         ipAddressOctetCapability("B"),

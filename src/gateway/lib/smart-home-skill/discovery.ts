@@ -52,7 +52,7 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
             "description": "LG webOS TV",
             "manufacturerName": "LG Electronics",
             "displayCategories": ["TV"],
-            "capabilities": capabilities
+            "capabilities": []
         };
         capabilities.forEach((capability) => {
             if (typeof capability === "undefined" || capability === null) {

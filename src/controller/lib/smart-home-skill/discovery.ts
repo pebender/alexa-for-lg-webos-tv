@@ -1,22 +1,21 @@
-import * as alexa from "./alexa";
-import * as alexaEndpointHealth from "./endpoint-health";
-import * as alexaPowerController from "./power-controller";
-import * as alexaRangeController from "./range-controller";
 import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
+    AlexaResponseEventPayloadEndpointCapability,
     errorToErrorResponse,
     namespaceErrorResponse} from "../../../common";
 import {Gateway} from "../gateway-api";
+import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
 async function gatewayEndpoint(alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpoint | null> {
     try {
-        const capabilities = await Promise.all([
-            ...alexa.capabilities(alexaRequest),
-            ...alexaPowerController.capabilities(alexaRequest),
-            ...alexaEndpointHealth.capabilities(alexaRequest),
-            ...alexaRangeController.capabilities(alexaRequest)
-        ]);
+        let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
+        try {
+            // Determine capabilities in parallel.
+            capabilities = await Promise.all(alexaSmartHomeCapabilities());
+        } catch (error) {
+            capabilities = [];
+        }
         if (capabilities.length === 0) {
             return null;
         }

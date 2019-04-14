@@ -7,19 +7,33 @@ import * as alexaPowerController from "./power-controller";
 import * as alexaRangeController from "./range-controller";
 import {AlexaRequest,
     AlexaResponse,
+    AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     errorToErrorResponse} from "../../../common";
 import {Gateway} from "../gateway-api";
 
+function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+    return [
+        ...alexa.capabilities(),
+        ...alexaEndpointHealth.capabilities(),
+        ...alexaPowerController.capabilities(),
+        ...alexaRangeController.capabilities()
+    ];
+}
+
+function states(): Promise<AlexaResponseContextProperty>[] {
+    return [
+        ...alexa.states(),
+        ...alexaEndpointHealth.states(),
+        ...alexaPowerController.states(),
+        ...alexaRangeController.states()
+    ];
+}
+
 async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
-        const states = await Promise.all([
-            ...alexa.states(),
-            ...alexaEndpointHealth.states(),
-            ...alexaPowerController.states(),
-            ...alexaRangeController.states()
-        ]);
-        states.forEach((state) => {
+        (await Promise.all(states())).forEach((state) => {
             if (typeof state === "undefined" || state === null ||
                 typeof state.value === "undefined" || state.value === null) {
                 return;
@@ -27,7 +41,7 @@ async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse
             alexaResponse.addContextProperty(state);
         });
         return alexaResponse;
-    } catch (_error) {
+    } catch (error) {
         return alexaResponse;
     }
 }
@@ -43,7 +57,7 @@ async function remoteResponse(alexaRequest: AlexaRequest): Promise<AlexaResponse
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function handler(event: AlexaRequest, _context: AWSLambda.Context): Promise<AlexaResponse> {
+async function handler(event: AlexaRequest, context: AWSLambda.Context): Promise<AlexaResponse> {
     try {
         const alexaRequest = new AlexaRequest(event);
         if (typeof alexaRequest.directive.endpoint === "undefined" ||
@@ -101,4 +115,4 @@ async function handlerWithLogging(alexaRequest: AlexaRequest, context: AWSLambda
     return alexaResponse;
 }
 
-export {handlerWithLogging as handler};
+export {capabilities, states, handlerWithLogging as handler};
