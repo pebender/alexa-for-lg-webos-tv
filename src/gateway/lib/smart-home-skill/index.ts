@@ -121,4 +121,15 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
     }
 }
 
+export class SmartHomeSkill {
+    private backend: Backend;
+    public constructor(backend: Backend) {
+        this.backend = backend;
+    }
+
+    public handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+        return handlerWithoutValidation(alexaRequest, this.backend);
+    }
+}
+
 export {capabilities, states, handlerWithoutValidation as handler};

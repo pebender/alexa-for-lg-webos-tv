@@ -1,27 +1,26 @@
 import * as ASKModel from "ask-sdk-model";
 import * as AWSLambda from "aws-lambda";
-import * as customSkill from "./lib/custom-skill";
-import * as smartHomeSkill from "./lib/smart-home-skill";
 import {AlexaRequest,
     AlexaResponse} from "../common";
+import {CustomSkill} from "./lib/custom-skill";
+import {SmartHomeSkill} from "./lib/smart-home-skill";
 
-async function smartHomeSkillHandler(event: AlexaRequest, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | null) => void): Promise<void> {
-    try {
-        const response = await smartHomeSkill.handler(event, context);
-        callback(null, response);
-        return;
-    } catch (error) {
-        callback(error, null);
-        // eslint-disable-next-line no-useless-return
-        return;
-    }
-}
+const customSkill = new CustomSkill();
+const smartHomeSkill = new SmartHomeSkill();
 
-function skilllHandler(request: AlexaRequest | ASKModel.RequestEnvelope, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | ASKModel.ResponseEnvelope | null) => void): Promise<void> {
+function skilllHandler(request: ASKModel.RequestEnvelope | AlexaRequest, context: ASKModel.Context | AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | ASKModel.ResponseEnvelope | null) => void): Promise<void> {
     if (typeof (request as AlexaRequest).directive !== "undefined") {
-        return smartHomeSkillHandler((request as AlexaRequest), context, (error, response) => callback(error, response));
+        return smartHomeSkill.handler(
+            (request as AlexaRequest),
+            (context as AWSLambda.Context),
+            (error: Error | null, response: AlexaResponse | null) => callback(error, response)
+        );
     }
-    return Promise.resolve(customSkill.handler((request as ASKModel.RequestEnvelope), context, (error: Error, response: ASKModel.ResponseEnvelope) => callback(error, response)));
+    return Promise.resolve(customSkill.handler(
+        (request as ASKModel.RequestEnvelope),
+        (context as ASKModel.Context),
+        (error: Error | null, response: ASKModel.ResponseEnvelope) => callback(error, response)
+    ));
 }
 
 

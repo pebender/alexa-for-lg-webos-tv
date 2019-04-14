@@ -82,4 +82,11 @@ const skillHandler = ASK.SkillBuilders.custom().
     withPersistenceAdapter(persistenceAdapter).
     lambda();
 
+export class CustomSkill {
+    // eslint-disable-next-line class-methods-use-this
+    public handler(requestEnvelope: ASKModel.RequestEnvelope, context: ASKModel.Context, callback: (err: Error, result?: any) => void): void {
+        return skillHandler(requestEnvelope, context, callback);
+    }
+}
+
 export {skillHandler as handler};

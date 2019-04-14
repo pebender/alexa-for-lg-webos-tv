@@ -1,9 +1,10 @@
-import {Backend} from "../backend";
+import {CustomSkill} from "../custom-skill";
 import {DatabaseTable} from "../database";
 import {FrontendExternal} from "./frontend-external";
 import {FrontendInternal} from "./frontend-internal";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
+import {SmartHomeSkill} from "../smart-home-skill";
 import {UninitializedClassError} from "../../../common";
 
 export class Frontend {
@@ -12,12 +13,12 @@ export class Frontend {
     private _security: FrontendSecurity;
     private _internal: FrontendInternal;
     private _external: FrontendExternal;
-    public constructor(db: DatabaseTable, backend: Backend) {
+    public constructor(db: DatabaseTable, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = new FrontendSecurity(db);
         this._internal = new FrontendInternal(this._security);
-        this._external = new FrontendExternal(this._security, backend);
+        this._external = new FrontendExternal(this._security, customSkill, smartHomeSkill);
     }
 
     private throwIfNotInitialized(methodName: string): void {

@@ -7,11 +7,10 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-import * as CustomSkill from "../custom-skill";
-import * as SmartHomeSkill from "../smart-home-skill";
-import {Backend} from "../backend";
+import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
+import {SmartHomeSkill} from "../smart-home-skill";
 import {UninitializedClassError} from "../../../common";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require("express-basic-auth");
@@ -22,13 +21,15 @@ export class FrontendExternal {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
     private _security: FrontendSecurity;
-    private _backend: Backend;
+    private _customSkill: CustomSkill;
+    private _smartHomeSkill: SmartHomeSkill;
     private _server: expressCore.Express;
-    public constructor(serverSecurity: FrontendSecurity, backend: Backend) {
+    public constructor(serverSecurity: FrontendSecurity, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = serverSecurity;
-        this._backend = backend;
+        this._customSkill = customSkill;
+        this._smartHomeSkill = smartHomeSkill;
         this._server = express();
     }
 
@@ -92,7 +93,7 @@ export class FrontendExternal {
                 return;
             }
             // X    console.log(JSON.stringify(request.body, null, 2));
-            const commandResponse = await SmartHomeSkill.handler(request.body, that._backend);
+            const commandResponse = await that._smartHomeSkill.handler(request.body);
             // X    console.log(JSON.stringify(commandResponse, null, 2));
             response.
                 type("json").
@@ -108,7 +109,7 @@ export class FrontendExternal {
         }
 
         async function backendRunHandler(request: express.Request, response: express.Response): Promise<void> {
-            const commandResponse = await CustomSkill.handler(request.body, that._backend);
+            const commandResponse = await that._customSkill.handler(request.body);
             response.
                 type("json").
                 status(200).

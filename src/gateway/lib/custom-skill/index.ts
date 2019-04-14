@@ -25,3 +25,14 @@ export async function handler(event: {udn: string; lgtvRequest: LGTVRequest}, ba
         return body;
     }
 }
+
+export class CustomSkill {
+    private backend: Backend;
+    public constructor(backend: Backend) {
+        this.backend = backend;
+    }
+
+    public handler(event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
+        return handler(event, this.backend);
+    }
+}

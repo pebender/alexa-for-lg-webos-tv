@@ -8,8 +8,10 @@
  */
 
 import {Backend} from "./lib/backend";
+import {CustomSkill} from "./lib/custom-skill";
 import {DatabaseTable} from "./lib/database";
 import {Frontend} from "./lib/frontend";
+import {SmartHomeSkill} from "./lib/smart-home-skill";
 import fs from "fs-extra";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ppath = require("persist-path");
@@ -47,7 +49,9 @@ export async function startGateway(): Promise<void> {
         console.log(error);
     });
     await backend.initialize();
-    const frontend = new Frontend(frontendDb, backend);
+    const customSkill = new CustomSkill(backend);
+    const smartHomeSkill = new SmartHomeSkill(backend);
+    const frontend = new Frontend(frontendDb, customSkill, smartHomeSkill);
     await frontend.initialize();
     await frontend.start();
     await backend.start();
