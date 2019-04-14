@@ -7,8 +7,7 @@ import {AlexaRequest,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {BackendControl} from "../../backend";
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video
@@ -65,7 +64,7 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         Promise.resolve({
             "type": "AlexaInterface",
@@ -87,8 +86,8 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
-    if (backend.getPowerState(udn) === "OFF") {
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+    if (backendControl.getPowerState() === "OFF") {
         return [];
     }
 
@@ -96,7 +95,7 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
         const lgtvRequest: LGTVRequest = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const input: LGTVResponse = await backend.lgtvCommand(udn, lgtvRequest);
+        const input: LGTVResponse = await backendControl.lgtvCommand(lgtvRequest);
         if (typeof input.appId !== "string" ||
             typeof lgtvToAlexa[input.appId] === "undefined") {
             return null;
@@ -118,7 +117,7 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
  * A list of LG webOS TV target ids can be found bet issuing the command
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
-async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function launchTargetHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (typeof alexaRequest.directive.payload.identifier !== "string" ||
         typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === "undefined") {
         return errorResponse(
@@ -127,13 +126,12 @@ async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest)
             `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
         );
     }
-    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
     const lgtvRequest: LGTVRequest = {
         "uri": "ssap://system.launcher/launch",
         "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]
     };
     // eslint-disable-next-line no-unused-vars
-    await backend.lgtvCommand(udn, lgtvRequest);
+    await backendControl.lgtvCommand(lgtvRequest);
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "Response",
@@ -142,13 +140,13 @@ async function launchTargetHandler(backend: Backend, alexaRequest: AlexaRequest)
     });
 }
 
-function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
     }
     switch (alexaRequest.directive.header.name) {
         case "LaunchTarget":
-            return launchTargetHandler(backend, alexaRequest);
+            return launchTargetHandler(alexaRequest, backendControl);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
     }

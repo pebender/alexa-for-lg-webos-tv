@@ -5,11 +5,10 @@ import {AlexaRequest,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {BackendControl} from "../../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendConrol: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         Promise.resolve({
             "type": "AlexaInterface",
@@ -28,9 +27,9 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
     ];
 }
 
-function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     function value(): "ON" | "OFF" {
-        return backend.getPowerState(udn);
+        return backendControl.getPowerState();
     }
 
     const powerStateState = AlexaResponse.buildContextProperty({
@@ -41,12 +40,10 @@ function states(backend: Backend, udn: UDN): Promise<AlexaResponseContextPropert
     return [powerStateState];
 }
 
-async function turnOffHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
-    const poweredOff = await backend.turnOff(udn);
+async function turnOffHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+    const poweredOff = await backendControl.turnOff();
     if (poweredOff === false) {
-        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOff for LGTV ${udn} failed.`);
-
+        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`);
     }
     return new AlexaResponse({
         "namespace": "Alexa",
@@ -56,11 +53,10 @@ async function turnOffHandler(backend: Backend, alexaRequest: AlexaRequest): Pro
     });
 }
 
-async function turnOnHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
-    const poweredOn = await backend.turnOn(udn);
+async function turnOnHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+    const poweredOn = await backendControl.turnOn();
     if (poweredOn === false) {
-        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${udn} failed.`);
+        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`);
     }
     return new AlexaResponse({
         "namespace": "Alexa",
@@ -70,15 +66,15 @@ async function turnOnHandler(backend: Backend, alexaRequest: AlexaRequest): Prom
     });
 }
 
-function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.PowerController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PowerController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "TurnOff":
-            return turnOffHandler(backend, alexaRequest);
+            return turnOffHandler(alexaRequest, backendControl);
         case "TurnOn":
-            return turnOnHandler(backend, alexaRequest);
+            return turnOnHandler(alexaRequest, backendControl);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PowerController"));
     }

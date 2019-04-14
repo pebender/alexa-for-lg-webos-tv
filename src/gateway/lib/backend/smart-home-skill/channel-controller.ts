@@ -7,13 +7,12 @@ import {AlexaRequest,
     errorResponse,
     errorToErrorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {BackendControl} from "../../backend";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         Promise.resolve({
             "type": "AlexaInterface",
@@ -24,21 +23,22 @@ function capabilities(_lgtv: Backend, _alexaRequest: AlexaRequest, _udn: UDN): P
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function skipChannelsHandler(_lgtv: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function skipChannelsHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     return Promise.resolve(errorResponse(alexaRequest, "UNKNOWN_ERROR", "'Alexa.ChannelController.SkipChannels' is not supported."));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function unknownChannelError(_lgtv: Backend, alexaRequest: AlexaRequest): AlexaResponse {
+function unknownChannelError(alexaRequest: AlexaRequest, backendControl: BackendControl): AlexaResponse {
     return errorResponse(alexaRequest, "INVALID_VALUE", "The gateway doesn't recognize channel.");
 }
 
-async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function changeChannelHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     function getCommand(): LGTVRequest | null {
         const lgtvRequest: LGTVRequest = {
             "uri": "ssap://tv/openChannel"
@@ -90,11 +90,10 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
 
     async function setChannel(lgtvRequest: LGTVRequest | null): Promise<AlexaResponse> {
         if (lgtvRequest === null) {
-            return unknownChannelError(backend, alexaRequest);
+            return unknownChannelError(alexaRequest, backendControl);
         }
-        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
         try {
-            await backend.lgtvCommand(udn, lgtvRequest);
+            await backendControl.lgtvCommand(lgtvRequest);
         } catch (error) {
             return errorToErrorResponse(alexaRequest, error);
         }
@@ -139,19 +138,18 @@ async function changeChannelHandler(backend: Backend, alexaRequest: AlexaRequest
     return setChannel(channelCommand);
 }
 
-function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.ChannelController") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.ChannelController"));
+        namespaceErrorResponse(alexaRequest, "Alexa.ChannelController");
     }
     switch (alexaRequest.directive.header.name) {
         case "ChangeChannel":
-            return changeChannelHandler(backend, alexaRequest);
+            return changeChannelHandler(alexaRequest, backendControl);
         case "SkipChannels":
-            return skipChannelsHandler(backend, alexaRequest);
+            return skipChannelsHandler(alexaRequest, backendControl);
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }
 }
-
 
 export {capabilities, states, handler};

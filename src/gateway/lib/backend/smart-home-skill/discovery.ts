@@ -1,19 +1,12 @@
-import * as alexa from "./alexa";
-import * as alexaChannelController from "./channel-controller";
-import * as alexaInputController from "./input-controller";
-import * as alexaLauncher from "./launcher";
-import * as alexaPlaybackController from "./playback-controller";
-import * as alexaPowerController from "./power-controller";
-import * as alexaSpeaker from "./speaker";
 import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
     AlexaResponseEventPayloadEndpointCapability,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {Backend, BackendControl} from "../../backend";
+import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
-async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<AlexaResponse> {
 
     /*
      * This looks strange at first. However, once it is explained, this
@@ -45,26 +38,17 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpoint(udn: UDN): Promise<AlexaResponseEventPayloadEndpoint> {
+    async function buildEndpoint(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpoint> {
         let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
         try {
             // Determine capabilities in parallel.
-            capabilities = await Promise.all([
-                ...alexa.capabilities(backend, alexaRequest, udn),
-                ...alexaPowerController.capabilities(backend, alexaRequest, udn),
-                ...alexaSpeaker.capabilities(backend, alexaRequest, udn),
-                ...alexaChannelController.capabilities(backend, alexaRequest, udn),
-                ...alexaInputController.capabilities(backend, alexaRequest, udn),
-                ...alexaLauncher.capabilities(backend, alexaRequest, udn),
-                ...alexaPlaybackController.capabilities(backend, alexaRequest, udn)
-            ]);
+            capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl));
         } catch (error) {
             capabilities = [];
         }
-        const {name} = backend.tv(udn);
         const endpoint: AlexaResponseEventPayloadEndpoint = {
-            "endpointId": udn,
-            "friendlyName": name,
+            "endpointId": backendControl.tv.udn,
+            "friendlyName": backendControl.tv.name,
             "description": "LG webOS TV",
             "manufacturerName": "LG Electronics",
             "displayCategories": ["TV"],
@@ -79,10 +63,8 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
         return endpoint;
     }
 
-    async function buildEndpointList(udns: UDN[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
-
-        const endpoints = await Promise.all(udns.map(buildEndpoint));
-        return endpoints;
+    function buildEndpoints(backendControls: BackendControl[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
+        return Promise.all(backendControls.map(buildEndpoint));
     }
 
     function buildResponse(endpoints: AlexaResponseEventPayloadEndpoint[]): AlexaResponse {
@@ -102,9 +84,9 @@ async function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<Al
         return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
     }
 
-    const udnList = await backend.getUDNList();
-    const endpointList = await buildEndpointList(udnList);
-    const response = await buildResponse(endpointList);
+    const backendControls = await backend.controls();
+    const endpoints = await buildEndpoints(backendControls);
+    const response = await buildResponse(endpoints);
     return response;
 }
 

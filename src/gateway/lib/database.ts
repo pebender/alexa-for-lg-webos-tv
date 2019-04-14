@@ -18,7 +18,6 @@ export class DatabaseTable {
     private _indexes: string[];
     private _key: string;
     private _db: Datastore;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(path: string, name: string, indexes: string[], key: string) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
@@ -40,12 +39,12 @@ export class DatabaseTable {
                 throw error;
             }
         });
+    }
 
-        this._throwIfNotInitialized = (methodName) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("DatabaseTable", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("DatabaseTable", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -63,7 +62,7 @@ export class DatabaseTable {
     }
 
     public async clean(): Promise<void> {
-        this._throwIfNotInitialized("clean");
+        this.throwIfNotInitialized("clean");
         const query1: DatabaseQuery = {};
         query1[this._key] = {"$exists": false};
         const query2: DatabaseQuery = {};
@@ -87,7 +86,7 @@ export class DatabaseTable {
     }
 
     public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
-        this._throwIfNotInitialized("getRecord");
+        this.throwIfNotInitialized("getRecord");
         const record = await new Promise<DatabaseRecord>((resolve, reject) => {
             this._db.findOne(
                 query,
@@ -104,7 +103,7 @@ export class DatabaseTable {
     }
 
     public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
-        this._throwIfNotInitialized("getRecords");
+        this.throwIfNotInitialized("getRecords");
         const records = await new Promise<DatabaseRecord[]>((resolve, reject) => {
             this._db.find(
                 query,
@@ -121,7 +120,7 @@ export class DatabaseTable {
     }
 
     public async insertRecord(record: DatabaseRecord): Promise<void> {
-        this._throwIfNotInitialized("insertRecord");
+        this.throwIfNotInitialized("insertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.insert(record, (error) => {
                 if (error) {
@@ -136,7 +135,7 @@ export class DatabaseTable {
     }
 
     public async updateRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        this._throwIfNotInitialized("updateRecord");
+        this.throwIfNotInitialized("updateRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(
                 query,
@@ -154,7 +153,7 @@ export class DatabaseTable {
     }
 
     public async updateOrInsertRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        this._throwIfNotInitialized("updateOrInsertRecord");
+        this.throwIfNotInitialized("updateOrInsertRecord");
         await new Promise<void>((resolve, reject) => {
             this._db.update(
                 query,

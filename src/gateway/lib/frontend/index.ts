@@ -12,19 +12,18 @@ export class Frontend {
     private _security: FrontendSecurity;
     private _internal: FrontendInternal;
     private _external: FrontendExternal;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(db: DatabaseTable, backend: Backend) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = new FrontendSecurity(db);
         this._internal = new FrontendInternal(this._security);
         this._external = new FrontendExternal(this._security, backend);
+    }
 
-        this._throwIfNotInitialized = (methodName) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("Frontend", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("Frontend", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -43,23 +42,23 @@ export class Frontend {
     }
 
     public start(): void {
-        this._throwIfNotInitialized("start");
+        this.throwIfNotInitialized("start");
         this._internal.start();
         this._external.start();
     }
 
     public get security(): FrontendSecurity {
-        this._throwIfNotInitialized("get+security");
+        this.throwIfNotInitialized("get+security");
         return this._security;
     }
 
     public get internal(): FrontendInternal {
-        this._throwIfNotInitialized("get+internal");
+        this.throwIfNotInitialized("get+internal");
         return this._internal;
     }
 
     public get external(): FrontendExternal {
-        this._throwIfNotInitialized("get+external");
+        this.throwIfNotInitialized("get+external");
         return this._external;
     }
 }

@@ -4,11 +4,10 @@ import {AlexaRequest,
     AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {BackendControl} from "../../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         Promise.resolve({
             "type": "AlexaInterface",
@@ -19,12 +18,12 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextProperty>[] {
+function states(backend: BackendControl): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function reportStateHandler(_backend: Backend, alexaRequest: AlexaRequest): AlexaResponse {
+function reportStateHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): AlexaResponse {
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "StateReport",
@@ -33,27 +32,16 @@ function reportStateHandler(_backend: Backend, alexaRequest: AlexaRequest): Alex
     });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function unknownDirectiveError(_backend: Backend, alexaRequest: AlexaRequest): AlexaResponse {
-    return directiveErrorResponse(alexaRequest, "Alexa");
-}
-
-function handler(backend: Backend, alexaRequest: AlexaRequest): AlexaResponse {
+function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa") {
-        return namespaceErrorResponse(alexaRequest, "Alexa");
+        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa"));
     }
     switch (alexaRequest.directive.header.name) {
         case "ReportState":
-            return reportStateHandler(backend, alexaRequest);
+            return Promise.resolve(reportStateHandler(alexaRequest, backendControl));
         default:
-            return unknownDirectiveError(backend, alexaRequest);
+            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa"));
     }
 }
-
-module.exports = {
-    "capabilities": capabilities,
-    "states": states,
-    "handler": handler
-};
 
 export {capabilities, states, handler};

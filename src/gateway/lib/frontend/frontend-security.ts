@@ -7,17 +7,16 @@ export class FrontendSecurity {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
     private _db: DatabaseTable;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(db: DatabaseTable) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._db = db;
+    }
 
-        this._throwIfNotInitialized = (methodName: string): void => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("FrontendSecurity", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("FrontendSecurity", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -33,7 +32,7 @@ export class FrontendSecurity {
     }
 
     public authorizeRoot(username: string, password: string): boolean {
-        this._throwIfNotInitialized("authorizeRoot");
+        this.throwIfNotInitialized("authorizeRoot");
         if (username === "HTTP" && password === constants.gatewayRootPassword) {
             return true;
         }
@@ -41,7 +40,7 @@ export class FrontendSecurity {
     }
 
     public async authorizeUser(username: string, password: string): Promise<boolean> {
-        this._throwIfNotInitialized("authorizeUser");
+        this.throwIfNotInitialized("authorizeUser");
         const record = await this._db.getRecord({"name": "password"});
         if (record === null || typeof record.value === "undefined" || record.value === null) {
             return false;
@@ -53,7 +52,7 @@ export class FrontendSecurity {
     }
 
     public async userPasswordIsNull(): Promise<boolean> {
-        this._throwIfNotInitialized("userPasswordIsNull");
+        this.throwIfNotInitialized("userPasswordIsNull");
         const record = await this._db.getRecord({"name": "password"});
         if (record === null || typeof record.value === "undefined" || record.value === null) {
             return true;
@@ -62,7 +61,7 @@ export class FrontendSecurity {
     }
 
     public setUserPassword(password: string | null): Promise<void> {
-        this._throwIfNotInitialized("setUserPassword");
+        this.throwIfNotInitialized("setUserPassword");
         return this._db.updateOrInsertRecord(
             {"name": "password"},
             {
@@ -73,7 +72,7 @@ export class FrontendSecurity {
     }
 
     public async getHostname(): Promise<string> {
-        this._throwIfNotInitialized("getHostname");
+        this.throwIfNotInitialized("getHostname");
         const record = await this._db.getRecord({"name": "hostname"});
         if (typeof record.value !== "string") {
             return "";
@@ -82,7 +81,7 @@ export class FrontendSecurity {
     }
 
     public async setHostname(hostname: string): Promise<void> {
-        this._throwIfNotInitialized("setHostname");
+        this.throwIfNotInitialized("setHostname");
         await this._db.updateOrInsertRecord(
             {"name": "hostname"},
             {

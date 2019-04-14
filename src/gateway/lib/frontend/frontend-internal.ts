@@ -9,18 +9,17 @@ export class FrontendInternal {
     private _initializeMutex: Mutex;
     private _security: FrontendSecurity;
     private _server: expressCore.Express;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(serverSecurity: FrontendSecurity) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = serverSecurity;
         this._server = express();
+    }
 
-        this._throwIfNotInitialized = (methodName) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("FrontendInternal", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("FrontendInternal", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -146,7 +145,7 @@ export class FrontendInternal {
     }
 
     public start(): void {
-        this._throwIfNotInitialized("start");
+        this.throwIfNotInitialized("start");
         this._server.listen(25393);
     }
 }

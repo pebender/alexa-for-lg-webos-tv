@@ -11,8 +11,6 @@ export class BackendController extends EventEmitter {
     private _initializeMutex = new Mutex();
     private _db: DatabaseTable;
     private _controls: {[x: string]: BackendControl};
-    private _throwIfNotInitialized: (methodName: string) => void
-    private _throwIfNotKnownTV: (methodName: string, udn: UDN) => void
     public constructor (db: DatabaseTable) {
         super();
 
@@ -20,18 +18,18 @@ export class BackendController extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._db = db;
         this._controls = {};
+    }
 
-        this._throwIfNotInitialized = (methodName: string) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("BackendController", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("BackendController", methodName);
+        }
+    }
 
-        this._throwIfNotKnownTV = (methodName: string, udn: UDN) => {
-            if (typeof this._controls[udn] === "undefined") {
-                throw new Error(`the requested television '${udn}' is not known in 'BackendController.${methodName}'`);
-            }
-        };
+    private throwIfNotKnownTV(methodName: string, udn: UDN): void {
+        if (typeof this._controls[udn] === "undefined") {
+            throw new Error(`the requested television '${udn}' is not known in 'BackendController.${methodName}'`);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -71,7 +69,7 @@ export class BackendController extends EventEmitter {
             });
         }
 
-        that._throwIfNotInitialized("tvUpsert");
+        that.throwIfNotInitialized("tvUpsert");
         try {
             const record = await this._db.getRecord({"$and": [
                 {"udn": tv.udn},
@@ -106,14 +104,14 @@ export class BackendController extends EventEmitter {
         }
     }
 
-    public getUDNList(): UDN[] {
-        this._throwIfNotInitialized("getUDNList");
-        return Object.keys(this._controls);
+    public control(udn: UDN): BackendControl {
+        this.throwIfNotInitialized("control");
+        this.throwIfNotKnownTV("control", udn);
+        return this._controls[udn];
     }
 
-    public control(udn: UDN): BackendControl {
-        this._throwIfNotInitialized("control");
-        this._throwIfNotKnownTV("control", udn);
-        return this._controls[udn];
+    public controls(): BackendControl[] {
+        this.throwIfNotInitialized("controls");
+        return Object.values(this._controls);
     }
 }

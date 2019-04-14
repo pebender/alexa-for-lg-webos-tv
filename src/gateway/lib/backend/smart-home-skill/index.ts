@@ -10,24 +10,39 @@ import * as alexaSpeaker from "./speaker";
 import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
+    AlexaResponseEventPayloadEndpointCapability,
     errorResponse,
     errorToErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {Backend,
+    BackendControl} from "../../backend";
 
-async function stateHandler(backend: Backend, alexaRequest: AlexaRequest, alexaResponse: AlexaResponse): Promise<AlexaResponse> {
+function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+    return [
+        ...alexa.capabilities(backendControl),
+        ...alexaPowerController.capabilities(backendControl),
+        ...alexaSpeaker.capabilities(backendControl),
+        ...alexaChannelController.capabilities(backendControl),
+        ...alexaInputController.capabilities(backendControl),
+        ...alexaLauncher.capabilities(backendControl),
+        ...alexaPlaybackController.capabilities(backendControl)
+    ];
+}
+
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+    return [
+        ...alexa.states(backendControl),
+        ...alexaPowerController.states(backendControl),
+        ...alexaSpeaker.states(backendControl),
+        ...alexaChannelController.states(backendControl),
+        ...alexaInputController.states(backendControl),
+        ...alexaLauncher.states(backendControl),
+        ...alexaPlaybackController.states(backendControl)
+    ];
+}
+
+async function addStates(alexaResponse: AlexaResponse, backendControl: BackendControl): Promise<AlexaResponse> {
     try {
-        const udn: UDN = (alexaRequest.getEndpointId() as UDN);
-        const states: AlexaResponseContextProperty[] = await Promise.all([
-            ...alexa.states(backend, udn),
-            ...alexaPowerController.states(backend, udn),
-            ...alexaSpeaker.states(backend, udn),
-            ...alexaChannelController.states(backend, udn),
-            ...alexaInputController.states(backend, udn),
-            ...alexaLauncher.states(backend, udn),
-            ...alexaPlaybackController.states(backend, udn)
-        ]);
-        states.forEach((state) => {
+        (await Promise.all(states(backendControl))).forEach((state) => {
             if (typeof state === "undefined" || state === null ||
                 typeof state.value === "undefined" || state.value === null) {
                 return;
@@ -56,25 +71,44 @@ async function handlerWithoutValidation(backend: Backend, event: AlexaRequest): 
     }
 
     try {
+        const udn = alexaRequest.getEndpointId();
+        if (typeof udn === "undefined") {
+            switch (alexaRequest.directive.header.namespace) {
+                case "Alexa.Authorization":
+                    return alexaAuthorization.handler(alexaRequest, backend);
+                case "Alexa.Discovery":
+                    return alexaDiscovery.handler(alexaRequest, backend);
+                default:
+                    return errorResponse(
+                        alexaRequest,
+                        "INTERNAL_ERROR",
+                        `Unknown namespace ${alexaRequest.directive.header.namespace}`
+                    );
+            }
+        }
+        const backendControl = backend.control(udn);
+        if (typeof backendControl === "undefined") {
+            return errorResponse(
+                alexaRequest,
+                "INTERNAL_ERROR",
+                `unknown LGTV UDN ${udn}`
+            );
+        }
         switch (alexaRequest.directive.header.namespace) {
-            case "Alexa.Authorization":
-                return alexaAuthorization.handler(backend, alexaRequest);
-            case "Alexa.Discovery":
-                return alexaDiscovery.handler(backend, alexaRequest);
             case "Alexa":
-                return stateHandler(backend, alexaRequest, await alexa.handler(backend, alexaRequest));
+                return addStates(await alexa.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.PowerController":
-                return stateHandler(backend, alexaRequest, await alexaPowerController.handler(backend, alexaRequest));
+                return addStates(await alexaPowerController.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.Speaker":
-                return stateHandler(backend, alexaRequest, await alexaSpeaker.handler(backend, alexaRequest));
+                return addStates(await alexaSpeaker.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.ChannelController":
-                return stateHandler(backend, alexaRequest, await alexaChannelController.handler(backend, alexaRequest));
+                return addStates(await alexaChannelController.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.InputController":
-                return stateHandler(backend, alexaRequest, await alexaInputController.handler(backend, alexaRequest));
+                return addStates(await alexaInputController.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.Launcher":
-                return stateHandler(backend, alexaRequest, await alexaLauncher.handler(backend, alexaRequest));
+                return addStates(await alexaLauncher.handler(alexaRequest, backendControl), backendControl);
             case "Alexa.PlaybackController":
-                return stateHandler(backend, alexaRequest, await alexaPlaybackController.handler(backend, alexaRequest));
+                return addStates(await alexaPlaybackController.handler(alexaRequest, backendControl), backendControl);
             default:
                 return errorResponse(
                     alexaRequest,
@@ -87,4 +121,4 @@ async function handlerWithoutValidation(backend: Backend, event: AlexaRequest): 
     }
 }
 
-export {handlerWithoutValidation as handler};
+export {capabilities, states, handlerWithoutValidation as handler};

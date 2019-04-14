@@ -5,11 +5,10 @@ import {AlexaRequest,
     LGTVRequest,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../../common";
-import {Backend} from "../../backend";
-import {UDN} from "../../tv";
+import {BackendControl} from "../../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
         Promise.resolve({
             "type": "AlexaInterface",
@@ -27,16 +26,15 @@ function capabilities(_backend: Backend, _alexaRequest: AlexaRequest, _udn: UDN)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(_backend: Backend, _udn: UDN): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
-async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, lgtvRequestURI: string): Promise<AlexaResponse> {
-    const udn: UDN = (alexaRequest.getEndpointId() as UDN);
+async function genericHandler(alexaRequest: AlexaRequest, backendControl: BackendControl, lgtvRequestURI: string): Promise<AlexaResponse> {
     const lgtvRequest: LGTVRequest = {
         "uri": lgtvRequestURI
     };
-    await backend.lgtvCommand(udn, lgtvRequest);
+    await backendControl.lgtvCommand(lgtvRequest);
     return new AlexaResponse({
         "namespace": "Alexa",
         "name": "Response",
@@ -45,41 +43,21 @@ async function genericHandler(backend: Backend, alexaRequest: AlexaRequest, lgtv
     });
 }
 
-function playHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backend, alexaRequest, "ssap://media.controls/play");
-}
-
-function pauseHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backend, alexaRequest, "ssap://media.controls/pause");
-}
-
-function stopHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backend, alexaRequest, "ssap://media.controls/stop");
-}
-
-function rewindHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backend, alexaRequest, "ssap://media.controls/rewind");
-}
-
-function fastForwardHandler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return genericHandler(backend, alexaRequest, "ssap://media.controls/fastForward");
-}
-
-function handler(backend: Backend, alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
     switch (alexaRequest.directive.header.name) {
         case "Play":
-            return playHandler(backend, alexaRequest);
+            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/play");
         case "Pause":
-            return pauseHandler(backend, alexaRequest);
+            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/pause");
         case "Stop":
-            return stopHandler(backend, alexaRequest);
+            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/stop");
         case "Rewind":
-            return rewindHandler(backend, alexaRequest);
+            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/rewind");
         case "FastForward":
-            return fastForwardHandler(backend, alexaRequest);
+            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/fastForward");
         default:
             return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }

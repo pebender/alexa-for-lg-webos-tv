@@ -23,7 +23,6 @@ export class BackendControl extends EventEmitter {
     private _connection: any;
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
-    private _throwIfNotInitialized: (methodName: string) => void
     public constructor(db: DatabaseTable, tv: TV) {
         super();
 
@@ -46,12 +45,12 @@ export class BackendControl extends EventEmitter {
         this._connection = null;
         this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
         this._ssdpResponse = new SsdpClient();
+    }
 
-        this._throwIfNotInitialized = (methodName: string) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("BackendControl", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("BackendControl", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -129,7 +128,7 @@ export class BackendControl extends EventEmitter {
     }
 
     public get tv(): TV {
-        this._throwIfNotInitialized("get+tv");
+        this.throwIfNotInitialized("get+tv");
         const tv = {
             "udn": this._tv.udn,
             "name": this._tv.name,
@@ -141,7 +140,7 @@ export class BackendControl extends EventEmitter {
     }
 
     public turnOff(): boolean {
-        this._throwIfNotInitialized("turnOff");
+        this.throwIfNotInitialized("turnOff");
         const lgtvCommand = {
             "uri": "ssap://system/turnOff"
         };
@@ -167,7 +166,7 @@ export class BackendControl extends EventEmitter {
             return setInterval(handler, milliseconds);
         }
 
-        that._throwIfNotInitialized("turnOn");
+        that.throwIfNotInitialized("turnOn");
 
         return new Promise<boolean>((resolveTurnOn) => {
             that._powerOn = false;
@@ -242,14 +241,14 @@ export class BackendControl extends EventEmitter {
     }
 
     public getPowerState(): "OFF" | "ON" {
-        this._throwIfNotInitialized("getPowerState");
+        this.throwIfNotInitialized("getPowerState");
         return this._powerOn
             ? "ON"
             : "OFF";
     }
 
     public async lgtvCommand(lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
-        this._throwIfNotInitialized("lgtvCommand");
+        this.throwIfNotInitialized("lgtvCommand");
         let lgtvResponse: LGTVResponse = {
             "returnValue": false
         };

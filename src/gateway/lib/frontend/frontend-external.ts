@@ -22,19 +22,18 @@ export class FrontendExternal {
     private _security: FrontendSecurity;
     private _backend: Backend;
     private _server: expressCore.Express;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(serverSecurity: FrontendSecurity, backend: Backend) {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._security = serverSecurity;
         this._backend = backend;
         this._server = express();
+    }
 
-        this._throwIfNotInitialized = (methodName) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("FrontendExternal", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("FrontendExternal", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -137,7 +136,7 @@ export class FrontendExternal {
     }
 
     public start(): void {
-        this._throwIfNotInitialized("start");
+        this.throwIfNotInitialized("start");
         this._server.listen(25391, "localhost");
     }
 }

@@ -21,7 +21,6 @@ export class Backend extends EventEmitter {
     private _initializeMutex: Mutex;
     private _controller: BackendController;
     private _searcher: BackendSearcher;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor(db: DatabaseTable) {
         super();
 
@@ -29,12 +28,12 @@ export class Backend extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._controller = new BackendController(db);
         this._searcher = new BackendSearcher();
+    }
 
-        this._throwIfNotInitialized = (methodName: string) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("Backend", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("Backend", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -62,52 +61,28 @@ export class Backend extends EventEmitter {
     }
 
     public start(): void {
-        this._throwIfNotInitialized("start");
+        this.throwIfNotInitialized("start");
         return this._searcher.now();
     }
 
     public runCommand(event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
-        this._throwIfNotInitialized("runCommand");
+        this.throwIfNotInitialized("runCommand");
         return rawHandler(this, event);
     }
 
     public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
-        this._throwIfNotInitialized("skillCommand");
+        this.throwIfNotInitialized("skillCommand");
         return smartHomeSkillHandler(this, event);
     }
 
-    public getUDNList(): UDN[] {
-        this._throwIfNotInitialized("getUDNList");
-        return this._controller.getUDNList();
-    }
-
     public control(udn: UDN): BackendControl {
-        this._throwIfNotInitialized("tv");
+        this.throwIfNotInitialized("control");
         return this._controller.control(udn);
     }
 
-    public tv(udn: UDN): TV {
-        this._throwIfNotInitialized("tv");
-        return this._controller.control(udn).tv;
-    }
+    public controls(): BackendControl[] {
+        this.throwIfNotInitialized("controls");
 
-    public lgtvCommand(udn: UDN, lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
-        this._throwIfNotInitialized("lgtvCommand");
-        return this._controller.control(udn).lgtvCommand(lgtvRequest);
-    }
-
-    public getPowerState(udn: UDN): "OFF" | "ON" {
-        this._throwIfNotInitialized("getPowerState");
-        return this._controller.control(udn).getPowerState();
-    }
-
-    public turnOff(udn: UDN): boolean {
-        this._throwIfNotInitialized("turnOff");
-        return this._controller.control(udn).turnOff();
-    }
-
-    public turnOn(udn: UDN): Promise<boolean> {
-        this._throwIfNotInitialized("turnOn");
-        return this._controller.control(udn).turnOn();
+        return this._controller.controls();
     }
 }

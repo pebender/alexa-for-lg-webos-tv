@@ -12,7 +12,7 @@ import {Backend} from "../../backend";
  */
 export async function handler(backend: Backend, event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
     try {
-        const commandResponse = await backend.lgtvCommand(event.udn, event.lgtvRequest);
+        const commandResponse = await backend.control(event.udn).lgtvCommand(event.lgtvRequest);
         return commandResponse;
     } catch (error) {
         const body: LGTVResponse = {

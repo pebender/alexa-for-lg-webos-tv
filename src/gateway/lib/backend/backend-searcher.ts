@@ -34,13 +34,11 @@ export interface UPnPDevice {
     };
 }
 
-
 export class BackendSearcher extends EventEmitter {
     private _initialized: boolean;
     private _initializeMutex: Mutex;
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
-    private _throwIfNotInitialized: (methodName: string) => void;
     public constructor() {
         super();
 
@@ -48,12 +46,12 @@ export class BackendSearcher extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
         this._ssdpResponse = new SsdpClient();
+    }
 
-        this._throwIfNotInitialized = (methodName) => {
-            if (this._initialized === false) {
-                throw new UninitializedClassError("BackendSearcher", methodName);
-            }
-        };
+    private throwIfNotInitialized(methodName: string): void {
+        if (this._initialized === false) {
+            throw new UninitializedClassError("BackendSearcher", methodName);
+        }
     }
 
     public initialize(): Promise<void> {
@@ -223,7 +221,7 @@ export class BackendSearcher extends EventEmitter {
     }
 
     public now(): void {
-        this._throwIfNotInitialized("now");
+        this.throwIfNotInitialized("now");
         this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }
