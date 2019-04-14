@@ -7,7 +7,7 @@ import {AlexaRequest,
 import {Gateway} from "../gateway-api";
 import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
-async function gatewayEndpoint(alexaRequest: AlexaRequest): Promise<AlexaResponseEventPayloadEndpoint | null> {
+async function gatewayEndpoint(): Promise<AlexaResponseEventPayloadEndpoint | null> {
     try {
         let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
         try {
@@ -56,7 +56,7 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     }
 
     try {
-        lgtvGatewayEndpoint = await gatewayEndpoint(alexaRequest);
+        lgtvGatewayEndpoint = await gatewayEndpoint();
     } catch (error) {
         lgtvGatewayEndpoint = null;
     }
