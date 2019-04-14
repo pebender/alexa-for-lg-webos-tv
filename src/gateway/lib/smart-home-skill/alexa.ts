@@ -3,8 +3,8 @@ import {AlexaRequest,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
     directiveErrorResponse,
-    namespaceErrorResponse} from "../../../../common";
-import {BackendControl} from "../../backend";
+    namespaceErrorResponse} from "../../../common";
+import {BackendControl} from "../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {

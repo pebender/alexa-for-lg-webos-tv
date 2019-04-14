@@ -2,8 +2,8 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    errorResponse} from "../../../../common";
-import {Backend} from "../../backend";
+    errorResponse} from "../../../common";
+import {Backend} from "../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backend: Backend): Promise<AlexaResponseEventPayloadEndpointCapability>[] {

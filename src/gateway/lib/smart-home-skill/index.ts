@@ -12,9 +12,9 @@ import {AlexaRequest,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
     errorResponse,
-    errorToErrorResponse} from "../../../../common";
+    errorToErrorResponse} from "../../../common";
 import {Backend,
-    BackendControl} from "../../backend";
+    BackendControl} from "../backend";
 
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
@@ -55,7 +55,7 @@ async function addStates(alexaResponse: AlexaResponse, backendControl: BackendCo
     }
 }
 
-async function handlerWithoutValidation(backend: Backend, event: AlexaRequest): Promise<AlexaResponse> {
+async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): Promise<AlexaResponse> {
     let alexaRequest: AlexaRequest | null = null;
     try {
         alexaRequest = new AlexaRequest(event);

@@ -6,8 +6,8 @@ import {AlexaRequest,
     directiveErrorResponse,
     errorResponse,
     errorToErrorResponse,
-    namespaceErrorResponse} from "../../../../common";
-import {BackendControl} from "../../backend";
+    namespaceErrorResponse} from "../../../common";
+import {BackendControl} from "../backend";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require("isnumeric");
 

@@ -8,8 +8,8 @@ import {AlexaRequest,
     LGTVResponseForgroundAppInfo,
     directiveErrorResponse,
     errorResponse,
-    namespaceErrorResponse} from "../../../../common";
-import {BackendControl} from "../../backend";
+    namespaceErrorResponse} from "../../../common";
+import {BackendControl} from "../backend";
 
 const alexaToLGTV: {[key: string]: string} = {
     "HDMI 1": "HDMI_1",

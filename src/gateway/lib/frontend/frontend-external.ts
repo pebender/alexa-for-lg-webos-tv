@@ -7,6 +7,8 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
+import * as CustomSkill from "../custom-skill";
+import * as SmartHomeSkill from "../smart-home-skill";
 import {Backend} from "../backend";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
@@ -90,7 +92,7 @@ export class FrontendExternal {
                 return;
             }
             // X    console.log(JSON.stringify(request.body, null, 2));
-            const commandResponse = await that._backend.skillCommand(request.body);
+            const commandResponse = await SmartHomeSkill.handler(request.body, that._backend);
             // X    console.log(JSON.stringify(commandResponse, null, 2));
             response.
                 type("json").
@@ -106,7 +108,7 @@ export class FrontendExternal {
         }
 
         async function backendRunHandler(request: express.Request, response: express.Response): Promise<void> {
-            const commandResponse = await that._backend.runCommand(request.body);
+            const commandResponse = await CustomSkill.handler(request.body, that._backend);
             response.
                 type("json").
                 status(200).

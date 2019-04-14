@@ -6,8 +6,8 @@ import {AlexaRequest,
     LGTVResponse,
     directiveErrorResponse,
     errorResponse,
-    namespaceErrorResponse} from "../../../../common";
-import {BackendControl} from "../../backend";
+    namespaceErrorResponse} from "../../../common";
+import {BackendControl} from "../backend";
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video

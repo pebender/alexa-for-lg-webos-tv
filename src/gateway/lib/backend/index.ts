@@ -1,8 +1,3 @@
-import {AlexaRequest,
-    AlexaResponse,
-    LGTVRequest,
-    LGTVResponse,
-    UninitializedClassError} from "../../../common";
 import {TV,
     UDN} from "../tv";
 import {BackendControl} from "./backend-control";
@@ -11,8 +6,7 @@ import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {handler as rawHandler} from "./custom-skill";
-import {handler as smartHomeSkillHandler} from "./smart-home-skill";
+import {UninitializedClassError} from "../../../common";
 
 export {BackendControl} from "./backend-control";
 
@@ -63,16 +57,6 @@ export class Backend extends EventEmitter {
     public start(): void {
         this.throwIfNotInitialized("start");
         return this._searcher.now();
-    }
-
-    public runCommand(event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
-        this.throwIfNotInitialized("runCommand");
-        return rawHandler(this, event);
-    }
-
-    public skillCommand(event: AlexaRequest): Promise<AlexaResponse> {
-        this.throwIfNotInitialized("skillCommand");
-        return smartHomeSkillHandler(this, event);
     }
 
     public control(udn: UDN): BackendControl {

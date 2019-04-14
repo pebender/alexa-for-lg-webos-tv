@@ -1,6 +1,6 @@
 import {LGTVRequest,
-    LGTVResponse} from "../../../../common";
-import {Backend} from "../../backend";
+    LGTVResponse} from "../../../common";
+import {Backend} from "../backend";
 
 /*
  *******************************************************************************
@@ -10,7 +10,7 @@ import {Backend} from "../../backend";
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-export async function handler(backend: Backend, event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
+export async function handler(event: {udn: string; lgtvRequest: LGTVRequest}, backend: Backend): Promise<LGTVResponse> {
     try {
         const commandResponse = await backend.control(event.udn).lgtvCommand(event.lgtvRequest);
         return commandResponse;

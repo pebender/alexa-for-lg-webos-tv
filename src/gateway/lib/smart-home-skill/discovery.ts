@@ -2,8 +2,8 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseEventPayloadEndpoint,
     AlexaResponseEventPayloadEndpointCapability,
-    namespaceErrorResponse} from "../../../../common";
-import {Backend, BackendControl} from "../../backend";
+    namespaceErrorResponse} from "../../../common";
+import {Backend, BackendControl} from "../backend";
 import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
 async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<AlexaResponse> {
