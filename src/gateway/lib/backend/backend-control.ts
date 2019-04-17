@@ -61,7 +61,7 @@ export class BackendControl extends EventEmitter {
                 {"udn": that._tv.udn},
                 {"$set": {"key": key}}
             ).
-                catch((error) => {
+                catch((error): void => {
                     callback(error);
                     // eslint-disable-next-line no-useless-return
                     return;
@@ -82,7 +82,7 @@ export class BackendControl extends EventEmitter {
                 that._connection.disconnect();
             }
         }
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve, reject) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve, reject): void => {
             if (that._initialized === true) {
                 resolve();
             }
@@ -102,21 +102,21 @@ export class BackendControl extends EventEmitter {
                 "clientKey": clientKey,
                 "saveKey": saveKey
             });
-            that._connection.on("error", (error: NodeJS.ErrnoException) => {
+            that._connection.on("error", (error: NodeJS.ErrnoException): void => {
                 that._connecting = false;
                 if (error && error.code !== "EHOSTUNREACH") {
                     that.emit("error", error, that._tv.udn);
                 }
             });
             // eslint-disable-next-line no-unused-vars
-            that._connection.on("connecting", () => {
+            that._connection.on("connecting", (): void => {
                 that._connecting = true;
             });
-            that._connection.on("connect", () => {
+            that._connection.on("connect", (): void => {
                 that._connecting = false;
                 that._powerOn = true;
             });
-            that._connection.on("close", () => {
+            that._connection.on("close", (): void => {
                 that._connecting = false;
             });
             that._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
@@ -168,7 +168,7 @@ export class BackendControl extends EventEmitter {
 
         that.throwIfNotInitialized("turnOn");
 
-        return new Promise<boolean>((resolveTurnOn) => {
+        return new Promise<boolean>((resolveTurnOn): void => {
             that._powerOn = false;
             that._connection.disconnect();
             let finishTimeoutObject: NodeJS.Timeout | null = null;
@@ -188,7 +188,7 @@ export class BackendControl extends EventEmitter {
             const finishMutex = new Mutex();
             let finishUUID: string | null = null;
             async function finish(poweredOn: boolean): Promise<void> {
-                const currentUUID = await finishMutex.runExclusive(() => new Promise<string | null>((resolve) => {
+                const currentUUID = await finishMutex.runExclusive((): Promise<string | null> => new Promise<string | null>((resolve): void => {
                     if (finished === true) {
                         resolve(null);
                         return;
@@ -224,15 +224,15 @@ export class BackendControl extends EventEmitter {
 
             finishTimeoutObject = setTimeout(finish, 7000, false);
 
-            monitorTimeoutObject = startInterval(100, () => {
+            monitorTimeoutObject = startInterval(100, (): void => {
                 if (that._powerOn === true) {
                     finish(true);
                 }
             });
-            wolTimeoutObject = startInterval(250, () => {
+            wolTimeoutObject = startInterval(250, (): void => {
                 wol.wake(that._tv.mac);
             });
-            searchTimeoutObject = startInterval(1000, () => {
+            searchTimeoutObject = startInterval(1000, (): void => {
                 if (that._ssdpResponse !== null) {
                     that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
                 }
@@ -253,10 +253,10 @@ export class BackendControl extends EventEmitter {
             "returnValue": false
         };
         if (lgtvRequest.payload === null) {
-            lgtvResponse = await new Promise<LGTVResponse>((resolve, reject) => {
+            lgtvResponse = await new Promise<LGTVResponse>((resolve, reject): void => {
                 this._connection.request(
                     lgtvRequest.uri,
-                    (error: Error, response: LGTVResponse) => {
+                    (error: Error, response: LGTVResponse): void => {
                         if (error) {
                             reject(error);
                             return;
@@ -266,11 +266,11 @@ export class BackendControl extends EventEmitter {
                 );
             });
         } else {
-            lgtvResponse = await new Promise((resolve, reject) => {
+            lgtvResponse = await new Promise((resolve, reject): void => {
                 this._connection.request(
                     lgtvRequest.uri,
                     lgtvRequest.payload,
-                    (error: Error, response: LGTVResponse) => {
+                    (error: Error, response: LGTVResponse): void => {
                         if (error) {
                             reject(error);
                             return;

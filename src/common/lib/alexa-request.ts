@@ -8,7 +8,7 @@ export function copyElement(original: copyElementType): copyElementType {
     if (Array.isArray(original)) {
         const originalArray = (original as copyElementType[]);
         const copy: copyElementType[] = [];
-        originalArray.forEach((item) => {
+        originalArray.forEach((item): void => {
             if (typeof item !== "undefined") {
                 copy.push(copyElement(item));
             }
@@ -21,7 +21,7 @@ export function copyElement(original: copyElementType): copyElementType {
         const copy: {
             [x: string]: copyElementType;
         } = {};
-        Object.keys(originalObject).forEach((property) => {
+        Object.keys(originalObject).forEach((property): void => {
             if (typeof originalObject[property] !== "undefined") {
                 copy[property] = copyElement(originalObject[property]);
             }

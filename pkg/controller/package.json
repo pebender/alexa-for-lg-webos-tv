@@ -19,10 +19,10 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.23",
-    "@types/node": "11.13.0",
+    "@types/aws-lambda": "8.10.24",
+    "@types/node": "11.13.4",
     "@types/uuid": "3.4.4",
-    "typescript": "3.4.2",
+    "typescript": "3.4.3",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [

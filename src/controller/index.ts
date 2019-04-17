@@ -13,13 +13,13 @@ function skilllHandler(request: ASKModel.RequestEnvelope | AlexaRequest, context
         return smartHomeSkill.handler(
             (request as AlexaRequest),
             (context as AWSLambda.Context),
-            (error: Error | null, response: AlexaResponse | null) => callback(error, response)
+            (error: Error | null, response: AlexaResponse | null): void => callback(error, response)
         );
     }
     return Promise.resolve(customSkill.handler(
         (request as ASKModel.RequestEnvelope),
         (context as ASKModel.Context),
-        (error: Error | null, response: ASKModel.ResponseEnvelope) => callback(error, response)
+        (error: Error | null, response: ASKModel.ResponseEnvelope): void => callback(error, response)
     ));
 }
 

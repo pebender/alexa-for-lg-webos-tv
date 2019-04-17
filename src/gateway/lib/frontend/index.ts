@@ -29,7 +29,7 @@ export class Frontend {
 
     public initialize(): Promise<void> {
         const that = this;
-        return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>(async (resolve): Promise<void> => {
             if (that._initialized === true) {
                 resolve();
                 return;

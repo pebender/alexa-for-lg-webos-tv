@@ -63,7 +63,7 @@ const handlers = [
 ];
 
 const ErrorHandler = {
-    canHandle() {
+    canHandle(): boolean {
         return true;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

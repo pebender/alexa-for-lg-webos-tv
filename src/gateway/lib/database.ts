@@ -34,7 +34,7 @@ export class DatabaseTable {
         } catch (error) {
             throw error;
         }
-        this._db.loadDatabase((error) => {
+        this._db.loadDatabase((error): void => {
             if (error) {
                 throw error;
             }
@@ -49,8 +49,8 @@ export class DatabaseTable {
 
     public initialize(): Promise<void> {
         const that = this;
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
-            that._indexes.forEach((record) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
+            that._indexes.forEach((record): void => {
                 that._db.ensureIndex({
                     "fieldName": record,
                     "unique": true
@@ -69,12 +69,12 @@ export class DatabaseTable {
         query2[this._key] = null;
         // eslint-disable-next-line array-element-newline
         const query: DatabaseQuery = {"$or": [query1, query2]};
-        await new Promise<void>((resolve, reject) => {
+        await new Promise<void>((resolve, reject): void => {
             this._db.remove(
                 query,
                 {"multi": true},
                 // eslint-disable-next-line no-unused-vars
-                (error) => {
+                (error): void => {
                     if (error) {
                         reject(error);
                         return;
@@ -87,10 +87,10 @@ export class DatabaseTable {
 
     public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
         this.throwIfNotInitialized("getRecord");
-        const record = await new Promise<DatabaseRecord>((resolve, reject) => {
+        const record = await new Promise<DatabaseRecord>((resolve, reject): void => {
             this._db.findOne(
                 query,
-                (err, doc: DatabaseRecord) => {
+                (err, doc: DatabaseRecord): void => {
                     if (err) {
                         reject(err);
                         return;
@@ -104,10 +104,10 @@ export class DatabaseTable {
 
     public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
         this.throwIfNotInitialized("getRecords");
-        const records = await new Promise<DatabaseRecord[]>((resolve, reject) => {
+        const records = await new Promise<DatabaseRecord[]>((resolve, reject): void => {
             this._db.find(
                 query,
-                (error: Error, docs: DatabaseRecord[]) => {
+                (error: Error, docs: DatabaseRecord[]): void => {
                     if (error) {
                         reject(error);
                         return;
@@ -121,8 +121,8 @@ export class DatabaseTable {
 
     public async insertRecord(record: DatabaseRecord): Promise<void> {
         this.throwIfNotInitialized("insertRecord");
-        await new Promise<void>((resolve, reject) => {
-            this._db.insert(record, (error) => {
+        await new Promise<void>((resolve, reject): void => {
+            this._db.insert(record, (error): void => {
                 if (error) {
                     reject(error);
                     return;
@@ -136,12 +136,12 @@ export class DatabaseTable {
 
     public async updateRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
         this.throwIfNotInitialized("updateRecord");
-        await new Promise<void>((resolve, reject) => {
+        await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,
                 update,
                 {},
-                (error) => {
+                (error): void => {
                     if (error) {
                         reject(error);
                         return;
@@ -154,13 +154,13 @@ export class DatabaseTable {
 
     public async updateOrInsertRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
         this.throwIfNotInitialized("updateOrInsertRecord");
-        await new Promise<void>((resolve, reject) => {
+        await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,
                 update,
                 {"upsert": true},
                 // eslint-disable-next-line no-unused-vars
-                (error) => {
+                (error): void => {
                     if (error) {
                         reject(error);
                         return;

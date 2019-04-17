@@ -42,7 +42,7 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
 
 async function addStates(alexaResponse: AlexaResponse, backendControl: BackendControl): Promise<AlexaResponse> {
     try {
-        (await Promise.all(states(backendControl))).forEach((state) => {
+        (await Promise.all(states(backendControl))).forEach((state): void => {
             if (typeof state === "undefined" || state === null ||
                 typeof state.value === "undefined" || state.value === null) {
                 return;

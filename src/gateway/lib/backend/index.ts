@@ -32,20 +32,20 @@ export class Backend extends EventEmitter {
 
     public initialize(): Promise<void> {
         const that = this;
-        return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>(async (resolve): Promise<void> => {
             if (that._initialized === true) {
                 resolve();
                 return;
             }
 
-            that._controller.on("error", (error: Error, id: string) => {
+            that._controller.on("error", (error: Error, id: string): void => {
                 that.emit("error", error, `BackendController.${id}`);
             });
             await that._controller.initialize();
-            that._searcher.on("error", (error) => {
+            that._searcher.on("error", (error): void => {
                 that.emit("error", error, "BackendSearcher");
             });
-            that._searcher.on("found", (tv: TV) => {
+            that._searcher.on("found", (tv: TV): void => {
                 that._controller.tvUpsert(tv);
             });
             await that._searcher.initialize();

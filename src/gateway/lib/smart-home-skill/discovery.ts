@@ -54,7 +54,7 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
             "displayCategories": ["TV"],
             "capabilities": []
         };
-        capabilities.forEach((capability) => {
+        capabilities.forEach((capability): void => {
             if (typeof capability === "undefined" || capability === null) {
                 return;
             }
@@ -72,7 +72,7 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
-        endpoints.forEach((endpoint: AlexaResponseEventPayloadEndpoint) => {
+        endpoints.forEach((endpoint: AlexaResponseEventPayloadEndpoint): void => {
             if (endpoint !== null) {
                 alexaResponse.addPayloadEndpoint(endpoint);
             }

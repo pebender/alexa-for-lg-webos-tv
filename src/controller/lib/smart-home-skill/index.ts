@@ -33,7 +33,7 @@ function states(): Promise<AlexaResponseContextProperty>[] {
 
 async function stateHandler(alexaResponse: AlexaResponse): Promise<AlexaResponse> {
     try {
-        (await Promise.all(states())).forEach((state) => {
+        (await Promise.all(states())).forEach((state): void => {
             if (typeof state === "undefined" || state === null ||
                 typeof state.value === "undefined" || state.value === null) {
                 return;

@@ -69,7 +69,7 @@ function pingHandler(requestOptions: {
     path: string;
     rejectUnauthorized?: boolean;
 }): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject): void => {
         let options: {
             hostname: string;
             port: number;
@@ -86,13 +86,13 @@ function pingHandler(requestOptions: {
             return;
         }
         const request = https.get(options);
-        request.once("response", (response) => {
+        request.once("response", (response): void => {
             response.setEncoding("utf8");
-            response.on("data", (chunk: string) => {
+            response.on("data", (chunk: string): void => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const _nothing: string = chunk;
             });
-            response.on("end", () => {
+            response.on("end", (): void => {
                 if (response.statusCode === 200) {
                     resolve(true);
                 }
@@ -109,9 +109,9 @@ function pingHandler(requestOptions: {
                     ` '${response.statusCode}'.`;
                 reject(error);
             });
-            response.on("error", (error: Error) => reject(error));
+            response.on("error", (error: Error): void => reject(error));
         });
-        request.on("error", (error: Error) => reject(error));
+        request.on("error", (error: Error): void => reject(error));
     });
 }
 
@@ -122,7 +122,7 @@ function sendHandler(requestOptions: {
     path: string;
     rejectUnauthorized?: boolean;
 }, requestBody: GatewayRequest): Promise<GatewayResponse> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject): void => {
         const options: {
             method?: "POST";
             hostname: string;
@@ -138,14 +138,14 @@ function sendHandler(requestOptions: {
         options.headers["Content-Type"] = "application/json";
         options.headers["Content-Length"] = Buffer.byteLength(content).toString();
         const request = https.request(options);
-        request.once("response", (response) => {
+        request.once("response", (response): void => {
             let body: GatewayResponse = {};
             let data = "";
             response.setEncoding("utf8");
-            response.on("data", (chunk: string) => {
+            response.on("data", (chunk: string): void => {
                 data += chunk;
             });
-            response.on("end", () => {
+            response.on("end", (): void => {
                 if (response.statusCode !== 200) {
                     if (typeof http.STATUS_CODES[response.statusCode] !== "undefined") {
                         const message = "The gateway returned HTTP/1.1 status code" +
@@ -177,13 +177,13 @@ function sendHandler(requestOptions: {
                 }
                 return resolve(body);
             });
-            response.on("error", (error: Error) => {
+            response.on("error", (error: Error): void => {
                 const message = "There was a problem talking to the gateway." +
                     ` The error was [${error.toString()}].`;
                 return reject(new Error(message));
             });
         });
-        request.on("error", (error: Error) => {
+        request.on("error", (error: Error): void => {
             const message = "There was a problem talking to the gateway." +
                 ` The error was [${error.name}: ${error.message}].`;
             return reject(new Error(message));

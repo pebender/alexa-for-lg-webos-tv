@@ -128,7 +128,7 @@ export class FrontendInternal {
             await sendForm(form, response);
         }
 
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
             if (that._initialized === true) {
                 resolve();
                 return;

@@ -44,7 +44,7 @@ export async function startGateway(): Promise<void> {
     const frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
     await frontendDb.initialize();
     const backend = new Backend(backendDb);
-    backend.on("error", (error: Error, id: string) => {
+    backend.on("error", (error: Error, id: string): void => {
         console.log(id);
         console.log(error);
     });

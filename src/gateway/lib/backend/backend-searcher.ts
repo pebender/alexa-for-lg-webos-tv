@@ -139,8 +139,8 @@ export class BackendSearcher extends EventEmitter {
                 callback(null, null);
                 return;
             }
-            http.get(headers.LOCATION).then((descriptionXml) => {
-                xml2js(descriptionXml.data, (error: Error | null, description: UPnPDevice) => {
+            http.get(headers.LOCATION).then((descriptionXml): void => {
+                xml2js(descriptionXml.data, (error: Error | null, description: UPnPDevice): void => {
                     if (error) {
                         callback(error, null);
                         return;
@@ -184,7 +184,7 @@ export class BackendSearcher extends EventEmitter {
                      * Get the mac address needed to turn on the TV using wake on
                      * lan.
                      */
-                    arp.getMAC(tv.ip, (err: Error, mac: MAC) => {
+                    arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
                         if (err) {
                             callback(err, null);
                             return;
@@ -198,7 +198,7 @@ export class BackendSearcher extends EventEmitter {
             });
         }
 
-        return that._initializeMutex.runExclusive(() => new Promise<void>((resolve) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
             if (that._initialized === true) {
                 resolve();
                 return;
@@ -207,7 +207,7 @@ export class BackendSearcher extends EventEmitter {
             that._ssdpNotify.on("advertise-alive", (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
                 ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
             });
-            that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo) => {
+            that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo): void => {
                 if (statusCode !== 200) {
                     return;
                 }

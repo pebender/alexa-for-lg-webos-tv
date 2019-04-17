@@ -27,7 +27,13 @@ function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<AlexaRe
     };
     const texts: string[] = textsList[octet];
     const instance = octet;
-    const friendlyNames = texts.map((text: string) => {
+    const friendlyNames = texts.map((text: string): {
+        "@type": "text";
+        "value": {
+            "text": string;
+            "locale": "en-US";
+        };
+    } => {
         const friendlyName: {
             "@type": "text";
             "value": {

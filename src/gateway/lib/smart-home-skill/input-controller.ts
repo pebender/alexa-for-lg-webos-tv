@@ -115,7 +115,7 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
 
         let input: string | null = null;
         if (appId !== null) {
-            inputList.forEach((item) => {
+            inputList.forEach((item): void => {
                 if (item.appId === appId) {
                     input = item.id;
                     if (typeof lgtvToAlexa.input !== "undefined") {
@@ -166,7 +166,7 @@ async function selectInputHandler(alexaRequest: AlexaRequest, backendControl: Ba
             input = alexaToLGTV[inputItem];
         }
         let device: string | null = null;
-        inputList.forEach((value) => {
+        inputList.forEach((value): void => {
             const id = value.id.toUpperCase();
             const label = value.label.toUpperCase();
             if (id === input) {

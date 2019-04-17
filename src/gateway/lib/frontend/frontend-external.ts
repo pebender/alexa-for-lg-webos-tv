@@ -117,7 +117,7 @@ export class FrontendExternal {
                 end();
         }
 
-        return that._initializeMutex.runExclusive(() => new Promise((resolve) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
             if (that._initialized === true) {
                 resolve();
                 return;
@@ -130,7 +130,7 @@ export class FrontendExternal {
             that._server.post("/LGTV/RUN", backendRunHandler);
             that._server.post("/LGTV/SKILL", backendSkillHandler);
             that._server.get("/LGTV/PING", backendPingHandler);
-            that._server.post("/", (_req: expressCore.Request, res: expressCore.Response) => {
+            that._server.post("/", (_req: expressCore.Request, res: expressCore.Response): void => {
                 res.status(401).end();
             });
             that._initialized = true;

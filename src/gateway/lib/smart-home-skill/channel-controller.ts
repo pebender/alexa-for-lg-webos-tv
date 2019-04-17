@@ -122,8 +122,16 @@ async function changeChannelHandler(alexaRequest: AlexaRequest, backendControl: 
         alexaResponse.addContextProperty(await AlexaResponse.buildContextProperty({
             "namespace": "Alexa.ChannelController",
             "name": "channel",
-            "value": () => {
-                const value = {
+            "value": (): {
+                "number": string;
+                "callSign": string;
+                "affiliateCallSign": string;
+            } => {
+                const value: {
+                    "number": string;
+                    "callSign": string;
+                    "affiliateCallSign": string;
+                } = {
                     "number": "1234",
                     "callSign": "callsign1",
                     "affiliateCallSign": "callsign2"

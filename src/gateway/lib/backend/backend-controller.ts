@@ -36,19 +36,19 @@ export class BackendController extends EventEmitter {
         const that: BackendController = this;
 
         function eventsAdd(udn: UDN): void {
-            that._controls[udn].on("error", (error: Error) => {
+            that._controls[udn].on("error", (error: Error): void => {
                 that.emit("error", error, udn);
             });
         }
 
-        return that._initializeMutex.runExclusive(() => new Promise<void>(async (resolve, reject) => {
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>(async (resolve, reject): Promise<void> => {
             if (that._initialized === true) {
                 resolve();
                 return;
             }
 
             const records: TV[] = ((await that._db.getRecords({}) as unknown) as TV[]);
-            await records.forEach((record) => {
+            await records.forEach((record): void => {
                 if (typeof that._controls[record.udn] === "undefined") {
                     that._controls[record.udn] = new BackendControl(that._db, record);
                     that._controls[record.udn].initialize().catch(reject);
@@ -64,7 +64,7 @@ export class BackendController extends EventEmitter {
         const that: BackendController = this;
 
         function eventsAdd(udn: UDN): void {
-            that._controls[udn].on("error", (error: Error) => {
+            that._controls[udn].on("error", (error: Error): void => {
                 that.emit("error", error, udn);
             });
         }

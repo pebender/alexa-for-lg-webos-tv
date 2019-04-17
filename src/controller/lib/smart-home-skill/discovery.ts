@@ -27,7 +27,7 @@ async function gatewayEndpoint(): Promise<AlexaResponseEventPayloadEndpoint | nu
             "displayCategories": ["OTHER"],
             "capabilities": []
         };
-        capabilities.forEach((capability) => {
+        capabilities.forEach((capability): void => {
             if (typeof capability === "undefined" || capability === null) {
                 return;
             }

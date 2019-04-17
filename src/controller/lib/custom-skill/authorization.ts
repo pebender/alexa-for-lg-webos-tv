@@ -14,17 +14,17 @@ const SetHostnameIntentHandler = {
     },
     async handle(handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
         function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject): void => {
                 const sock = tls.connect(ipPort, ipAddress, {"rejectUnauthorized": false});
-                sock.on("secureConnect", () => {
+                sock.on("secureConnect", (): void => {
                     const cert = sock.getPeerCertificate().raw;
-                    sock.on("close", () => {
+                    sock.on("close", (): void => {
                         const hostnames = certnames.getCommonNames(cert);
                         return resolve(hostnames);
                     });
                     sock.end();
                 });
-                sock.on("error", (error) => reject(error));
+                sock.on("error", (error): void => reject(error));
             });
         }
 
