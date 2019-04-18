@@ -21,9 +21,15 @@ module.exports = {
         "ecmaVersion": 2018
     },
     "rules": {
+        "@typescript-eslint/indent": [
+            "error",
+            4,
+            { "SwitchCase": 0 }
+        ],
         "indent": [
             "error",
-            4
+            4,
+            { "SwitchCase": 0 }
         ],
         "linebreak-style": [
             "error",

@@ -227,10 +227,10 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.InputController"));
     }
     switch (alexaRequest.directive.header.name) {
-        case "SelectInput":
-            return selectInputHandler(alexaRequest, backendControl);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.InputController"));
+    case "SelectInput":
+        return selectInputHandler(alexaRequest, backendControl);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.InputController"));
     }
 }
 

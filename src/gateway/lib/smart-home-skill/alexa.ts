@@ -37,10 +37,10 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa"));
     }
     switch (alexaRequest.directive.header.name) {
-        case "ReportState":
-            return Promise.resolve(reportStateHandler(alexaRequest, backendControl));
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa"));
+    case "ReportState":
+        return Promise.resolve(reportStateHandler(alexaRequest, backendControl));
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa"));
     }
 }
 

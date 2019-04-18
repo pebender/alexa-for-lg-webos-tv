@@ -11,7 +11,7 @@ import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {SmartHomeSkill} from "../smart-home-skill";
-import {UninitializedClassError} from "../../../common";
+import {throwIfUninitializedClass} from "../../../common";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require("express-basic-auth");
 import express from "express";
@@ -31,12 +31,6 @@ export class FrontendExternal {
         this._customSkill = customSkill;
         this._smartHomeSkill = smartHomeSkill;
         this._server = express();
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("FrontendExternal", methodName);
-        }
     }
 
     public initialize(): Promise<void> {
@@ -139,7 +133,7 @@ export class FrontendExternal {
     }
 
     public start(): void {
-        this.throwIfNotInitialized("start");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "start");
         this._server.listen(25391, "localhost");
     }
 }

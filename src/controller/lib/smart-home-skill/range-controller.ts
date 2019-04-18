@@ -157,31 +157,31 @@ function unknownInstanceError(alexaRequest: AlexaRequest): AlexaResponse {
 
 function setRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     switch (alexaRequest.directive.header.instance) {
-        case "A":
-            return setRangeValueInstanceHandler(alexaRequest);
-        case "B":
-            return setRangeValueInstanceHandler(alexaRequest);
-        case "C":
-            return setRangeValueInstanceHandler(alexaRequest);
-        case "D":
-            return setRangeValueInstanceHandler(alexaRequest);
-        default:
-            return Promise.resolve(unknownInstanceError(alexaRequest));
+    case "A":
+        return setRangeValueInstanceHandler(alexaRequest);
+    case "B":
+        return setRangeValueInstanceHandler(alexaRequest);
+    case "C":
+        return setRangeValueInstanceHandler(alexaRequest);
+    case "D":
+        return setRangeValueInstanceHandler(alexaRequest);
+    default:
+        return Promise.resolve(unknownInstanceError(alexaRequest));
     }
 }
 
 function adjustRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     switch (alexaRequest.directive.header.instance) {
-        case "A":
-            return adjustRangeValueInstanceHandler(alexaRequest);
-        case "B":
-            return adjustRangeValueInstanceHandler(alexaRequest);
-        case "C":
-            return adjustRangeValueInstanceHandler(alexaRequest);
-        case "D":
-            return adjustRangeValueInstanceHandler(alexaRequest);
-        default:
-            return Promise.resolve(unknownInstanceError(alexaRequest));
+    case "A":
+        return adjustRangeValueInstanceHandler(alexaRequest);
+    case "B":
+        return adjustRangeValueInstanceHandler(alexaRequest);
+    case "C":
+        return adjustRangeValueInstanceHandler(alexaRequest);
+    case "D":
+        return adjustRangeValueInstanceHandler(alexaRequest);
+    default:
+        return Promise.resolve(unknownInstanceError(alexaRequest));
     }
 }
 
@@ -190,12 +190,12 @@ function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
     switch (alexaRequest.directive.header.name) {
-        case "SetRangeValue":
-            return Promise.resolve(setRangeValueHandler(alexaRequest));
-        case "AdjustRangeValue":
-            return Promise.resolve(adjustRangeValueHandler(alexaRequest));
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+    case "SetRangeValue":
+        return Promise.resolve(setRangeValueHandler(alexaRequest));
+    case "AdjustRangeValue":
+        return Promise.resolve(adjustRangeValueHandler(alexaRequest));
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
 }
 

@@ -50,8 +50,8 @@ function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
         return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
     switch (alexaRequest.directive.header.name) {
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
 }
 

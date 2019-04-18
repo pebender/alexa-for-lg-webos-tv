@@ -145,10 +145,10 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
     }
     switch (alexaRequest.directive.header.name) {
-        case "LaunchTarget":
-            return launchTargetHandler(alexaRequest, backendControl);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
+    case "LaunchTarget":
+        return launchTargetHandler(alexaRequest, backendControl);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
     }
 }
 

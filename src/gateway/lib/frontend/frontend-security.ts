@@ -1,5 +1,5 @@
-import {UninitializedClassError,
-    constants} from "../../../common";
+import {constants,
+    throwIfUninitializedClass} from "../../../common";
 import {DatabaseTable} from "../database";
 import {Mutex} from "async-mutex";
 
@@ -11,12 +11,6 @@ export class FrontendSecurity {
         this._initialized = false;
         this._initializeMutex = new Mutex();
         this._db = db;
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("FrontendSecurity", methodName);
-        }
     }
 
     public initialize(): Promise<void> {
@@ -32,7 +26,7 @@ export class FrontendSecurity {
     }
 
     public authorizeRoot(username: string, password: string): boolean {
-        this.throwIfNotInitialized("authorizeRoot");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "authorizeRoot");
         if (username === "HTTP" && password === constants.gatewayRootPassword) {
             return true;
         }
@@ -40,7 +34,7 @@ export class FrontendSecurity {
     }
 
     public async authorizeUser(username: string, password: string): Promise<boolean> {
-        this.throwIfNotInitialized("authorizeUser");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "authorizeUser");
         const record = await this._db.getRecord({"name": "password"});
         if (record === null || typeof record.value === "undefined" || record.value === null) {
             return false;
@@ -52,7 +46,7 @@ export class FrontendSecurity {
     }
 
     public async userPasswordIsNull(): Promise<boolean> {
-        this.throwIfNotInitialized("userPasswordIsNull");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "userPasswordIsNull");
         const record = await this._db.getRecord({"name": "password"});
         if (record === null || typeof record.value === "undefined" || record.value === null) {
             return true;
@@ -61,7 +55,7 @@ export class FrontendSecurity {
     }
 
     public setUserPassword(password: string | null): Promise<void> {
-        this.throwIfNotInitialized("setUserPassword");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "setUserPassword");
         return this._db.updateOrInsertRecord(
             {"name": "password"},
             {
@@ -72,7 +66,7 @@ export class FrontendSecurity {
     }
 
     public async getHostname(): Promise<string> {
-        this.throwIfNotInitialized("getHostname");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "getHostname");
         const record = await this._db.getRecord({"name": "hostname"});
         if (typeof record.value !== "string") {
             return "";
@@ -81,7 +75,7 @@ export class FrontendSecurity {
     }
 
     public async setHostname(hostname: string): Promise<void> {
-        this.throwIfNotInitialized("setHostname");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "setHostname");
         await this._db.updateOrInsertRecord(
             {"name": "hostname"},
             {

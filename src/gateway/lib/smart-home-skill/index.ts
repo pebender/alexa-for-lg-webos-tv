@@ -74,16 +74,16 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
         const udn = alexaRequest.getEndpointId();
         if (typeof udn === "undefined") {
             switch (alexaRequest.directive.header.namespace) {
-                case "Alexa.Authorization":
-                    return alexaAuthorization.handler(alexaRequest, backend);
-                case "Alexa.Discovery":
-                    return alexaDiscovery.handler(alexaRequest, backend);
-                default:
-                    return errorResponse(
-                        alexaRequest,
-                        "INTERNAL_ERROR",
-                        `Unknown namespace ${alexaRequest.directive.header.namespace}`
-                    );
+            case "Alexa.Authorization":
+                return alexaAuthorization.handler(alexaRequest, backend);
+            case "Alexa.Discovery":
+                return alexaDiscovery.handler(alexaRequest, backend);
+            default:
+                return errorResponse(
+                    alexaRequest,
+                    "INTERNAL_ERROR",
+                    `Unknown namespace ${alexaRequest.directive.header.namespace}`
+                );
             }
         }
         const backendControl = backend.control(udn);
@@ -95,26 +95,26 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
             );
         }
         switch (alexaRequest.directive.header.namespace) {
-            case "Alexa":
-                return addStates(await alexa.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.PowerController":
-                return addStates(await alexaPowerController.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.Speaker":
-                return addStates(await alexaSpeaker.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.ChannelController":
-                return addStates(await alexaChannelController.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.InputController":
-                return addStates(await alexaInputController.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.Launcher":
-                return addStates(await alexaLauncher.handler(alexaRequest, backendControl), backendControl);
-            case "Alexa.PlaybackController":
-                return addStates(await alexaPlaybackController.handler(alexaRequest, backendControl), backendControl);
-            default:
-                return errorResponse(
-                    alexaRequest,
-                    "INTERNAL_ERROR",
-                    `Unknown namespace ${alexaRequest.directive.header.namespace}`
-                );
+        case "Alexa":
+            return addStates(await alexa.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.PowerController":
+            return addStates(await alexaPowerController.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.Speaker":
+            return addStates(await alexaSpeaker.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.ChannelController":
+            return addStates(await alexaChannelController.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.InputController":
+            return addStates(await alexaInputController.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.Launcher":
+            return addStates(await alexaLauncher.handler(alexaRequest, backendControl), backendControl);
+        case "Alexa.PlaybackController":
+            return addStates(await alexaPlaybackController.handler(alexaRequest, backendControl), backendControl);
+        default:
+            return errorResponse(
+                alexaRequest,
+                "INTERNAL_ERROR",
+                `Unknown namespace ${alexaRequest.directive.header.namespace}`
+            );
         }
     } catch (error) {
         return errorToErrorResponse(alexaRequest, error);

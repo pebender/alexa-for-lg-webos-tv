@@ -5,7 +5,7 @@ import {FrontendInternal} from "./frontend-internal";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {SmartHomeSkill} from "../smart-home-skill";
-import {UninitializedClassError} from "../../../common";
+import {throwIfUninitializedClass} from "../../../common";
 
 export class Frontend {
     private _initialized: boolean;
@@ -19,12 +19,6 @@ export class Frontend {
         this._security = new FrontendSecurity(db);
         this._internal = new FrontendInternal(this._security);
         this._external = new FrontendExternal(this._security, customSkill, smartHomeSkill);
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("Frontend", methodName);
-        }
     }
 
     public initialize(): Promise<void> {
@@ -43,23 +37,23 @@ export class Frontend {
     }
 
     public start(): void {
-        this.throwIfNotInitialized("start");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "start");
         this._internal.start();
         this._external.start();
     }
 
     public get security(): FrontendSecurity {
-        this.throwIfNotInitialized("get+security");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "get+security");
         return this._security;
     }
 
     public get internal(): FrontendInternal {
-        this.throwIfNotInitialized("get+internal");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "get+internal");
         return this._internal;
     }
 
     public get external(): FrontendExternal {
-        this.throwIfNotInitialized("get+external");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "get+external");
         return this._external;
     }
 }

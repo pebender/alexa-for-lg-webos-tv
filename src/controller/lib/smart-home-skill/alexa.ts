@@ -20,13 +20,13 @@ function states(): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
-function reportStateHandler(alexaRequest: AlexaRequest): AlexaResponse {
-    return new AlexaResponse({
+function reportStateHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    return Promise.resolve(new AlexaResponse({
         "namespace": "Alexa",
         "name": "StateReport",
         "correlationToken": alexaRequest.getCorrelationToken(),
         "endpointId": alexaRequest.getEndpointId()
-    });
+    }));
 }
 
 function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
@@ -35,10 +35,10 @@ function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     }
 
     switch (alexaRequest.directive.header.name) {
-        case "ReportState":
-            return Promise.resolve(reportStateHandler(alexaRequest));
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+    case "ReportState":
+        return reportStateHandler(alexaRequest);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
     }
 }
 

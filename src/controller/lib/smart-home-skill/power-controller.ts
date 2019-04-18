@@ -60,12 +60,12 @@ function handler(alexaRequest: AlexaRequest): AlexaResponse {
         return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
     switch (alexaRequest.directive.header.name) {
-        case "TurnOff":
-            return turnOffHandler(alexaRequest);
-        case "TurnOn":
-            return turnOnHandler(alexaRequest);
-        default:
-            return directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
+    case "TurnOff":
+        return turnOffHandler(alexaRequest);
+    case "TurnOn":
+        return turnOnHandler(alexaRequest);
+    default:
+        return directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
     }
 }
 

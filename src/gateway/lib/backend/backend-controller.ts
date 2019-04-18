@@ -4,7 +4,7 @@ import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {UninitializedClassError} from "../../../common";
+import {throwIfUninitializedClass} from "../../../common";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
@@ -18,12 +18,6 @@ export class BackendController extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._db = db;
         this._controls = {};
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("BackendController", methodName);
-        }
     }
 
     private throwIfNotKnownTV(methodName: string, udn: UDN): void {
@@ -69,7 +63,7 @@ export class BackendController extends EventEmitter {
             });
         }
 
-        that.throwIfNotInitialized("tvUpsert");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "tvUpsert");
         try {
             const record = await this._db.getRecord({"$and": [
                 {"udn": tv.udn},
@@ -105,13 +99,13 @@ export class BackendController extends EventEmitter {
     }
 
     public control(udn: UDN): BackendControl {
-        this.throwIfNotInitialized("control");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "control");
         this.throwIfNotKnownTV("control", udn);
         return this._controls[udn];
     }
 
     public controls(): BackendControl[] {
-        this.throwIfNotInitialized("controls");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "controls");
         return Object.values(this._controls);
     }
 }

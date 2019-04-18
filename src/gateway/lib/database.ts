@@ -1,6 +1,6 @@
 import Datastore from "nedb";
 import {Mutex} from "async-mutex";
-import {UninitializedClassError} from "../../common";
+import {throwIfUninitializedClass} from "../../common";
 
 export interface DatabaseUpdate {
     [x: string]: boolean | number | string | object | null;
@@ -41,12 +41,6 @@ export class DatabaseTable {
         });
     }
 
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("DatabaseTable", methodName);
-        }
-    }
-
     public initialize(): Promise<void> {
         const that = this;
         return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
@@ -62,7 +56,7 @@ export class DatabaseTable {
     }
 
     public async clean(): Promise<void> {
-        this.throwIfNotInitialized("clean");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "clean");
         const query1: DatabaseQuery = {};
         query1[this._key] = {"$exists": false};
         const query2: DatabaseQuery = {};
@@ -86,7 +80,7 @@ export class DatabaseTable {
     }
 
     public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
-        this.throwIfNotInitialized("getRecord");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "getRecord");
         const record = await new Promise<DatabaseRecord>((resolve, reject): void => {
             this._db.findOne(
                 query,
@@ -103,7 +97,7 @@ export class DatabaseTable {
     }
 
     public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
-        this.throwIfNotInitialized("getRecords");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "getRecords");
         const records = await new Promise<DatabaseRecord[]>((resolve, reject): void => {
             this._db.find(
                 query,
@@ -120,7 +114,7 @@ export class DatabaseTable {
     }
 
     public async insertRecord(record: DatabaseRecord): Promise<void> {
-        this.throwIfNotInitialized("insertRecord");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "insertRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.insert(record, (error): void => {
                 if (error) {
@@ -135,7 +129,7 @@ export class DatabaseTable {
     }
 
     public async updateRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        this.throwIfNotInitialized("updateRecord");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "updateRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,
@@ -153,7 +147,7 @@ export class DatabaseTable {
     }
 
     public async updateOrInsertRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        this.throwIfNotInitialized("updateOrInsertRecord");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "updateOrInsertRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,

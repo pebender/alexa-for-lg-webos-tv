@@ -63,25 +63,25 @@ async function handler(event: AlexaRequest, context: AWSLambda.Context): Promise
         if (typeof alexaRequest.directive.endpoint === "undefined" ||
             typeof alexaRequest.directive.endpoint.endpointId === "undefined") {
             switch (alexaRequest.directive.header.namespace) {
-                case "Alexa.Authorization":
-                    return alexaAuthorization.handler(alexaRequest);
-                case "Alexa.Discovery":
-                    return alexaDiscovery.handler(alexaRequest);
-                default:
-                    return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+            case "Alexa.Authorization":
+                return alexaAuthorization.handler(alexaRequest);
+            case "Alexa.Discovery":
+                return alexaDiscovery.handler(alexaRequest);
+            default:
+                return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
             }
         } else if (alexaRequest.directive.endpoint.endpointId === "lg-webos-tv-gateway") {
             switch (alexaRequest.directive.header.namespace) {
-                case "Alexa":
-                    return stateHandler(await alexa.handler(alexaRequest));
-                case "Alexa.EndpointHealth":
-                    return stateHandler(await alexaEndpointHealth.handler(alexaRequest));
-                case "Alexa.PowerController":
-                    return stateHandler(await alexaPowerController.handler(alexaRequest));
-                case "Alexa.RangeController":
-                    return stateHandler(await alexaRangeController.handler(alexaRequest));
-                default:
-                    return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+            case "Alexa":
+                return stateHandler(await alexa.handler(alexaRequest));
+            case "Alexa.EndpointHealth":
+                return stateHandler(await alexaEndpointHealth.handler(alexaRequest));
+            case "Alexa.PowerController":
+                return stateHandler(await alexaPowerController.handler(alexaRequest));
+            case "Alexa.RangeController":
+                return stateHandler(await alexaRangeController.handler(alexaRequest));
+            default:
+                return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
             }
         } else {
             return remoteResponse(alexaRequest);

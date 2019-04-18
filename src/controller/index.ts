@@ -23,5 +23,4 @@ function skilllHandler(request: ASKModel.RequestEnvelope | AlexaRequest, context
     ));
 }
 
-
 exports.handler = skilllHandler;

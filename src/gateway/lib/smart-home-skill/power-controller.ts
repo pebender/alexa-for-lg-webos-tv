@@ -71,12 +71,12 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PowerController"));
     }
     switch (alexaRequest.directive.header.name) {
-        case "TurnOff":
-            return turnOffHandler(alexaRequest, backendControl);
-        case "TurnOn":
-            return turnOnHandler(alexaRequest, backendControl);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PowerController"));
+    case "TurnOff":
+        return turnOffHandler(alexaRequest, backendControl);
+    case "TurnOn":
+        return turnOnHandler(alexaRequest, backendControl);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PowerController"));
     }
 }
 

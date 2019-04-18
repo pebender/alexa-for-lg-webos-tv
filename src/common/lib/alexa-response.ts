@@ -67,7 +67,7 @@ export interface AlexaResponseContextProperty {
     value: boolean | number | string | object;
     timeOfSample: string;
     uncertaintyInMilliseconds: number;
-    [x: string]: boolean | number | string | object | undefined;
+    [x: string]: boolean | number | string | [] | object | undefined;
 }
 
 export interface AlexaResponseContext {
@@ -268,7 +268,7 @@ export class AlexaResponse {
         "namespace": string;
         "name": string;
         "instance"?: string;
-        "value": () => boolean | number | string | object;
+        "value": () => boolean | number | string | [] | object;
     }): Promise<AlexaResponseContextProperty> {
         const startTime = new Date();
         const value = await opts.value();

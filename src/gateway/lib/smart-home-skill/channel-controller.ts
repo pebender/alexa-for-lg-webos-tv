@@ -151,12 +151,12 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         namespaceErrorResponse(alexaRequest, "Alexa.ChannelController");
     }
     switch (alexaRequest.directive.header.name) {
-        case "ChangeChannel":
-            return changeChannelHandler(alexaRequest, backendControl);
-        case "SkipChannels":
-            return skipChannelsHandler(alexaRequest, backendControl);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.ChannelController"));
+    case "ChangeChannel":
+        return changeChannelHandler(alexaRequest, backendControl);
+    case "SkipChannels":
+        return skipChannelsHandler(alexaRequest, backendControl);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.ChannelController"));
     }
 }
 

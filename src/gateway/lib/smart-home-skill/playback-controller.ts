@@ -48,18 +48,18 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
     switch (alexaRequest.directive.header.name) {
-        case "Play":
-            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/play");
-        case "Pause":
-            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/pause");
-        case "Stop":
-            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/stop");
-        case "Rewind":
-            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/rewind");
-        case "FastForward":
-            return genericHandler(alexaRequest, backendControl, "ssap://media.controls/fastForward");
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
+    case "Play":
+        return genericHandler(alexaRequest, backendControl, "ssap://media.controls/play");
+    case "Pause":
+        return genericHandler(alexaRequest, backendControl, "ssap://media.controls/pause");
+    case "Stop":
+        return genericHandler(alexaRequest, backendControl, "ssap://media.controls/stop");
+    case "Rewind":
+        return genericHandler(alexaRequest, backendControl, "ssap://media.controls/rewind");
+    case "FastForward":
+        return genericHandler(alexaRequest, backendControl, "ssap://media.controls/fastForward");
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PlaybackController"));
     }
 }
 

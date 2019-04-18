@@ -198,14 +198,14 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
         namespaceErrorResponse(alexaRequest, "Alexa.Speaker");
     }
     switch (alexaRequest.directive.header.name) {
-        case "SetVolume":
-            return setVolumeHandler(alexaRequest, backendControl);
-        case "AdjustVolume":
-            return adjustVolumeHandler(alexaRequest, backendControl);
-        case "SetMute":
-            return setMuteHandler(alexaRequest, backendControl);
-        default:
-            return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Speaker"));
+    case "SetVolume":
+        return setVolumeHandler(alexaRequest, backendControl);
+    case "AdjustVolume":
+        return adjustVolumeHandler(alexaRequest, backendControl);
+    case "SetMute":
+        return setMuteHandler(alexaRequest, backendControl);
+    default:
+        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Speaker"));
     }
 }
 

@@ -18,7 +18,7 @@ import {IP, MAC, TV, UDN} from "../tv";
 import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {UninitializedClassError} from "../../../common";
+import {throwIfUninitializedClass} from "../../../common";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require("node-arp");
 import http from "axios";
@@ -46,12 +46,6 @@ export class BackendSearcher extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
         this._ssdpResponse = new SsdpClient();
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("BackendSearcher", methodName);
-        }
     }
 
     public initialize(): Promise<void> {
@@ -221,7 +215,7 @@ export class BackendSearcher extends EventEmitter {
     }
 
     public now(): void {
-        this.throwIfNotInitialized("now");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "now");
         this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }

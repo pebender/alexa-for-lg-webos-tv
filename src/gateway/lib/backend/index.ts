@@ -6,7 +6,7 @@ import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {UninitializedClassError} from "../../../common";
+import {throwIfUninitializedClass} from "../../../common";
 
 export {BackendControl} from "./backend-control";
 
@@ -22,12 +22,6 @@ export class Backend extends EventEmitter {
         this._initializeMutex = new Mutex();
         this._controller = new BackendController(db);
         this._searcher = new BackendSearcher();
-    }
-
-    private throwIfNotInitialized(methodName: string): void {
-        if (this._initialized === false) {
-            throw new UninitializedClassError("Backend", methodName);
-        }
     }
 
     public initialize(): Promise<void> {
@@ -55,18 +49,17 @@ export class Backend extends EventEmitter {
     }
 
     public start(): void {
-        this.throwIfNotInitialized("start");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "start");
         return this._searcher.now();
     }
 
     public control(udn: UDN): BackendControl {
-        this.throwIfNotInitialized("control");
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "control");
         return this._controller.control(udn);
     }
 
     public controls(): BackendControl[] {
-        this.throwIfNotInitialized("controls");
-
+        throwIfUninitializedClass(this._initialized, this.constructor.name, "controls");
         return this._controller.controls();
     }
 }
