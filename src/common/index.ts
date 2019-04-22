@@ -5,8 +5,6 @@ export enum constants {
     "gatewayUserPassword" = "37f0098320b4478980ceee37acdc208bd830127bfc51d2136c274f280852a58b70b2d9351266a68492cb4284c99869a417866ec5dd0d02ac1788d8ab0295c0c6"
 }
 export * from "./lib/error-classes";
-export * from "./lib/lgtv-request";
-export * from "./lib/lgtv-response";
 export * from "./lib/alexa-request";
 export * from "./lib/alexa-response";
 export * from "./lib/alexa-error-responses";

@@ -1,6 +1,5 @@
-import {LGTVRequest,
-    LGTVResponse} from "../../../common";
 import {Backend} from "../backend";
+import LGTV from "lgtv2";
 
 /*
  *******************************************************************************
@@ -10,12 +9,12 @@ import {Backend} from "../backend";
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-export async function handler(event: {udn: string; lgtvRequest: LGTVRequest}, backend: Backend): Promise<LGTVResponse> {
+export async function handler(event: {udn: string; lgtvRequest: LGTV.Request}, backend: Backend): Promise<LGTV.Response> {
     try {
         const commandResponse = await backend.control(event.udn).lgtvCommand(event.lgtvRequest);
         return commandResponse;
     } catch (error) {
-        const body: LGTVResponse = {
+        const body: LGTV.Response = {
             "returnValue": false,
             "error": {
                 "name": error.name,
@@ -32,7 +31,7 @@ export class CustomSkill {
         this.backend = backend;
     }
 
-    public handler(event: {udn: string; lgtvRequest: LGTVRequest}): Promise<LGTVResponse> {
+    public handler(event: {udn: string; lgtvRequest: LGTV.Request}): Promise<LGTV.Response> {
         return handler(event, this.backend);
     }
 }

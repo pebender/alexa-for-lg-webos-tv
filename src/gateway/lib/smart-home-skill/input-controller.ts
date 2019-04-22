@@ -2,14 +2,11 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    LGTVRequest,
-    LGTVResponseExternalInputList,
-    LGTVResponseExternalInputListDevice,
-    LGTVResponseForgroundAppInfo,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
+import LGTV from "lgtv2";
 
 const alexaToLGTV: {[key: string]: string} = {
     "HDMI 1": "HDMI_1",
@@ -74,15 +71,15 @@ function capabilities(backendControl: BackendControl): Promise<AlexaResponseEven
 
 function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     async function value(): Promise<string | null> {
-        async function getExternalInputList(): Promise<LGTVResponseExternalInputListDevice[]> {
+        async function getExternalInputList(): Promise<LGTV.ResponseExternalInputListDevice[]> {
             if (backendControl.getPowerState() === "OFF") {
                 return [];
             }
 
-            const lgtvRequest: LGTVRequest = {
+            const lgtvRequest: LGTV.Request = {
                 "uri": "ssap://tv/getExternalInputList"
             };
-            const lgtvResponse: LGTVResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseExternalInputList);
+            const lgtvResponse: LGTV.ResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseExternalInputList);
             if (typeof lgtvResponse.devices === "undefined") {
                 return [];
             }
@@ -96,10 +93,10 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
             if (backendControl.getPowerState() === "OFF") {
                 return null;
             }
-            const lgtvRequest: LGTVRequest = {
+            const lgtvRequest: LGTV.Request = {
                 "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
             };
-            const lgtvResponse: LGTVResponseForgroundAppInfo = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseForgroundAppInfo);
+            const lgtvResponse: LGTV.ResponseForgroundAppInfo = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseForgroundAppInfo);
             if (typeof lgtvResponse.appId === "undefined") {
                 throw new Error("invalid LGTVResponse message");
             }
@@ -138,15 +135,15 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
 }
 
 async function selectInputHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
-    async function getExternalInputList(): Promise<LGTVResponseExternalInputListDevice[]> {
+    async function getExternalInputList(): Promise<LGTV.ResponseExternalInputListDevice[]> {
         if (backendControl.getPowerState() === "OFF") {
             return [];
         }
 
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://tv/getExternalInputList"
         };
-        const lgtvResponse: LGTVResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseExternalInputList);
+        const lgtvResponse: LGTV.ResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseExternalInputList);
         if (typeof lgtvResponse.devices === "undefined") {
             return [];
         }
@@ -160,7 +157,7 @@ async function selectInputHandler(alexaRequest: AlexaRequest, backendControl: Ba
         return alexaRequest.directive.payload.input.toUpperCase();
     }
 
-    function mapInput(inputList: LGTVResponseExternalInputListDevice[], inputItem: string): string | null {
+    function mapInput(inputList: LGTV.ResponseExternalInputListDevice[], inputItem: string): string | null {
         let input = inputItem;
         if (typeof alexaToLGTV[inputItem] !== "undefined") {
             input = alexaToLGTV[inputItem];
@@ -203,7 +200,7 @@ async function selectInputHandler(alexaRequest: AlexaRequest, backendControl: Ba
             });
         }
 
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://tv/switchInput",
             "payload": {"inputId": input}
         };

@@ -2,10 +2,11 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    LGTVRequest,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
+import LGTV from "lgtv2";
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
@@ -31,7 +32,7 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
 }
 
 async function genericHandler(alexaRequest: AlexaRequest, backendControl: BackendControl, lgtvRequestURI: string): Promise<AlexaResponse> {
-    const lgtvRequest: LGTVRequest = {
+    const lgtvRequest: LGTV.Request = {
         "uri": lgtvRequestURI
     };
     await backendControl.lgtvCommand(lgtvRequest);

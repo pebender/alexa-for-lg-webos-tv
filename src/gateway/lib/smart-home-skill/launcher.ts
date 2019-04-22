@@ -2,12 +2,11 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    LGTVRequest,
-    LGTVResponse,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
+import LGTV from "lgtv2";
 
 const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
     // Amazon Video
@@ -92,10 +91,10 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
     }
 
     async function value(): Promise<{identifier: string; name: string} | null> {
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://com.webos.applicationManager/getForegroundAppInfo"
         };
-        const input: LGTVResponse = await backendControl.lgtvCommand(lgtvRequest);
+        const input: LGTV.Response = await backendControl.lgtvCommand(lgtvRequest);
         if (typeof input.appId !== "string" ||
             typeof lgtvToAlexa[input.appId] === "undefined") {
             return null;
@@ -126,7 +125,7 @@ async function launchTargetHandler(alexaRequest: AlexaRequest, backendControl: B
             `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
         );
     }
-    const lgtvRequest: LGTVRequest = {
+    const lgtvRequest: LGTV.Request = {
         "uri": "ssap://system.launcher/launch",
         "payload": alexaToLGTV[alexaRequest.directive.payload.identifier]
     };

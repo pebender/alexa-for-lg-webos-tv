@@ -2,12 +2,12 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    LGTVRequest,
     directiveErrorResponse,
     errorResponse,
     errorToErrorResponse,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
+import LGTV from "lgtv2";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require("isnumeric");
 
@@ -39,8 +39,8 @@ function unknownChannelError(alexaRequest: AlexaRequest, backendControl: Backend
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function changeChannelHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
-    function getCommand(): LGTVRequest | null {
-        const lgtvRequest: LGTVRequest = {
+    function getCommand(): LGTV.Request | null {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://tv/openChannel"
         };
         if (typeof alexaRequest.directive.payload !== "undefined") {
@@ -85,10 +85,10 @@ async function changeChannelHandler(alexaRequest: AlexaRequest, backendControl: 
         if (typeof lgtvRequest.payload === "undefined") {
             return null;
         }
-        return (lgtvRequest as LGTVRequest);
+        return (lgtvRequest as LGTV.Request);
     }
 
-    async function setChannel(lgtvRequest: LGTVRequest | null): Promise<AlexaResponse> {
+    async function setChannel(lgtvRequest: LGTV.Request | null): Promise<AlexaResponse> {
         if (lgtvRequest === null) {
             return unknownChannelError(alexaRequest, backendControl);
         }

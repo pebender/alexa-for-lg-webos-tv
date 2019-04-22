@@ -2,12 +2,11 @@ import {AlexaRequest,
     AlexaResponse,
     AlexaResponseContextProperty,
     AlexaResponseEventPayloadEndpointCapability,
-    LGTVRequest,
-    LGTVResponseVolume,
     directiveErrorResponse,
     errorResponse,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
+import LGTV from "lgtv2";    
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
     return [
@@ -34,10 +33,10 @@ function capabilities(backendControl: BackendControl): Promise<AlexaResponseEven
 function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     function getVolumeState(): Promise<AlexaResponseContextProperty> {
         async function value(): Promise<number> {
-            const lgtvRequest: LGTVRequest = {
+            const lgtvRequest: LGTV.Request = {
                 "uri": "ssap://audio/getVolume"
             };
-            const lgtvResponse: LGTVResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseVolume);
+            const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume);
             if (typeof lgtvResponse.volume !== "number") {
                 throw new Error("invalid lgtvCommand response");
             }
@@ -54,10 +53,10 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
 
     function getMutedState(): Promise<AlexaResponseContextProperty> {
         async function value(): Promise<boolean> {
-            const lgtvRequest: LGTVRequest = {
+            const lgtvRequest: LGTV.Request = {
                 "uri": "ssap://audio/getVolume"
             };
-            const lgtvResponse: LGTVResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseVolume);
+            const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume);
             if (typeof lgtvResponse.muted !== "boolean") {
                 throw new Error("invalid lgtvCommand response");
             }
@@ -92,7 +91,7 @@ async function setVolumeHandler(alexaRequest: AlexaRequest, backendControl: Back
     }
 
     async function setVolume(volume: number): Promise<AlexaResponse> {
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
@@ -120,10 +119,10 @@ async function setVolumeHandler(alexaRequest: AlexaRequest, backendControl: Back
 
 async function adjustVolumeHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     async function getVolume(): Promise<number> {
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://audio/getVolume"
         };
-        const lgtvResponse: LGTVResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTVResponseVolume);
+        const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume);
         if (typeof lgtvResponse.volume === "undefined") {
             throw new Error("the T.V. did not return it's volume");
         }
@@ -147,7 +146,7 @@ async function adjustVolumeHandler(alexaRequest: AlexaRequest, backendControl: B
     }
 
     async function setVolume(volume: number): Promise<AlexaResponse> {
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://audio/setVolume",
             "payload": {"volume": volume}
         };
@@ -175,7 +174,7 @@ async function adjustVolumeHandler(alexaRequest: AlexaRequest, backendControl: B
 
 function setMuteHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
     async function setMute(): Promise<AlexaResponse> {
-        const lgtvRequest: LGTVRequest = {
+        const lgtvRequest: LGTV.Request = {
             "uri": "ssap://audio/setMute",
             "payload": {"mute": (alexaRequest.directive.payload.mute as boolean)}
         };

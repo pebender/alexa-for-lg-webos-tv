@@ -1,14 +1,12 @@
 /* eslint-disable max-lines */
 import * as wol from "wake_on_lan";
-import {LGTVRequest,
-    LGTVResponse,
-    throwIfUninitializedClass} from "../../../common";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
+import LGTV from "lgtv2";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const LGTV = require("lgtv2");
+import {throwIfUninitializedClass} from "../../../common";
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";
 import uuid from "uuid/v4";
@@ -20,11 +18,13 @@ export class BackendControl extends EventEmitter {
     private _connecting: boolean;
     private _powerOn: boolean;
     private _tv: TV;
-    private _connection: any;
+    private _connection: LGTV;
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
     public constructor(db: DatabaseTable, tv: TV) {
         super();
+
+        const that = this;
 
         this._initialized = false;
         this._initializeMutex = new Mutex();
@@ -39,16 +39,8 @@ export class BackendControl extends EventEmitter {
             "mac": tv.mac,
             "key": ""
         };
-        if (("key" in tv) && tv.key !== null) {
-            this._tv.key = tv.key;
-        }
-        this._connection = null;
-        this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
-        this._ssdpResponse = new SsdpClient();
-    }
 
-    public initialize(): Promise<void> {
-        const that: BackendControl = this;
+        let clientKey = (typeof tv.key === "string") ? tv.key : "";
 
         function saveKey(key: string, callback: (error: Error) => void): void {
             that._db.updateRecord(
@@ -61,6 +53,39 @@ export class BackendControl extends EventEmitter {
                     return;
                 });
         }
+
+        this._connection = new LGTV({
+            "url": this._tv.url,
+            "timeout": 10000,
+            "reconnect": 0,
+            "clientKey": clientKey,
+            "saveKey": saveKey
+        });
+
+        this._connection.on("error", (error: NodeJS.ErrnoException): void => {
+            that._connecting = false;
+            if (error && error.code !== "EHOSTUNREACH") {
+                that.emit("error", error, that._tv.udn);
+            }
+        });
+        // eslint-disable-next-line no-unused-vars
+        this._connection.on("connecting", (): void => {
+            that._connecting = true;
+        });
+        this._connection.on("connect", (): void => {
+            that._connecting = false;
+            that._powerOn = true;
+        });
+        this._connection.on("close", (): void => {
+            that._connecting = false;
+        });
+
+        this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
+        this._ssdpResponse = new SsdpClient();
+    }
+
+    public initialize(): Promise<void> {
+        const that: BackendControl = this;
 
         function ssdpConnectHandler(headers: SsdpHeaders): void {
             if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
@@ -76,48 +101,19 @@ export class BackendControl extends EventEmitter {
                 that._connection.disconnect();
             }
         }
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve, reject): void => {
+
+        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
             if (that._initialized === true) {
                 resolve();
             }
 
-            let clientKey = "";
-            if (typeof that._tv.key === "string") {
-                clientKey = that._tv.key;
-                Reflect.deleteProperty(that._tv, "key");
-            } else {
-                reject(new Error("initial LGTV key not set"));
-            }
-
-            that._connection = new LGTV({
-                "url": that._tv.url,
-                "timeout": 10000,
-                "reconnect": 0,
-                "clientKey": clientKey,
-                "saveKey": saveKey
-            });
-            that._connection.on("error", (error: NodeJS.ErrnoException): void => {
-                that._connecting = false;
-                if (error && error.code !== "EHOSTUNREACH") {
-                    that.emit("error", error, that._tv.udn);
-                }
-            });
-            // eslint-disable-next-line no-unused-vars
-            that._connection.on("connecting", (): void => {
-                that._connecting = true;
-            });
-            that._connection.on("connect", (): void => {
-                that._connecting = false;
-                that._powerOn = true;
-            });
-            that._connection.on("close", (): void => {
-                that._connecting = false;
-            });
             that._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
             that._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
             that._ssdpNotify.start();
             that._ssdpResponse.on("response", ssdpConnectHandler);
             that._initialized = true;
+
+            resolve();
         }));
     }
 
@@ -241,16 +237,16 @@ export class BackendControl extends EventEmitter {
             : "OFF";
     }
 
-    public async lgtvCommand(lgtvRequest: LGTVRequest): Promise<LGTVResponse> {
+    public async lgtvCommand(lgtvRequest: LGTV.Request): Promise<LGTV.Response> {
         throwIfUninitializedClass(this._initialized, this.constructor.name, "lgtvCommand");
-        let lgtvResponse: LGTVResponse = {
+        let lgtvResponse: LGTV.Response = {
             "returnValue": false
         };
         if (lgtvRequest.payload === null) {
-            lgtvResponse = await new Promise<LGTVResponse>((resolve, reject): void => {
+            lgtvResponse = await new Promise<LGTV.Response>((resolve, reject): void => {
                 this._connection.request(
                     lgtvRequest.uri,
-                    (error: Error, response: LGTVResponse): void => {
+                    (error: Error, response: LGTV.Response): void => {
                         if (error) {
                             reject(error);
                             return;
@@ -263,8 +259,8 @@ export class BackendControl extends EventEmitter {
             lgtvResponse = await new Promise((resolve, reject): void => {
                 this._connection.request(
                     lgtvRequest.uri,
-                    lgtvRequest.payload,
-                    (error: Error, response: LGTVResponse): void => {
+                    (lgtvRequest.payload as LGTV.RequestPayload),
+                    (error: Error, response: LGTV.Response): void => {
                         if (error) {
                             reject(error);
                             return;
