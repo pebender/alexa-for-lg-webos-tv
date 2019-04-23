@@ -117,13 +117,13 @@ async function handlerWithLogging(alexaRequest: AlexaRequest, context: AWSLambda
 
 export class SmartHomeSkill {
     // eslint-disable-next-line class-methods-use-this
-    public async handler(event: AlexaRequest, context: AWSLambda.Context, callback: (error: Error | null, response: AlexaResponse | null) => void): Promise<void> {
+    public async handler(event: AlexaRequest, context: AWSLambda.Context, callback: (error: Error | null, response?: AlexaResponse) => void): Promise<void> {
         try {
             const response = await handlerWithLogging(event, context);
             callback(null, response);
             return;
         } catch (error) {
-            callback(error, null);
+            callback(error);
             // eslint-disable-next-line no-useless-return
             return;
         }

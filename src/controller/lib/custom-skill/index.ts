@@ -84,7 +84,7 @@ const skillHandler = ASK.SkillBuilders.custom().
 
 export class CustomSkill {
     // eslint-disable-next-line class-methods-use-this
-    public handler(requestEnvelope: ASKModel.RequestEnvelope, context: ASKModel.Context, callback: (err: Error, result?: any) => void): void {
+    public handler(requestEnvelope: ASKModel.RequestEnvelope, context: ASKModel.Context, callback: (err: Error, responseEnvelope?: ASKModel.ResponseEnvelope) => void): void {
         return skillHandler(requestEnvelope, context, callback);
     }
 }
