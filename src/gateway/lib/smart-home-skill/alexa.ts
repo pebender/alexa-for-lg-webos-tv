@@ -18,7 +18,7 @@ function capabilities(backendControl: BackendControl): Promise<AlexaResponseEven
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(backend: BackendControl): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
     return [];
 }
 
