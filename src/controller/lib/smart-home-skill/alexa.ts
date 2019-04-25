@@ -5,15 +5,10 @@ import {AlexaRequest,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../common";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa",
-            "version": "3"
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa"
+    })];
 }
 
 function states(): Promise<AlexaResponseContextProperty>[] {

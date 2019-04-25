@@ -13,13 +13,9 @@ const isNumeric = require("isnumeric");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa.ChannelController",
-            "version": "3"
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa",
+    })];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -87,11 +87,19 @@ declare namespace LGTV {
         payload?: LGTV.RequestPayload;
     }
 
+    /*
+     * Response to:
+     * "ssap://audio/setMute" {"muted": boolean}
+     */
     export interface Response {
         "returnValue": boolean;
-        [x: string]: boolean | number | string | object;
+        [x: string]: boolean | number | string | object | undefined;
     }
 
+    /*
+     * Response to:
+     * "ssap://audio/getVolume"
+     */
     export interface ResponseVolume extends Response {
         "scenario": string;
         "volume": number;
@@ -99,12 +107,20 @@ declare namespace LGTV {
         "volumeMax": number;
     }
 
+    /*
+     * Response to:
+     * "ssap://com.webos.applicationManager/getForegroundAppInfo"
+     */
     export interface ResponseForgroundAppInfo extends Response {
         "appId": string;
         "windowId": string;
         "processId": string;
     }
 
+    /*
+     * Response to:
+     * "ssap://tv/getExternalInputList"
+     */
     export interface ResponseExternalInputListDevice extends Response {
         "id": string;
         "label": string;
@@ -112,14 +128,18 @@ declare namespace LGTV {
         "appId": string;
         "icon": string;
         "modified": boolean;
+        "spdProductDescription"?: string;
+        "spdVendorName"?: string;
+        "spdSourceDeviceInfo"?: string;
+        "lastUniqueId": number;
         "subList": {
             [x: string]: boolean | number | string;
         }[];
+        "oneDepth"?: boolean;
         "subCount": number;
         "connected": boolean;
         "favorite": boolean;
     }
-
     export interface ResponseExternalInputList extends Response {
         "devices": ResponseExternalInputListDevice[];
     }

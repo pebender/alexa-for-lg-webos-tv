@@ -5,24 +5,11 @@ import {AlexaRequest,
     directiveErrorResponse,
     namespaceErrorResponse} from "../../../common";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa.PowerController",
-            "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "powerState"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa.PowerController",
+        "propertyNames": ["powerState"]
+    })];
 }
 
 function states(): Promise<AlexaResponseContextProperty>[] {

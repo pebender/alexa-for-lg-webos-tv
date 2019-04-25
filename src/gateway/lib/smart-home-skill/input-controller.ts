@@ -51,22 +51,10 @@ const lgtvToAlexa: {[key: string]: string} = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa.InputController",
-            "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "input"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa",
+        "propertyNames": ["input"]
+    })];
 }
 
 function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {

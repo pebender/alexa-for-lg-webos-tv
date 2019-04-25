@@ -7,27 +7,13 @@ import {AlexaRequest,
     namespaceErrorResponse} from "../../../common";
 import {BackendControl} from "../backend";
 import LGTV from "lgtv2";    
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa.Speaker",
-            "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "volume"
-                    },
-                    {
-                        "name": "muted"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa.Speaker",
+        "propertyNames": ["volume", "muted"]
+    })];
 }
 
 function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {

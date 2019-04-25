@@ -6,24 +6,11 @@ import {AlexaRequest,
     namespaceErrorResponse} from "../../../common";
 import {Gateway} from "../gateway-api";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [
-        Promise.resolve({
-            "type": "AlexaInterface",
-            "interface": "Alexa.EndpointHealth",
-            "version": "3",
-            "properties": {
-                "supported": [
-                    {
-                        "name": "connectivity"
-                    }
-                ],
-                "proactivelyReported": false,
-                "retrievable": true
-            }
-        })
-    ];
+    return [AlexaResponse.buildPayloadEndpointCapability({
+        "namespace": "Alexa.EndpointHealth",
+        "propertyNames": ["connectivity"]
+    })];
 }
 
 function states(): Promise<AlexaResponseContextProperty>[] {

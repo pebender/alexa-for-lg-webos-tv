@@ -281,4 +281,23 @@ export class AlexaResponse {
             "uncertaintyInMilliseconds": endTime.getTime() - startTime.getTime()
         };
     }
+
+    public static buildPayloadEndpointCapability(opts: {
+        "namespace": string;
+        "propertyNames"?: string[];
+    }): Promise<AlexaResponseEventPayloadEndpointCapability> {
+        let capability: AlexaResponseEventPayloadEndpointCapability = {
+            "type": "AlexaInterface",
+            "interface": opts.namespace,
+            "version": "3"
+        };
+        if (typeof opts.propertyNames !== "undefined") {
+            capability.properties = {
+                "supported": opts.propertyNames.map((name: string): {"name": string} => ({"name": name})),
+                "proactivelyReported": false,
+                "retrievable": true
+            };
+        }
+        return Promise.resolve(capability); 
+    }
 }
