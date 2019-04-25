@@ -270,8 +270,6 @@ export class BackendControl extends EventEmitter {
                 );
             });
         }
-console.log(JSON.stringify(lgtvRequest, null, 2));
-console.log(JSON.stringify(lgtvResponse, null, 2));
         if (typeof lgtvResponse.returnValue === "undefined") {
             throw new Error("'LGTVResponse' does not contain property 'returnValue'");
         }
