@@ -13,16 +13,16 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "ask-sdk": "2.5.1",
-    "ask-sdk-dynamodb-persistence-adapter": "2.5.1",
+    "ask-sdk": "2.5.2",
+    "ask-sdk-dynamodb-persistence-adapter": "2.5.2",
     "certnames": "1.0.4",
     "uuid": "3.3.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.24",
-    "@types/node": "11.13.4",
+    "@types/node": "11.13.8",
     "@types/uuid": "3.4.4",
-    "typescript": "3.4.3",
+    "typescript": "3.4.5",
     "npm-pack-zip": "1.2.7"
   },
   "bundledDependencies": [
