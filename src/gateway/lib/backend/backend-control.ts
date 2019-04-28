@@ -13,31 +13,30 @@ import uuid from "uuid/v4";
 
 export class BackendControl extends EventEmitter {
     private _initialized: boolean;
-    private _initializeMutex: Mutex;
-    private _db: DatabaseTable;
+    private _poweredOn: boolean;
     private _connecting: boolean;
-    private _powerOn: boolean;
-    private _tv: TV;
-    private _connection: LGTV;
-    private _ssdpNotify: SsdpClient;
-    private _ssdpResponse: SsdpClient;
+    private readonly _db: DatabaseTable;
+    private readonly _tv: TV;
+    private readonly _initializeMutex: Mutex;
+    private readonly _connection: LGTV;
+    private readonly _ssdpNotify: SsdpClient;
+    private readonly _ssdpResponse: SsdpClient;
     public constructor(db: DatabaseTable, tv: TV) {
         super();
 
-        const that = this;
+        const that: BackendControl = this;
 
         this._initialized = false;
-        this._initializeMutex = new Mutex();
-        this._db = db;
+        this._poweredOn = false;
         this._connecting = false;
-        this._powerOn = false;
+
+        this._db = db;
         this._tv = {
             "udn": tv.udn,
             "name": tv.name,
             "ip": tv.ip,
             "url": tv.url,
             "mac": tv.mac,
-            "key": ""
         };
 
         let clientKey = (typeof tv.key === "string") ? tv.key : "";
@@ -46,13 +45,10 @@ export class BackendControl extends EventEmitter {
             that._db.updateRecord(
                 {"udn": that._tv.udn},
                 {"$set": {"key": key}}
-            ).
-                catch((error): void => {
-                    callback(error);
-                    // eslint-disable-next-line no-useless-return
-                    return;
-                });
+            ).catch((error): void => callback(error));
         }
+
+        this._initializeMutex = new Mutex();
 
         this._connection = new LGTV({
             "url": this._tv.url,
@@ -74,7 +70,7 @@ export class BackendControl extends EventEmitter {
         });
         this._connection.on("connect", (): void => {
             that._connecting = false;
-            that._powerOn = true;
+            that._poweredOn = true;
         });
         this._connection.on("close", (): void => {
             that._connecting = false;
@@ -82,11 +78,6 @@ export class BackendControl extends EventEmitter {
 
         this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
         this._ssdpResponse = new SsdpClient();
-    }
-
-    public initialize(): Promise<void> {
-        const that: BackendControl = this;
-
         function ssdpConnectHandler(headers: SsdpHeaders): void {
             if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
                 if (that._connecting === false) {
@@ -97,45 +88,41 @@ export class BackendControl extends EventEmitter {
 
         function ssdpDisconnectHandler(headers: SsdpHeaders): void {
             if (headers.USN === `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`) {
-                that._powerOn = false;
+                that._poweredOn = false;
                 that._connection.disconnect();
             }
         }
+
+        that._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
+        that._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
+        that._ssdpResponse.on("response", ssdpConnectHandler);
+    }
+
+    public initialize(): Promise<void> {
+        const that: BackendControl = this;
 
         return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
             if (that._initialized === true) {
                 resolve();
             }
-
-            that._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
-            that._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
             that._ssdpNotify.start();
-            that._ssdpResponse.on("response", ssdpConnectHandler);
             that._initialized = true;
-
             resolve();
         }));
     }
 
     public get tv(): TV {
         throwIfUninitializedClass(this._initialized, this.constructor.name, "get+tv");
-        const tv = {
-            "udn": this._tv.udn,
-            "name": this._tv.name,
-            "ip": this._tv.ip,
-            "url": this._tv.url,
-            "mac": this._tv.mac
-        };
-        return tv;
+        return Object.assign({}, this._tv);
     }
 
     public turnOff(): boolean {
         throwIfUninitializedClass(this._initialized, this.constructor.name, "turnOff");
-        const lgtvCommand = {
+        const lgtvCommand: LGTV.Request = {
             "uri": "ssap://system/turnOff"
         };
         this._connection.request(lgtvCommand.uri);
-        this._powerOn = false;
+        this._poweredOn = false;
         return true;
     }
 
@@ -159,7 +146,7 @@ export class BackendControl extends EventEmitter {
         throwIfUninitializedClass(this._initialized, this.constructor.name, "turnOn");
 
         return new Promise<boolean>((resolveTurnOn): void => {
-            that._powerOn = false;
+            that._poweredOn = false;
             that._connection.disconnect();
             let finishTimeoutObject: NodeJS.Timeout | null = null;
             let monitorTimeoutObject: NodeJS.Timeout | null = null;
@@ -215,7 +202,7 @@ export class BackendControl extends EventEmitter {
             finishTimeoutObject = setTimeout(finish, 7000, false);
 
             monitorTimeoutObject = startInterval(100, (): void => {
-                if (that._powerOn === true) {
+                if (that._poweredOn === true) {
                     finish(true);
                 }
             });
@@ -232,7 +219,7 @@ export class BackendControl extends EventEmitter {
 
     public getPowerState(): "OFF" | "ON" {
         throwIfUninitializedClass(this._initialized, this.constructor.name, "getPowerState");
-        return this._powerOn
+        return this._poweredOn
             ? "ON"
             : "OFF";
     }

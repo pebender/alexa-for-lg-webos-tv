@@ -5,12 +5,12 @@ import {Mutex} from "async-mutex";
 
 export class FrontendSecurity {
     private _initialized: boolean;
-    private _initializeMutex: Mutex;
-    private _db: DatabaseTable;
+    private readonly _db: DatabaseTable;
+    private readonly _initializeMutex: Mutex;
     public constructor(db: DatabaseTable) {
         this._initialized = false;
-        this._initializeMutex = new Mutex();
         this._db = db;
+        this._initializeMutex = new Mutex();
     }
 
     public initialize(): Promise<void> {

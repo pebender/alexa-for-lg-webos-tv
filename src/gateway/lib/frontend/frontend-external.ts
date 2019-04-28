@@ -19,11 +19,11 @@ import expressCore from "express-serve-static-core";
 
 export class FrontendExternal {
     private _initialized: boolean;
-    private _initializeMutex: Mutex;
-    private _security: FrontendSecurity;
-    private _customSkill: CustomSkill;
-    private _smartHomeSkill: SmartHomeSkill;
-    private _server: expressCore.Express;
+    private readonly _initializeMutex: Mutex;
+    private readonly _security: FrontendSecurity;
+    private readonly _customSkill: CustomSkill;
+    private readonly _smartHomeSkill: SmartHomeSkill;
+    private readonly _server: expressCore.Express;
     public constructor(serverSecurity: FrontendSecurity, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
         this._initialized = false;
         this._initializeMutex = new Mutex();

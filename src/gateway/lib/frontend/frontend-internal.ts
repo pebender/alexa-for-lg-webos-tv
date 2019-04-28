@@ -6,9 +6,9 @@ import expressCore from "express-serve-static-core";
 
 export class FrontendInternal {
     private _initialized: boolean;
-    private _initializeMutex: Mutex;
-    private _security: FrontendSecurity;
-    private _server: expressCore.Express;
+    private readonly _initializeMutex: Mutex;
+    private readonly _security: FrontendSecurity;
+    private readonly _server: expressCore.Express;
     public constructor(serverSecurity: FrontendSecurity) {
         this._initialized = false;
         this._initializeMutex = new Mutex();

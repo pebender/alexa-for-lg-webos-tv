@@ -8,9 +8,9 @@ import {throwIfUninitializedClass} from "../../../common";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;
-    private _initializeMutex = new Mutex();
-    private _db: DatabaseTable;
-    private _controls: {[x: string]: BackendControl};
+    private readonly _initializeMutex = new Mutex();
+    private readonly _db: DatabaseTable;
+    private readonly _controls: {[x: string]: BackendControl};
     public constructor (db: DatabaseTable) {
         super();
 

@@ -12,9 +12,9 @@ export {BackendControl} from "./backend-control";
 
 export class Backend extends EventEmitter {
     private _initialized: boolean;
-    private _initializeMutex: Mutex;
-    private _controller: BackendController;
-    private _searcher: BackendSearcher;
+    private readonly _initializeMutex: Mutex;
+    private readonly _controller: BackendController;
+    private readonly _searcher: BackendSearcher;
     public constructor(db: DatabaseTable) {
         super();
 
