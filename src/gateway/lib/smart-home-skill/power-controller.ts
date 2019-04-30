@@ -1,26 +1,20 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    errorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from  "../../../common/alexa";
 import {BackendControl} from "../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa.PowerController",
         "propertyNames": ["powerState"]
     })];
 }
 
-function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
     function value(): "ON" | "OFF" {
         return backendControl.getPowerState();
     }
 
-    const powerStateState = AlexaResponse.buildContextProperty({
+    const powerStateState = ASH.Response.buildContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
         "value": value
@@ -28,12 +22,12 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
     return [powerStateState];
 }
 
-async function turnOffHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+async function turnOffHandler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
     const poweredOff = await backendControl.turnOff();
     if (poweredOff === false) {
-        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`);
+        return ASH.errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`);
     }
-    return new AlexaResponse({
+    return new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -41,12 +35,12 @@ async function turnOffHandler(alexaRequest: AlexaRequest, backendControl: Backen
     });
 }
 
-async function turnOnHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+async function turnOnHandler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
     const poweredOn = await backendControl.turnOn();
     if (poweredOn === false) {
-        return errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`);
+        return ASH.errorResponse(alexaRequest, "INTERNAL_ERROR", `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`);
     }
-    return new AlexaResponse({
+    return new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -54,9 +48,9 @@ async function turnOnHandler(alexaRequest: AlexaRequest, backendControl: Backend
     });
 }
 
-function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+function handler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa.PowerController") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.PowerController"));
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, "Alexa.PowerController"));
     }
     switch (alexaRequest.directive.header.name) {
     case "TurnOff":
@@ -64,7 +58,7 @@ function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Pr
     case "TurnOn":
         return turnOnHandler(alexaRequest, backendControl);
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.PowerController"));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

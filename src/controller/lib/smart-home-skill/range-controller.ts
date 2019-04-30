@@ -1,12 +1,6 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    errorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 
-function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<AlexaResponseEventPayloadEndpointCapability> {
+function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<ASH.ResponseEventPayloadEndpointCapability> {
     const textsList: {[x: string]: string[]} = {
         "A": [
             "Alpha",
@@ -78,7 +72,7 @@ function ipAddressOctetCapability(octet: "A" | "B" | "C" | "D"): Promise<AlexaRe
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
     return [
         ipAddressOctetCapability("A"),
         ipAddressOctetCapability("B"),
@@ -87,7 +81,7 @@ function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] 
     ];
 }
 
-function states(): Promise<AlexaResponseContextProperty>[] {
+function states(): Promise<ASH.ResponseContextProperty>[] {
     function valueA(): string {
         return "0";
     }
@@ -100,25 +94,25 @@ function states(): Promise<AlexaResponseContextProperty>[] {
     function valueD(): string {
         return "0";
     }
-    const rangeValueStateA = AlexaResponse.buildContextProperty({
+    const rangeValueStateA = ASH.Response.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "A",
         "name": "rangeValue",
         "value": valueA
     });
-    const rangeValueStateB = AlexaResponse.buildContextProperty({
+    const rangeValueStateB = ASH.Response.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "B",
         "name": "rangeValue",
         "value": valueB
     });
-    const rangeValueStateC = AlexaResponse.buildContextProperty({
+    const rangeValueStateC = ASH.Response.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "C",
         "name": "rangeValue",
         "value": valueC
     });
-    const rangeValueStateD = AlexaResponse.buildContextProperty({
+    const rangeValueStateD = ASH.Response.buildContextProperty({
         "namespace": "Alexa.RangeController",
         "instance": "D",
         "name": "rangeValue",
@@ -132,8 +126,8 @@ function states(): Promise<AlexaResponseContextProperty>[] {
     ];
 }
 
-function setRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return Promise.resolve(new AlexaResponse({
+function setRangeValueInstanceHandler(alexaRequest: ASH.Request): Promise<ASH.Response> {
+    return Promise.resolve(new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -141,8 +135,8 @@ function setRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<Alexa
     }));
 }
 
-function adjustRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return Promise.resolve(new AlexaResponse({
+function adjustRangeValueInstanceHandler(alexaRequest: ASH.Request): Promise<ASH.Response> {
+    return Promise.resolve(new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -150,12 +144,12 @@ function adjustRangeValueInstanceHandler(alexaRequest: AlexaRequest): Promise<Al
     }));
 }
 
-function unknownInstanceError(alexaRequest: AlexaRequest): AlexaResponse {
+function unknownInstanceError(alexaRequest: ASH.Request): ASH.Response {
     const message = `I do not know the Range Controller instance ${alexaRequest.directive.header.instance}`;
-    return errorResponse(alexaRequest, "INTERNAL_ERROR", message);
+    return ASH.errorResponse(alexaRequest, "INTERNAL_ERROR", message);
 }
 
-function setRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function setRangeValueHandler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     switch (alexaRequest.directive.header.instance) {
     case "A":
         return setRangeValueInstanceHandler(alexaRequest);
@@ -170,7 +164,7 @@ function setRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse
     }
 }
 
-function adjustRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function adjustRangeValueHandler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     switch (alexaRequest.directive.header.instance) {
     case "A":
         return adjustRangeValueInstanceHandler(alexaRequest);
@@ -185,9 +179,9 @@ function adjustRangeValueHandler(alexaRequest: AlexaRequest): Promise<AlexaRespo
     }
 }
 
-function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa.RangeController") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace));
     }
     switch (alexaRequest.directive.header.name) {
     case "SetRangeValue":
@@ -195,7 +189,7 @@ function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     case "AdjustRangeValue":
         return Promise.resolve(adjustRangeValueHandler(alexaRequest));
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

@@ -1,10 +1,4 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    errorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from  "../../../common/alexa";
 import {BackendControl} from "../backend";
 import LGTV from "lgtv2";
 
@@ -63,14 +57,14 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa.Launcher",
         "propertyNames": ["identifier", "name"]
     })];
 }
 
-function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
     if (backendControl.getPowerState() === "OFF") {
         return [];
     }
@@ -87,7 +81,7 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
         return lgtvToAlexa[input.appId];
     }
 
-    const targetState = AlexaResponse.buildContextProperty({
+    const targetState = ASH.Response.buildContextProperty({
         "namespace": "Alexa.Launcher",
         "name": "target",
         "value": value
@@ -101,10 +95,10 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
  * A list of LG webOS TV target ids can be found bet issuing the command
  * "ssap://com.webos.applicationManager/listLaunchPoints".
  */
-async function launchTargetHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+async function launchTargetHandler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
     if (typeof alexaRequest.directive.payload.identifier !== "string" ||
         typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === "undefined") {
-        return errorResponse(
+        return ASH.errorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
@@ -116,7 +110,7 @@ async function launchTargetHandler(alexaRequest: AlexaRequest, backendControl: B
     };
     // eslint-disable-next-line no-unused-vars
     await backendControl.lgtvCommand(lgtvRequest);
-    return new AlexaResponse({
+    return new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -124,15 +118,15 @@ async function launchTargetHandler(alexaRequest: AlexaRequest, backendControl: B
     });
 }
 
-function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
+function handler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa.Launcher"));
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, "Alexa.Launcher"));
     }
     switch (alexaRequest.directive.header.name) {
     case "LaunchTarget":
         return launchTargetHandler(alexaRequest, backendControl);
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa.Launcher"));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

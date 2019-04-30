@@ -1,15 +1,10 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseEventPayloadEndpoint,
-    AlexaResponseEventPayloadEndpointCapability,
-    errorToErrorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 import {Gateway} from "../gateway-api";
 import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
-async function gatewayEndpoint(): Promise<AlexaResponseEventPayloadEndpoint | null> {
+async function gatewayEndpoint(): Promise<ASH.ResponseEventPayloadEndpoint | null> {
     try {
-        let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
+        let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = [];
         try {
             // Determine capabilities in parallel.
             capabilities = await Promise.all(alexaSmartHomeCapabilities());
@@ -19,7 +14,7 @@ async function gatewayEndpoint(): Promise<AlexaResponseEventPayloadEndpoint | nu
         if (capabilities.length === 0) {
             return null;
         }
-        const endpoint: AlexaResponseEventPayloadEndpoint = {
+        const endpoint: ASH.ResponseEventPayloadEndpoint = {
             "endpointId": "lg-webos-tv-gateway",
             "friendlyName": "LGTV Gateway",
             "description": "LG webOS TV Gateway",
@@ -39,20 +34,20 @@ async function gatewayEndpoint(): Promise<AlexaResponseEventPayloadEndpoint | nu
     }
 }
 
-async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+async function handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
-        return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
+        return ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace);
     }
 
     const gateway: Gateway = new Gateway("");
 
-    let alexaResponse: AlexaResponse | null = null;
-    let lgtvGatewayEndpoint: AlexaResponseEventPayloadEndpoint | null = null;
+    let alexaResponse: ASH.Response | null = null;
+    let lgtvGatewayEndpoint: ASH.ResponseEventPayloadEndpoint | null = null;
 
     try {
         alexaResponse = await gateway.sendSkillDirective(alexaRequest);
     } catch (error) {
-        alexaResponse = errorToErrorResponse(alexaRequest, error);
+        alexaResponse = ASH.errorResponseFromError(alexaRequest, error);
     }
 
     try {
@@ -67,7 +62,7 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
 
     if (alexaResponse.event.header.namespace !== "Alexa.Discovery" ||
         alexaResponse.event.header.name !== "Discover.Response") {
-        alexaResponse = new AlexaResponse({
+        alexaResponse = new ASH.Response({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
@@ -76,7 +71,7 @@ async function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
     try {
         await alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint);
     } catch (error) {
-        return errorToErrorResponse(alexaRequest, error);
+        return ASH.errorResponseFromError(alexaRequest, error);
     }
 
     return alexaResponse;

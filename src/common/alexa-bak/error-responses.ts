@@ -1,9 +1,9 @@
-import {AlexaRequest} from "./alexa-request";
-import {AlexaResponse} from "./alexa-response";
+import {Request} from "./request";
+import {Response} from "./response";
 
-export function errorResponse(alexaRequest: AlexaRequest | null, type: string, message: string): AlexaResponse {
+export function errorResponse(alexaRequest: Request | null, type: string, message: string): Response {
     if (alexaRequest !== null) {
-        return new AlexaResponse({
+        return new Response({
             "namespace": "Alexa",
             "name": "ErrorResponse",
             "correlationToken": alexaRequest.getCorrelationToken(),
@@ -14,7 +14,7 @@ export function errorResponse(alexaRequest: AlexaRequest | null, type: string, m
             }
         });
     }
-    return new AlexaResponse({
+    return new Response({
         "namespace": "Alexa",
         "name": "ErrorResponse",
         "payload": {
@@ -24,7 +24,7 @@ export function errorResponse(alexaRequest: AlexaRequest | null, type: string, m
     });
 }
 
-export function errorToErrorResponse(alexaRequest: AlexaRequest, error: Error): AlexaResponse {
+export function errorResponseFromError(alexaRequest: Request, error: Error): Response {
     return errorResponse(
         alexaRequest,
         "INTERNAL_ERROR",
@@ -32,7 +32,7 @@ export function errorToErrorResponse(alexaRequest: AlexaRequest, error: Error): 
     );
 }
 
-export function namespaceErrorResponse(alexaRequest: AlexaRequest, namespace: string): AlexaResponse {
+export function errorResponseForWrongNamespace(alexaRequest: Request, namespace: string): Response {
     return errorResponse(
         alexaRequest,
         "INTERNAL_ERROR",
@@ -40,10 +40,10 @@ export function namespaceErrorResponse(alexaRequest: AlexaRequest, namespace: st
     );
 }
 
-export function directiveErrorResponse(alexaRequest: AlexaRequest, namespace: string): AlexaResponse {
+export function errorResponseForUnknownDirective(alexaRequest: Request): Response {
     return errorResponse(
         alexaRequest,
         "INTERNAL_ERROR",
-        `I do not know the ${namespace} directive ${alexaRequest.directive.header.name}`
+        `I do not know the ${alexaRequest.directive.header.namespace} directive ${alexaRequest.directive.header.name}`
     );
 }

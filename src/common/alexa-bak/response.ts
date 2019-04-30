@@ -1,11 +1,12 @@
 /* eslint-disable max-lines */
-import {AlexaEndpoint,
-    AlexaHeader,
-    copyElement} from "./alexa-request";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const uuid = require("uuid/v4");
+import {Endpoint,
+    Header,
+    Namespace} from "./common";
+import  {Request} from "./request";
+import {copyElement} from "./copy";
+import uuid from "uuid/v4";
 
-export interface AlexaResponseEventPayloadEndpointCapability {
+export interface ResponseEventPayloadEndpointCapability {
     type: string;
     interface: string;
     version: string;
@@ -33,7 +34,7 @@ export interface AlexaResponseEventPayloadEndpointCapability {
     [x: string]: string | object | undefined;
 }
 
-export interface AlexaResponseEventPayloadEndpoint {
+export interface ResponseEventPayloadEndpoint {
     description: string;
     displayCategories: string[];
     endpointId: string;
@@ -42,26 +43,26 @@ export interface AlexaResponseEventPayloadEndpoint {
     cookie?: {
         [x: string]: string;
     };
-    capabilities: AlexaResponseEventPayloadEndpointCapability[];
+    capabilities: ResponseEventPayloadEndpointCapability[];
     [x: string]: string | object | undefined;
 }
 
-export interface AlexaResponseEventPayload {
-    endpoints?: AlexaResponseEventPayloadEndpoint[];
+export interface ResponseEventPayload {
+    endpoints?: ResponseEventPayloadEndpoint[];
     type?: string;
     message?: string;
     [x: string]: string | object | undefined;
 }
 
-export interface AlexaResponseEvent {
-    header: AlexaHeader;
-    endpoint?: AlexaEndpoint;
-    payload: AlexaResponseEventPayload;
+export interface ResponseEvent {
+    header: Header;
+    endpoint?: Endpoint;
+    payload: ResponseEventPayload;
     [x: string]: object | undefined;
 }
 
-export interface AlexaResponseContextProperty {
-    namespace: string;
+export interface ResponseContextProperty {
+    namespace: Namespace;
     name: string;
     instance?: string;
     value: boolean | number | string | object;
@@ -70,39 +71,39 @@ export interface AlexaResponseContextProperty {
     [x: string]: boolean | number | string | [] | object | undefined;
 }
 
-export interface AlexaResponseContext {
-    properties?: AlexaResponseContextProperty[];
-    [x: string]: AlexaResponseContextProperty[] | undefined;
+export interface ResponseContext {
+    properties?: ResponseContextProperty[];
+    [x: string]: ResponseContextProperty[] | undefined;
 }
 
-export class AlexaResponse {
-    public event: AlexaResponseEvent;
-    public context?: AlexaResponseContext;
+export class Response {
+    public event: ResponseEvent;
+    public context?: ResponseContext;
     [x: string]: object | undefined;
     public constructor(opts: {
-        event: AlexaResponseEvent;
-        context?: AlexaResponseContext;
+        event: ResponseEvent;
+        context?: ResponseContext;
     } | {
-        namespace: string;
+        namespace: Namespace;
         name: string;
         instance?: string;
         correlationToken?: string;
         endpointId?: string;
         token?: string;
-        payload?: AlexaResponseEventPayload;
+        payload?: ResponseEventPayload;
     }) {
         const optsA = (opts as {
-            event: AlexaResponseEvent;
-            context?: AlexaResponseContext;
+            event: ResponseEvent;
+            context?: ResponseContext;
         });
         const optsB = (opts as {
-            namespace: string;
+            namespace: Namespace;
             name: string;
             instance?: string;
             correlationToken?: string;
             endpointId?: string;
             token?: string;
-            payload?: AlexaResponseEventPayload;
+            payload?: ResponseEventPayload;
         });
 
         if (typeof optsA.event !== "undefined" || typeof optsA.context !== "undefined") {
@@ -206,7 +207,7 @@ export class AlexaResponse {
         }
 
         const response = {
-            "event": (copyElement(optsA.event) as AlexaResponseEvent) || {
+            "event": (copyElement(optsA.event) as ResponseEvent) || {
                 "header": {
                     "namespace": optsB.namespace,
                     "name": optsB.name,
@@ -222,7 +223,7 @@ export class AlexaResponse {
                         "token": optsB.token
                     }
                 },
-                "payload": (copyElement(optsB.payload) as AlexaResponseEventPayload) || {}
+                "payload": (copyElement(optsB.payload) as ResponseEventPayload) || {}
             },
             "context": optsA.context
         };
@@ -239,13 +240,13 @@ export class AlexaResponse {
             Reflect.deleteProperty(response.event, "endpoint");
         }
 
-        this.event = (copyElement(response.event) as AlexaResponseEvent);
+        this.event = (copyElement(response.event) as ResponseEvent);
         if (typeof response.context !== "undefined") {
-            this.response = (copyElement(response.context) as AlexaResponseContext);
+            this.response = (copyElement(response.context) as ResponseContext);
         }
     }
 
-    public addContextProperty(contextProperty: AlexaResponseContextProperty): void {
+    public addContextProperty(contextProperty: ResponseContextProperty): void {
         if (typeof this.context === "undefined") {
             this.context = {};
         }
@@ -256,7 +257,7 @@ export class AlexaResponse {
         this.context.properties.push(contextProperty);
     }
 
-    public addPayloadEndpoint(payloadEndpoint: AlexaResponseEventPayloadEndpoint): void {
+    public addPayloadEndpoint(payloadEndpoint: ResponseEventPayloadEndpoint): void {
         if (typeof this.event.payload.endpoints === "undefined") {
             this.event.payload.endpoints = [];
         }
@@ -269,7 +270,7 @@ export class AlexaResponse {
         "name": string;
         "instance"?: string;
         "value": () => boolean | number | string | [] | object;
-    }): Promise<AlexaResponseContextProperty> {
+    }): Promise<ResponseContextProperty> {
         const startTime = new Date();
         const value = await opts.value();
         const endTime = new Date();
@@ -283,10 +284,10 @@ export class AlexaResponse {
     }
 
     public static buildPayloadEndpointCapability(opts: {
-        "namespace": string;
+        "namespace": Namespace;
         "propertyNames"?: string[];
-    }): Promise<AlexaResponseEventPayloadEndpointCapability> {
-        let capability: AlexaResponseEventPayloadEndpointCapability = {
+    }): Promise<ResponseEventPayloadEndpointCapability> {
+        let capability: ResponseEventPayloadEndpointCapability = {
             "type": "AlexaInterface",
             "interface": opts.namespace,
             "version": "3"

@@ -1,3 +1,4 @@
+import * as ASH from  "../../../common/alexa";
 import * as alexa from "./alexa";
 import * as alexaAuthorization from "./authorization";
 import * as alexaChannelController from "./channel-controller";
@@ -7,16 +8,10 @@ import * as alexaLauncher from "./launcher";
 import * as alexaPlaybackController from "./playback-controller";
 import * as alexaPowerController from "./power-controller";
 import * as alexaSpeaker from "./speaker";
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    errorResponse,
-    errorToErrorResponse} from "../../../common";
 import {Backend,
     BackendControl} from "../backend";
 
-function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
     return [
         ...alexa.capabilities(backendControl),
         ...alexaPowerController.capabilities(backendControl),
@@ -28,7 +23,7 @@ function capabilities(backendControl: BackendControl): Promise<AlexaResponseEven
     ];
 }
 
-function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
     return [
         ...alexa.states(backendControl),
         ...alexaPowerController.states(backendControl),
@@ -40,7 +35,7 @@ function states(backendControl: BackendControl): Promise<AlexaResponseContextPro
     ];
 }
 
-async function addStates(alexaResponse: AlexaResponse, backendControl: BackendControl): Promise<AlexaResponse> {
+async function addStates(alexaResponse: ASH.Response, backendControl: BackendControl): Promise<ASH.Response> {
     try {
         (await Promise.all(states(backendControl))).forEach((state): void => {
             if (typeof state === "undefined" || state === null ||
@@ -55,12 +50,12 @@ async function addStates(alexaResponse: AlexaResponse, backendControl: BackendCo
     }
 }
 
-async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): Promise<AlexaResponse> {
-    let alexaRequest: AlexaRequest | null = null;
+async function handlerWithoutValidation(event: ASH.Request, backend: Backend): Promise<ASH.Response> {
+    let alexaRequest: ASH.Request | null = null;
     try {
-        alexaRequest = new AlexaRequest(event);
+        alexaRequest = new ASH.Request(event);
     } catch (error) {
-        return new AlexaResponse({
+        return new ASH.Response({
             "namespace": "Alexa",
             "name": "ErrorResponse",
             "payload": {
@@ -79,7 +74,7 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
             case "Alexa.Discovery":
                 return alexaDiscovery.handler(alexaRequest, backend);
             default:
-                return errorResponse(
+                return ASH.errorResponse(
                     alexaRequest,
                     "INTERNAL_ERROR",
                     `Unknown namespace ${alexaRequest.directive.header.namespace}`
@@ -88,7 +83,7 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
         }
         const backendControl = backend.control(udn);
         if (typeof backendControl === "undefined") {
-            return errorResponse(
+            return ASH.errorResponse(
                 alexaRequest,
                 "INTERNAL_ERROR",
                 `unknown LGTV UDN ${udn}`
@@ -110,14 +105,14 @@ async function handlerWithoutValidation(event: AlexaRequest, backend: Backend): 
         case "Alexa.PlaybackController":
             return addStates(await alexaPlaybackController.handler(alexaRequest, backendControl), backendControl);
         default:
-            return errorResponse(
+            return ASH.errorResponse(
                 alexaRequest,
                 "INTERNAL_ERROR",
                 `Unknown namespace ${alexaRequest.directive.header.namespace}`
             );
         }
     } catch (error) {
-        return errorToErrorResponse(alexaRequest, error);
+        return ASH.errorResponseFromError(alexaRequest, error);
     }
 }
 
@@ -127,7 +122,7 @@ export class SmartHomeSkill {
         this.backend = backend;
     }
 
-    public handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+    public handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
         return handlerWithoutValidation(alexaRequest, this.backend);
     }
 }

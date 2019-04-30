@@ -5,7 +5,7 @@ import {FrontendInternal} from "./frontend-internal";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {SmartHomeSkill} from "../smart-home-skill";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 
 export class Frontend {
     private _initialized: boolean;

@@ -11,7 +11,7 @@ import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
 import {SmartHomeSkill} from "../smart-home-skill";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require("express-basic-auth");
 import express from "express";

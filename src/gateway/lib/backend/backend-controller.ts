@@ -4,7 +4,7 @@ import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 
 export class BackendController extends EventEmitter {
     private _initialized = false;

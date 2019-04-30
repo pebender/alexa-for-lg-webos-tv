@@ -3,7 +3,7 @@ const certnames = require("certnames");
 import ASK from "ask-sdk";
 import ASKModel from "ask-sdk-model";
 import {Gateway} from "../gateway-api";
-import {constants} from "../../../common";
+import {constants} from "../../../common/constants";
 import crypto from "crypto";
 import tls from "tls";
 

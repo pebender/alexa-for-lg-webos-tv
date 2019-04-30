@@ -1,5 +1,5 @@
-import {constants,
-    throwIfUninitializedClass} from "../../../common";
+import {constants} from "../../../common/constants";
+import {throwIfUninitializedClass} from "../error-classes";
 import {DatabaseTable} from "../database";
 import {Mutex} from "async-mutex";
 

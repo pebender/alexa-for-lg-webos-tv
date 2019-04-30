@@ -1,12 +1,8 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseEventPayloadEndpoint,
-    AlexaResponseEventPayloadEndpointCapability,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from  "../../../common/alexa";
 import {Backend, BackendControl} from "../backend";
 import {capabilities as alexaSmartHomeCapabilities} from "./index";
 
-async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<AlexaResponse> {
+async function handler(alexaRequest: ASH.Request, backend: Backend): Promise<ASH.Response> {
 
     /*
      * This looks strange at first. However, once it is explained, this
@@ -38,15 +34,15 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpoint(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpoint> {
-        let capabilities: AlexaResponseEventPayloadEndpointCapability[] = [];
+    async function buildEndpoint(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpoint> {
+        let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = [];
         try {
             // Determine capabilities in parallel.
             capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl));
         } catch (error) {
             capabilities = [];
         }
-        const endpoint: AlexaResponseEventPayloadEndpoint = {
+        const endpoint: ASH.ResponseEventPayloadEndpoint = {
             "endpointId": backendControl.tv.udn,
             "friendlyName": backendControl.tv.name,
             "description": "LG webOS TV",
@@ -63,16 +59,16 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
         return endpoint;
     }
 
-    function buildEndpoints(backendControls: BackendControl[]): Promise<AlexaResponseEventPayloadEndpoint[]> {
+    function buildEndpoints(backendControls: BackendControl[]): Promise<ASH.ResponseEventPayloadEndpoint[]> {
         return Promise.all(backendControls.map(buildEndpoint));
     }
 
-    function buildResponse(endpoints: AlexaResponseEventPayloadEndpoint[]): AlexaResponse {
-        const alexaResponse = new AlexaResponse({
+    function buildResponse(endpoints: ASH.ResponseEventPayloadEndpoint[]): ASH.Response {
+        const alexaResponse = new ASH.Response({
             "namespace": "Alexa.Discovery",
             "name": "Discover.Response"
         });
-        endpoints.forEach((endpoint: AlexaResponseEventPayloadEndpoint): void => {
+        endpoints.forEach((endpoint: ASH.ResponseEventPayloadEndpoint): void => {
             if (endpoint !== null) {
                 alexaResponse.addPayloadEndpoint(endpoint);
             }
@@ -81,7 +77,7 @@ async function handler(alexaRequest: AlexaRequest, backend: Backend): Promise<Al
     }
 
     if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
-        return namespaceErrorResponse(alexaRequest, "Alexa.Discovery");
+        return ASH.errorResponseForWrongNamespace(alexaRequest, "Alexa.Discovery");
     }
 
     const backendControls = await backend.controls();

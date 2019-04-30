@@ -1,6 +1,6 @@
 import Datastore from "nedb";
 import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../../common";
+import {throwIfUninitializedClass} from "./error-classes";
 
 export interface DatabaseUpdate {
     [x: string]: boolean | number | string | object | null;

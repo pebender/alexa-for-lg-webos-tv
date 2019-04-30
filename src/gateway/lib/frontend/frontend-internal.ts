@@ -1,6 +1,6 @@
 import {FrontendSecurity} from "./frontend-security";
 import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 import express from "express";
 import expressCore from "express-serve-static-core";
 

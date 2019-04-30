@@ -1,43 +1,38 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from  "../../../common/alexa";
 import {BackendControl} from "../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(backendControl: BackendControl): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa",
     })];
 }
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(backendControl: BackendControl): Promise<AlexaResponseContextProperty>[] {
+function states(backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function reportStateHandler(alexaRequest: AlexaRequest, backendControl: BackendControl): AlexaResponse {
-    return new AlexaResponse({
-        "namespace": "Alexa",
+function reportStateHandler(alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
+    return new ASH.Response({
+        "namespace": "Alexa.",
         "name": "StateReport",
         "correlationToken": alexaRequest.getCorrelationToken(),
         "endpointId": alexaRequest.getEndpointId()
     });
 }
 
-function handler(alexaRequest: AlexaRequest, backendControl: BackendControl): Promise<AlexaResponse> {
-    if (alexaRequest.directive.header.namespace !== "Alexa") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, "Alexa"));
+function handler(alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+    if (alexaRequest.directive.header.namespace !== "ASH.") {
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, "Alexa"));
     }
     switch (alexaRequest.directive.header.name) {
     case "ReportState":
         return Promise.resolve(reportStateHandler(alexaRequest, backendControl));
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, "Alexa"));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

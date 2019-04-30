@@ -6,7 +6,7 @@ import {BackendSearcher} from "./backend-searcher";
 import {DatabaseTable} from "./../database";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 
 export {BackendControl} from "./backend-control";
 

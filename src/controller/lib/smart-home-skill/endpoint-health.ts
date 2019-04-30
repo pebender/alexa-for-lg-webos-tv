@@ -1,19 +1,14 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 import {Gateway} from "../gateway-api";
 
-function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa.EndpointHealth",
         "propertyNames": ["connectivity"]
     })];
 }
 
-function states(): Promise<AlexaResponseContextProperty>[] {
+function states(): Promise<ASH.ResponseContextProperty>[] {
     async function value(): Promise<"OK" | "UNREACHABLE"> {
         try {
             const gateway = new Gateway("");
@@ -24,7 +19,7 @@ function states(): Promise<AlexaResponseContextProperty>[] {
         }
     }
 
-    const connectivityState = AlexaResponse.buildContextProperty({
+    const connectivityState = ASH.Response.buildContextProperty({
         "namespace": "Alexa.EndpointHealth",
         "name": "connectivity",
         "value": value
@@ -32,13 +27,13 @@ function states(): Promise<AlexaResponseContextProperty>[] {
     return [connectivityState];
 }
 
-function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa.EndpointHealth") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace));
     }
     switch (alexaRequest.directive.header.name) {
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

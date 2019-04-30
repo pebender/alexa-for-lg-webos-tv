@@ -5,8 +5,7 @@ import {Client as SsdpClient,
 import LGTV from "lgtv2";
 import {DatabaseTable} from "../database";
 import EventEmitter from "events";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";
 import uuid from "uuid/v4";

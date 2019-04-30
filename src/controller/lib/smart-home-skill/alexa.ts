@@ -1,22 +1,17 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 
-function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa"
     })];
 }
 
-function states(): Promise<AlexaResponseContextProperty>[] {
+function states(): Promise<ASH.ResponseContextProperty>[] {
     return [];
 }
 
-function reportStateHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return Promise.resolve(new AlexaResponse({
+function reportStateHandler(alexaRequest: ASH.Request): Promise<ASH.Response> {
+    return Promise.resolve(new ASH.Response({
         "namespace": "Alexa",
         "name": "StateReport",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -24,16 +19,16 @@ function reportStateHandler(alexaRequest: AlexaRequest): Promise<AlexaResponse> 
     }));
 }
 
-function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
+function handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
     if (alexaRequest.directive.header.namespace !== "Alexa") {
-        return Promise.resolve(namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace));
     }
 
     switch (alexaRequest.directive.header.name) {
     case "ReportState":
         return reportStateHandler(alexaRequest);
     default:
-        return Promise.resolve(directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace));
+        return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest));
     }
 }
 

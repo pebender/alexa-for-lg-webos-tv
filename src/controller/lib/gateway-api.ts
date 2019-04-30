@@ -1,7 +1,5 @@
-import {AlexaRequest,
-    AlexaResponse,
-    constants,
-    errorToErrorResponse} from "../../common";
+import * as ASH from "../../common/alexa";
+import {constants} from "../../common/constants";
 import http from "http";
 import https from "https";
 
@@ -233,7 +231,7 @@ class Gateway {
         return this._username;
     }
 
-    public async sendSkillDirective(request: AlexaRequest): Promise<AlexaResponse> {
+    public async sendSkillDirective(request: ASH.Request): Promise<ASH.Response> {
         const options = {
             "hostname": this.hostname,
             "username": this.username,
@@ -241,11 +239,11 @@ class Gateway {
             "path": "/LGTV/SKILL"
         };
         try {
-            const response = ((await sendHandler(options, request)) as AlexaResponse);
-            const alexaResponse = new AlexaResponse(response);
+            const response = ((await sendHandler(options, request)) as ASH.Response);
+            const alexaResponse = new ASH.Response(response);
             return alexaResponse;
         } catch (error) {
-            return errorToErrorResponse(request, error);
+            return ASH.errorResponseFromError(request, error);
         }
     }
 

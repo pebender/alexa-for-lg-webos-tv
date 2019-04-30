@@ -1,23 +1,19 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    errorResponse} from "../../../common";
+import * as ASH from  "../../../common/alexa";
 import {Backend} from "../backend";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function capabilities(backend: Backend): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities(backend: Backend): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function states(backend: Backend): Promise<AlexaResponseContextProperty>[] {
+function states(backend: Backend): Promise<ASH.ResponseContextProperty>[] {
     return [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handler(alexaRequest: AlexaRequest, backend: Backend): AlexaResponse {
-    return errorResponse(alexaRequest, "INTERNAL_ERROR", "");
+function handler(alexaRequest: ASH.Request, backend: Backend): ASH.Response {
+    return ASH.errorResponse(alexaRequest, "INTERNAL_ERROR", "");
 }
 
 export {capabilities, states, handler};

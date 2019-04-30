@@ -1,22 +1,17 @@
-import {AlexaRequest,
-    AlexaResponse,
-    AlexaResponseContextProperty,
-    AlexaResponseEventPayloadEndpointCapability,
-    directiveErrorResponse,
-    namespaceErrorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 
-function capabilities(): Promise<AlexaResponseEventPayloadEndpointCapability>[] {
-    return [AlexaResponse.buildPayloadEndpointCapability({
+function capabilities(): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+    return [ASH.Response.buildPayloadEndpointCapability({
         "namespace": "Alexa.PowerController",
         "propertyNames": ["powerState"]
     })];
 }
 
-function states(): Promise<AlexaResponseContextProperty>[] {
+function states(): Promise<ASH.ResponseContextProperty>[] {
     function value(): "ON" | "OFF" {
         return "OFF";
     }
-    const powerStateState = AlexaResponse.buildContextProperty({
+    const powerStateState = ASH.Response.buildContextProperty({
         "namespace": "Alexa.PowerController",
         "name": "powerState",
         "value": value
@@ -24,8 +19,8 @@ function states(): Promise<AlexaResponseContextProperty>[] {
     return [powerStateState];
 }
 
-function turnOffHandler(alexaRequest: AlexaRequest): AlexaResponse {
-    return new AlexaResponse({
+function turnOffHandler(alexaRequest: ASH.Request): ASH.Response {
+    return new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -33,8 +28,8 @@ function turnOffHandler(alexaRequest: AlexaRequest): AlexaResponse {
     });
 }
 
-function turnOnHandler(alexaRequest: AlexaRequest): AlexaResponse {
-    return new AlexaResponse({
+function turnOnHandler(alexaRequest: ASH.Request): ASH.Response {
+    return new ASH.Response({
         "namespace": "Alexa",
         "name": "Response",
         "correlationToken": alexaRequest.getCorrelationToken(),
@@ -42,9 +37,9 @@ function turnOnHandler(alexaRequest: AlexaRequest): AlexaResponse {
     });
 }
 
-function handler(alexaRequest: AlexaRequest): AlexaResponse {
+function handler(alexaRequest: ASH.Request): ASH.Response {
     if (alexaRequest.directive.header.namespace !== "Alexa.PowerController") {
-        return namespaceErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
+        return ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace);
     }
     switch (alexaRequest.directive.header.name) {
     case "TurnOff":
@@ -52,7 +47,7 @@ function handler(alexaRequest: AlexaRequest): AlexaResponse {
     case "TurnOn":
         return turnOnHandler(alexaRequest);
     default:
-        return directiveErrorResponse(alexaRequest, alexaRequest.directive.header.namespace);
+        return ASH.errorResponseForUnknownDirective(alexaRequest);
     }
 }
 

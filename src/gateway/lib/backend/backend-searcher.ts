@@ -18,7 +18,7 @@ import {IP, MAC, TV, UDN} from "../tv";
 import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../../../common";
+import {throwIfUninitializedClass} from "../error-classes";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require("node-arp");
 import http from "axios";

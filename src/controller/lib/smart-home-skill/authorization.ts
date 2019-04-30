@@ -1,9 +1,7 @@
-import {AlexaRequest,
-    AlexaResponse,
-    errorResponse} from "../../../common";
+import * as ASH from "../../../common/alexa";
 
-function handler(alexaRequest: AlexaRequest): Promise<AlexaResponse> {
-    return Promise.resolve(errorResponse(alexaRequest, "INTERNAL_ERROR", "'Alexa.Authorization' is not supported."));
+function handler(alexaRequest: ASH.Request): Promise<ASH.Response> {
+    return Promise.resolve(ASH.errorResponse(alexaRequest, "INTERNAL_ERROR", "'Alexa.Authorization' is not supported."));
 }
 
 export {handler};
