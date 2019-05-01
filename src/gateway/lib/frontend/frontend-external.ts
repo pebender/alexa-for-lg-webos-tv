@@ -7,7 +7,7 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-import {BaseClass} from "../error-classes";
+import {BaseClass} from "../base-class";
 import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
 import {SmartHomeSkill} from "../smart-home-skill";

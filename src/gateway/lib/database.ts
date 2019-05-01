@@ -1,4 +1,4 @@
-import {BaseClass} from "./error-classes";
+import {BaseClass} from "./base-class";
 import Datastore from "nedb";
 
 export interface DatabaseUpdate {

@@ -1,6 +1,6 @@
 import {TV,
     UDN} from "../tv";
-import {BaseClass} from "../error-classes";
+import {BaseClass} from "../base-class";
 import {BackendControl} from "./backend-control";
 import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";

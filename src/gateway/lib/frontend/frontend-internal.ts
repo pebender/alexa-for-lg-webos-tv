@@ -1,4 +1,4 @@
-import {BaseClass} from "../error-classes";
+import {BaseClass} from "../base-class";
 import {FrontendSecurity} from "./frontend-security";
 import express from "express";
 import expressCore from "express-serve-static-core";

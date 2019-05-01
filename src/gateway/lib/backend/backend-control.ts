@@ -2,7 +2,7 @@
 import * as wol from "wake_on_lan";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
-import {BaseClass} from "../error-classes";
+import {BaseClass} from "../base-class";
 import LGTV from "lgtv2";
 import {DatabaseTable} from "../database";
 import {Mutex} from "async-mutex";

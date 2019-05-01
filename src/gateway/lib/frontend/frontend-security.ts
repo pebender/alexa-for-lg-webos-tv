@@ -1,4 +1,4 @@
-import {BaseClass} from "../error-classes";
+import {BaseClass} from "../base-class";
 import {DatabaseTable} from "../database";
 import {constants} from "../../../common/constants";
 
