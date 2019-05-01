@@ -1,6 +1,5 @@
+import {AlexaLGwebOSTVObject} from "./error-classes";
 import Datastore from "nedb";
-import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "./error-classes";
 
 export interface DatabaseUpdate {
     [x: string]: boolean | number | string | object | null;
@@ -12,15 +11,13 @@ export interface DatabaseRecord {
     [x: string]: boolean | number | string | object | null;
 }
 
-export class DatabaseTable {
-    private _initialized: boolean;
-    private _initializeMutex: Mutex;
+export class DatabaseTable extends AlexaLGwebOSTVObject {
     private _indexes: string[];
     private _key: string;
     private _db: Datastore;
     public constructor(path: string, name: string, indexes: string[], key: string) {
-        this._initialized = false;
-        this._initializeMutex = new Mutex();
+        super();
+
         this._indexes = indexes;
         this._key = key;
 
@@ -43,20 +40,20 @@ export class DatabaseTable {
 
     public initialize(): Promise<void> {
         const that = this;
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
+        const initializeFunction = (): Promise<void> => new Promise<void>((resolve): void => {
             that._indexes.forEach((record): void => {
                 that._db.ensureIndex({
                     "fieldName": record,
                     "unique": true
                 });
             });
-            that._initialized = true;
             resolve();
-        }));
+        });
+        return this.initializeHandler(initializeFunction);
     }
 
     public async clean(): Promise<void> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "clean");
+        this.throwIfUninitialized("clean");
         const query1: DatabaseQuery = {};
         query1[this._key] = {"$exists": false};
         const query2: DatabaseQuery = {};
@@ -80,7 +77,7 @@ export class DatabaseTable {
     }
 
     public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "getRecord");
+        this.throwIfUninitialized("getRecord");
         const record = await new Promise<DatabaseRecord>((resolve, reject): void => {
             this._db.findOne(
                 query,
@@ -97,7 +94,7 @@ export class DatabaseTable {
     }
 
     public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "getRecords");
+        this.throwIfUninitialized("getRecords");
         const records = await new Promise<DatabaseRecord[]>((resolve, reject): void => {
             this._db.find(
                 query,
@@ -114,7 +111,7 @@ export class DatabaseTable {
     }
 
     public async insertRecord(record: DatabaseRecord): Promise<void> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "insertRecord");
+        this.throwIfUninitialized("insertRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.insert(record, (error): void => {
                 if (error) {
@@ -129,7 +126,7 @@ export class DatabaseTable {
     }
 
     public async updateRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "updateRecord");
+        this.throwIfUninitialized("updateRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,
@@ -147,7 +144,7 @@ export class DatabaseTable {
     }
 
     public async updateOrInsertRecord(query: DatabaseQuery, update: DatabaseUpdate): Promise<void> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "updateOrInsertRecord");
+        this.throwIfUninitialized("updateOrInsertRecord");
         await new Promise<void>((resolve, reject): void => {
             this._db.update(
                 query,

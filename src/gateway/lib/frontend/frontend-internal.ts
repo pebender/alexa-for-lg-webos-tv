@@ -1,17 +1,14 @@
+import {AlexaLGwebOSTVObject} from "../error-classes";
 import {FrontendSecurity} from "./frontend-security";
-import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../error-classes";
 import express from "express";
 import expressCore from "express-serve-static-core";
 
-export class FrontendInternal {
-    private _initialized: boolean;
-    private readonly _initializeMutex: Mutex;
+export class FrontendInternal extends AlexaLGwebOSTVObject {
     private readonly _security: FrontendSecurity;
     private readonly _server: expressCore.Express;
     public constructor(serverSecurity: FrontendSecurity) {
-        this._initialized = false;
-        this._initializeMutex = new Mutex();
+        super();
+
         this._security = serverSecurity;
         this._server = express();
     }
@@ -122,24 +119,21 @@ export class FrontendInternal {
             await sendForm(form, response);
         }
 
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
-            if (that._initialized === true) {
+        function initializeFunction(): Promise<void> {
+            return new Promise<void>(async (resolve): Promise<void> => {
+                that._server.use(express.urlencoded({
+                    "extended": false
+                }));
+                that._server.get("/", getHandler);
+                that._server.post("/", postHandler);
                 resolve();
-                return;
-            }
-
-            this._server.use(express.urlencoded({
-                "extended": false
-            }));
-            this._server.get("/", getHandler);
-            this._server.post("/", postHandler);
-            this._initialized = true;
-            resolve();
-        }));
+            });
+        }
+        return this.initializeHandler(initializeFunction);
     }
 
     public start(): void {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "start");
+        this.throwIfUninitialized("start");
         this._server.listen(25393);
     }
 }

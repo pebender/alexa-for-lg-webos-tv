@@ -7,26 +7,23 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
+import {AlexaLGwebOSTVObject} from "../error-classes";
 import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
-import {Mutex} from "async-mutex";
 import {SmartHomeSkill} from "../smart-home-skill";
-import {throwIfUninitializedClass} from "../error-classes";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require("express-basic-auth");
 import express from "express";
 import expressCore from "express-serve-static-core";
 
-export class FrontendExternal {
-    private _initialized: boolean;
-    private readonly _initializeMutex: Mutex;
+export class FrontendExternal extends AlexaLGwebOSTVObject {
     private readonly _security: FrontendSecurity;
     private readonly _customSkill: CustomSkill;
     private readonly _smartHomeSkill: SmartHomeSkill;
     private readonly _server: expressCore.Express;
     public constructor(serverSecurity: FrontendSecurity, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
-        this._initialized = false;
-        this._initializeMutex = new Mutex();
+        super();
+
         this._security = serverSecurity;
         this._customSkill = customSkill;
         this._smartHomeSkill = smartHomeSkill;
@@ -111,29 +108,26 @@ export class FrontendExternal {
                 end();
         }
 
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
-            if (that._initialized === true) {
+        function initializeFunction(): Promise<void> {
+            return new Promise<void>((resolve): void => {
+                that._server.use("/", express.json());
+                that._server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
+                that._server.post("/HTTP", httpHandler);
+                that._server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
+                that._server.post("/LGTV/RUN", backendRunHandler);
+                that._server.post("/LGTV/SKILL", backendSkillHandler);
+                that._server.get("/LGTV/PING", backendPingHandler);
+                that._server.post("/", (_req: expressCore.Request, res: expressCore.Response): void => {
+                    res.status(401).end();
+                });
                 resolve();
-                return;
-            }
-
-            that._server.use("/", express.json());
-            that._server.use("/HTTP", basicAuth({"authorizer": authorizeRoot}));
-            that._server.post("/HTTP", httpHandler);
-            that._server.use("/LGTV", basicAuth({"authorizer": authorizeUser}));
-            that._server.post("/LGTV/RUN", backendRunHandler);
-            that._server.post("/LGTV/SKILL", backendSkillHandler);
-            that._server.get("/LGTV/PING", backendPingHandler);
-            that._server.post("/", (_req: expressCore.Request, res: expressCore.Response): void => {
-                res.status(401).end();
             });
-            that._initialized = true;
-            resolve();
-        }));
+        }
+        return this.initializeHandler(initializeFunction);
     }
 
     public start(): void {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "start");
+        this.throwIfUninitialized("start");
         this._server.listen(25391, "localhost");
     }
 }

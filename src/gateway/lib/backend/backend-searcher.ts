@@ -16,9 +16,7 @@
 import * as dgram from "dgram";
 import {IP, MAC, TV, UDN} from "../tv";
 import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
-import EventEmitter from "events";
-import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../error-classes";
+import {AlexaLGwebOSTVObject} from "../error-classes";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require("node-arp");
 import http from "axios";
@@ -34,16 +32,12 @@ export interface UPnPDevice {
     };
 }
 
-export class BackendSearcher extends EventEmitter {
-    private _initialized: boolean;
-    private _initializeMutex: Mutex;
+export class BackendSearcher extends AlexaLGwebOSTVObject {
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
     public constructor() {
         super();
 
-        this._initialized = false;
-        this._initializeMutex = new Mutex();
         this._ssdpNotify = new SsdpClient({"sourcePort": 1900});
         this._ssdpResponse = new SsdpClient();
     }
@@ -192,30 +186,27 @@ export class BackendSearcher extends EventEmitter {
             });
         }
 
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
-            if (that._initialized === true) {
+        function initializeFunction(): Promise<void> {
+            return new Promise<void>(async (resolve): Promise<void> => {
+                that._ssdpNotify.on("advertise-alive", (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
+                    ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+                });
+                that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo): void => {
+                    if (statusCode !== 200) {
+                        return;
+                    }
+                    ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+                });
+                that._ssdpNotify.start();
+                setImmediate(periodicSearch);
                 resolve();
-                return;
-            }
-
-            that._ssdpNotify.on("advertise-alive", (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
-                ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
             });
-            that._ssdpResponse.on("response", (headers: SsdpHeaders, statusCode: number, rinfo): void => {
-                if (statusCode !== 200) {
-                    return;
-                }
-                ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
-            });
-            that._ssdpNotify.start();
-            setImmediate(periodicSearch);
-            that._initialized = true;
-            resolve();
-        }));
+        }
+        return this.initializeHandler(initializeFunction);
     }
 
     public now(): void {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "now");
+        this.throwIfUninitialized("now");
         this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
     }
 }

@@ -1,21 +1,15 @@
 import {TV,
     UDN} from "../tv";
+import {AlexaLGwebOSTVObject} from "../error-classes";
 import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
-import EventEmitter from "events";
-import {Mutex} from "async-mutex";
-import {throwIfUninitializedClass} from "../error-classes";
 
-export class BackendController extends EventEmitter {
-    private _initialized = false;
-    private readonly _initializeMutex = new Mutex();
+export class BackendController extends AlexaLGwebOSTVObject {
     private readonly _db: DatabaseTable;
     private readonly _controls: {[x: string]: BackendControl};
     public constructor (db: DatabaseTable) {
         super();
 
-        this._initialized = false;
-        this._initializeMutex = new Mutex();
         this._db = db;
         this._controls = {};
     }
@@ -35,23 +29,21 @@ export class BackendController extends EventEmitter {
             });
         }
 
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>(async (resolve, reject): Promise<void> => {
-            if (that._initialized === true) {
+        function initializeFunction(): Promise<void> {
+            return new Promise<void>(async (resolve, reject): Promise<void> => {
+                const records: TV[] = ((await that._db.getRecords({}) as unknown) as TV[]);
+                await records.forEach((record): void => {
+                    if (typeof that._controls[record.udn] === "undefined") {
+                        that._controls[record.udn] = new BackendControl(that._db, record);
+                        that._controls[record.udn].initialize().catch(reject);
+                        eventsAdd(record.udn);
+                    }
+                });
                 resolve();
-                return;
-            }
-
-            const records: TV[] = ((await that._db.getRecords({}) as unknown) as TV[]);
-            await records.forEach((record): void => {
-                if (typeof that._controls[record.udn] === "undefined") {
-                    that._controls[record.udn] = new BackendControl(that._db, record);
-                    that._controls[record.udn].initialize().catch(reject);
-                    eventsAdd(record.udn);
-                }
             });
-            that._initialized = true;
-            resolve();
-        }));
+        }
+        return this.initializeHandler(initializeFunction);
+
     }
 
     public async tvUpsert(tv: TV): Promise<void> {
@@ -63,7 +55,7 @@ export class BackendController extends EventEmitter {
             });
         }
 
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "tvUpsert");
+        this.throwIfUninitialized("tvUpsert");
         try {
             const record = await this._db.getRecord({"$and": [
                 {"udn": tv.udn},
@@ -99,13 +91,13 @@ export class BackendController extends EventEmitter {
     }
 
     public control(udn: UDN): BackendControl {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "control");
+        this.throwIfUninitialized("control");
         this.throwIfNotKnownTV("control", udn);
         return this._controls[udn];
     }
 
     public controls(): BackendControl[] {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "controls");
+        this.throwIfUninitialized("controls");
         return Object.values(this._controls);
     }
 }

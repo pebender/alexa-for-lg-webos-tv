@@ -2,21 +2,18 @@
 import * as wol from "wake_on_lan";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
+import {AlexaLGwebOSTVObject} from "../error-classes";
 import LGTV from "lgtv2";
 import {DatabaseTable} from "../database";
-import EventEmitter from "events";
-import {throwIfUninitializedClass} from "../error-classes";
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";
 import uuid from "uuid/v4";
 
-export class BackendControl extends EventEmitter {
-    private _initialized: boolean;
+export class BackendControl extends AlexaLGwebOSTVObject {
     private _poweredOn: boolean;
     private _connecting: boolean;
     private readonly _db: DatabaseTable;
     private readonly _tv: TV;
-    private readonly _initializeMutex: Mutex;
     private readonly _connection: LGTV;
     private readonly _ssdpNotify: SsdpClient;
     private readonly _ssdpResponse: SsdpClient;
@@ -25,7 +22,6 @@ export class BackendControl extends EventEmitter {
 
         const that: BackendControl = this;
 
-        this._initialized = false;
         this._poweredOn = false;
         this._connecting = false;
 
@@ -46,8 +42,6 @@ export class BackendControl extends EventEmitter {
                 {"$set": {"key": key}}
             ).catch((error): void => callback(error));
         }
-
-        this._initializeMutex = new Mutex();
 
         this._connection = new LGTV({
             "url": this._tv.url,
@@ -100,23 +94,22 @@ export class BackendControl extends EventEmitter {
     public initialize(): Promise<void> {
         const that: BackendControl = this;
 
-        return that._initializeMutex.runExclusive((): Promise<void> => new Promise<void>((resolve): void => {
-            if (that._initialized === true) {
+        function initializeFunction(): Promise<void> {
+            return new Promise<void>(async (resolve): Promise<void> => {
+                that._ssdpNotify.start();
                 resolve();
-            }
-            that._ssdpNotify.start();
-            that._initialized = true;
-            resolve();
-        }));
+            });
+        }
+        return this.initializeHandler(initializeFunction);
     }
 
     public get tv(): TV {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "get+tv");
+        this.throwIfUninitialized("get+tv");
         return Object.assign({}, this._tv);
     }
 
     public turnOff(): boolean {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "turnOff");
+        this.throwIfUninitialized("turnOff");
         const lgtvCommand: LGTV.Request = {
             "uri": "ssap://system/turnOff"
         };
@@ -142,7 +135,7 @@ export class BackendControl extends EventEmitter {
             return setInterval(handler, milliseconds);
         }
 
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "turnOn");
+        this.throwIfUninitialized("turnOn");
 
         return new Promise<boolean>((resolveTurnOn): void => {
             that._poweredOn = false;
@@ -217,14 +210,14 @@ export class BackendControl extends EventEmitter {
     }
 
     public getPowerState(): "OFF" | "ON" {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "getPowerState");
+        this.throwIfUninitialized("getPowerState");
         return this._poweredOn
             ? "ON"
             : "OFF";
     }
 
     public async lgtvCommand(lgtvRequest: LGTV.Request): Promise<LGTV.Response> {
-        throwIfUninitializedClass(this._initialized, this.constructor.name, "lgtvCommand");
+        this.throwIfUninitialized("lgtvCommand");
         let lgtvResponse: LGTV.Response = {
             "returnValue": false
         };
