@@ -1,4 +1,4 @@
-import {AlexaLGwebOSTVObject} from "./error-classes";
+import {BaseClass} from "./error-classes";
 import Datastore from "nedb";
 
 export interface DatabaseUpdate {
@@ -11,7 +11,7 @@ export interface DatabaseRecord {
     [x: string]: boolean | number | string | object | null;
 }
 
-export class DatabaseTable extends AlexaLGwebOSTVObject {
+export class DatabaseTable extends BaseClass {
     private _indexes: string[];
     private _key: string;
     private _db: Datastore;

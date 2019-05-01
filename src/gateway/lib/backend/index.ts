@@ -1,6 +1,6 @@
 import {TV,
     UDN} from "../tv";
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {BackendControl} from "./backend-control";
 import {BackendController} from "./backend-controller";
 import {BackendSearcher} from "./backend-searcher";
@@ -8,7 +8,7 @@ import {DatabaseTable} from "./../database";
 
 export {BackendControl} from "./backend-control";
 
-export class Backend extends AlexaLGwebOSTVObject {
+export class Backend extends BaseClass {
     private readonly _controller: BackendController;
     private readonly _searcher: BackendSearcher;
     public constructor(db: DatabaseTable) {

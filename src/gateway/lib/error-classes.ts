@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import {Mutex} from "async-mutex";
 
-export class AlexaLGwebOSTVObject extends EventEmitter {
+export class BaseClass extends EventEmitter {
     protected initialized: boolean;
     protected initializeMutex: Mutex;
 

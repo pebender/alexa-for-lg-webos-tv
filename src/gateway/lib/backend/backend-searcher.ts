@@ -16,7 +16,7 @@
 import * as dgram from "dgram";
 import {IP, MAC, TV, UDN} from "../tv";
 import {Client as SsdpClient, SsdpHeaders} from "node-ssdp";
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require("node-arp");
 import http from "axios";
@@ -32,7 +32,7 @@ export interface UPnPDevice {
     };
 }
 
-export class BackendSearcher extends AlexaLGwebOSTVObject {
+export class BackendSearcher extends BaseClass {
     private _ssdpNotify: SsdpClient;
     private _ssdpResponse: SsdpClient;
     public constructor() {

@@ -1,9 +1,9 @@
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {FrontendSecurity} from "./frontend-security";
 import express from "express";
 import expressCore from "express-serve-static-core";
 
-export class FrontendInternal extends AlexaLGwebOSTVObject {
+export class FrontendInternal extends BaseClass {
     private readonly _security: FrontendSecurity;
     private readonly _server: expressCore.Express;
     public constructor(serverSecurity: FrontendSecurity) {

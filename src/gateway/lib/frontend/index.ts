@@ -1,4 +1,4 @@
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {CustomSkill} from "../custom-skill";
 import {DatabaseTable} from "../database";
 import {FrontendExternal} from "./frontend-external";
@@ -6,7 +6,7 @@ import {FrontendInternal} from "./frontend-internal";
 import {FrontendSecurity} from "./frontend-security";
 import {SmartHomeSkill} from "../smart-home-skill";
 
-export class Frontend extends AlexaLGwebOSTVObject {
+export class Frontend extends BaseClass {
     private _security: FrontendSecurity;
     private _internal: FrontendInternal;
     private _external: FrontendExternal;

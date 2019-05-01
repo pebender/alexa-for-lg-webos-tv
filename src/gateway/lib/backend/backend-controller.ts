@@ -1,10 +1,10 @@
 import {TV,
     UDN} from "../tv";
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {BackendControl} from "./backend-control";
 import {DatabaseTable} from "../database";
 
-export class BackendController extends AlexaLGwebOSTVObject {
+export class BackendController extends BaseClass {
     private readonly _db: DatabaseTable;
     private readonly _controls: {[x: string]: BackendControl};
     public constructor (db: DatabaseTable) {

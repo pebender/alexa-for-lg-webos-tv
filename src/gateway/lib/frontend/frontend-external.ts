@@ -7,7 +7,7 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {CustomSkill} from "../custom-skill";
 import {FrontendSecurity} from "./frontend-security";
 import {SmartHomeSkill} from "../smart-home-skill";
@@ -16,7 +16,7 @@ const basicAuth = require("express-basic-auth");
 import express from "express";
 import expressCore from "express-serve-static-core";
 
-export class FrontendExternal extends AlexaLGwebOSTVObject {
+export class FrontendExternal extends BaseClass {
     private readonly _security: FrontendSecurity;
     private readonly _customSkill: CustomSkill;
     private readonly _smartHomeSkill: SmartHomeSkill;

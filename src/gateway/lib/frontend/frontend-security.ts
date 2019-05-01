@@ -1,8 +1,8 @@
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import {DatabaseTable} from "../database";
 import {constants} from "../../../common/constants";
 
-export class FrontendSecurity extends AlexaLGwebOSTVObject {
+export class FrontendSecurity extends BaseClass {
     private readonly _db: DatabaseTable;
     public constructor(db: DatabaseTable) {
         super();

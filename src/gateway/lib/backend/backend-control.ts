@@ -2,14 +2,14 @@
 import * as wol from "wake_on_lan";
 import {Client as SsdpClient,
     SsdpHeaders} from "node-ssdp";
-import {AlexaLGwebOSTVObject} from "../error-classes";
+import {BaseClass} from "../error-classes";
 import LGTV from "lgtv2";
 import {DatabaseTable} from "../database";
 import {Mutex} from "async-mutex";
 import {TV} from "../tv";
 import uuid from "uuid/v4";
 
-export class BackendControl extends AlexaLGwebOSTVObject {
+export class BackendControl extends BaseClass {
     private _poweredOn: boolean;
     private _connecting: boolean;
     private readonly _db: DatabaseTable;
