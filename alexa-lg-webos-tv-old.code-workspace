@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"Alexa",
+			"backinthirty",
+			"callsign",
+			"certnames",
+			"Hulu",
+			"isnumeric",
+			"leanback",
+			"LGTV",
+			"LGWebOSTVController",
+			"OSTV",
+			"Plex",
+			"reprompt",
+			"ssap",
+			"ssdp",
+			"tvmap",
+			"Upsert",
+			"Vudu",
+			"WebOS"
+		],
+		"eslint.validate": [
+			"javascript",
+			"typescript"
+		]
+	}
+}
