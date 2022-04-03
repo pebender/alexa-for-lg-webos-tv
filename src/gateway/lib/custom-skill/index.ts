@@ -1,5 +1,5 @@
-import {Backend} from "../backend";
-import LGTV from "lgtv2";
+import { Backend } from '../backend'
+import LGTV from 'lgtv2'
 
 /*
  *******************************************************************************
@@ -9,29 +9,40 @@ import LGTV from "lgtv2";
  * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
  * since the 1.6.0 release on 09 September 2015.
  */
-export async function handler(event: {udn: string; lgtvRequest: LGTV.Request}, backend: Backend): Promise<LGTV.Response> {
-    try {
-        const commandResponse = await backend.control(event.udn).lgtvCommand(event.lgtvRequest);
-        return commandResponse;
-    } catch (error) {
-        const body: LGTV.Response = {
-            "returnValue": false,
-            "error": {
-                "name": error.name,
-                "message": error.message
-            }
-        };
-        return body;
+export async function handler (event: {udn: string; lgtvRequest: LGTV.Request}, backend: Backend): Promise<LGTV.Response> {
+  try {
+    const commandResponse = await backend.control(event.udn).lgtvCommand(event.lgtvRequest)
+    return commandResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      const body: LGTV.Response = {
+        returnValue: false,
+        error: {
+          name: error.name,
+          message: error.message
+        }
+      }
+      return body
+    } else {
+      const body: LGTV.Response = {
+        returnValue: false,
+        error: {
+          name: 'Unknown',
+          message: 'Unknown'
+        }
+      }
+      return body
     }
+  }
 }
 
 export class CustomSkill {
-    private backend: Backend;
-    public constructor(backend: Backend) {
-        this.backend = backend;
-    }
+  private backend: Backend
+  public constructor (backend: Backend) {
+    this.backend = backend
+  }
 
-    public handler(event: {udn: string; lgtvRequest: LGTV.Request}): Promise<LGTV.Response> {
-        return handler(event, this.backend);
-    }
+  public handler (event: {udn: string; lgtvRequest: LGTV.Request}): Promise<LGTV.Response> {
+    return handler(event, this.backend)
+  }
 }

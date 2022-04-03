@@ -1,10 +1,9 @@
-import * as ASH from  "../../../common/alexa";
-import {Backend, BackendControl} from "../backend";
-import {capabilities as alexaSmartHomeCapabilities} from "./index";
+import * as ASH from '../../../common/alexa'
+import { Backend, BackendControl } from '../backend'
+import { capabilities as alexaSmartHomeCapabilities } from './index'
 
-async function handler(alexaRequest: ASH.Request, backend: Backend): Promise<ASH.Response> {
-
-    /*
+async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<ASH.Response> {
+  /*
      * This looks strange at first. However, once it is explained, this
      * convolution of promises and async/awaits should make sense. The goal is
      * to (1) convert an array of functions into an array of their corresponding
@@ -12,7 +11,7 @@ async function handler(alexaRequest: ASH.Request, backend: Backend): Promise<ASH
      * array.
      *
      * In our case, 'buildEndpoint' accomplishes (1) and 'buildEndpointList'
-     * accoplishes (2).
+     * accomplishes (2).
      *
      * To create the array of function values in parallel. To process them in
      * parallel, we use 'Promise.resolve' to convert the functions to promises
@@ -34,56 +33,56 @@ async function handler(alexaRequest: ASH.Request, backend: Backend): Promise<ASH
      * 'Promise.all' to ensure the array of promises is resolve. After that, we
      * use 'await' to ensure we have the values from the resolved promises.
      */
-    async function buildEndpoint(backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpoint> {
-        let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = [];
-        try {
-            // Determine capabilities in parallel.
-            capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl));
-        } catch (error) {
-            capabilities = [];
-        }
-        const endpoint: ASH.ResponseEventPayloadEndpoint = {
-            "endpointId": backendControl.tv.udn,
-            "friendlyName": backendControl.tv.name,
-            "description": "LG webOS TV",
-            "manufacturerName": "LG Electronics",
-            "displayCategories": ["TV"],
-            "capabilities": []
-        };
-        capabilities.forEach((capability): void => {
-            if (typeof capability === "undefined" || capability === null) {
-                return;
-            }
-            endpoint.capabilities.push(capability);
-        });
-        return endpoint;
+  async function buildEndpoint (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpoint> {
+    let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = []
+    try {
+      // Determine capabilities in parallel.
+      capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl))
+    } catch (error) {
+      capabilities = []
     }
-
-    function buildEndpoints(backendControls: BackendControl[]): Promise<ASH.ResponseEventPayloadEndpoint[]> {
-        return Promise.all(backendControls.map(buildEndpoint));
+    const endpoint: ASH.ResponseEventPayloadEndpoint = {
+      endpointId: backendControl.tv.udn,
+      friendlyName: backendControl.tv.name,
+      description: 'LG webOS TV',
+      manufacturerName: 'LG Electronics',
+      displayCategories: ['TV'],
+      capabilities: []
     }
+    capabilities.forEach((capability): void => {
+      if (typeof capability === 'undefined' || capability === null) {
+        return
+      }
+      endpoint.capabilities.push(capability)
+    })
+    return endpoint
+  }
 
-    function buildResponse(endpoints: ASH.ResponseEventPayloadEndpoint[]): ASH.Response {
-        const alexaResponse = new ASH.Response({
-            "namespace": "Alexa.Discovery",
-            "name": "Discover.Response"
-        });
-        endpoints.forEach((endpoint: ASH.ResponseEventPayloadEndpoint): void => {
-            if (endpoint !== null) {
-                alexaResponse.addPayloadEndpoint(endpoint);
-            }
-        });
-        return alexaResponse;
-    }
+  function buildEndpoints (backendControls: BackendControl[]): Promise<ASH.ResponseEventPayloadEndpoint[]> {
+    return Promise.all(backendControls.map(buildEndpoint))
+  }
 
-    if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
-        return ASH.errorResponseForWrongNamespace(alexaRequest, "Alexa.Discovery");
-    }
+  function buildResponse (endpoints: ASH.ResponseEventPayloadEndpoint[]): ASH.Response {
+    const alexaResponse = new ASH.Response({
+      namespace: 'Alexa.Discovery',
+      name: 'Discover.Response'
+    })
+    endpoints.forEach((endpoint: ASH.ResponseEventPayloadEndpoint): void => {
+      if (endpoint !== null) {
+        alexaResponse.addPayloadEndpoint(endpoint)
+      }
+    })
+    return alexaResponse
+  }
 
-    const backendControls = await backend.controls();
-    const endpoints = await buildEndpoints(backendControls);
-    const response = await buildResponse(endpoints);
-    return response;
+  if (alexaRequest.directive.header.namespace !== 'Alexa.Discovery') {
+    return ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.Discovery')
+  }
+
+  const backendControls = await backend.controls()
+  const endpoints = await buildEndpoints(backendControls)
+  const response = await buildResponse(endpoints)
+  return response
 }
 
-export {handler};
+export { handler }

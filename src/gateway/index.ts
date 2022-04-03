@@ -7,52 +7,52 @@
  * since the 1.6.0 release on 09 September 2015.
  */
 
-import {Backend} from "./lib/backend";
-import {CustomSkill} from "./lib/custom-skill";
-import {DatabaseTable} from "./lib/database";
-import {Frontend} from "./lib/frontend";
-import {SmartHomeSkill} from "./lib/smart-home-skill";
-import fs from "fs-extra";
+import { Backend } from './lib/backend'
+import { CustomSkill } from './lib/custom-skill'
+import { DatabaseTable } from './lib/database'
+import { Frontend } from './lib/frontend'
+import { SmartHomeSkill } from './lib/smart-home-skill'
+import fs from 'fs-extra'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const ppath = require("persist-path");
+const persistPath = require('persist-path')
 
-export async function startGateway(): Promise<void> {
-    const configurationDir = ppath("LGwebOSTVGateway");
+export async function startGateway (): Promise<void> {
+  const configurationDir = persistPath('LGWebOSTVGateway')
 
-    /*
+  /*
      * This operation is synchronous. It is both expected and desired because it
-     * occures once at startup and because the directory is needed before the LG
+     * occurs once at startup and because the directory is needed before the LG
      * webOS TV gateway can run.
      */
-    try {
-        // eslint-disable-next-line no-sync
-        fs.mkdirSync(configurationDir);
-    } catch (error) {
-        if (error.code !== "EEXIST") {
-            throw error;
-        }
+  try {
+    // eslint-disable-next-line no-sync
+    fs.mkdirSync(configurationDir)
+  } catch (error) {
+    if ((error as any).code !== 'EEXIST') {
+      throw error
     }
+  }
 
-    /*
+  /*
      * I keep long term information needed to connect to each TV in a database.
      * The long term information is the TV's unique device name (udn), friendly name
      * (name), Internet Protocol address (ip), media access control address (mac)
      * and client key (key).
      */
-    const backendDb = new DatabaseTable(configurationDir, "backend", ["udn"], "udn");
-    await backendDb.initialize();
-    const frontendDb = new DatabaseTable(configurationDir, "frontend", ["username"], "username");
-    await frontendDb.initialize();
-    const backend = new Backend(backendDb);
-    backend.on("error", (error: Error, id: string): void => {
-        console.log(id);
-        console.log(error);
-    });
-    await backend.initialize();
-    const customSkill = new CustomSkill(backend);
-    const smartHomeSkill = new SmartHomeSkill(backend);
-    const frontend = new Frontend(frontendDb, customSkill, smartHomeSkill);
-    await frontend.initialize();
-    await frontend.start();
-    await backend.start();
+  const backendDb = new DatabaseTable(configurationDir, 'backend', ['udn'], 'udn')
+  await backendDb.initialize()
+  const frontendDb = new DatabaseTable(configurationDir, 'frontend', ['username'], 'username')
+  await frontendDb.initialize()
+  const backend = new Backend(backendDb)
+  backend.on('error', (error: Error, id: string): void => {
+    console.log(id)
+    console.log(error)
+  })
+  await backend.initialize()
+  const customSkill = new CustomSkill(backend)
+  const smartHomeSkill = new SmartHomeSkill(backend)
+  const frontend = new Frontend(frontendDb, customSkill, smartHomeSkill)
+  await frontend.initialize()
+  await frontend.start()
+  await backend.start()
 }
