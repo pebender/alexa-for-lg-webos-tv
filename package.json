@@ -19,6 +19,6 @@
     "install_modules": "npm install && (cd pkg/controller && npm install) && (cd pkg/gateway && npm install)",
     "build": "(cd pkg/controller && npm run build) && (cd pkg/gateway && npm run build)",
     "pack": "(cd pkg/controller && npm run pack) && (cd pkg/gateway && npm run pack)",
-    "all": "(cd pkg/controller && npm run all) && (cd pkg/gateway && npm run all)"
+    "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
 }
