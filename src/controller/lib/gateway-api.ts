@@ -87,25 +87,32 @@ function pingHandler (requestOptions: {
     request.once('response', (response): void => {
       response.setEncoding('utf8')
       response.on('data', (chunk: string): void => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line no-unused-vars
         const _nothing: string = chunk
       })
       response.on('end', (): void => {
         if (response.statusCode === 200) {
           resolve(true)
         }
-        if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
+        if (typeof response.statusCode !== 'undefined') {
+          if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
+            const error = new Error()
+            error.name = 'HTTP_SERVER_ERROR'
+            error.message = 'The gateway returned HTTP/1.1 status ' +
+                          ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
+            reject(error)
+          }
           const error = new Error()
           error.name = 'HTTP_SERVER_ERROR'
           error.message = 'The gateway returned HTTP/1.1 status ' +
-                        ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
+                      ` '${response.statusCode}'.`
+          reject(error)
+        } else {
+          const error = new Error()
+          error.name = 'HTTP_SERVER_ERROR'
+          error.message = 'The gateway returned no HTTP/1.1 status.'
           reject(error)
         }
-        const error = new Error()
-        error.name = 'HTTP_SERVER_ERROR'
-        error.message = 'The gateway returned HTTP/1.1 status ' +
-                    ` '${response.statusCode}'.`
-        reject(error)
       })
       response.on('error', (error: Error): void => reject(error))
     })
@@ -144,19 +151,29 @@ function sendHandler (requestOptions: {
         data += chunk
       })
       response.on('end', (): void => {
-        if (response.statusCode !== 200) {
-          if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
-            const message = 'The gateway returned HTTP/1.1 status code' +
-                            ` '${response.statusCode}'.`
+        if (typeof response.statusCode !== 'undefined') {
+          if (response.statusCode !== 200) {
+            if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
+              const message = 'The gateway returned HTTP/1.1 status code' +
+                              ` '${response.statusCode}'.`
+              return reject(new Error(message))
+            }
+            const message = 'The gateway returned HTTP/1.1 status message' +
+                          ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
             return reject(new Error(message))
           }
-          const message = 'The gateway returned HTTP/1.1 status message' +
-                        ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
+        } else {
+          const message = 'The gateway returned no HTTP/1.1 status code.'
           return reject(new Error(message))
         }
-        if (!(/^application\/json/).test(response.headers['content-type'])) {
-          const message = 'The gateway returned the wrong content type.'
-          return reject(new Error(message))
+        if (typeof response.headers['content-type'] !== 'undefined') {
+          if (!(/^application\/json/).test(response.headers['content-type'])) {
+            const message = 'The gateway returned the wrong content type.'
+            return reject(new Error(message))
+          } else {
+            const message = 'The gateway returned no content type.'
+            return reject(new Error(message))
+          }
         }
         try {
           body = JSON.parse(data)

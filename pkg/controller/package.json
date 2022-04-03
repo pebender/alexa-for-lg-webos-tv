@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "typescript": "4.6.3",
-    "@types/node": "11.13.8",
+    "@types/node": "14.18.9",
     "@types/aws-lambda": "8.10.24",
     "@types/uuid": "3.4.4",
     "npm-pack-zip": "1.2.7"
