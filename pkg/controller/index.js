@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const controller = require("./lib/controller");
+const controller = require('./lib/controller')
 
-module.exports = {"handler": controller.handler};
+module.exports = { handler: controller.handler }
