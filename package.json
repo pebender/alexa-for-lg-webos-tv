@@ -1,0 +1,18 @@
+{
+  "name": "alexa-lg-webos-tv",
+  "version": "0.0.1",
+  "description": "A controller and gateway for adding Alexa support to LG WebOS TVs that don't have native Alexa Support",
+  "main": "index.js",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.12.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0"
+  },
+  "scripts": {}
+}
