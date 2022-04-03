@@ -19,11 +19,9 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "typescript": "4.6.3",
     "@types/node": "14.18.9",
     "@types/aws-lambda": "8.10.24",
-    "@types/uuid": "3.4.4",
-    "npm-pack-zip": "1.2.7"
+    "@types/uuid": "3.4.4"
   },
   "bundledDependencies": [
     "ask-sdk",
@@ -34,9 +32,9 @@
   "scripts": {
     "clean": "rm -rf lib node_modules *.zip",
     "install_modules": "npm install",
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "pack": "npm-pack-zip",
+    "build": "../../node_modules/.bin/tsc",
+    "watch": "../../node_modules/.bin/tsc --watch",
+    "pack": "../../node_modules/.bin/npm-pack-zip",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
