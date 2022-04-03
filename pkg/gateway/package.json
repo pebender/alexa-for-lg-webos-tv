@@ -54,9 +54,12 @@
     "xml2js"
   ],
   "scripts": {
-    "clean": "rm -rf lib node_modules",
-    "build": "node_modules/.bin/tsc",
-    "watch": "node_modules/.bin/tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf lib node_modules *.tgz",
+    "install_modules": "npm install",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "pack": "npm pack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
 }

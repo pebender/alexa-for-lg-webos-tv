@@ -14,5 +14,11 @@
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0"
   },
-  "scripts": {}
+  "scripts": {
+    "clean": "rm -rf node_modules && (cd pkg/controller && npm run clean) && (cd pkg/gateway && npm run clean)",
+    "install_modules": "npm install && (cd pkg/controller && npm install) && (cd pkg/gateway && npm install)",
+    "build": "(cd pkg/controller && npm run build) && (cd pkg/gateway && npm run build)",
+    "pack": "(cd pkg/controller && npm run pack) && (cd pkg/gateway && npm run pack)",
+    "all": "(cd pkg/controller && npm run all) && (cd pkg/gateway && npm run all)"
+  }
 }

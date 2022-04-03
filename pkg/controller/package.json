@@ -32,10 +32,12 @@
     "uuid"
   ],
   "scripts": {
-    "clean": "rm -rf lib node_modules alexa-lg-webos-tv-controller.zip",
+    "clean": "rm -rf lib node_modules *.zip",
+    "install_modules": "npm install",
     "build": "tsc",
     "watch": "tsc --watch",
     "pack": "npm-pack-zip",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
 }
