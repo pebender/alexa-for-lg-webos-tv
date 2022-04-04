@@ -9,7 +9,7 @@ import LGTV from 'lgtv2'
 import { DatabaseTable } from '../database'
 import { Mutex } from 'async-mutex'
 import { TV } from '../tv'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 export class BackendControl extends BaseClass {
   private _poweredOn: boolean

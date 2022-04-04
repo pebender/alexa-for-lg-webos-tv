@@ -6,7 +6,7 @@ import {
 } from './common'
 import { Request } from './request'
 import { copyElement } from './copy'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 export interface ResponseEventPayloadEndpointCapability {
   type: string;

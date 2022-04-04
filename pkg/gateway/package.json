@@ -22,7 +22,7 @@
     "node-arp": "1.0.6",
     "node-ssdp": "4.0.0",
     "persist-path": "1.0.2",
-    "uuid": "3.3.2",
+    "uuid": "8.3.2",
     "wake_on_lan": "1.0.0",
     "xml2js": "0.4.23"
   },
@@ -31,7 +31,7 @@
     "@types/express": "4.17.13",
     "@types/fs-extra": "9.0.13",
     "@types/nedb": "1.8.12",
-    "@types/uuid": "3.4.4",
+    "@types/uuid": "8.3.4",
     "@types/wake_on_lan": "0.0.30",
     "@types/xml2js": "0.4.9"
   },

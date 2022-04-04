@@ -17,12 +17,12 @@
     "ask-sdk-model": "1.38.1",
     "ask-sdk-dynamodb-persistence-adapter": "2.12.1",
     "certnames": "1.0.4",
-    "uuid": "3.3.2"
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@types/node": "14.18.9",
     "@types/aws-lambda": "8.10.93",
-    "@types/uuid": "3.4.4"
+    "@types/uuid": "8.3.4"
   },
   "bundledDependencies": [
     "ask-sdk-core",
