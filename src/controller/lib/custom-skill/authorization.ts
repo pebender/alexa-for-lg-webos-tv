@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import ASK from 'ask-sdk'
-import ASKModel from 'ask-sdk-model'
+import * as ASKCore from 'ask-sdk-core'
+import * as ASKModel from 'ask-sdk-model'
 import { Gateway } from '../gateway-api'
 import { constants } from '../../../common/constants'
 import crypto from 'crypto'
@@ -8,11 +8,11 @@ import tls from 'tls'
 const certnames = require('certnames')
 
 const SetHostnameIntentHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-               handlerInput.requestEnvelope.request.intent.name === 'Authorization_SetHostnameIntent'
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'Authorization_SetHostnameIntent'
   },
-  async handle (handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
+  async handle (handlerInput: ASKCore.HandlerInput): Promise<ASKModel.Response> {
     function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
       return new Promise((resolve, reject): void => {
         const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false })
@@ -24,87 +24,110 @@ const SetHostnameIntentHandler = {
           })
           sock.end()
         })
-        sock.on('error', (error): void => reject(error))
+        sock.on('error', (error): void => {
+          reject(error)
+        })
       })
     }
+    console.log(JSON.stringify(handlerInput))
 
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
     if (typeof handlerInput.requestEnvelope.request === 'undefined') {
+      console.log('Authorization_SetHostnameIntent: request undefined')
       throw new Error('invalid code path')
     }
     const intentRequest = (handlerInput.requestEnvelope.request as ASKModel.IntentRequest)
-    if (typeof intentRequest.intent.slots === 'undefined') {
-      throw new Error('invalid code path')
-    }
-    const slots = (intentRequest.intent.slots as {[x: string]: ASKModel.Slot})
-    if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === 'STARTED') {
+
+    if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'STARTED') {
+      console.log('Authorization_SetHostnameIntent: STARTED')
       Reflect.deleteProperty(sessionAttributes, 'ipAddress')
       Reflect.deleteProperty(sessionAttributes, 'hostnames')
       handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
 
       return handlerInput.responseBuilder
-        .addDelegateDirective()
+        .addDelegateDirective(intentRequest.intent)
         .getResponse()
-    } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).dialogState === 'IN_PROGRESS') {
-      if (typeof slots.ipAddressA.value === 'undefined') {
+    } else if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'IN_PROGRESS') {
+      console.log('Authorization_SetHostnameIntent: IN_PROGRESS')
+      console.log(`ipAddressA: ${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')}`)
+      console.log(`ipAddressB: ${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')}`)
+      console.log(`ipAddressC: ${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')}`)
+      console.log(`ipAddressD: ${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')}`)
+      if (typeof ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA') === 'undefined') {
+        console.log('Authorization_SetHostnameIntent: ipAddressA is undefined')
         return handlerInput.responseBuilder
-          .addDelegateDirective()
+          .addDelegateDirective(intentRequest.intent)
           .getResponse()
-      } else if (parseInt(slots.ipAddressA.value, 10) < 0 || parseInt(slots.ipAddressA.value, 10) > 255) {
+      } else if (parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA'), 10) < 0 ||
+          parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA'), 10) > 255) {
+        console.log('Authorization_SetHostnameIntent: ipAddressA out of range')
         return handlerInput.responseBuilder
           .speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be between 0 and 255.' +
                         ' Could you tell me the first number again?')
           .addElicitSlotDirective('ipAddressA')
           .getResponse()
-      } else if (typeof slots.ipAddressB.value === 'undefined') {
+      } else if (typeof ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB') === 'undefined') {
+        console.log('Authorization_SetHostnameIntent: ipAddressB is undefined')
+
         return handlerInput.responseBuilder
-          .addDelegateDirective()
+          .addDelegateDirective(intentRequest.intent)
           .getResponse()
-      } else if (parseInt(slots.ipAddressB.value, 10) < 0 || parseInt(slots.ipAddressB.value, 10) > 255) {
+      } else if (parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB'), 10) < 0 ||
+          parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB'), 10) > 255) {
+        console.log('Authorization_SetHostnameIntent: ipAddressB out of range')
         return handlerInput.responseBuilder
           .speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be between 0 and 255.' +
                         ' Could you tell me the second number again?')
           .addElicitSlotDirective('ipAddressB')
           .getResponse()
-      } else if (typeof slots.ipAddressC.value === 'undefined') {
+      } else if (typeof ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC') === 'undefined') {
+        console.log('Authorization_SetHostnameIntent: ipAddressC is undefined')
         return handlerInput.responseBuilder
-          .addDelegateDirective()
+          .addDelegateDirective(intentRequest.intent)
           .getResponse()
-      } else if (parseInt(slots.ipAddressC.value, 10) < 0 || parseInt(slots.ipAddressC.value, 10) > 255) {
+      } else if (parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC'), 10) < 0 ||
+          parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC'), 10) > 255) {
+        console.log('Authorization_SetHostnameIntent: ipAddressC out of range')
         return handlerInput.responseBuilder
           .speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be between 0 and 255.' +
                         ' Could you tell me the third number again?')
           .addElicitSlotDirective('ipAddressC')
           .getResponse()
-      } else if (typeof slots.ipAddressD.value === 'undefined') {
+      } else if (typeof ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD') === 'undefined') {
+        console.log('Authorization_SetHostnameIntent: ipAddressD is undefined')
         return handlerInput.responseBuilder
-          .addDelegateDirective()
+          .addDelegateDirective(intentRequest.intent)
           .getResponse()
-      } else if (parseInt(slots.ipAddressD.value, 10) < 0 || parseInt(slots.ipAddressD.value, 10) > 255) {
+      } else if (parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD'), 10) < 0 ||
+          parseInt(ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD'), 10) > 255) {
+        console.log('Authorization_SetHostnameIntent: ipAddressD out of range')
         return handlerInput.responseBuilder
           .speak('I think I misheard you.' +
                         ' I.P. v four address numbers need to be between 0 and 255.' +
                         ' Could you tell me the fourth number again?')
           .addElicitSlotDirective('ipAddressD')
           .getResponse()
-      } else if (typeof slots.hostnameIndex.value === 'undefined') {
+      } else if (typeof ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') !== 'undefined') {
+        console.log('Authorization_SetHostnameIntent: hostnameIndex is defined')
         sessionAttributes.ipAddress =
-                    `${slots.ipAddressA.value}.` +
-                    `${slots.ipAddressB.value}.` +
-                    `${slots.ipAddressC.value}.` +
-                    `${slots.ipAddressD.value}`
+                    `${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')}.` +
+                    `${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')}.` +
+                    `${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')}.` +
+                    `${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')}`
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
+        console.log(`Authorization_SetHostnameIntent: IPv4 address is ${sessionAttributes.hostname}`)
         try {
           sessionAttributes.hostnames = await getHostnames(sessionAttributes.ipAddress, 25392)
         } catch (error) {
+          console.log(`Authorization_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
             return handlerInput.responseBuilder
               .speak('I had a problem connecting to the I.P. address.' +
-                              ' A card in the Alexa App shows more.')
+                              ' A card in the ASK App shows more.')
               .withSimpleCard('LG webOS TV Controller Error', `${error.name}: ${error.message}`)
               .getResponse()
           } else {
@@ -115,6 +138,7 @@ const SetHostnameIntentHandler = {
               .getResponse()
           }
         }
+        console.log(`Authorization_SetHostnameIntent: gateway FQDNs: ${sessionAttributes.hostnames}`)
         const cardTitle = 'Gateway Hostname Configuration'
         let cardContent = ''
         let index = 0
@@ -126,37 +150,38 @@ const SetHostnameIntentHandler = {
         index += 1
         cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
+        console.log(`Authorization_SetHostnameIntent: gateway FQDN prompt: ${cardContent}`)
         return handlerInput.responseBuilder
           .speak('Thank you.' +
-                        ' Now, could you look at the card in your Alexa app and' +
+                        ' Now, could you look at the card in your Alexa App and' +
                         ' tell me the number next to your gateway\'s hostname?')
           .withSimpleCard(cardTitle, cardContent)
           .addElicitSlotDirective('hostnameIndex')
           .getResponse()
-      } else if ((slots.hostnameIndex.value >= sessionAttributes.hostnames.length + 2) ||
-                       (((slots.hostnameIndex.value as unknown) as number) < 0)) {
+      } else if ((ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') >= sessionAttributes.hostnames.length + 2) ||
+          (((ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as unknown) as number) < 0)) {
         return handlerInput.responseBuilder
           .speak('I think I misheard you.' +
-                        ` I heard ${slots.hostnameIndex.value}, which is not an index on the card.` +
+                        ` I heard ${ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')}, which is not an index on the card.` +
                         ' Could you repeat your index?')
           .addElicitSlotDirective('hostnameIndex')
           .getResponse()
-      } else if (slots.hostnameIndex.value === sessionAttributes.hostnames.length + 1) {
+      } else if (ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') === sessionAttributes.hostnames.length + 1) {
         return handlerInput.responseBuilder
           .speak('I\'m sorry I misheard your gateway\'s I.P. address.' +
                         'Maybe we could try again.')
           .getResponse()
-      } else if (slots.hostnameIndex.value === sessionAttributes.hostnames.length) {
+      } else if (ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') === sessionAttributes.hostnames.length) {
         return handlerInput.responseBuilder
           .speak('I\'m sorry I could not discover your gateway\'s hostname.')
           .getResponse()
       } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
         return handlerInput.responseBuilder
-          .speak(`Is your hostname ${sessionAttributes.hostnames[slots.hostnameIndex.value]}?`)
+          .speak(`Is your hostname ${sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`)
           .addConfirmIntentDirective()
           .getResponse()
       }
-    } else if (intentRequest.dialogState === 'COMPLETED') {
+    } else if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
         let persistentAttributes: {
           hostname?: string;
@@ -167,13 +192,13 @@ const SetHostnameIntentHandler = {
           if (error instanceof Error) {
             return handlerInput.responseBuilder
               .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa app shows more.')
+                              ' A card in the Alexa App shows more.')
               .withSimpleCard('Error', `${error.name}: ${error.message}`)
               .getResponse()
           } else {
             return handlerInput.responseBuilder
               .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa app shows more.')
+                              ' A card in the Alexa App shows more.')
               .withSimpleCard('Error', 'Unknown: Unknown')
               .getResponse()
           }
@@ -181,20 +206,20 @@ const SetHostnameIntentHandler = {
         Reflect.deleteProperty(persistentAttributes, 'hostname')
         Reflect.deleteProperty(persistentAttributes, 'password')
         Reflect.deleteProperty(persistentAttributes, 'tvmap')
-        persistentAttributes.hostname = sessionAttributes.hostnames[slots.hostnameIndex.value as string]
+        persistentAttributes.hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
         try {
           await handlerInput.attributesManager.savePersistentAttributes()
         } catch (error) {
           if (error instanceof Error) {
             return handlerInput.responseBuilder
               .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa app shows more.')
+                              ' A card in the Alexa App shows more.')
               .withSimpleCard('Error', `${error.name}: ${error.message}`)
               .getResponse()
           } else {
             return handlerInput.responseBuilder
               .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa app shows more.')
+                              ' A card in the Alexa App shows more.')
               .withSimpleCard('Error', 'Unknown: Unknown')
               .getResponse()
           }
@@ -214,29 +239,25 @@ const SetHostnameIntentHandler = {
           .getResponse()
       }
       return handlerInput.responseBuilder
-        .addDelegateDirective()
+        .addDelegateDirective(intentRequest.intent)
         .getResponse()
     }
     return handlerInput.responseBuilder
-      .addDelegateDirective()
+      .addDelegateDirective(intentRequest.intent)
       .getResponse()
   }
 }
 const SetPasswordIntentHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
             handlerInput.requestEnvelope.request.intent.name === 'Authorization_SetPasswordIntent'
   },
-  async handle (handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
+  async handle (handlerInput: ASKCore.HandlerInput): Promise<ASKModel.Response> {
     let persistentAttributes: {
       hostname?: string;
       password?: string;
     } = {}
-    try {
-      persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
-    } catch (error) {
-      throw error
-    }
+    persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
     if (typeof persistentAttributes.hostname === 'undefined') {
       return handlerInput.responseBuilder
         .speak('You need to set your gateway\'s hostname before you can set its password.')
@@ -262,12 +283,12 @@ const SetPasswordIntentHandler = {
       } catch (error) {
         if (error instanceof Error) {
           return handlerInput.responseBuilder
-            .speak('I had a problem talking with the gateway. The Alexa app will show you more.')
+            .speak('I had a problem talking with the gateway. The Alexa App will show you more.')
             .withSimpleCard('Gateway Communication Error', `${error.name}; ${error.message}`)
             .getResponse()
         } else {
           return handlerInput.responseBuilder
-            .speak('I had a problem talking with the gateway. The Alexa app will show you more.')
+            .speak('I had a problem talking with the gateway. The Alexa App will show you more.')
             .withSimpleCard('Gateway Communication Error', 'Unknown: Unknown')
             .getResponse()
         }

@@ -1,4 +1,4 @@
-import * as ASK from 'ask-sdk'
+import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
 import * as authorization from './authorization'
 import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter'
@@ -8,57 +8,88 @@ const persistenceAdapter = new DynamoDbPersistenceAdapter({
   createTable: true
 })
 
-const HelpIntentHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent'
+const LaunchRequestHandler = {
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'
   },
-  handle (handlerInput: ASK.HandlerInput): ASKModel.Response {
-    const speechText = 'There is a manual around here somewhere.'
-    return handlerInput.responseBuilder.speak(speechText).getResponse()
+  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+    const speechOutput = 'Ground control to major Tom.'
+    return handlerInput.responseBuilder
+      .speak(speechOutput)
+      .reprompt(speechOutput)
+      .getResponse()
   }
 }
-const CancelIntentHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent'
+
+const HelpIntentHandler = {
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent'
   },
-  handle (handlerInput: ASK.HandlerInput): ASKModel.Response {
-    const speechText = 'There is a big red button around here somewhere.'
-    return handlerInput.responseBuilder.speak(speechText).getResponse()
+  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+    const speechOutput = 'There is a manual around here somewhere.'
+    const response: ASKModel.Response = handlerInput.responseBuilder
+      .speak(speechOutput)
+      .reprompt(speechOutput)
+      .getResponse()
+    console.log(JSON.stringify(response))
+    return response
+  }
+}
+
+const CancelIntentHandler = {
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+  },
+  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+    const speechOutput = 'There is a big red button around here somewhere.'
+    return handlerInput.responseBuilder
+      .speak(speechOutput)
+      .reprompt(speechOutput)
+      .getResponse()
   }
 }
 
 const StopIntentHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-            handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent'
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
   },
-  handle (handlerInput: ASK.HandlerInput): ASKModel.Response {
-    const speechText = 'But I don\'t want to stop.'
-    return handlerInput.responseBuilder.speak(speechText).getResponse()
+  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+    const speechOutput = 'But I don\'t want to stop.'
+    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
+  }
+}
+
+const FallbackIntentHandler = {
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent'
+  },
+  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+    const speechOutput = 'It\'s time to fall back.'
+    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
   }
 }
 
 const SessionEndedRequestHandler = {
-  canHandle (handlerInput: ASK.HandlerInput): boolean {
-    return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest'
+  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
+    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest'
   },
-  async handle (handlerInput: ASK.HandlerInput): Promise<ASKModel.Response> {
-    try {
-      await handlerInput.attributesManager.savePersistentAttributes()
-    } catch (error) {
-      throw error
-    }
+  async handle (handlerInput: ASKCore.HandlerInput): Promise<ASKModel.Response> {
+    await handlerInput.attributesManager.savePersistentAttributes()
     return handlerInput.responseBuilder.getResponse()
   }
 }
 
 const handlers = [
+  LaunchRequestHandler,
   ...authorization.handlers,
   HelpIntentHandler,
   CancelIntentHandler,
   StopIntentHandler,
+  FallbackIntentHandler,
   SessionEndedRequestHandler
 ]
 
@@ -66,20 +97,22 @@ const ErrorHandler = {
   canHandle (): boolean {
     return true
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handle (handlerInput: ASK.HandlerInput, _error: Error): ASKModel.Response {
+  handle (handlerInput: ASKCore.HandlerInput, error: Error): ASKModel.Response {
+    const speechOutput = 'Sorry, I can\'t understand the command. Please say again.'
+    console.log(`~~~~ Error handled: ${error.name} - ${error.message}: ${JSON.stringify(handlerInput)}`)
     return handlerInput.responseBuilder
-      .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
+      .speak(speechOutput)
+      .reprompt(speechOutput)
       .getResponse()
   }
 }
 
 // Function has three arguments skillHandler(event, context, callback).
-const skillHandler = ASK.SkillBuilders.custom()
+const skillHandler = ASKCore.SkillBuilders.custom()
   .addRequestHandlers(...handlers)
   .addErrorHandlers(ErrorHandler)
   .withPersistenceAdapter(persistenceAdapter)
+  .withCustomUserAgent('LGWebOSTVController')
   .lambda()
 
 export class CustomSkill {
