@@ -50,7 +50,7 @@ function createBasicOptions (requestOptions: {
     port: 25392,
     path: requestOptions.path,
     headers: {
-      Authorization: `Basic ${authorization}`
+      authorization: `Basic ${authorization}`
     },
     rejectUnauthorized:
             typeof requestOptions.rejectUnauthorized !== 'undefined'
@@ -140,8 +140,8 @@ function sendHandler (requestOptions: {
     } = createBasicOptions(requestOptions)
     const content = JSON.stringify(requestBody)
     options.method = 'POST'
-    options.headers['Content-Type'] = 'application/json'
-    options.headers['Content-Length'] = Buffer.byteLength(content).toString()
+    options.headers['content-type'] = 'application/json'
+    options.headers['content-length'] = Buffer.byteLength(content).toString()
     const request = https.request(options)
     request.once('response', (response): void => {
       let body: GatewayResponse = {}
@@ -150,57 +150,66 @@ function sendHandler (requestOptions: {
       response.on('data', (chunk: string): void => {
         data += chunk
       })
+      console.log(data)
       response.on('end', (): void => {
-        if (typeof response.statusCode !== 'undefined') {
-          if (response.statusCode !== 200) {
-            if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
-              const message = 'The gateway returned HTTP/1.1 status code' +
-                              ` '${response.statusCode}'.`
-              return reject(new Error(message))
-            }
-            const message = 'The gateway returned HTTP/1.1 status message' +
-                          ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
-            return reject(new Error(message))
-          }
-        } else {
+        // The expected HTTP/1.1 status code is 200.
+        const statusCode = response.statusCode
+        if (typeof statusCode === 'undefined') {
           const message = 'The gateway returned no HTTP/1.1 status code.'
           return reject(new Error(message))
         }
-        if (typeof response.headers['content-type'] !== 'undefined') {
-          if (!(/^application\/json/).test(response.headers['content-type'])) {
-            const message = 'The gateway returned the wrong content type.'
+        if (statusCode !== 200) {
+          if (typeof http.STATUS_CODES[statusCode] === 'undefined') {
+            const message = 'The gateway returned HTTP/1.1 status code: ' +
+                            `'${statusCode}'.`
             return reject(new Error(message))
           } else {
-            const message = 'The gateway returned no content type.'
+            const message = 'The gateway returned HTTP/1.1 status code: ' +
+                            `'${statusCode}' ('${http.STATUS_CODES[statusCode]}').`
             return reject(new Error(message))
           }
         }
+        // The expected HTTP/1.1 'content-type' header is 'application/json'
+        const contentType = response.headers['content-type']
+        if (typeof contentType === 'undefined') {
+          const message = 'The gateway returned no \'content-type\' header.'
+          return reject(new Error(message))
+        }
+        if (!(/^application\/json/).test(contentType.toLowerCase())) {
+          const message = 'The gateway returned the wrong \'content-type\' header:' +
+                          `'${contentType.toLowerCase()}'.`
+          return reject(new Error(message))
+        }
+        // Validate the body.
         try {
           body = JSON.parse(data)
         } catch (error) {
-          const message = 'The gateway returned corrupted content.'
+          const message = 'The gateway returned invalid JSON in its body.'
           return reject(new Error(message))
         }
         if (typeof body.error !== 'undefined') {
-          let message = 'The gateway returned the error'
           if (typeof body.error.name !== 'undefined') {
-            message += ` [${body.error.name}: ${body.error.message}]`
+            const message = 'The gateway returned the error: ' +
+                            `'${body.error.name}: ${body.error.message}'.`
+            return reject(new Error(message))
           } else {
-            message += ` ${body.error.message}`
+            const message = 'The gateway returned the error: ' +
+                            `'${body.error.message}'.`
+            return reject(new Error(message))
           }
-          return reject(new Error(message))
         }
+        // Return the body.
         return resolve(body)
       })
       response.on('error', (error: Error): void => {
-        const message = 'There was a problem talking to the gateway.' +
-                    ` The error was [${error.toString()}].`
+        const message = 'There was a problem talking to the gateway. ' +
+                        `The error was [${error.toString()}].`
         return reject(new Error(message))
       })
     })
     request.on('error', (error: Error): void => {
       const message = 'There was a problem talking to the gateway.' +
-                ` The error was [${error.name}: ${error.message}].`
+                      `The error was [${error.name}: ${error.message}].`
       return reject(new Error(message))
     })
     request.write(content)
