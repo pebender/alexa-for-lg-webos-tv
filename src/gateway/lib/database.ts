@@ -1,5 +1,5 @@
 import { BaseClass } from './base-class'
-import Datastore from 'nedb'
+import Datastore from '@seald-io/nedb'
 
 export interface DatabaseUpdate {
   [x: string]: boolean | number | string | object | null;
