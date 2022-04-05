@@ -1,25 +1,22 @@
-/*
- *******************************************************************************
- * I use UPnP discovery along with LG Electronics custom service type
- * urn:lge-com:service:webos-second-screen:1 to detect the LG webOS TVs. This
- * appears to be the most reliable way to find LG webOS TVs because of the more
- * targeted service type, the cleaner response headers and cleaner device
- * description fields. Other UPnP service types advertised by LG webOS TVs
- * appear to have either less consistent response headers or device description
- * fields making it more difficult to identify them. My LG webOS TV advertises
- * as UPnP 1.0. However, the discovery implemented complies with UPnP 1.1 it
- * accepts 1.1 as well.
- * <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf>
- * <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
- *******************************************************************************
- */
+//
+// I use UPnP discovery along with LG Electronics custom service type
+// urn:lge-com:service:webos-second-screen:1 to detect the LG webOS TVs. This
+// appears to be the most reliable way to find LG webOS TVs because of the more
+// targeted service type, the cleaner response headers and cleaner device
+// description fields. Other UPnP service types advertised by LG webOS TVs
+// appear to have either less consistent response headers or device description
+// fields making it more difficult to identify them. My LG webOS TV advertises
+// as UPnP 1.0. However, the discovery implemented complies with UPnP 1.1 it
+// accepts 1.1 as well.
+// <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf>
+// <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
+//
 import * as dgram from 'dgram'
 import { IP, MAC, TV, UDN } from '../tv'
 import { Client as SsdpClient, SsdpHeaders } from 'node-ssdp'
 import { BaseClass } from '../base-class'
 import http from 'axios'
 import { parseString as xml2js } from 'xml2js'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const arp = require('node-arp')
 
 export interface UPnPDevice {
@@ -119,9 +116,9 @@ export class BackendSearcher extends BaseClass {
       tv.url = `ws://${tv.ip}:3000`
 
       /*
-             * Get the device description. I use this to make sure that this is an
-             * LG Electronics webOS TV as well as to obtain the TV's friendly name
-             * and Unique Device Name (UDN).
+            // Get the device description. I use this to make sure that this is an
+            // LG Electronics webOS TV as well as to obtain the TV's friendly name
+            // and Unique Device Name (UDN).
              */
       if (typeof headers.LOCATION === 'undefined') {
         callback(null, null)
@@ -139,8 +136,8 @@ export class BackendSearcher extends BaseClass {
           }
 
           /*
-                     * These properties are required by the UPnP specification but
-                     * check anyway.
+                    // These properties are required by the UPnP specification but
+                    // check anyway.
                      */
           if (typeof description.root === 'undefined' ||
                         typeof description.root.device === 'undefined' ||
@@ -156,8 +153,8 @@ export class BackendSearcher extends BaseClass {
           }
 
           /*
-                     * Make sure this is from LG Electronics and has both a friendly
-                     * name and a UDN.
+                    // Make sure this is from LG Electronics and has both a friendly
+                    // name and a UDN.
                      */
           if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
                         description.root.device[0].friendlyName[0] === '' ||
@@ -169,8 +166,8 @@ export class BackendSearcher extends BaseClass {
           [tv.udn] = description.root.device[0].UDN
 
           /*
-                     * Get the mac address needed to turn on the TV using wake on
-                     * lan.
+                    // Get the mac address needed to turn on the TV using wake on
+                    // lan.
                      */
           arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
             if (err) {

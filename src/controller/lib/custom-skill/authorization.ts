@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
 import { Gateway } from '../gateway-api'

@@ -71,7 +71,6 @@ function ipAddressOctetCapability (octet: 'A' | 'B' | 'C' | 'D'): Promise<ASH.Re
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [
     ipAddressOctetCapability('A'),

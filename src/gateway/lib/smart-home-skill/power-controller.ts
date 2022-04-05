@@ -1,7 +1,6 @@
 import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa.PowerController',

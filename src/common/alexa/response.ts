@@ -1,10 +1,8 @@
-/* eslint-disable max-lines */
 import {
   Endpoint,
   Header,
   Namespace
 } from './common'
-import { Request } from './request'
 import { copyElement } from './copy'
 import { v4 as uuid } from 'uuid'
 

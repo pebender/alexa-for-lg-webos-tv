@@ -1,39 +1,32 @@
 import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 import LGTV from 'lgtv2'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const isNumeric = require('isnumeric')
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa.ChannelController'
   })]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
   return []
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function skipChannelsHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   return Promise.resolve(ASH.errorResponse(alexaRequest, 'UNKNOWN_ERROR', '\'Alexa.ChannelController.SkipChannels\' is not supported.'))
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function unknownChannelError (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
   return ASH.errorResponse(alexaRequest, 'INVALID_VALUE', 'The gateway doesn\'t recognize channel.')
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   function getCommand (): LGTV.Request | null {
     const lgtvRequest: LGTV.Request = {
       uri: 'ssap://tv/openChannel'
     }
     if (typeof alexaRequest.directive.payload !== 'undefined') {
-      // eslint-disable-next-line prefer-destructuring
       const payload: {
         channel?: {
           number?: number | string;
@@ -91,10 +84,10 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
       }
     }
 
-    /*
-         * X const [state] = await states(lgtv, null);
-         * Dummy 'value' values.
-         */
+    //
+    // X const [state] = await states(lgtv, null);
+    // Dummy 'value' values.
+    //
     const state: ASH.ResponseContextProperty = {
       namespace: 'Alexa.ChannelController',
       name: 'channel',

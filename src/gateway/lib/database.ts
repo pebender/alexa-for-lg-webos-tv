@@ -21,16 +21,12 @@ export class DatabaseTable extends BaseClass {
     this._indexes = indexes
     this._key = key
 
-    /*
-         * This operation is synchronous. It is both expected and desired because it
-         * occurs once at startup and because the database is needed before the LG
-         * webOS TV gateway can run.
-         */
-    try {
-      this._db = new Datastore({ filename: `${path}/${name}.nedb` })
-    } catch (error) {
-      throw error
-    }
+    //
+    // This operation is synchronous. It is both expected and desired because it
+    // occurs once at startup and because the database is needed before the LG
+    // webOS TV gateway can run.
+    //
+    this._db = new Datastore({ filename: `${path}/${name}.nedb` })
     this._db.loadDatabase((error): void => {
       if (error) {
         throw error
@@ -61,13 +57,11 @@ export class DatabaseTable extends BaseClass {
     query1[this._key] = { $exists: false }
     const query2: DatabaseQuery = {}
     query2[this._key] = null
-    // eslint-disable-next-line array-element-newline
     const query: DatabaseQuery = { $or: [query1, query2] }
     await new Promise<void>((resolve, reject): void => {
       that._db.remove(
         query,
         { multi: true },
-        // eslint-disable-next-line no-unused-vars
         (error): void => {
           if (error) {
             reject(error)
@@ -158,7 +152,6 @@ export class DatabaseTable extends BaseClass {
         query,
         update,
         { upsert: true },
-        // eslint-disable-next-line no-unused-vars
         (error): void => {
           if (error) {
             reject(error)

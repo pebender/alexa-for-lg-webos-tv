@@ -2,7 +2,6 @@ import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 import LGTV from 'lgtv2'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [
     Promise.resolve({
@@ -20,7 +19,6 @@ function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEven
   ]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
   return []
 }

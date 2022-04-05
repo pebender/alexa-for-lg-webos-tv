@@ -55,7 +55,6 @@ async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response>
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function handler (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   try {
     const alexaRequest = new ASH.Request(event)

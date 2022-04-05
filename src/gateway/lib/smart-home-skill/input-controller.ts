@@ -43,7 +43,6 @@ const lgtvToAlexa: {[key: string]: string} = {
   AV_3: 'VIDEO 3'
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa.InputController',

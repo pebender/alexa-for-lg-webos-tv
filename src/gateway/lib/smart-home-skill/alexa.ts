@@ -1,19 +1,16 @@
 import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa'
   })]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
   return []
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function reportStateHandler (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
   return new ASH.Response({
     namespace: 'Alexa.',

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import * as wol from 'wake_on_lan'
 import {
   Client as SsdpClient,
@@ -59,7 +58,6 @@ export class BackendControl extends BaseClass {
         that.emit('error', error, that._tv.udn)
       }
     })
-    // eslint-disable-next-line no-unused-vars
     this._connection.on('connecting', (): void => {
       that._connecting = true
     })
@@ -121,13 +119,13 @@ export class BackendControl extends BaseClass {
   }
 
   /*
-     * The method turns on the TV. It forces the BackendControl instance to
-     * assume the TV is off and to disconnect from the TV. Then, it periodically
-     * kicks the TV using Wake On Lan, periodically searches for the TV using
-     * UPnP Discovery and waits for the BackendControl instance to detect that
-     * the TV is on and connected. Before it does any of this, it sets a timeout
-     * of 7 seconds in an attempt to ensure that Alexa has the chance for a
-     * response before its 8 second timeout.
+    // The method turns on the TV. It forces the BackendControl instance to
+    // assume the TV is off and to disconnect from the TV. Then, it periodically
+    // kicks the TV using Wake On Lan, periodically searches for the TV using
+    // UPnP Discovery and waits for the BackendControl instance to detect that
+    // the TV is on and connected. Before it does any of this, it sets a timeout
+    // of 7 seconds in an attempt to ensure that Alexa has the chance for a
+    // response before its 8 second timeout.
      */
   public turnOn (): Promise<boolean> {
     const that = this
@@ -139,7 +137,7 @@ export class BackendControl extends BaseClass {
 
     this.throwIfUninitialized('turnOn')
 
-    return new Promise<boolean>((resolveTurnOn): void => {
+    return new Promise<boolean>((resolve): void => {
       that._poweredOn = false
       that._connection.disconnect()
       let finishTimeoutObject: NodeJS.Timeout | null = null
@@ -147,14 +145,14 @@ export class BackendControl extends BaseClass {
       let wolTimeoutObject: NodeJS.Timeout | null = null
       let searchTimeoutObject: NodeJS.Timeout | null = null
 
-      /*
-             * The function cleans up and then resolves the function's promise.
-             * It uses a mutex and a uuid to ensure that clean up and the
-             * function's promise resolution is only performed once. The mutex
-             * protects the clean up phase ensures that clean up is called only
-             * once. The uuid, which is set during the clean up phase, ensures
-             * that the function's promise resolution is called only once.
-             */
+      //
+      // The function cleans up and then resolves the function's promise.
+      // It uses a mutex and a uuid to ensure that clean up and the
+      // function's promise resolution is only performed once. The mutex
+      // protects the clean up phase ensures that clean up is called only
+      // once. The uuid, which is set during the clean up phase, ensures
+      // that the function's promise resolution is called only once.
+      //
       let finished = false
       const finishMutex = new Mutex()
       let finishUUID: string | null = null
@@ -188,7 +186,7 @@ export class BackendControl extends BaseClass {
           if (finished === false) {
             finishUUID = null
             finished = true
-            resolveTurnOn(poweredOn)
+            resolve(poweredOn)
           }
         }
       }

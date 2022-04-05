@@ -1,11 +1,10 @@
-/*
- *******************************************************************************
- * I found the 'ssap://*' LG webOS TV commands in
- * <https://github.com/ConnectSDK/Connect-SDK-Android-Core/blob/master/src/com/connectsdk/service/WebOSTVService.java>.
- * These commands may be incomplete/inaccurate as the LG Connect SDK team
- * <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
- * since the 1.6.0 release on 09 September 2015.
- */
+//
+// I found the 'ssap://*' LG webOS TV commands in
+// <https://github.com/ConnectSDK/Connect-SDK-Android-Core/blob/master/src/com/connectsdk/service/WebOSTVService.java>.
+// These commands may be incomplete/inaccurate as the LG Connect SDK team
+// <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
+// since the 1.6.0 release on 09 September 2015.
+//
 
 import { BaseClass } from '../base-class'
 import { CustomSkill } from '../custom-skill'
@@ -13,7 +12,6 @@ import { FrontendSecurity } from './frontend-security'
 import { SmartHomeSkill } from '../smart-home-skill'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const basicAuth = require('express-basic-auth')
 
 export class FrontendExternal extends BaseClass {

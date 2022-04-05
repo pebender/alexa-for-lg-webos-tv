@@ -29,7 +29,6 @@ function createBasicOptions (requestOptions: {
       [x: string]: string;
     };
     rejectUnauthorized: boolean;
-    // eslint-disable-next-line @typescript-eslint/indent
 } {
   if (typeof requestOptions.hostname === 'undefined' || requestOptions.hostname === null) {
     throw new RangeError('Gateway hostname not set.')

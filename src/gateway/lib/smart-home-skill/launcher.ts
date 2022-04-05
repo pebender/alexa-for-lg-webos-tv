@@ -56,7 +56,6 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa.Launcher',
@@ -89,12 +88,12 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   return [targetState]
 }
 
-/*
- * A list of Alexa target identifiers can be found at
- * <https://developer.amazon.com/docs/video/launch-target-reference.html>.
- * A list of LG webOS TV target ids can be found bet issuing the command
- * "ssap://com.webos.applicationManager/listLaunchPoints".
- */
+//
+// A list of Alexa target identifiers can be found at
+// <https://developer.amazon.com/docs/video/launch-target-reference.html>.
+// A list of LG webOS TV target ids can be found bet issuing the command
+// "ssap://com.webos.applicationManager/listLaunchPoints".
+//
 async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (typeof alexaRequest.directive.payload.identifier !== 'string' ||
         typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === 'undefined') {
@@ -108,7 +107,6 @@ async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: B
     uri: 'ssap://system.launcher/launch',
     payload: alexaToLGTV[alexaRequest.directive.payload.identifier]
   }
-  // eslint-disable-next-line no-unused-vars
   await backendControl.lgtvCommand(lgtvRequest)
   return new ASH.Response({
     namespace: 'Alexa',
