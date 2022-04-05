@@ -1,25 +1,23 @@
 import * as ASKModel from 'ask-sdk-model'
 import * as ASH from '../common/alexa'
 import * as AWSLambda from 'aws-lambda'
-import { CustomSkill } from './lib/custom-skill'
-import { SmartHomeSkill } from './lib/smart-home-skill'
+import { handler as customSkillHandler } from './lib/custom-skill'
+import { handler as smartHomeSkillHandler } from './lib/smart-home-skill'
 
-const customSkill = new CustomSkill()
-const smartHomeSkill = new SmartHomeSkill()
+async function skillHandler (request: ASKModel.RequestEnvelope | ASH.Request, context: ASKModel.Context | AWSLambda.Context): Promise<ASKModel.ResponseEnvelope | ASH.Response> {
+  let response: ASKModel.ResponseEnvelope | ASH.Response
+  if ('session' in request) {
+    response = await customSkillHandler((request as ASKModel.RequestEnvelope), (context as ASKModel.Context))
 
-function skillHandler (request: ASKModel.RequestEnvelope | ASH.Request, context: ASKModel.Context | AWSLambda.Context, callback: (error: Error | null, response?: ASH.Response | ASKModel.ResponseEnvelope) => void): Promise<void> {
-  if (typeof (request as ASH.Request).directive !== 'undefined') {
-    return smartHomeSkill.handler(
-      (request as ASH.Request),
-      (context as AWSLambda.Context),
-      (error: Error | null, response?: ASH.Response): void => callback(error, response)
-    )
+    return response
   }
-  return Promise.resolve(customSkill.handler(
-    (request as ASKModel.RequestEnvelope),
-    (context as ASKModel.Context),
-    (error: Error | null, response?: ASKModel.ResponseEnvelope): void => callback(error, response)
-  ))
+  if ('directive' in request) {
+    response = await smartHomeSkillHandler((request as ASH.Request), (context as AWSLambda.Context))
+
+    return response
+  }
+
+  throw new Error('Unhandled request')
 }
 
-exports.handler = skillHandler
+export { skillHandler as handler }

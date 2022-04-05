@@ -108,18 +108,14 @@ const ErrorHandler = {
 }
 
 // Function has three arguments skillHandler(event, context, callback).
-const skillHandler = ASKCore.SkillBuilders.custom()
-  .addRequestHandlers(...handlers)
-  .addErrorHandlers(ErrorHandler)
-  .withPersistenceAdapter(persistenceAdapter)
-  .withCustomUserAgent('LGWebOSTVController')
-  .lambda()
-
-export class CustomSkill {
-  // eslint-disable-next-line class-methods-use-this
-  public handler (requestEnvelope: ASKModel.RequestEnvelope, context: ASKModel.Context, callback: (err: Error, responseEnvelope?: ASKModel.ResponseEnvelope) => void): void {
-    return skillHandler(requestEnvelope, context, callback)
-  }
+const skillHandler = async function (request: ASKModel.RequestEnvelope, context: ASKModel.Context): Promise<ASKModel.ResponseEnvelope> {
+  return ASKCore.SkillBuilders.custom()
+    .addRequestHandlers(...handlers)
+    .addErrorHandlers(ErrorHandler)
+    .withPersistenceAdapter(persistenceAdapter)
+    .withCustomUserAgent('LGWebOSTVController')
+    .create()
+    .invoke(request, context)
 }
 
 export { skillHandler as handler }

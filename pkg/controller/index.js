@@ -1,3 +1,3 @@
-const controller = require('./lib/controller/lib/custom-skill')
+const controller = require('./lib/controller')
 
-module.exports = { handler: controller.handler }
+exports.handler = controller.handler
