@@ -1,7 +1,7 @@
 {
   "name": "alexa-for-lg-webos-tv",
   "version": "0.0.1",
-  "description": "An Alexa Skill and bridge for adding Alexa support to LG WebOS TVs that don't have native Alexa Support",
+  "description": "An Alexa skill and a bridge for adding Alexa support to LG WebOS TVs that don't have native Alexa Support",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",

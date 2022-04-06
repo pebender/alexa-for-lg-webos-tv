@@ -22,11 +22,11 @@
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../src/controller/types/*",
-                "../src/gateway/types/*",
+                "../src/skill/types/*",
+                "../src/bridge/types/*",
                 "../src/common/types/*",
                 "../pkg/skill/node_modules/*",
-                "../pkg/bride/node_modules/*",
+                "../pkg/bridge/node_modules/*",
                 "../pkg/skill/node_modules/@types/*",
                 "../pkg/bridge/node_modules/@types/*"
             ]

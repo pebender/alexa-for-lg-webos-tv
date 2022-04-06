@@ -1,6 +1,6 @@
 {
     "include": [
-        "../../src/gateway/**/*",
+        "../../src/bridge/**/*",
         "../../src/common/**/*"
     ],
     "exclude": [
@@ -22,7 +22,7 @@
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../../src/gateway/types/*",
+                "../../src/bridge/types/*",
                 "../../src/common/types/*",
                 "node_modules/*",
                 "node_modules/@types/*"

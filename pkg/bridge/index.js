@@ -1,4 +1,4 @@
-const bridge = require('./lib/gateway')
+const bridge = require('./lib/bridge')
 
 bridge.startBridge()
   .catch((error) => {
