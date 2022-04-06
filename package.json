@@ -17,10 +17,10 @@
     "npm-pack-zip": "1.3.0"
   },
   "scripts": {
-    "clean": "rm -rf node_modules && (cd pkg/controller && npm run clean) && (cd pkg/gateway && npm run clean)",
-    "install_modules": "npm install && (cd pkg/controller && npm install) && (cd pkg/gateway && npm install)",
-    "build": "(cd pkg/controller && npm run build) && (cd pkg/gateway && npm run build)",
-    "pack": "(cd pkg/controller && npm run pack) && (cd pkg/gateway && npm run pack)",
+    "clean": "rm -rf node_modules && (cd pkg/skill && npm run clean) && (cd pkg/bridge && npm run clean)",
+    "install_modules": "npm install && (cd pkg/skill && npm install) && (cd pkg/bridge && npm install)",
+    "build": "(cd pkg/skill && npm run build) && (cd pkg/bridge && npm run build)",
+    "pack": "(cd pkg/skill && npm run pack) && (cd pkg/bridge && npm run pack)",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
 }

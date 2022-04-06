@@ -25,10 +25,10 @@
                 "../src/controller/types/*",
                 "../src/gateway/types/*",
                 "../src/common/types/*",
-                "../pkg/controller/node_modules/*",
-                "../pkg/gateway/node_modules/*",
-                "../pkg/controller/node_modules/@types/*",
-                "../pkg/gateway/node_modules/@types/*"
+                "../pkg/skill/node_modules/*",
+                "../pkg/bride/node_modules/*",
+                "../pkg/skill/node_modules/@types/*",
+                "../pkg/bridge/node_modules/@types/*"
             ]
         }
     }
