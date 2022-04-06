@@ -1,5 +1,5 @@
 import * as ASH from '../../../common/alexa'
-import { Bridge } from '../gateway-api'
+import { Bridge } from '../bridge-api'
 
 function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({

@@ -1,6 +1,6 @@
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
-import { Bridge } from '../gateway-api'
+import { Bridge } from '../bridge-api'
 import { constants } from '../../../common/constants'
 import crypto from 'crypto'
 import tls from 'tls'

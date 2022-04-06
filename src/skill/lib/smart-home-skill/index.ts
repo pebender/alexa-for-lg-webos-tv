@@ -6,7 +6,7 @@ import * as alexaDiscovery from './discovery'
 import * as alexaEndpointHealth from './endpoint-health'
 import * as alexaPowerController from './power-controller'
 import * as alexaRangeController from './range-controller'
-import { Bridge } from '../gateway-api'
+import { Bridge } from '../bridge-api'
 
 function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [
