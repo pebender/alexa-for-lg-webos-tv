@@ -14,17 +14,17 @@
 			"isnumeric",
 			"leanback",
 			"LGTV",
-			"LGWebOSTVController",
-			"OSTV",
 			"Plex",
 			"reprompt",
 			"seald",
 			"ssap",
 			"ssdp",
 			"tvmap",
+			"UnofficialLGWebOSTVController",
+			"UnofficialLGwebOSTVGateway",
 			"Upsert",
 			"Vudu",
-			"WebOS"
+			"webOS"
 		],
 		"eslint.validate": [
 			"javascript",
