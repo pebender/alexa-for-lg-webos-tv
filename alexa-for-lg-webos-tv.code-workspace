@@ -27,6 +27,9 @@
 			"Vudu",
 			"webOS"
 		],
+		"cSpell.ignorePaths" : [
+			"src/common/alexa/alexa_smart_home_message_schema.json",
+		],
 		"eslint.validate": [
 			"javascript",
 			"typescript"
