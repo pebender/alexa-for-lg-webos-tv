@@ -98,7 +98,7 @@ const SetHostnameIntentHandler = {
           (typeof ipAddressBString === 'undefined') ||
           (typeof ipAddressCString === 'undefined') ||
           (typeof ipAddressDString === 'undefined')) {
-        const cardTitle = 'LG webOS TV Controller Error'
+        const cardTitle = 'Unofficial LG webOS TV Controller Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
         const speechOutput = 'I missed some of the numbers in the I.P. address. ' +
@@ -116,7 +116,7 @@ const SetHostnameIntentHandler = {
           ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) ||
           ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) ||
           ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255))) {
-        const cardTitle = 'LG webOS TV Controller Error'
+        const cardTitle = 'Unofficial LG webOS TV Controller Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
         const speechOutput = 'There is a problem with some numbers in the I.P. addresses. ' +
@@ -142,7 +142,7 @@ const SetHostnameIntentHandler = {
         } catch (error) {
           console.log(`Authorization_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
-            const cardTitle = 'LG webOS TV Controller Error'
+            const cardTitle = 'Unofficial LG webOS TV Controller Error'
             const cardContent = 'I heard the I.P. Address: ' +
                                 `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
             const speechOutput = 'I had a problem connecting to the I.P. address. ' +
@@ -152,7 +152,7 @@ const SetHostnameIntentHandler = {
               .speak(speechOutput)
               .getResponse()
           } else {
-            const cardTitle = 'LG webOS TV Controller Error'
+            const cardTitle = 'Unofficial LG webOS TV Controller Error'
             const cardContent = 'Unknown: Unknown'
             const speechOutput = 'I had a problem connecting to the I.P. address.' +
                                  'A card in the Alexa App shows more.'

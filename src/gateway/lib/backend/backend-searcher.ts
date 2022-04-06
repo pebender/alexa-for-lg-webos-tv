@@ -103,7 +103,7 @@ export class BackendSearcher extends BaseClass {
       }
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (typeof headers.SERVER === 'undefined' ||
-                !(headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
+          !(headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)) {
         callback(null, null)
         return
       }
@@ -115,11 +115,11 @@ export class BackendSearcher extends BaseClass {
       tv.ip = rinfo.address
       tv.url = `ws://${tv.ip}:3000`
 
-      /*
-            // Get the device description. I use this to make sure that this is an
-            // LG Electronics webOS TV as well as to obtain the TV's friendly name
-            // and Unique Device Name (UDN).
-             */
+      //
+      // Get the device description. I use this to make sure that this is an
+      // LG Electronics webOS TV as well as to obtain the TV's friendly name
+      // and Unique Device Name (UDN).
+      //
       if (typeof headers.LOCATION === 'undefined') {
         callback(null, null)
         return
@@ -135,40 +135,40 @@ export class BackendSearcher extends BaseClass {
             return
           }
 
-          /*
-                    // These properties are required by the UPnP specification but
-                    // check anyway.
-                     */
+          //
+          // These properties are required by the UPnP specification but
+          // check anyway.
+          //
           if (typeof description.root === 'undefined' ||
-                        typeof description.root.device === 'undefined' ||
-                        description.root.device.length !== 1 ||
-                        typeof description.root.device[0].manufacturer === 'undefined' ||
-                        description.root.device[0].manufacturer.length !== 1 ||
-                        typeof description.root.device[0].friendlyName === 'undefined' ||
-                        description.root.device[0].friendlyName.length !== 1 ||
-                        typeof description.root.device[0].UDN === 'undefined' ||
-                        description.root.device[0].UDN.length !== 1) {
+              typeof description.root.device === 'undefined' ||
+              description.root.device.length !== 1 ||
+              typeof description.root.device[0].manufacturer === 'undefined' ||
+              description.root.device[0].manufacturer.length !== 1 ||
+              typeof description.root.device[0].friendlyName === 'undefined' ||
+              description.root.device[0].friendlyName.length !== 1 ||
+              typeof description.root.device[0].UDN === 'undefined' ||
+              description.root.device[0].UDN.length !== 1) {
             callback(null, null)
             return
           }
 
-          /*
-                    // Make sure this is from LG Electronics and has both a friendly
-                    // name and a UDN.
-                     */
+          //
+          // Make sure this is from LG Electronics and has both a friendly
+          // name and a UDN.
+          //
           if (!description.root.device[0].manufacturer[0].match(/^LG Electronics$/i) ||
-                        description.root.device[0].friendlyName[0] === '' ||
-                        description.root.device[0].UDN[0] === '') {
+               description.root.device[0].friendlyName[0] === '' ||
+               description.root.device[0].UDN[0] === '') {
             callback(null, null)
             return
           }
           [tv.name] = description.root.device[0].friendlyName;
           [tv.udn] = description.root.device[0].UDN
 
-          /*
-                    // Get the mac address needed to turn on the TV using wake on
-                    // lan.
-                     */
+          //
+          // Get the mac address needed to turn on the TV using wake on
+          // lan.
+          //
           arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
             if (err) {
               callback(err, null)

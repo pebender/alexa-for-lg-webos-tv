@@ -16,8 +16,8 @@ async function gatewayEndpoint (): Promise<ASH.ResponseEventPayloadEndpoint | nu
     }
     const endpoint: ASH.ResponseEventPayloadEndpoint = {
       endpointId: 'lg-webos-tv-gateway',
-      friendlyName: 'LGTV Gateway',
-      description: 'LG webOS TV Gateway',
+      friendlyName: 'Unofficial LGTV Gateway',
+      description: 'An unofficial gateway between Alexa and an LG webOS TV',
       manufacturerName: 'Paul Bender',
       displayCategories: ['OTHER'],
       capabilities: []

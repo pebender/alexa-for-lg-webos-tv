@@ -44,8 +44,8 @@ async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<AS
     const endpoint: ASH.ResponseEventPayloadEndpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
-      description: 'LG webOS TV',
-      manufacturerName: 'LG Electronics',
+      description: 'Unofficial LG webOS TV Gateway',
+      manufacturerName: 'Back in Thirty',
       displayCategories: ['TV'],
       capabilities: []
     }

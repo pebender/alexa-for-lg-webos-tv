@@ -91,7 +91,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
 //
 // A list of Alexa target identifiers can be found at
 // <https://developer.amazon.com/docs/video/launch-target-reference.html>.
-// A list of LG webOS TV target ids can be found bet issuing the command
+// A list of LG webOS TV target ids can be found by issuing the command
 // "ssap://com.webos.applicationManager/listLaunchPoints".
 //
 async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {

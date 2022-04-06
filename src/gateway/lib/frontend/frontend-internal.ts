@@ -50,7 +50,7 @@ export class FrontendInternal extends BaseClass {
       if (passwordIsNull) {
         deletePasswordHTML = '' +
                     '<label>' +
-                        'LG webOS TV gateway password delete' +
+                        'Unofficial LG webOS TV Gateway password delete' +
                         ' (already deleted)' +
                         ':' +
                         '<input' +
@@ -63,7 +63,7 @@ export class FrontendInternal extends BaseClass {
       } else {
         deletePasswordHTML = '' +
                     '<label>' +
-                        'LG webOS TV gateway password delete' +
+                        'Unofficial LG webOS TV Gateway password delete' +
                         ':' +
                         '<input' +
                             ' type="checkbox"' +
@@ -76,15 +76,15 @@ export class FrontendInternal extends BaseClass {
                 <html>
                     <head>
                         <title>
-                            LG webOS TV gateway
+                            Unofficial LG webOS TV Gateway
                         </title>
                     </head>
                     <body>
-                        <H1>LG webOS TV gateway</H1>
+                        <H1>Unofficial LG webOS TV Gateway</H1>
                             <form  method="post" action="/" enctype="application/x-www-form-urlencoded">
                                 <div>
                                     <label>
-                                        LG webOS TV gateway hostname:
+                                        Unofficial LG webOS TV Gateway hostname:
                                         <input type="text" name="hostname" value="${hostname}" />
                                     </label>
                                 </div>

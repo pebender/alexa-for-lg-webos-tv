@@ -15,12 +15,12 @@ import fs from 'fs-extra'
 const persistPath = require('persist-path')
 
 export async function startGateway (): Promise<void> {
-  const configurationDir = persistPath('LGWebOSTVGateway')
+  const configurationDir = persistPath('UnofficialLGwebOSTVGateway')
 
   /*
     // This operation is synchronous. It is both expected and desired because it
-    // occurs once at startup and because the directory is needed before the LG
-    // webOS TV gateway can run.
+    // occurs once at startup and because the directory is needed before the Unofficial
+    // LG webOS TV Gateway can run.
      */
   try {
     fs.mkdirSync(configurationDir)
