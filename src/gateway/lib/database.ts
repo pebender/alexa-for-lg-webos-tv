@@ -24,7 +24,7 @@ export class DatabaseTable extends BaseClass {
     //
     // This operation is synchronous. It is both expected and desired because it
     // occurs once at startup and because the database is needed before the LG
-    // webOS TV gateway can run.
+    // webOS TV bridge can run.
     //
     this._db = new Datastore({ filename: `${path}/${name}.nedb` })
     this._db.loadDatabase((error): void => {

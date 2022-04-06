@@ -1,6 +1,6 @@
 export enum constants {
   'amazonVendorId' = 'M2V6930QON4TLV',
-  'gatewayHostname' = 'home.backinthirty.net',
-  'gatewayRootPassword' = 'd86566e397a9afb420fee18c5387b4de032a1fe402e14be2c76e91cf13554d870b57fcfc1030e424fb12324b9ca64324c79dbc6079bbd19086779fdbc31cbf81',
-  'gatewayUserPassword' = '09d1638b516783c85a18386532a87f629f5d2dce4b1a2abc363aca3c258433589bfac2f5f98699d1f44af00b05099e320813a1b59a50a5dfb92c5ccaa51bb914'
+  'bridgeHostname' = 'home.backinthirty.net',
+  'bridgeRootPassword' = 'd86566e397a9afb420fee18c5387b4de032a1fe402e14be2c76e91cf13554d870b57fcfc1030e424fb12324b9ca64324c79dbc6079bbd19086779fdbc31cbf81',
+  'bridgeUserPassword' = '54db9a66c24a9573a444b98edd46878da02ef06739c6537791827d50b27ea0635abf94e3269491fd9816d0f738225f47e0763c1d43728b3ff2c965cc97d0de96',
 }

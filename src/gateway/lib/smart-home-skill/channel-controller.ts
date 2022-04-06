@@ -18,7 +18,7 @@ function skipChannelsHandler (alexaRequest: ASH.Request, backendControl: Backend
 }
 
 function unknownChannelError (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
-  return ASH.errorResponse(alexaRequest, 'INVALID_VALUE', 'The gateway doesn\'t recognize channel.')
+  return ASH.errorResponse(alexaRequest, 'INVALID_VALUE', 'The bridge  doesn\'t recognize channel.')
 }
 
 async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {

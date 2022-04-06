@@ -1,5 +1,5 @@
 import * as ASH from '../../../common/alexa'
-import { Gateway } from '../gateway-api'
+import { Bridge } from '../gateway-api'
 
 function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [ASH.Response.buildPayloadEndpointCapability({
@@ -11,8 +11,8 @@ function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] 
 function states (): Promise<ASH.ResponseContextProperty>[] {
   async function value (): Promise<'OK' | 'UNREACHABLE'> {
     try {
-      const gateway = new Gateway('')
-      await gateway.ping()
+      const bridge = new Bridge('')
+      await bridge.ping()
       return 'OK'
     } catch (_error) {
       return 'UNREACHABLE'

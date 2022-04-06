@@ -1,12 +1,12 @@
 {
-  "name": "alexa-lg-webos-tv-controller",
+  "name": "alexa-for-lg-webos-tv-skill",
   "version": "0.0.1",
-  "description": "The code behind the the LG webOS TV Controller Alexa Skill.",
+  "description": "The code for the For LG webOS TV Alexa Skill.",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",
   "alexa": {
-    "applicationId": "amzn1.ask.skill.933ee8a1-2ae8-4a35-88b8-57281e0648e2"
+    "applicationId": "amzn1.ask.skill.0d98c4b6-d485-42d7-b269-c8bcdecff910"
   },
   "files": [
     "lib",

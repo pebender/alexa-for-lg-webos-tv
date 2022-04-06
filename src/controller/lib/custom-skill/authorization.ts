@@ -1,6 +1,6 @@
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
-import { Gateway } from '../gateway-api'
+import { Bridge } from '../gateway-api'
 import { constants } from '../../../common/constants'
 import crypto from 'crypto'
 import tls from 'tls'
@@ -98,12 +98,12 @@ const SetHostnameIntentHandler = {
           (typeof ipAddressBString === 'undefined') ||
           (typeof ipAddressCString === 'undefined') ||
           (typeof ipAddressDString === 'undefined')) {
-        const cardTitle = 'Unofficial LG webOS TV Controller Error'
+        const cardTitle = 'For LG webOS TV Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
         const speechOutput = 'I missed some of the numbers in the I.P. address. ' +
                              'An I.P. address is four numbers separated from each other by the word \'dot\'. '
-        const reprompt = 'Please tell me your gateway\'s I.P. address again.'
+        const reprompt = 'Please tell me your bridge\'s I.P. address again.'
         return handlerInput.responseBuilder
           .addElicitSlotDirective('ipAddressValid')
           .speak(speechOutput)
@@ -116,12 +116,12 @@ const SetHostnameIntentHandler = {
           ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) ||
           ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) ||
           ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255))) {
-        const cardTitle = 'Unofficial LG webOS TV Controller Error'
+        const cardTitle = 'For LG webOS TV Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
         const speechOutput = 'There is a problem with some numbers in the I.P. addresses. ' +
                              'The numbers must be integers between 0 and 255. '
-        const reprompt = 'Please tell me your gateway\'s I.P. address again.'
+        const reprompt = 'Please tell me your bridge\'s I.P. address again.'
         return handlerInput.responseBuilder
           .addElicitSlotDirective('ipAddressValid')
           .speak(speechOutput)
@@ -142,7 +142,7 @@ const SetHostnameIntentHandler = {
         } catch (error) {
           console.log(`Authorization_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
-            const cardTitle = 'Unofficial LG webOS TV Controller Error'
+            const cardTitle = 'For LG webOS TV Error'
             const cardContent = 'I heard the I.P. Address: ' +
                                 `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
             const speechOutput = 'I had a problem connecting to the I.P. address. ' +
@@ -152,7 +152,7 @@ const SetHostnameIntentHandler = {
               .speak(speechOutput)
               .getResponse()
           } else {
-            const cardTitle = 'Unofficial LG webOS TV Controller Error'
+            const cardTitle = 'For LG webOS TV Error'
             const cardContent = 'Unknown: Unknown'
             const speechOutput = 'I had a problem connecting to the I.P. address.' +
                                  'A card in the Alexa App shows more.'
@@ -162,22 +162,22 @@ const SetHostnameIntentHandler = {
               .getResponse()
           }
         }
-        console.log(`Authorization_SetHostnameIntent: gateway FQDNs: ${sessionAttributes.hostnames}`)
-        const cardTitle = 'Gateway Hostname Configuration'
+        console.log(`Authorization_SetHostnameIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
+        const cardTitle = 'Bridge  Hostname Configuration'
         let cardContent: string = ''
         let index = 0
         while (index < sessionAttributes.hostnames.length) {
           cardContent += `${index}: ${sessionAttributes.hostnames[index]}\n`
           index += 1
         }
-        cardContent += `\n${index}: My gateway is not in the list of hostnames.`
+        cardContent += `\n${index}: My bridge is not in the list of hostnames.`
         index += 1
         cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        console.log(`Authorization_SetHostnameIntent: gateway FQDN prompt: ${cardContent}`)
+        console.log(`Authorization_SetHostnameIntent: bridge FQDN prompt: ${cardContent}`)
         const speechOutput = 'Thank you. ' +
             'Now, could you look at the card in your Alexa App and ' +
-            'tell me the number next to your gateway\'s hostname?'
+            'tell me the number next to your bridge\'s hostname?'
         return handlerInput.responseBuilder
           .speak(speechOutput)
           .withSimpleCard(cardTitle, cardContent)
@@ -201,13 +201,13 @@ const SetHostnameIntentHandler = {
       }
       if (hostnameIndex === (sessionAttributes.hostnames.length + 1)) {
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I misheard your gateway\'s I.P. address.' +
+          .speak('I\'m sorry I misheard your bridge\'s I.P. address.' +
                           'Maybe we could try again.')
           .getResponse()
       }
       if (hostnameIndex === sessionAttributes.hostnames.length) {
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I could not discover your gateway\'s hostname.')
+          .speak('I\'m sorry I could not discover your bridge\'s hostname.')
           .getResponse()
       }
       if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
@@ -265,14 +265,14 @@ const SetHostnameIntentHandler = {
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
-          .speak('Your gateway\'s hostname has been set.')
+          .speak('Your bridge\'s hostname has been set.')
           .getResponse()
       } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'DENIED') {
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
-          .speak('Your gateway\'s hostname has not been set.')
+          .speak('Your bridge\'s hostname has not been set.')
           .getResponse()
       }
       return handlerInput.responseBuilder
@@ -297,7 +297,7 @@ const SetPasswordIntentHandler = {
     persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
     if (typeof persistentAttributes.hostname === 'undefined') {
       return handlerInput.responseBuilder
-        .speak('You need to set your gateway\'s hostname before you can set its password.')
+        .speak('You need to set your bridge\'s hostname before you can set its password.')
         .getResponse()
     }
     const password = crypto.randomBytes(64).toString('hex')
@@ -307,7 +307,7 @@ const SetPasswordIntentHandler = {
           hostname: persistentAttributes.hostname,
           path: '/HTTP',
           username: 'HTTP',
-          password: constants.gatewayRootPassword
+          password: constants.bridgeRootPassword
         }
         const request = {
           command: {
@@ -315,18 +315,18 @@ const SetPasswordIntentHandler = {
             value: password
           }
         }
-        const gateway = new Gateway('')
-        await gateway.send(options, request)
+        const bridge = new Bridge('')
+        await bridge.send(options, request)
       } catch (error) {
         if (error instanceof Error) {
           return handlerInput.responseBuilder
-            .speak('I had a problem talking with the gateway. The Alexa App will show you more.')
-            .withSimpleCard('Gateway Communication Error', `${error.name}; ${error.message}`)
+            .speak('I had a problem talking with the bridge. The Alexa App will show you more.')
+            .withSimpleCard('Bridge Communication Error', `${error.name}; ${error.message}`)
             .getResponse()
         } else {
           return handlerInput.responseBuilder
-            .speak('I had a problem talking with the gateway. The Alexa App will show you more.')
-            .withSimpleCard('Gateway Communication Error', 'Unknown: Unknown')
+            .speak('I had a problem talking with the bridge. The Alexa App will show you more.')
+            .withSimpleCard('Bridge Communication Error', 'Unknown: Unknown')
             .getResponse()
         }
       }
@@ -356,12 +356,12 @@ const SetPasswordIntentHandler = {
     } catch (error) {
       if (error instanceof Error) {
         return handlerInput.responseBuilder
-          .speak('I had a problem talking to the gateway. The Alexa App will show you more.')
+          .speak('I had a problem talking to the bridge. The Alexa App will show you more.')
           .withSimpleCard('Error', `${error.name}: ${error.message}`)
           .getResponse()
       } else {
         return handlerInput.responseBuilder
-          .speak('I had a problem talking to the gateway. The Alexa App will show you more.')
+          .speak('I had a problem talking to the bridge. The Alexa App will show you more.')
           .withSimpleCard('Error', 'Unknown: Unknown')
           .getResponse()
       }

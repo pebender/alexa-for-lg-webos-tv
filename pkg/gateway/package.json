@@ -1,7 +1,7 @@
 {
-  "name": "alexa-lg-webos-tv-gateway",
+  "name": "alexa-for-lg-webos-tv-bridge",
   "version": "0.0.1",
-  "description": "A daemon/service to bridge/translate/aggregate the LG webOS TV websocket transport and the Alexa HTTPS transport",
+  "description": "A daemon/service to bridge the Alexa Smart Home Skill protocol to the LG webOS TV control protocol",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "ISC",

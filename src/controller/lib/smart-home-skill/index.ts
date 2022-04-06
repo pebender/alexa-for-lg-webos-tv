@@ -6,7 +6,7 @@ import * as alexaDiscovery from './discovery'
 import * as alexaEndpointHealth from './endpoint-health'
 import * as alexaPowerController from './power-controller'
 import * as alexaRangeController from './range-controller'
-import { Gateway } from '../gateway-api'
+import { Bridge } from '../gateway-api'
 
 function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [
@@ -42,9 +42,9 @@ async function stateHandler (alexaResponse: ASH.Response): Promise<ASH.Response>
 }
 
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
-  const gateway = new Gateway('')
+  const bridge = new Bridge('')
   try {
-    const alexaResponse = await gateway.sendSkillDirective(alexaRequest)
+    const alexaResponse = await bridge.sendSkillDirective(alexaRequest)
     return alexaResponse
   } catch (error) {
     if (error instanceof Error) {
@@ -68,7 +68,7 @@ async function handler (event: ASH.Request, context: AWSLambda.Context): Promise
         default:
           return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
       }
-    } else if (alexaRequest.directive.endpoint.endpointId === 'lg-webos-tv-gateway') {
+    } else if (alexaRequest.directive.endpoint.endpointId === 'lg-webos-tv-bridge') {
       switch (alexaRequest.directive.header.namespace) {
         case 'Alexa':
           return stateHandler(await alexa.handler(alexaRequest))
@@ -94,9 +94,9 @@ async function handler (event: ASH.Request, context: AWSLambda.Context): Promise
 }
 
 async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
-  const gateway = new Gateway('x')
+  const bridge = new Bridge('x')
   try {
-    await gateway.send({ path: Gateway.skillPath() }, { log: alexaRequest })
+    await bridge.send({ path: Bridge.skillPath() }, { log: alexaRequest })
   } catch (error) {
     //
   }
@@ -113,7 +113,7 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   }
 
   try {
-    await gateway.send({ path: Gateway.skillPath() }, { log: alexaResponse })
+    await bridge.send({ path: Bridge.skillPath() }, { log: alexaResponse })
   } catch (error) {
     //
   }

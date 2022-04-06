@@ -1,3 +1,3 @@
-const controller = require('./lib/controller')
+const skill = require('./lib/controller')
 
-exports.handler = controller.handler
+exports.handler = skill.handler

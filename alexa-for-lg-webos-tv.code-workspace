@@ -10,6 +10,9 @@
 			"backinthirty",
 			"callsign",
 			"certnames",
+			"ForLGwebOSTV",
+			"ForLGWebOSTVController",
+			"ForLGwebOSTVGateway",
 			"Hulu",
 			"isnumeric",
 			"leanback",
@@ -20,8 +23,6 @@
 			"ssap",
 			"ssdp",
 			"tvmap",
-			"UnofficialLGWebOSTVController",
-			"UnofficialLGwebOSTVGateway",
 			"Upsert",
 			"Vudu",
 			"webOS"

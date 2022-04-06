@@ -1,8 +1,8 @@
 import * as ASH from '../../../common/alexa'
-import { Gateway } from '../gateway-api'
+import { Bridge } from '../gateway-api'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
 
-async function gatewayEndpoint (): Promise<ASH.ResponseEventPayloadEndpoint | null> {
+async function bridgeEndpoint (): Promise<ASH.ResponseEventPayloadEndpoint | null> {
   try {
     let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = []
     try {
@@ -15,9 +15,9 @@ async function gatewayEndpoint (): Promise<ASH.ResponseEventPayloadEndpoint | nu
       return null
     }
     const endpoint: ASH.ResponseEventPayloadEndpoint = {
-      endpointId: 'lg-webos-tv-gateway',
-      friendlyName: 'Unofficial LGTV Gateway',
-      description: 'An unofficial gateway between Alexa and an LG webOS TV',
+      endpointId: 'lg-webos-tv-bridge',
+      friendlyName: 'For LG webOS TV',
+      description: 'A bridge between the Alexa skill and the LG webOS TV',
       manufacturerName: 'Paul Bender',
       displayCategories: ['OTHER'],
       capabilities: []
@@ -39,13 +39,13 @@ async function handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
     return ASH.errorResponseForWrongNamespace(alexaRequest, alexaRequest.directive.header.namespace)
   }
 
-  const gateway: Gateway = new Gateway('')
+  const bridge: Bridge = new Bridge('')
 
   let alexaResponse: ASH.Response | null = null
-  let lgtvGatewayEndpoint: ASH.ResponseEventPayloadEndpoint | null = null
+  let lgtvBridgeEndpoint: ASH.ResponseEventPayloadEndpoint | null = null
 
   try {
-    alexaResponse = await gateway.sendSkillDirective(alexaRequest)
+    alexaResponse = await bridge.sendSkillDirective(alexaRequest)
   } catch (error) {
     if (error instanceof Error) {
       alexaResponse = ASH.errorResponseFromError(alexaRequest, error)
@@ -55,12 +55,12 @@ async function handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
   }
 
   try {
-    lgtvGatewayEndpoint = await gatewayEndpoint()
+    lgtvBridgeEndpoint = await bridgeEndpoint()
   } catch (error) {
-    lgtvGatewayEndpoint = null
+    lgtvBridgeEndpoint = null
   }
 
-  if (lgtvGatewayEndpoint === null) {
+  if (lgtvBridgeEndpoint === null) {
     return alexaResponse
   }
 
@@ -73,7 +73,7 @@ async function handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
   }
 
   try {
-    await alexaResponse.addPayloadEndpoint(lgtvGatewayEndpoint)
+    await alexaResponse.addPayloadEndpoint(lgtvBridgeEndpoint)
   } catch (error) {
     if (error instanceof Error) {
       return ASH.errorResponseFromError(alexaRequest, error)

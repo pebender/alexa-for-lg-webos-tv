@@ -16,7 +16,7 @@ export class FrontendSecurity extends BaseClass {
 
   public authorizeRoot (username: string, password: string): boolean {
     this.throwIfUninitialized('authorizeRoot')
-    if (username === 'HTTP' && password === constants.gatewayRootPassword) {
+    if (username === 'HTTP' && password === constants.bridgeRootPassword) {
       return true
     }
     return false

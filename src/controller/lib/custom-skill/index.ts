@@ -4,7 +4,7 @@ import * as authorization from './authorization'
 import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter'
 
 const persistenceAdapter = new DynamoDbPersistenceAdapter({
-  tableName: 'UnofficialLGwebOSTVController',
+  tableName: 'ForLGwebOSTV',
   createTable: true
 })
 
@@ -113,7 +113,7 @@ const skillHandler = async function (request: ASKModel.RequestEnvelope, context:
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
     .withPersistenceAdapter(persistenceAdapter)
-    .withCustomUserAgent('UnofficialLGwebOSTVController')
+    .withCustomUserAgent('ForLGwebOSTV')
     .create()
     .invoke(request, context)
 }

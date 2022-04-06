@@ -90,9 +90,9 @@ export class FrontendExternal extends BaseClass {
           .end()
         return
       }
-      // X    console.log(JSON.stringify(request.body, null, 2));
+      console.log(JSON.stringify(request.body, null, 2))
       const commandResponse = await that._smartHomeSkill.handler(request.body)
-      // X    console.log(JSON.stringify(commandResponse, null, 2));
+      console.log(JSON.stringify(commandResponse, null, 2))
       response
         .type('json')
         .status(200)

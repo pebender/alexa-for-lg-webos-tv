@@ -3,11 +3,11 @@ import { constants } from '../../common/constants'
 import http from 'http'
 import https from 'https'
 
-export interface GatewayRequest {
+export interface BridgeRequest {
   [x: string]: number | string | object | undefined;
 }
 
-export interface GatewayResponse {
+export interface BridgeResponse {
   error?: {
     name?: string;
     message?: string;
@@ -31,16 +31,16 @@ function createBasicOptions (requestOptions: {
     rejectUnauthorized: boolean;
 } {
   if (typeof requestOptions.hostname === 'undefined' || requestOptions.hostname === null) {
-    throw new RangeError('Gateway hostname not set.')
+    throw new RangeError('Bridge hostname not set.')
   }
   if (typeof requestOptions.username === 'undefined' || requestOptions.username === null) {
-    throw new RangeError('Gateway username not set.')
+    throw new RangeError('Bridge username not set.')
   }
   if (typeof requestOptions.password === 'undefined' || requestOptions.password === null) {
-    throw new RangeError('Gateway password not set.')
+    throw new RangeError('Bridge password not set.')
   }
   if (typeof requestOptions.path === 'undefined' || requestOptions.path === null) {
-    throw new RangeError('Gateway path not set.')
+    throw new RangeError('Bridge path not set.')
   }
 
   const authorization = Buffer.from(`${requestOptions.username}:${requestOptions.password}`).toString('base64')
@@ -97,19 +97,19 @@ function pingHandler (requestOptions: {
           if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
             const error = new Error()
             error.name = 'HTTP_SERVER_ERROR'
-            error.message = 'The gateway returned HTTP/1.1 status ' +
+            error.message = 'The bridge returned HTTP/1.1 status ' +
                           ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
             reject(error)
           }
           const error = new Error()
           error.name = 'HTTP_SERVER_ERROR'
-          error.message = 'The gateway returned HTTP/1.1 status ' +
+          error.message = 'The bridge returned HTTP/1.1 status ' +
                       ` '${response.statusCode}'.`
           reject(error)
         } else {
           const error = new Error()
           error.name = 'HTTP_SERVER_ERROR'
-          error.message = 'The gateway returned no HTTP/1.1 status.'
+          error.message = 'The bridge returned no HTTP/1.1 status.'
           reject(error)
         }
       })
@@ -125,7 +125,7 @@ function sendHandler (requestOptions: {
   password: string;
   path: string;
   rejectUnauthorized?: boolean;
-}, requestBody: GatewayRequest): Promise<GatewayResponse> {
+}, requestBody: BridgeRequest): Promise<BridgeResponse> {
   return new Promise((resolve, reject): void => {
     const options: {
       method?: 'POST';
@@ -143,7 +143,7 @@ function sendHandler (requestOptions: {
     options.headers['content-length'] = Buffer.byteLength(content).toString()
     const request = https.request(options)
     request.once('response', (response): void => {
-      let body: GatewayResponse = {}
+      let body: BridgeResponse = {}
       let data = ''
       response.setEncoding('utf8')
       response.on('data', (chunk: string): void => {
@@ -154,46 +154,53 @@ function sendHandler (requestOptions: {
         // The expected HTTP/1.1 status code is 200.
         const statusCode = response.statusCode
         if (typeof statusCode === 'undefined') {
-          const message = 'The gateway returned no HTTP/1.1 status code.'
+          const message = 'The bridge returned no HTTP/1.1 status code.'
+          console.log(message)
           return reject(new Error(message))
         }
         if (statusCode !== 200) {
           if (typeof http.STATUS_CODES[statusCode] === 'undefined') {
-            const message = 'The gateway returned HTTP/1.1 status code: ' +
+            const message = 'The bridge returned HTTP/1.1 status code: ' +
                             `'${statusCode}'.`
+            console.log(message)
             return reject(new Error(message))
           } else {
-            const message = 'The gateway returned HTTP/1.1 status code: ' +
+            const message = 'The bridge returned HTTP/1.1 status code: ' +
                             `'${statusCode}' ('${http.STATUS_CODES[statusCode]}').`
+            console.log(message)
             return reject(new Error(message))
           }
         }
         // The expected HTTP/1.1 'content-type' header is 'application/json'
         const contentType = response.headers['content-type']
         if (typeof contentType === 'undefined') {
-          const message = 'The gateway returned no \'content-type\' header.'
+          const message = 'The bridge returned no \'content-type\' header.'
+          console.log(message)
           return reject(new Error(message))
         }
         if (!(/^application\/json/).test(contentType.toLowerCase())) {
-          const message = 'The gateway returned the wrong \'content-type\' header:' +
+          const message = 'The bridge returned the wrong \'content-type\' header:' +
                           `'${contentType.toLowerCase()}'.`
+          console.log(message)
           return reject(new Error(message))
         }
         // Validate the body.
         try {
           body = JSON.parse(data)
         } catch (error) {
-          const message = 'The gateway returned invalid JSON in its body.'
+          const message = 'The bridge returned invalid JSON in its body.'
           return reject(new Error(message))
         }
         if (typeof body.error !== 'undefined') {
           if (typeof body.error.name !== 'undefined') {
-            const message = 'The gateway returned the error: ' +
+            const message = 'The bridge returned the error: ' +
                             `'${body.error.name}: ${body.error.message}'.`
+            console.log(message)
             return reject(new Error(message))
           } else {
-            const message = 'The gateway returned the error: ' +
+            const message = 'The bridge returned the error: ' +
                             `'${body.error.message}'.`
+            console.log(message)
             return reject(new Error(message))
           }
         }
@@ -201,14 +208,16 @@ function sendHandler (requestOptions: {
         return resolve(body)
       })
       response.on('error', (error: Error): void => {
-        const message = 'There was a problem talking to the gateway. ' +
+        const message = 'There was a problem talking to the bridge. ' +
                         `The error was [${error.toString()}].`
+        console.log(message)
         return reject(new Error(message))
       })
     })
     request.on('error', (error: Error): void => {
-      const message = 'There was a problem talking to the gateway.' +
+      const message = 'There was a problem talking to the bridge.' +
                       `The error was [${error.name}: ${error.message}].`
+      console.log(message)
       return reject(new Error(message))
     })
     request.write(content)
@@ -216,7 +225,7 @@ function sendHandler (requestOptions: {
   })
 }
 
-class Gateway {
+class Bridge {
   private _userId: string
   private _hostname: string
   private _username: string
@@ -225,9 +234,9 @@ class Gateway {
   public constructor (userId: string) {
     this._userId = userId
     // These will be in a database indexed by userId.
-    this._hostname = constants.gatewayHostname
+    this._hostname = constants.bridgeHostname
     this._username = 'LGTV'
-    this._password = constants.gatewayUserPassword
+    this._password = constants.bridgeUserPassword
     this._null = ''
   }
 
@@ -282,8 +291,8 @@ class Gateway {
       password?: string;
       path: string;
     },
-    request: GatewayRequest
-  ): Promise<GatewayResponse> {
+    request: BridgeRequest
+  ): Promise<BridgeResponse> {
     const options = {
       hostname: typeof sendOptions.hostname !== 'undefined'
         ? sendOptions.hostname
@@ -304,10 +313,10 @@ class Gateway {
       hostname: this.hostname,
       username: this.username,
       password: this.password,
-      path: Gateway.skillPath()
+      path: Bridge.skillPath()
     }
     return pingHandler(options)
   }
 }
 
-export { Gateway }
+export { Bridge }
