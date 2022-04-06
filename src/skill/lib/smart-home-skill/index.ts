@@ -1,45 +1,8 @@
 import * as ASH from '../../../common/alexa'
 import * as AWSLambda from 'aws-lambda'
-import * as alexa from './alexa'
 import * as alexaAuthorization from './authorization'
 import * as alexaDiscovery from './discovery'
-import * as alexaEndpointHealth from './endpoint-health'
-import * as alexaPowerController from './power-controller'
-import * as alexaRangeController from './range-controller'
 import { Bridge } from '../bridge-api'
-
-function capabilities (): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
-  return [
-    ...alexa.capabilities(),
-    ...alexaEndpointHealth.capabilities(),
-    ...alexaPowerController.capabilities(),
-    ...alexaRangeController.capabilities()
-  ]
-}
-
-function states (): Promise<ASH.ResponseContextProperty>[] {
-  return [
-    ...alexa.states(),
-    ...alexaEndpointHealth.states(),
-    ...alexaPowerController.states(),
-    ...alexaRangeController.states()
-  ]
-}
-
-async function stateHandler (alexaResponse: ASH.Response): Promise<ASH.Response> {
-  try {
-    (await Promise.all(states())).forEach((state): void => {
-      if (typeof state === 'undefined' || state === null ||
-                typeof state.value === 'undefined' || state.value === null) {
-        return
-      }
-      alexaResponse.addContextProperty(state)
-    })
-    return alexaResponse
-  } catch (error) {
-    return alexaResponse
-  }
-}
 
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
   const bridge = new Bridge('')
@@ -59,25 +22,12 @@ async function handler (event: ASH.Request, context: AWSLambda.Context): Promise
   try {
     const alexaRequest = new ASH.Request(event)
     if (typeof alexaRequest.directive.endpoint === 'undefined' ||
-            typeof alexaRequest.directive.endpoint.endpointId === 'undefined') {
+        typeof alexaRequest.directive.endpoint.endpointId === 'undefined') {
       switch (alexaRequest.directive.header.namespace) {
         case 'Alexa.Authorization':
           return alexaAuthorization.handler(alexaRequest)
         case 'Alexa.Discovery':
           return alexaDiscovery.handler(alexaRequest)
-        default:
-          return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
-      }
-    } else if (alexaRequest.directive.endpoint.endpointId === 'lg-webos-tv-bridge') {
-      switch (alexaRequest.directive.header.namespace) {
-        case 'Alexa':
-          return stateHandler(await alexa.handler(alexaRequest))
-        case 'Alexa.EndpointHealth':
-          return stateHandler(await alexaEndpointHealth.handler(alexaRequest))
-        case 'Alexa.PowerController':
-          return stateHandler(await alexaPowerController.handler(alexaRequest))
-        case 'Alexa.RangeController':
-          return stateHandler(await alexaRangeController.handler(alexaRequest))
         default:
           return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
       }
@@ -121,4 +71,4 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   return alexaResponse
 }
 
-export { capabilities, states, handlerWithLogging as handler }
+export { handlerWithLogging as handler }
