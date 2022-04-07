@@ -28,13 +28,11 @@ const SetHostnameIntentHandler = {
         })
       })
     }
-    console.log(JSON.stringify(handlerInput.requestEnvelope))
 
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
 
     if (typeof handlerInput.requestEnvelope.request === 'undefined') {
       const errorMessage = 'Authorization_SetHostnameIntent: invalid code path: request undefined'
-      console.log(errorMessage)
       throw new Error(errorMessage)
     }
 
@@ -42,7 +40,6 @@ const SetHostnameIntentHandler = {
 
     if (typeof intentRequest.intent.slots === 'undefined') {
       const errorMessage = 'Authorization_SetHostnameIntent: invalid code path: intents has no slots'
-      console.log(errorMessage)
       throw new Error(errorMessage)
     }
 
@@ -53,29 +50,21 @@ const SetHostnameIntentHandler = {
         (typeof intentRequest.intent.slots.ipAddressD === 'undefined') ||
         (typeof intentRequest.intent.slots.hostnameIndex === 'undefined')) {
       const errorMessage = 'Authorization_SetHostnameIntent: invalid code path: missing slot(s)'
-      console.log(errorMessage)
       throw new Error(errorMessage)
     }
 
     const dialogState: ASKModel.DialogState = ASKCore.getDialogState(handlerInput.requestEnvelope)
-    console.log(`dialogState: ${dialogState}`)
 
-    const ipAddressValidString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressValid')
     const ipAddressAString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')
     const ipAddressBString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')
     const ipAddressCString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')
     const ipAddressDString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')
     const hostnameIndexString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
-    console.log(`(dirty) set: ${ipAddressValidString}, address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
 
     const ipAddressA: Number = Number(ipAddressAString)
     const ipAddressB: Number = Number(ipAddressBString)
     const ipAddressC: Number = Number(ipAddressCString)
     const ipAddressD: Number = Number(ipAddressDString)
-    const hostnameIndex: Number = Number(hostnameIndexString)
-    const ipAddressValid: Boolean = (typeof ipAddressValidString !== 'undefined') && (ipAddressValidString.toLowerCase() === 'yes')
-
-    console.log(`(clean) set: ${ipAddressValid}, address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`)
 
     if (dialogState === 'STARTED') {
       Reflect.deleteProperty(sessionAttributes, 'ipAddress')
@@ -98,15 +87,15 @@ const SetHostnameIntentHandler = {
           (typeof ipAddressBString === 'undefined') ||
           (typeof ipAddressCString === 'undefined') ||
           (typeof ipAddressDString === 'undefined')) {
-        const cardTitle = 'For LG webOS TV Error'
+        const cardTitle = '\'For LG webOS TV\' Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
-        const speechOutput = 'I missed some of the numbers in the I.P. address. ' +
-                             'An I.P. address is four numbers separated from each other by the word \'dot\'. '
+        const speakText = 'I missed some of the numbers in the I.P. address. ' +
+                          'An I.P. address is four numbers separated from each other by the word \'dot\'. '
         const reprompt = 'Please tell me your bridge\'s I.P. address again.'
         return handlerInput.responseBuilder
           .addElicitSlotDirective('ipAddressValid')
-          .speak(speechOutput)
+          .speak(speakText)
           .reprompt(reprompt)
           .withSimpleCard(cardTitle, cardContent)
           .getResponse()
@@ -116,15 +105,15 @@ const SetHostnameIntentHandler = {
           ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) ||
           ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) ||
           ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255))) {
-        const cardTitle = 'For LG webOS TV Error'
+        const cardTitle = '\'For LG webOS TV\' Error'
         const cardContent = 'I heard the I.P. Address: ' +
                             `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
-        const speechOutput = 'There is a problem with some numbers in the I.P. addresses. ' +
-                             'The numbers must be integers between 0 and 255. '
+        const speakText = 'There is a problem with some numbers in the I.P. addresses. ' +
+                          'The numbers must be integers between 0 and 255. '
         const reprompt = 'Please tell me your bridge\'s I.P. address again.'
         return handlerInput.responseBuilder
           .addElicitSlotDirective('ipAddressValid')
-          .speak(speechOutput)
+          .speak(speakText)
           .reprompt(reprompt)
           .withSimpleCard(cardTitle, cardContent)
           .getResponse()
@@ -136,33 +125,30 @@ const SetHostnameIntentHandler = {
         sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        console.log(`Authorization_SetHostnameIntent: IPv4 address is ${sessionAttributes.hostname}`)
         try {
           sessionAttributes.hostnames = await getHostnames(sessionAttributes.ipAddress, 25392)
         } catch (error) {
-          console.log(`Authorization_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
-            const cardTitle = 'For LG webOS TV Error'
+            const cardTitle = '\'For LG webOS TV\' Error'
             const cardContent = 'I heard the I.P. Address: ' +
                                 `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
-            const speechOutput = 'I had a problem connecting to the I.P. address. ' +
-                                 'A card in the ASK App shows more.'
+            const speakText = 'I had a problem connecting to the I.P. address. ' +
+                              'A card in the Alexa App shows more.'
             return handlerInput.responseBuilder
               .withSimpleCard(cardTitle, cardContent)
-              .speak(speechOutput)
+              .speak(speakText)
               .getResponse()
           } else {
-            const cardTitle = 'For LG webOS TV Error'
+            const cardTitle = '\'For LG webOS TV\' Error'
             const cardContent = 'Unknown: Unknown'
-            const speechOutput = 'I had a problem connecting to the I.P. address.' +
-                                 'A card in the Alexa App shows more.'
+            const speakText = 'I had a problem connecting to the I.P. address. ' +
+                              'A card in the Alexa App shows more.'
             return handlerInput.responseBuilder
               .withSimpleCard(cardTitle, cardContent)
-              .speak(speechOutput)
+              .speak(speakText)
               .getResponse()
           }
         }
-        console.log(`Authorization_SetHostnameIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
         const cardTitle = 'Bridge  Hostname Configuration'
         let cardContent: string = ''
         let index = 0
@@ -174,12 +160,11 @@ const SetHostnameIntentHandler = {
         index += 1
         cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        console.log(`Authorization_SetHostnameIntent: bridge FQDN prompt: ${cardContent}`)
-        const speechOutput = 'Thank you. ' +
-            'Now, could you look at the card in your Alexa App and ' +
-            'tell me the number next to your bridge\'s hostname?'
+        const speakText = 'Thank you. ' +
+                          'Now, could you look at the card in your Alexa App and ' +
+                          'tell me the number next to your bridge\'s hostname?'
         return handlerInput.responseBuilder
-          .speak(speechOutput)
+          .speak(speakText)
           .withSimpleCard(cardTitle, cardContent)
           .addElicitSlotDirective('hostnameIndex')
           .getResponse()
@@ -190,29 +175,32 @@ const SetHostnameIntentHandler = {
       if ((!Number.isInteger(hostnameIndex)) ||
           (hostnameIndex >= sessionAttributes.hostnames.length + 2) ||
           (hostnameIndex < 0)) {
-        const speechOutput = 'I think I misheard you. ' +
-                             `I heard ${hostnameIndexString}, which is not an index on the card.`
-        const reprompt = ' Could you repeat your index?'
+        const speakText = 'I think I misheard you. ' +
+                          `I heard ${hostnameIndexString}, which is not an index on the card.`
+        const reprompt = 'Could you repeat your index?'
         return handlerInput.responseBuilder
-          .speak(speechOutput)
+          .speak(speakText)
           .reprompt(reprompt)
           .addElicitSlotDirective('hostnameIndex')
           .getResponse()
       }
       if (hostnameIndex === (sessionAttributes.hostnames.length + 1)) {
+        const speakText = 'I\'m sorry I misheard your bridge\'s I.P. address. ' +
+                          'Maybe we could try again.'
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I misheard your bridge\'s I.P. address.' +
-                          'Maybe we could try again.')
+          .speak(speakText)
           .getResponse()
       }
       if (hostnameIndex === sessionAttributes.hostnames.length) {
+        const speakText = 'I\'m sorry I could not discover your bridge\'s hostname.'
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I could not discover your bridge\'s hostname.')
+          .speak(speakText)
           .getResponse()
       }
       if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
+        const speakText = `Is your hostname ${sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`
         return handlerInput.responseBuilder
-          .speak(`Is your hostname ${sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`)
+          .speak(speakText)
           .addConfirmIntentDirective()
           .getResponse()
       }
@@ -226,19 +214,19 @@ const SetHostnameIntentHandler = {
         try {
           persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
         } catch (error) {
+          const speakText = 'I had a problem and we will have to start over. ' +
+                            'A card in the Alexa App shows more.'
+          const cardTitle = 'Error'
+          let cardContent
           if (error instanceof Error) {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', `${error.name}: ${error.message}`)
-              .getResponse()
+            cardContent = `${error.name}: ${error.message}`
           } else {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', 'Unknown: Unknown')
-              .getResponse()
+            cardContent = 'Unknown: Unknown'
           }
+          return handlerInput.responseBuilder
+            .speak(speakText)
+            .withSimpleCard(cardTitle, cardContent)
+            .getResponse()
         }
         Reflect.deleteProperty(persistentAttributes, 'hostname')
         Reflect.deleteProperty(persistentAttributes, 'password')
@@ -247,32 +235,34 @@ const SetHostnameIntentHandler = {
         try {
           await handlerInput.attributesManager.savePersistentAttributes()
         } catch (error) {
+          const speakText = 'I had a problem and we will have to start over. ' +
+                            'A card in the Alexa App shows more.'
+          const cardTitle = 'Error'
+          let cardContent
           if (error instanceof Error) {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', `${error.name}: ${error.message}`)
-              .getResponse()
+            cardContent = `${error.name}: ${error.message}`
           } else {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', 'Unknown: Unknown')
-              .getResponse()
+            cardContent = 'Unknown: Unknown'
           }
+          return handlerInput.responseBuilder
+            .speak(speakText)
+            .withSimpleCard(cardTitle, cardContent)
+            .getResponse()
         }
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
+        const speakText = 'Your bridge\'s hostname has been set.'
         return handlerInput.responseBuilder
-          .speak('Your bridge\'s hostname has been set.')
+          .speak(speakText)
           .getResponse()
       } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'DENIED') {
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
+        const speakText = 'Your bridge\'s hostname has not been set.'
         return handlerInput.responseBuilder
-          .speak('Your bridge\'s hostname has not been set.')
+          .speak(speakText)
           .getResponse()
       }
       return handlerInput.responseBuilder
@@ -296,8 +286,9 @@ const SetPasswordIntentHandler = {
     } = {}
     persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
     if (typeof persistentAttributes.hostname === 'undefined') {
+      const speakText = 'You need to set your bridge\'s hostname before you can set its password.'
       return handlerInput.responseBuilder
-        .speak('You need to set your bridge\'s hostname before you can set its password.')
+        .speak(speakText)
         .getResponse()
     }
     const password = crypto.randomBytes(64).toString('hex')
@@ -318,17 +309,18 @@ const SetPasswordIntentHandler = {
         const bridge = new Bridge('')
         await bridge.send(options, request)
       } catch (error) {
+        const speakText = 'I had a problem talking with the bridge. The Alexa App will show you more.'
+        const cardTitle = 'Bridge Communication Error'
+        let cardContent
         if (error instanceof Error) {
-          return handlerInput.responseBuilder
-            .speak('I had a problem talking with the bridge. The Alexa App will show you more.')
-            .withSimpleCard('Bridge Communication Error', `${error.name}; ${error.message}`)
-            .getResponse()
+          cardContent = `${error.name}; ${error.message}`
         } else {
-          return handlerInput.responseBuilder
-            .speak('I had a problem talking with the bridge. The Alexa App will show you more.')
-            .withSimpleCard('Bridge Communication Error', 'Unknown: Unknown')
-            .getResponse()
+          cardContent = 'Unknown: Unknown'
         }
+        return handlerInput.responseBuilder
+          .speak(speakText)
+          .withSimpleCard(cardTitle, cardContent)
+          .getResponse()
       }
       persistentAttributes.password = password
       Reflect.deleteProperty(persistentAttributes, 'tvmap')
@@ -336,35 +328,38 @@ const SetPasswordIntentHandler = {
       try {
         await handlerInput.attributesManager.savePersistentAttributes()
       } catch (error) {
+        const speakText = 'I had a problem and we will have to start over. ' +
+                          'A card in the Alexa App shows more.'
+        const cardTitle = 'Error'
+        let cardContent
         if (error instanceof Error) {
-          return handlerInput.responseBuilder
-            .speak('I had a problem and we will have to start over.' +
-                          ' A card in the Alexa App shows more.')
-            .withSimpleCard('Error', `${error.name}: ${error.message}`)
-            .getResponse()
+          cardContent = `${error.name}: ${error.message}`
         } else {
-          return handlerInput.responseBuilder
-            .speak('I had a problem and we will have to start over.' +
-                          ' A card in the Alexa App shows more.')
-            .withSimpleCard('Error', 'Unknown: Unknown')
-            .getResponse()
+          cardContent = 'Unknown: Unknown'
         }
+        return handlerInput.responseBuilder
+          .speak(speakText)
+          .withSimpleCard(cardTitle, cardContent)
+          .getResponse()
       }
+      const speakText = 'Your password has been set.'
       return handlerInput.responseBuilder
-        .speak('Your password has been set.')
+        .speak(speakText)
         .getResponse()
     } catch (error) {
+      const speakText = 'I had a problem and we will have to start over. ' +
+                        'A card in the Alexa App shows more.'
+      const cardTitle = 'Error'
+      let cardContent
       if (error instanceof Error) {
-        return handlerInput.responseBuilder
-          .speak('I had a problem talking to the bridge. The Alexa App will show you more.')
-          .withSimpleCard('Error', `${error.name}: ${error.message}`)
-          .getResponse()
+        cardContent = `${error.name}: ${error.message}`
       } else {
-        return handlerInput.responseBuilder
-          .speak('I had a problem talking to the bridge. The Alexa App will show you more.')
-          .withSimpleCard('Error', 'Unknown: Unknown')
-          .getResponse()
+        cardContent = 'Unknown: Unknown'
       }
+      return handlerInput.responseBuilder
+        .speak(speakText)
+        .withSimpleCard(cardTitle, cardContent)
+        .getResponse()
     }
   }
 }

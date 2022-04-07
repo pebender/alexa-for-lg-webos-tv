@@ -13,10 +13,10 @@ const LaunchRequestHandler = {
     return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'
   },
   handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
-    const speechOutput = 'Ground control to major Tom.'
+    const speakText = 'Ground control to major Tom.'
     return handlerInput.responseBuilder
-      .speak(speechOutput)
-      .reprompt(speechOutput)
+      .speak(speakText)
+      .reprompt(speakText)
       .getResponse()
   }
 }
@@ -27,13 +27,11 @@ const HelpIntentHandler = {
         ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent'
   },
   handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
-    const speechOutput = 'There is a manual around here somewhere.'
-    const response: ASKModel.Response = handlerInput.responseBuilder
-      .speak(speechOutput)
-      .reprompt(speechOutput)
+    const speakText = 'There is a manual around here somewhere.'
+    return handlerInput.responseBuilder
+      .speak(speakText)
+      .reprompt(speakText)
       .getResponse()
-    console.log(JSON.stringify(response))
-    return response
   }
 }
 
@@ -43,10 +41,10 @@ const CancelIntentHandler = {
         ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
   },
   handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
-    const speechOutput = 'There is a big red button around here somewhere.'
+    const speakText = 'There is a big red button around here somewhere.'
     return handlerInput.responseBuilder
-      .speak(speechOutput)
-      .reprompt(speechOutput)
+      .speak(speakText)
+      .reprompt(speakText)
       .getResponse()
   }
 }
@@ -57,8 +55,8 @@ const StopIntentHandler = {
         ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
   },
   handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
-    const speechOutput = 'But I don\'t want to stop.'
-    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
+    const speakText = 'But I don\'t want to stop.'
+    return handlerInput.responseBuilder.speak(speakText).getResponse()
   }
 }
 
@@ -68,8 +66,8 @@ const FallbackIntentHandler = {
         ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent'
   },
   handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
-    const speechOutput = 'It\'s time to fall back.'
-    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
+    const speakText = 'It\'s time to fall back.'
+    return handlerInput.responseBuilder.speak(speakText).getResponse()
   }
 }
 
@@ -98,11 +96,10 @@ const ErrorHandler = {
     return true
   },
   handle (handlerInput: ASKCore.HandlerInput, error: Error): ASKModel.Response {
-    const speechOutput = 'Sorry, I can\'t understand the command. Please say again.'
-    console.log(`~~~~ Error handled: ${error.name} - ${error.message}: ${JSON.stringify(handlerInput)}`)
+    const speakText = 'Sorry, I can\'t understand the command. Please say again.'
     return handlerInput.responseBuilder
-      .speak(speechOutput)
-      .reprompt(speechOutput)
+      .speak(speakText)
+      .reprompt(speakText)
       .getResponse()
   }
 }
@@ -113,7 +110,7 @@ const skillHandler = async function (request: ASKModel.RequestEnvelope, context:
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
     .withPersistenceAdapter(persistenceAdapter)
-    .withCustomUserAgent('ForLGwebOSTV')
+    .withCustomUserAgent('For LG webOS TV')
     .create()
     .invoke(request, context)
 }

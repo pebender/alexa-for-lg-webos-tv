@@ -149,25 +149,21 @@ function sendHandler (requestOptions: {
       response.on('data', (chunk: string): void => {
         data += chunk
       })
-      console.log(data)
       response.on('end', (): void => {
         // The expected HTTP/1.1 status code is 200.
         const statusCode = response.statusCode
         if (typeof statusCode === 'undefined') {
           const message = 'The bridge returned no HTTP/1.1 status code.'
-          console.log(message)
           return reject(new Error(message))
         }
         if (statusCode !== 200) {
           if (typeof http.STATUS_CODES[statusCode] === 'undefined') {
             const message = 'The bridge returned HTTP/1.1 status code: ' +
                             `'${statusCode}'.`
-            console.log(message)
             return reject(new Error(message))
           } else {
             const message = 'The bridge returned HTTP/1.1 status code: ' +
                             `'${statusCode}' ('${http.STATUS_CODES[statusCode]}').`
-            console.log(message)
             return reject(new Error(message))
           }
         }
@@ -175,13 +171,11 @@ function sendHandler (requestOptions: {
         const contentType = response.headers['content-type']
         if (typeof contentType === 'undefined') {
           const message = 'The bridge returned no \'content-type\' header.'
-          console.log(message)
           return reject(new Error(message))
         }
         if (!(/^application\/json/).test(contentType.toLowerCase())) {
           const message = 'The bridge returned the wrong \'content-type\' header:' +
                           `'${contentType.toLowerCase()}'.`
-          console.log(message)
           return reject(new Error(message))
         }
         // Validate the body.
@@ -195,12 +189,10 @@ function sendHandler (requestOptions: {
           if (typeof body.error.name !== 'undefined') {
             const message = 'The bridge returned the error: ' +
                             `'${body.error.name}: ${body.error.message}'.`
-            console.log(message)
             return reject(new Error(message))
           } else {
             const message = 'The bridge returned the error: ' +
                             `'${body.error.message}'.`
-            console.log(message)
             return reject(new Error(message))
           }
         }
@@ -210,14 +202,12 @@ function sendHandler (requestOptions: {
       response.on('error', (error: Error): void => {
         const message = 'There was a problem talking to the bridge. ' +
                         `The error was [${error.toString()}].`
-        console.log(message)
         return reject(new Error(message))
       })
     })
     request.on('error', (error: Error): void => {
       const message = 'There was a problem talking to the bridge.' +
                       `The error was [${error.name}: ${error.message}].`
-      console.log(message)
       return reject(new Error(message))
     })
     request.write(content)
