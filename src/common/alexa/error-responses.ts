@@ -9,8 +9,8 @@ export function errorResponse (alexaRequest: Request | null, type: string, messa
       correlationToken: alexaRequest.getCorrelationToken(),
       endpointId: alexaRequest.getEndpointId(),
       payload: {
-        type: type,
-        message: message
+        type,
+        message
       }
     })
   }
@@ -18,8 +18,8 @@ export function errorResponse (alexaRequest: Request | null, type: string, messa
     namespace: 'Alexa',
     name: 'ErrorResponse',
     payload: {
-      type: type,
-      message: message
+      type,
+      message
     }
   })
 }

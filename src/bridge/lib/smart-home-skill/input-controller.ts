@@ -110,7 +110,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   const inputState = ASH.Response.buildContextProperty({
     namespace: 'Alexa.InputController',
     name: 'input',
-    value: value
+    value
   })
   return [inputState]
 }

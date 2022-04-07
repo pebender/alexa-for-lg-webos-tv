@@ -25,7 +25,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
     const volumeState = ASH.Response.buildContextProperty({
       namespace: 'Alexa.Speaker',
       name: 'volume',
-      value: value
+      value
     })
     return volumeState
   }
@@ -45,7 +45,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
     const mutedState = ASH.Response.buildContextProperty({
       namespace: 'Alexa.Speaker',
       name: 'muted',
-      value: value
+      value
     })
     return mutedState
   }
@@ -72,7 +72,7 @@ async function setVolumeHandler (alexaRequest: ASH.Request, backendControl: Back
   async function setVolume (volume: number): Promise<ASH.Response> {
     const lgtvRequest: LGTV.Request = {
       uri: 'ssap://audio/setVolume',
-      payload: { volume: volume }
+      payload: { volume }
     }
     await backendControl.lgtvCommand(lgtvRequest)
     return new ASH.Response({
@@ -135,7 +135,7 @@ async function adjustVolumeHandler (alexaRequest: ASH.Request, backendControl: B
   async function setVolume (volume: number): Promise<ASH.Response> {
     const lgtvRequest: LGTV.Request = {
       uri: 'ssap://audio/setVolume',
-      payload: { volume: volume }
+      payload: { volume }
     }
     await backendControl.lgtvCommand(lgtvRequest)
     return new ASH.Response({

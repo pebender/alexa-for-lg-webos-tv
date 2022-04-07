@@ -83,7 +83,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   const targetState = ASH.Response.buildContextProperty({
     namespace: 'Alexa.Launcher',
     name: 'target',
-    value: value
+    value
   })
   return [targetState]
 }

@@ -16,7 +16,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   const powerStateState = ASH.Response.buildContextProperty({
     namespace: 'Alexa.PowerController',
     name: 'powerState',
-    value: value
+    value
   })
   return [powerStateState]
 }

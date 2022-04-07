@@ -40,7 +40,7 @@ export class BackendControl extends BaseClass {
     function saveKey (key: string, callback: (error: Error) => void): void {
       that._db.updateRecord(
         { udn: that._tv.udn },
-        { $set: { key: key } }
+        { $set: { key } }
       ).catch((error): void => callback(error))
     }
 
@@ -48,8 +48,8 @@ export class BackendControl extends BaseClass {
       url: this._tv.url,
       timeout: 10000,
       reconnect: 0,
-      clientKey: clientKey,
-      saveKey: saveKey
+      clientKey,
+      saveKey
     })
 
     this._connection.on('error', (error: NodeJS.ErrnoException): void => {

@@ -277,7 +277,7 @@ export class Response {
     return {
       namespace: opts.namespace,
       name: opts.name,
-      value: value,
+      value,
       timeOfSample: endTime.toISOString(),
       uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime()
     }
@@ -294,7 +294,7 @@ export class Response {
     }
     if (typeof opts.propertyNames !== 'undefined') {
       capability.properties = {
-        supported: opts.propertyNames.map((name: string): {'name': string} => ({ name: name })),
+        supported: opts.propertyNames.map((name: string): {'name': string} => ({ name })),
         proactivelyReported: false,
         retrievable: true
       }
