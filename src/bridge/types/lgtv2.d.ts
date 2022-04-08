@@ -45,6 +45,8 @@ declare class LGTV extends EventEmitter {
     'saveKey'?: (key: string, callback: (error: Error) => void) => void;
   });
 
+  public clientKey: string;
+
   public register(): void;
   public request(uri: string): void;
   public request(uri: string, callback: (error: Error, response: LGTV.Response) => void): void;

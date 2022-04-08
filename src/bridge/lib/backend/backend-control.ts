@@ -41,7 +41,10 @@ export class BackendControl extends BaseClass {
       that._db.updateRecord(
         { udn: that._tv.udn },
         { $set: { key } }
-      ).catch((error): void => callback(error))
+      ).then(() => {
+        that._tv.key = key
+        that._connection.clientKey = key
+      }).catch((error): void => callback(error))
     }
 
     this._connection = new LGTV({
