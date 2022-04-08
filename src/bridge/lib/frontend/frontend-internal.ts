@@ -120,14 +120,12 @@ export class FrontendInternal extends BaseClass {
     }
 
     function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve): Promise<void> => {
-        that._server.use(express.urlencoded({
-          extended: false
-        }))
-        that._server.get('/', getHandler)
-        that._server.post('/', postHandler)
-        resolve()
-      })
+      that._server.use(express.urlencoded({
+        extended: false
+      }))
+      that._server.get('/', getHandler)
+      that._server.post('/', postHandler)
+      return Promise.resolve()
     }
     return this.initializeHandler(initializeFunction)
   }

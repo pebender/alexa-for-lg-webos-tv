@@ -95,10 +95,7 @@ export class BackendControl extends BaseClass {
     const that: BackendControl = this
 
     function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve): Promise<void> => {
-        that._ssdpNotify.start()
-        resolve()
-      })
+      return that._ssdpNotify.start()
     }
     return this.initializeHandler(initializeFunction)
   }

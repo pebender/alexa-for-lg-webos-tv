@@ -22,21 +22,26 @@ export class Backend extends BaseClass {
 
   public initialize (): Promise<void> {
     const that = this
+
     function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve): Promise<void> => {
+      function controllerInitialize (): Promise<void> {
         that._controller.on('error', (error: Error, id: string): void => {
           that.emit('error', error, `BackendController.${id}`)
         })
-        await that._controller.initialize()
+        return that._controller.initialize()
+      }
+
+      function searcherInitialize (): Promise<void> {
         that._searcher.on('error', (error): void => {
           that.emit('error', error, 'BackendSearcher')
         })
         that._searcher.on('found', (tv: TV): void => {
           that._controller.tvUpsert(tv)
         })
-        await that._searcher.initialize()
-        resolve()
-      })
+        return that._searcher.initialize()
+      }
+
+      return controllerInitialize().then(searcherInitialize)
     }
     return this.initializeHandler(initializeFunction)
   }

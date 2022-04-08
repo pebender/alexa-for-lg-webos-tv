@@ -4,7 +4,7 @@ import {
 } from '../tv'
 import { BaseClass } from '../base-class'
 import { BackendControl } from './backend-control'
-import { DatabaseTable } from '../database'
+import { DatabaseRecord, DatabaseTable } from '../database'
 
 export class BackendController extends BaseClass {
   private readonly _db: DatabaseTable
@@ -31,19 +31,29 @@ export class BackendController extends BaseClass {
       })
     }
 
-    function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve, reject): Promise<void> => {
-        const records: TV[] = ((await that._db.getRecords({}) as unknown) as TV[])
-        await records.forEach((record): void => {
-          if (typeof that._controls[record.udn] === 'undefined') {
-            that._controls[record.udn] = new BackendControl(that._db, record)
-            that._controls[record.udn].initialize().catch(reject)
-            eventsAdd(record.udn)
-          }
-        })
-        resolve()
-      })
+    function tvInitialize (tv: TV): Promise<void> {
+      if (typeof that._controls[tv.udn] === 'undefined') {
+        that._controls[tv.udn] = new BackendControl(that._db, tv)
+        return that._controls[tv.udn].initialize()
+          .then(() => eventsAdd(tv.udn))
+      } else {
+        return Promise.resolve()
+      }
     }
+
+    function tvsInitialize (records: DatabaseRecord[]): Promise<void> {
+      const tvs: TV[] = ((records as unknown) as TV[])
+      const tvInitializers: Promise<void>[] = []
+      tvs.forEach((tv: TV): void => {
+        tvInitializers.push(tvInitialize(tv))
+      })
+      return Promise.all(tvInitializers).then()
+    }
+
+    function initializeFunction (): Promise<void> {
+      return that._db.getRecords({}).then(tvsInitialize)
+    }
+
     return this.initializeHandler(initializeFunction)
   }
 

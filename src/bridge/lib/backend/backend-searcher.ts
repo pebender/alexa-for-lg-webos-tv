@@ -184,21 +184,18 @@ export class BackendSearcher extends BaseClass {
     }
 
     function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve): Promise<void> => {
-        that._ssdpNotify.on('advertise-alive', (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
-          ssdpProcess('advertise-alive', headers, rinfo, ssdpProcessCallback)
-        })
-        that._ssdpResponse.on('response', (headers: SsdpHeaders, statusCode: number, rinfo): void => {
-          if (statusCode !== 200) {
-            return
-          }
-          ssdpProcess('response', headers, rinfo, ssdpProcessCallback)
-        })
-        that._ssdpNotify.start()
-        setImmediate(periodicSearch)
-        resolve()
+      that._ssdpNotify.on('advertise-alive', (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
+        ssdpProcess('advertise-alive', headers, rinfo, ssdpProcessCallback)
       })
+      that._ssdpResponse.on('response', (headers: SsdpHeaders, statusCode: number, rinfo): void => {
+        if (statusCode !== 200) {
+          return
+        }
+        ssdpProcess('response', headers, rinfo, ssdpProcessCallback)
+      })
+      return that._ssdpNotify.start().then(() => { setImmediate(periodicSearch) })
     }
+
     return this.initializeHandler(initializeFunction)
   }
 
