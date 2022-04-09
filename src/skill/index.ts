@@ -1,3 +1,3 @@
-import { handler } from './lib'
+import { handler } from './lib/skill'
 
 export { handler }

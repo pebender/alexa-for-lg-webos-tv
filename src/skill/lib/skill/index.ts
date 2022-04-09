@@ -1,8 +1,8 @@
-import * as ASH from '../../common/alexa'
+import * as ASH from '../../../common/alexa'
 import * as AWSLambda from 'aws-lambda'
 import * as alexaAuthorization from './authorization'
 import * as alexaDiscovery from './discovery'
-import { Bridge } from './bridge-api'
+import { Bridge } from '../bridge-api'
 
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
   const bridge = new Bridge('')

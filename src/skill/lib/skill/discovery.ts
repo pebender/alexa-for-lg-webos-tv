@@ -1,5 +1,5 @@
-import * as ASH from '../../common/alexa'
-import { Bridge } from './bridge-api'
+import * as ASH from '../../../common/alexa'
+import { Bridge } from '../bridge-api'
 
 async function handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.Discovery') {
