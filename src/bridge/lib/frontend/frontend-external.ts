@@ -82,6 +82,7 @@ export class FrontendExternal extends BaseClass {
 
     async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
       if (typeof request.body.log !== 'undefined') {
+        console.log(JSON.stringify(request.body, null, 2))
         response
           .type('json')
           .status(200)
