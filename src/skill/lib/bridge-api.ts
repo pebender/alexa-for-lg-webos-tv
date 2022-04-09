@@ -225,8 +225,8 @@ class Bridge {
     this._userId = userId
     // These will be in a database indexed by userId.
     this._hostname = constants.bridgeHostname
-    this._username = 'LGTV'
-    this._password = constants.bridgeUserPassword
+    this._username = constants.bridgeUsername
+    this._password = constants.bridgePassword
     this._null = ''
   }
 

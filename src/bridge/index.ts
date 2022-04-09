@@ -7,7 +7,6 @@
 //
 
 import { Backend } from './lib/backend'
-import { CustomSkill } from './lib/custom-skill'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
 import { SmartHomeSkill } from './lib/smart-home-skill'
@@ -46,9 +45,8 @@ export async function startBridge (): Promise<void> {
     console.log(error)
   })
   await backend.initialize()
-  const customSkill = new CustomSkill(backend)
   const smartHomeSkill = new SmartHomeSkill(backend)
-  const frontend = new Frontend(frontendDb, customSkill, smartHomeSkill)
+  const frontend = new Frontend(frontendDb, smartHomeSkill)
   await frontend.initialize()
   await frontend.start()
   await backend.start()

@@ -1,6 +1,5 @@
 import { BaseClass } from '../base-class'
 import { DatabaseTable } from '../database'
-import { constants } from '../../../common/constants'
 
 export class FrontendSecurity extends BaseClass {
   private readonly _db: DatabaseTable
@@ -14,62 +13,44 @@ export class FrontendSecurity extends BaseClass {
     return this.initializeHandler((): Promise<void> => Promise.resolve())
   }
 
-  public authorizeRoot (username: string, password: string): boolean {
-    this.throwIfUninitialized('authorizeRoot')
-    if (username === 'HTTP' && password === constants.bridgeRootPassword) {
-      return true
-    }
-    return false
-  }
-
   public async authorizeUser (username: string, password: string): Promise<boolean> {
     this.throwIfUninitialized('authorizeUser')
-    const record = await this._db.getRecord({ name: 'password' })
-    if (record === null || typeof record.value === 'undefined' || record.value === null) {
+    const record = await this._db.getRecord({ username })
+    if (record === null ||
+        typeof record.username === 'undefined' ||
+        record.username === null ||
+        typeof record.password === 'undefined' ||
+        record.password === null) {
       return false
     }
-    if (username === 'LGTV' && password === record.value) {
+    return true
+  }
+
+  public async passwordIsNull (username: string): Promise<boolean> {
+    this.throwIfUninitialized('passwordIsNull')
+    const record = await this._db.getRecord({ username })
+    if (record === null || typeof record.password === 'undefined' || record.password === null) {
       return true
     }
     return false
   }
 
-  public async userPasswordIsNull (): Promise<boolean> {
-    this.throwIfUninitialized('userPasswordIsNull')
-    const record = await this._db.getRecord({ name: 'password' })
-    if (record === null || typeof record.value === 'undefined' || record.value === null) {
-      return true
-    }
-    return false
-  }
-
-  public setUserPassword (password: string | null): Promise<void> {
-    this.throwIfUninitialized('setUserPassword')
-    return this._db.updateOrInsertRecord(
-      { name: 'password' },
-      {
-        name: 'password',
-        value: password
-      }
-    )
-  }
-
-  public async getHostname (): Promise<string> {
-    this.throwIfUninitialized('getHostname')
-    const record = await this._db.getRecord({ name: 'hostname' })
-    if (typeof record.value !== 'string') {
+  public async getPassword (username: string): Promise<string | null> {
+    this.throwIfUninitialized('getPassword')
+    const record = await this._db.getRecord({ username })
+    if (typeof record.password !== 'string') {
       return ''
     }
-    return record.value
+    return record.password
   }
 
-  public async setHostname (hostname: string): Promise<void> {
-    this.throwIfUninitialized('setHostname')
-    await this._db.updateOrInsertRecord(
-      { name: 'hostname' },
+  public setPassword (username: string, password: string | null): Promise<void> {
+    this.throwIfUninitialized('setPassword')
+    return this._db.updateOrInsertRecord(
+      { username },
       {
-        name: 'hostname',
-        value: hostname
+        username,
+        password
       }
     )
   }

@@ -7,7 +7,6 @@
 //
 
 import { BaseClass } from '../base-class'
-import { CustomSkill } from '../custom-skill'
 import { FrontendSecurity } from './frontend-security'
 import { SmartHomeSkill } from '../smart-home-skill'
 import express from 'express'
@@ -16,14 +15,12 @@ const basicAuth = require('express-basic-auth')
 
 export class FrontendExternal extends BaseClass {
   private readonly _security: FrontendSecurity
-  private readonly _customSkill: CustomSkill
   private readonly _smartHomeSkill: SmartHomeSkill
   private readonly _server: expressCore.Express
-  public constructor (serverSecurity: FrontendSecurity, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
+  public constructor (serverSecurity: FrontendSecurity, smartHomeSkill: SmartHomeSkill) {
     super()
 
     this._security = serverSecurity
-    this._customSkill = customSkill
     this._smartHomeSkill = smartHomeSkill
     this._server = express()
   }
@@ -31,53 +28,8 @@ export class FrontendExternal extends BaseClass {
   public initialize (): Promise<void> {
     const that = this
 
-    function authorizeRoot (username: string, password: string): boolean {
-      return that._security.authorizeRoot(username, password)
-    }
-
     function authorizeUser (username: string, password: string): Promise<boolean> {
       return that._security.authorizeUser(username, password)
-    }
-
-    async function httpHandler (request: expressCore.Request, response: expressCore.Response): Promise<void> {
-      if (('command' in request.body) && request.body.command.name === 'passwordSet') {
-        let body: {[x: string]: boolean | number | string | object} = {
-          error: {
-            message: 'The password is already set.'
-          }
-        }
-        try {
-          if (await that._security.userPasswordIsNull()) {
-            await that._security.setUserPassword(request.body.command.value)
-            body = {}
-          }
-        } catch (error) {
-          if (error instanceof Error) {
-            body = {
-              error: {
-                name: error.name,
-                message: error.message
-              }
-            }
-          } else {
-            body = {
-              error: {
-                name: 'Unknown',
-                message: 'Unknown'
-              }
-            }
-          }
-        }
-        response
-          .type('json')
-          .status(200)
-          .json(body)
-          .end()
-      } else {
-        response
-          .status(400)
-          .end()
-      }
     }
 
     async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
@@ -104,22 +56,10 @@ export class FrontendExternal extends BaseClass {
         .end()
     }
 
-    async function backendRunHandler (request: express.Request, response: express.Response): Promise<void> {
-      const commandResponse = await that._customSkill.handler(request.body)
-      response
-        .type('json')
-        .status(200)
-        .json(commandResponse)
-        .end()
-    }
-
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         that._server.use('/', express.json())
-        that._server.use('/HTTP', basicAuth({ authorizer: authorizeRoot }))
-        that._server.post('/HTTP', httpHandler)
         that._server.use('/LGTV', basicAuth({ authorizer: authorizeUser }))
-        that._server.post('/LGTV/RUN', backendRunHandler)
         that._server.post('/LGTV/SKILL', backendSkillHandler)
         that._server.get('/LGTV/PING', backendPingHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {

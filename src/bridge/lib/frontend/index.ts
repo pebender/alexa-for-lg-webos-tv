@@ -1,50 +1,76 @@
 import { BaseClass } from '../base-class'
-import { CustomSkill } from '../custom-skill'
+import { constants } from '../../../common/constants'
 import { DatabaseTable } from '../database'
 import { FrontendExternal } from './frontend-external'
-import { FrontendInternal } from './frontend-internal'
 import { FrontendSecurity } from './frontend-security'
 import { SmartHomeSkill } from '../smart-home-skill'
 
 export class Frontend extends BaseClass {
   private _security: FrontendSecurity
-  private _internal: FrontendInternal
   private _external: FrontendExternal
-  public constructor (db: DatabaseTable, customSkill: CustomSkill, smartHomeSkill: SmartHomeSkill) {
+  public constructor (db: DatabaseTable, smartHomeSkill: SmartHomeSkill) {
     super()
 
     this._security = new FrontendSecurity(db)
-    this._internal = new FrontendInternal(this._security)
-    this._external = new FrontendExternal(this._security, customSkill, smartHomeSkill)
+    this._external = new FrontendExternal(this._security, smartHomeSkill)
   }
 
   public initialize (): Promise<void> {
     const that = this
-    function initializeFunction (): Promise<void> {
-      return new Promise<void>(async (resolve): Promise<void> => {
+
+    async function initializeFunction (): Promise<void> {
+      try {
         await that._security.initialize()
-        await that._internal.initialize()
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(`error: ${error.name}: ${error.message}`)
+          if ('stack' in Error) {
+            console.log(error.stack)
+          }
+        } else {
+          console.log('error: unknown')
+        }
+        process.exit(1)
+      }
+      try {
+        await that._security.setPassword(constants.bridgeUsername, constants.bridgePassword)
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(`error: ${error.name}: ${error.message}`)
+          if ('stack' in Error) {
+            console.log(error.stack)
+          }
+        } else {
+          console.log('error: unknown')
+        }
+        process.exit(1)
+      }
+      try {
         await that._external.initialize()
-        resolve()
-      })
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(`error: ${error.name}: ${error.message}`)
+          if ('stack' in Error) {
+            console.log(error.stack)
+          }
+        } else {
+          console.log('error: unknown')
+          process.exit(1)
+        }
+      }
     }
+
     return this.initializeHandler(initializeFunction)
   }
 
   public start (): void {
     this.throwIfUninitialized('start')
-    this._internal.start()
     this._external.start()
   }
 
   public get security (): FrontendSecurity {
     this.throwIfUninitialized('get+security')
     return this._security
-  }
-
-  public get internal (): FrontendInternal {
-    this.throwIfUninitialized('get+internal')
-    return this._internal
   }
 
   public get external (): FrontendExternal {
