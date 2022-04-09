@@ -18,7 +18,7 @@ async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response>
   }
 }
 
-async function handler (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   try {
     const alexaRequest = new ASH.Request(event)
     if (typeof alexaRequest.directive.endpoint === 'undefined' ||
@@ -43,6 +43,7 @@ async function handler (event: ASH.Request, context: AWSLambda.Context): Promise
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   const bridge = new Bridge('x')
   try {
@@ -53,7 +54,7 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
 
   let alexaResponse: ASH.Response | null = null
   try {
-    alexaResponse = await handler(alexaRequest, context)
+    alexaResponse = await handlerWithoutLogging(alexaRequest, context)
   } catch (error) {
     if (error instanceof Error) {
       alexaResponse = ASH.errorResponseFromError(alexaRequest, error)
@@ -71,4 +72,4 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   return alexaResponse
 }
 
-export { handlerWithLogging as handler }
+export { handlerWithoutLogging as handler }
