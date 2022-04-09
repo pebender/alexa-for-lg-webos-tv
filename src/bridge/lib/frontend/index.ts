@@ -3,7 +3,7 @@ import { constants } from '../../../common/constants'
 import { DatabaseTable } from '../database'
 import { FrontendExternal } from './frontend-external'
 import { FrontendSecurity } from './frontend-security'
-import { SmartHomeSkill } from '../smart-home-skill'
+import { SmartHomeSkill } from '../skill'
 
 export class Frontend extends BaseClass {
   private _security: FrontendSecurity

@@ -9,7 +9,7 @@
 import { Backend } from './lib/backend'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
-import { SmartHomeSkill } from './lib/smart-home-skill'
+import { SmartHomeSkill } from './lib/skill'
 import fs from 'fs-extra'
 const persistPath = require('persist-path')
 

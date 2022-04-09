@@ -8,7 +8,7 @@
 
 import { BaseClass } from '../base-class'
 import { FrontendSecurity } from './frontend-security'
-import { SmartHomeSkill } from '../smart-home-skill'
+import { SmartHomeSkill } from '../skill'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
 const basicAuth = require('express-basic-auth')
