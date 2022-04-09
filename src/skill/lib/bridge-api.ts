@@ -20,7 +20,6 @@ function createBasicOptions (requestOptions: {
   username: string;
   password: string;
   path: string;
-  rejectUnauthorized?: boolean;
 }): {
     hostname: string;
     port: number;
@@ -28,7 +27,6 @@ function createBasicOptions (requestOptions: {
     headers: {
       [x: string]: string;
     };
-    rejectUnauthorized: boolean;
 } {
   if (typeof requestOptions.hostname === 'undefined' || requestOptions.hostname === null) {
     throw new RangeError('Bridge hostname not set.')
@@ -50,11 +48,7 @@ function createBasicOptions (requestOptions: {
     path: requestOptions.path,
     headers: {
       authorization: `Basic ${authorization}`
-    },
-    rejectUnauthorized:
-            typeof requestOptions.rejectUnauthorized !== 'undefined'
-              ? requestOptions.rejectUnauthorized
-              : true
+    }
   }
   return options
 }
@@ -64,7 +58,6 @@ function pingHandler (requestOptions: {
   username: string;
   password: string;
   path: string;
-  rejectUnauthorized?: boolean;
 }): Promise<boolean> {
   return new Promise((resolve, reject): void => {
     let options: {
@@ -73,8 +66,7 @@ function pingHandler (requestOptions: {
       path: string;
       headers: {
         [x: string]: string;
-      };
-      rejectUnauthorized: boolean;
+      }
     } | null = null
     try {
       options = createBasicOptions(requestOptions)
@@ -124,7 +116,6 @@ function sendHandler (requestOptions: {
   username: string;
   password: string;
   path: string;
-  rejectUnauthorized?: boolean;
 }, requestBody: BridgeRequest): Promise<BridgeResponse> {
   return new Promise((resolve, reject): void => {
     const options: {
@@ -135,7 +126,6 @@ function sendHandler (requestOptions: {
       headers: {
         [x: string]: string;
       };
-      rejectUnauthorized: boolean;
     } = createBasicOptions(requestOptions)
     const content = JSON.stringify(requestBody)
     options.method = 'POST'
