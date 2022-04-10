@@ -39,7 +39,7 @@ export async function startBridge (): Promise<void> {
   //
   const backendDb = new DatabaseTable(configurationDir, 'backend', ['udn'], 'udn')
   await backendDb.initialize()
-  const frontendDb = new DatabaseTable(configurationDir, 'frontend', ['username'], 'username')
+  const frontendDb = new DatabaseTable(configurationDir, 'frontend', ['email', 'bearerToken'], 'email')
   await frontendDb.initialize()
   const backend = new Backend(backendDb)
   backend.on('error', (error: Error, id: string): void => {
@@ -47,8 +47,8 @@ export async function startBridge (): Promise<void> {
     console.log(error)
   })
   await backend.initialize()
-  const smartHomeSkill = new SmartHomeSkill(backend)
-  const frontend = new Frontend(frontendDb, smartHomeSkill)
+  const smartHomeSkill = new SmartHomeSkill(frontendDb, backend)
+  const frontend = new Frontend(smartHomeSkill)
   await frontend.initialize()
   await frontend.start()
   await backend.start()

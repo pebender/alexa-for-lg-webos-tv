@@ -1,50 +1,19 @@
 import { BaseClass } from '../base-class'
-import { constants } from '../../../common/constants'
-import { DatabaseTable } from '../database'
 import { FrontendExternal } from './frontend-external'
-import { FrontendSecurity } from './frontend-security'
 import { SmartHomeSkill } from '../skill'
 
 export class Frontend extends BaseClass {
-  private _security: FrontendSecurity
   private _external: FrontendExternal
-  public constructor (db: DatabaseTable, smartHomeSkill: SmartHomeSkill) {
+  public constructor (smartHomeSkill: SmartHomeSkill) {
     super()
 
-    this._security = new FrontendSecurity(db)
-    this._external = new FrontendExternal(this._security, smartHomeSkill)
+    this._external = new FrontendExternal(smartHomeSkill)
   }
 
   public initialize (): Promise<void> {
     const that = this
 
     async function initializeFunction (): Promise<void> {
-      try {
-        await that._security.initialize()
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log(`error: ${error.name}: ${error.message}`)
-          if ('stack' in Error) {
-            console.log(error.stack)
-          }
-        } else {
-          console.log('error: unknown')
-        }
-        process.exit(1)
-      }
-      try {
-        await that._security.setPassword(constants.bridge.username, constants.bridge.password)
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log(`error: ${error.name}: ${error.message}`)
-          if ('stack' in Error) {
-            console.log(error.stack)
-          }
-        } else {
-          console.log('error: unknown')
-        }
-        process.exit(1)
-      }
       try {
         await that._external.initialize()
       } catch (error) {
@@ -66,11 +35,6 @@ export class Frontend extends BaseClass {
   public start (): void {
     this.throwIfUninitialized('start')
     this._external.start()
-  }
-
-  public get security (): FrontendSecurity {
-    this.throwIfUninitialized('get+security')
-    return this._security
   }
 
   public get external (): FrontendExternal {

@@ -12,6 +12,9 @@ import {
   Backend,
   BackendControl
 } from '../backend'
+import { constants } from '../../../common/constants'
+import { DatabaseTable } from '../database'
+import * as https from 'https'
 
 function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
   return [
@@ -52,7 +55,62 @@ async function addStates (alexaResponse: ASH.Response, backendControl: BackendCo
   }
 }
 
-async function handlerWithoutValidation (event: ASH.Request, backend: Backend): Promise<ASH.Response> {
+async function authorizeUser (db: DatabaseTable, bearerToken: string | undefined): Promise<boolean> {
+  async function getUserProfile (bearerToken: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: 'GET',
+        hostname: 'api.amazon.com',
+        path: '/user/profile',
+        headers: {
+          Authorization: `Bearer ${bearerToken}`
+        }
+      }
+      const req = https.request(options, (response) => {
+        let returnData = ''
+
+        response.on('data', (chunk) => {
+          returnData += chunk
+        })
+
+        response.on('end', () => {
+          resolve(JSON.parse(returnData))
+        })
+
+        response.on('error', (error) => {
+          reject(error)
+        })
+      })
+      req.end()
+    })
+  }
+
+  if (typeof bearerToken === 'undefined') {
+    return false
+  }
+
+  const record = await db.getRecord({ bearerToken })
+  if (record === null) {
+    const userProfile = await getUserProfile(bearerToken)
+
+    if ((!('user_id' in userProfile)) || (!('email' in userProfile))) {
+      return false
+    }
+    const userId = userProfile.user_id
+    const email = userProfile.email
+
+    const found = constants.user.emails.find((element) => (element === email))
+    if (typeof found === 'undefined') {
+      return false
+    }
+
+    await db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
+  }
+
+  return true
+}
+
+async function handlerWithoutValidation (event: ASH.Request, db: DatabaseTable, backend: Backend): Promise<ASH.Response> {
   let alexaRequest: ASH.Request | null = null
   try {
     alexaRequest = new ASH.Request(event)
@@ -84,8 +142,17 @@ async function handlerWithoutValidation (event: ASH.Request, backend: Backend): 
       switch (alexaRequest.directive.header.namespace) {
         case 'Alexa.Authorization':
           return alexaAuthorization.handler(alexaRequest, backend)
-        case 'Alexa.Discovery':
+        case 'Alexa.Discovery': {
+          const bearerToken = alexaRequest.getBearerToken()
+          if (typeof bearerToken === 'undefined') {
+            throw Error()
+          }
+          const authorized = await authorizeUser(db, bearerToken)
+          if (!authorized) {
+            throw Error()
+          }
           return alexaDiscovery.handler(alexaRequest, backend)
+        }
         default:
           return ASH.errorResponse(
             alexaRequest,
@@ -93,6 +160,14 @@ async function handlerWithoutValidation (event: ASH.Request, backend: Backend): 
           `Unknown namespace ${alexaRequest.directive.header.namespace}`
           )
       }
+    }
+    const bearerToken = alexaRequest.getBearerToken()
+    if (typeof bearerToken === 'undefined') {
+      throw Error()
+    }
+    const authorized = await authorizeUser(db, bearerToken)
+    if (!authorized) {
+      throw Error()
     }
     const backendControl = backend.control(udn)
     if (typeof backendControl === 'undefined') {
@@ -134,13 +209,15 @@ async function handlerWithoutValidation (event: ASH.Request, backend: Backend): 
 }
 
 export class SmartHomeSkill {
+  private db: DatabaseTable
   private backend: Backend
-  public constructor (backend: Backend) {
+  public constructor (frontendDb: DatabaseTable, backend: Backend) {
+    this.db = frontendDb
     this.backend = backend
   }
 
   public handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
-    return handlerWithoutValidation(alexaRequest, this.backend)
+    return handlerWithoutValidation(alexaRequest, this.db, this.backend)
   }
 }
 

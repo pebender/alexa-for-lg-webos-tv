@@ -17,8 +17,6 @@ export interface BridgeResponse {
 
 function createBasicOptions (requestOptions: {
   hostname: string;
-  username: string;
-  password: string;
   path: string;
 }): {
     hostname: string;
@@ -31,32 +29,21 @@ function createBasicOptions (requestOptions: {
   if (typeof requestOptions.hostname === 'undefined' || requestOptions.hostname === null) {
     throw new RangeError('Bridge hostname not set.')
   }
-  if (typeof requestOptions.username === 'undefined' || requestOptions.username === null) {
-    throw new RangeError('Bridge username not set.')
-  }
-  if (typeof requestOptions.password === 'undefined' || requestOptions.password === null) {
-    throw new RangeError('Bridge password not set.')
-  }
   if (typeof requestOptions.path === 'undefined' || requestOptions.path === null) {
     throw new RangeError('Bridge path not set.')
   }
 
-  const authorization = Buffer.from(`${requestOptions.username}:${requestOptions.password}`).toString('base64')
   const options = {
     hostname: requestOptions.hostname,
     port: 25392,
     path: requestOptions.path,
-    headers: {
-      authorization: `Basic ${authorization}`
-    }
+    headers: {}
   }
   return options
 }
 
 function pingHandler (requestOptions: {
   hostname: string;
-  username: string;
-  password: string;
   path: string;
 }): Promise<boolean> {
   return new Promise((resolve, reject): void => {
@@ -113,8 +100,6 @@ function pingHandler (requestOptions: {
 
 function sendHandler (requestOptions: {
   hostname: string;
-  username: string;
-  password: string;
   path: string;
 }, requestBody: BridgeRequest): Promise<BridgeResponse> {
   return new Promise((resolve, reject): void => {
@@ -208,15 +193,11 @@ function sendHandler (requestOptions: {
 class Bridge {
   private _userId: string
   private _hostname: string
-  private _username: string
-  private _password: string
   private _null: string
   public constructor (userId: string) {
     this._userId = userId
     // These will be in a database indexed by userId.
     this._hostname = constants.bridge.hostname
-    this._username = constants.bridge.username
-    this._password = constants.bridge.password
     this._null = ''
   }
 
@@ -232,23 +213,9 @@ class Bridge {
     return this._hostname
   }
 
-  public set password (password: string) {
-    this._null = password
-  }
-
-  public get password (): string {
-    return this._password
-  }
-
-  public get username (): string {
-    return this._username
-  }
-
   public async sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
     const options = {
       hostname: this.hostname,
-      username: this.username,
-      password: this.password,
       path: '/LGTV/SKILL'
     }
     try {
@@ -267,8 +234,6 @@ class Bridge {
   public send (
     sendOptions: {
       hostname?: string;
-      username?: string;
-      password?: string;
       path: string;
     },
     request: BridgeRequest
@@ -277,12 +242,6 @@ class Bridge {
       hostname: typeof sendOptions.hostname !== 'undefined'
         ? sendOptions.hostname
         : this.hostname,
-      username: typeof sendOptions.username !== 'undefined'
-        ? sendOptions.username
-        : this.username,
-      password: typeof sendOptions.password !== 'undefined'
-        ? sendOptions.password
-        : this.password,
       path: sendOptions.path
     }
     return sendHandler(options, request)
@@ -291,8 +250,6 @@ class Bridge {
   public ping (): Promise<boolean> {
     const options = {
       hostname: this.hostname,
-      username: this.username,
-      password: this.password,
       path: Bridge.skillPath()
     }
     return pingHandler(options)

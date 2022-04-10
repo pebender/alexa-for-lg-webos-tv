@@ -7,20 +7,16 @@
 //
 
 import { BaseClass } from '../base-class'
-import { FrontendSecurity } from './frontend-security'
 import { SmartHomeSkill } from '../skill'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
-const basicAuth = require('express-basic-auth')
 
 export class FrontendExternal extends BaseClass {
-  private readonly _security: FrontendSecurity
   private readonly _smartHomeSkill: SmartHomeSkill
   private readonly _server: expressCore.Express
-  public constructor (serverSecurity: FrontendSecurity, smartHomeSkill: SmartHomeSkill) {
+  public constructor (smartHomeSkill: SmartHomeSkill) {
     super()
 
-    this._security = serverSecurity
     this._smartHomeSkill = smartHomeSkill
     this._server = express()
   }
@@ -28,11 +24,8 @@ export class FrontendExternal extends BaseClass {
   public initialize (): Promise<void> {
     const that = this
 
-    function authorizeUser (username: string, password: string): Promise<boolean> {
-      return that._security.authorizeUser(username, password)
-    }
-
     async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
+      console.log(JSON.stringify(request.body, null, 2))
       if (typeof request.body.log !== 'undefined') {
         console.log(JSON.stringify(request.body, null, 2))
         response
@@ -59,7 +52,6 @@ export class FrontendExternal extends BaseClass {
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         that._server.use('/', express.json())
-        that._server.use('/LGTV', basicAuth({ authorizer: authorizeUser }))
         that._server.post('/LGTV/SKILL', backendSkillHandler)
         that._server.get('/LGTV/PING', backendPingHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {

@@ -73,6 +73,22 @@ export class Request {
     this.directive = (copyElement(opts.directive) as Directive)
   }
 
+  public getBearerToken (): string | undefined {
+    if (this.directive.header.namespace === 'Alexa.Discovery') {
+      if (('scope' in (this.directive.payload as any)) &&
+          ('type' in (this.directive.payload.scope as any)) &&
+          ('token' in (this.directive.payload.scope as any))) {
+        return ((this.directive.payload as any).scope as any).token
+      }
+    } else {
+      if ((typeof this.directive.endpoint?.scope?.type !== 'undefined') ||
+          (this.directive.endpoint?.scope?.type === 'BearerToken')) {
+        return this.directive.endpoint?.scope?.token
+      }
+    }
+    return undefined
+  }
+
   public getCorrelationToken (): string | undefined {
     return this.directive.header.correlationToken
   }
