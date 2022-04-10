@@ -43,17 +43,10 @@ export class FrontendExternal extends BaseClass {
         .end()
     }
 
-    function backendPingHandler (_request: expressCore.Request, response: expressCore.Response): void {
-      response
-        .status(200)
-        .end()
-    }
-
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         that._server.use('/', express.json())
         that._server.post('/LGTV/SKILL', backendSkillHandler)
-        that._server.get('/LGTV/PING', backendPingHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
         })

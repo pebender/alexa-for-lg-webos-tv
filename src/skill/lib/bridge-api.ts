@@ -42,62 +42,6 @@ function createBasicOptions (requestOptions: {
   return options
 }
 
-function pingHandler (requestOptions: {
-  hostname: string;
-  path: string;
-}): Promise<boolean> {
-  return new Promise((resolve, reject): void => {
-    let options: {
-      hostname: string;
-      port: number;
-      path: string;
-      headers: {
-        [x: string]: string;
-      }
-    } | null = null
-    try {
-      options = createBasicOptions(requestOptions)
-    } catch (error) {
-      reject(error)
-      return
-    }
-    const request = https.get(options)
-    request.once('response', (response): void => {
-      response.setEncoding('utf8')
-      response.on('data', (chunk: string): void => {
-        // eslint-disable-next-line no-unused-vars
-        const _nothing: string = chunk
-      })
-      response.on('end', (): void => {
-        if (response.statusCode === 200) {
-          resolve(true)
-        }
-        if (typeof response.statusCode !== 'undefined') {
-          if (typeof http.STATUS_CODES[response.statusCode] !== 'undefined') {
-            const error = new Error()
-            error.name = 'HTTP_SERVER_ERROR'
-            error.message = 'The bridge returned HTTP/1.1 status ' +
-                          ` '${http.STATUS_CODES[response.statusCode]} (${response.statusCode})'.`
-            reject(error)
-          }
-          const error = new Error()
-          error.name = 'HTTP_SERVER_ERROR'
-          error.message = 'The bridge returned HTTP/1.1 status ' +
-                      ` '${response.statusCode}'.`
-          reject(error)
-        } else {
-          const error = new Error()
-          error.name = 'HTTP_SERVER_ERROR'
-          error.message = 'The bridge returned no HTTP/1.1 status.'
-          reject(error)
-        }
-      })
-      response.on('error', (error: Error): void => reject(error))
-    })
-    request.on('error', (error: Error): void => reject(error))
-  })
-}
-
 function sendHandler (requestOptions: {
   hostname: string;
   path: string;
@@ -245,14 +189,6 @@ class Bridge {
       path: sendOptions.path
     }
     return sendHandler(options, request)
-  }
-
-  public ping (): Promise<boolean> {
-    const options = {
-      hostname: this.hostname,
-      path: Bridge.skillPath()
-    }
-    return pingHandler(options)
   }
 }
 
