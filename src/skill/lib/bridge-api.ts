@@ -214,9 +214,9 @@ class Bridge {
   public constructor (userId: string) {
     this._userId = userId
     // These will be in a database indexed by userId.
-    this._hostname = constants.bridgeHostname
-    this._username = constants.bridgeUsername
-    this._password = constants.bridgePassword
+    this._hostname = constants.bridge.hostname
+    this._username = constants.bridge.username
+    this._password = constants.bridge.password
     this._null = ''
   }
 

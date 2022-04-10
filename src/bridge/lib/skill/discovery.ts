@@ -1,6 +1,7 @@
 import * as ASH from '../../../common/alexa'
 import { Backend, BackendControl } from '../backend'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
+import { constants } from '../../../common/constants'
 
 async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<ASH.Response> {
   //
@@ -44,8 +45,8 @@ async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<AS
     const endpoint: ASH.ResponseEventPayloadEndpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
-      description: 'For LG webOS TV',
-      manufacturerName: 'Back in Thirty',
+      description: constants.application.name.pretty,
+      manufacturerName: constants.application.vendor,
       displayCategories: ['TV'],
       capabilities: []
     }

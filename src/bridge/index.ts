@@ -7,25 +7,27 @@
 //
 
 import { Backend } from './lib/backend'
+import { constants } from '../common/constants'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
 import { SmartHomeSkill } from './lib/skill'
-import fs from 'fs-extra'
+import * as fs from 'fs/promises'
 const persistPath = require('persist-path')
 
 export async function startBridge (): Promise<void> {
-  const configurationDir = persistPath('ForLGwebOSTV')
+  const configurationDir = persistPath(constants.application.name.safe)
 
-  /*
-    // This operation is synchronous. It is both expected and desired because it
-    // occurs once at startup and because the directory is needed before the
-    // LG webOS TV bridge can run.
-     */
   try {
-    fs.mkdirSync(configurationDir)
+    await fs.mkdir(configurationDir, { recursive: true })
   } catch (error) {
-    if ((error as any).code !== 'EEXIST') {
-      throw error
+    if (error instanceof Error) {
+      console.log(`error: ${error.name}: ${error.message}`)
+    } else {
+      if ('code' in (error as any)) {
+        console.log(`error: ${(error as any).code}`)
+      } else {
+        console.log('error: unknown')
+      }
     }
   }
 

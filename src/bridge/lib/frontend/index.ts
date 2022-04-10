@@ -33,7 +33,7 @@ export class Frontend extends BaseClass {
         process.exit(1)
       }
       try {
-        await that._security.setPassword(constants.bridgeUsername, constants.bridgePassword)
+        await that._security.setPassword(constants.bridge.username, constants.bridge.password)
       } catch (error) {
         if (error instanceof Error) {
           console.log(`error: ${error.name}: ${error.message}`)
