@@ -24,7 +24,7 @@
     "uuid"
   ],
   "scripts": {
-    "clean": "rm -rf lib node_modules *.zip",
+    "clean": "rm -rf lib node_modules package-lock.json *.zip",
     "install_modules": "npm install",
     "build": "../../node_modules/.bin/tsc",
     "watch": "../../node_modules/.bin/tsc --watch",

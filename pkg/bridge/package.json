@@ -51,7 +51,7 @@
     "xml2js"
   ],
   "scripts": {
-    "clean": "rm -rf lib node_modules *.tgz",
+    "clean": "rm -rf lib node_modules package-lock.json *.tgz",
     "install_modules": "npm install",
     "build": "../../node_modules/.bin/tsc",
     "watch": "../../node_modules/.bin/tsc --watch",
