@@ -7,6 +7,7 @@
 //
 
 import { BaseClass } from '../base-class'
+import { constants } from '../../../common/constants'
 import { SmartHomeSkill } from '../skill'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
@@ -46,7 +47,7 @@ export class FrontendExternal extends BaseClass {
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         that._server.use('/', express.json())
-        that._server.post('/LGTV/SKILL', backendSkillHandler)
+        that._server.post(`/${constants.application.name.safe}`, backendSkillHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
         })

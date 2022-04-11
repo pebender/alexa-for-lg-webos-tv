@@ -146,7 +146,7 @@ class Bridge {
   }
 
   public static skillPath (): string {
-    return '/LGTV/SKILL'
+    return `/${constants.application.name.safe}`
   }
 
   public set hostname (hostname: string) {
@@ -160,7 +160,7 @@ class Bridge {
   public async sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
     const options = {
       hostname: this.hostname,
-      path: '/LGTV/SKILL'
+      path: Bridge.skillPath()
     }
     try {
       const response = ((await sendHandler(options, request)) as ASH.Response)
