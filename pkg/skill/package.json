@@ -13,6 +13,9 @@
     "TODO.txt"
   ],
   "dependencies": {
+    "certnames": "1.0.4",
+    "ask-sdk": "2.12.1",	  
+    "ask-sdk-dynamodb-persistence-adapter": "2.12.1",
     "uuid": "8.3.2"
   },
   "devDependencies": {
@@ -21,6 +24,10 @@
     "@types/uuid": "8.3.4"
   },
   "bundledDependencies": [
+    "certnames",
+    "ask-sdk-core",
+    "ask-sdk-dynamodb-persistence-adapter",
+    "ask-sdk-model",
     "uuid"
   ],
   "scripts": {
