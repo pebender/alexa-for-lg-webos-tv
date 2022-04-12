@@ -1,0 +1,192 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "l. g. t. v.",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "LGTV_SetHostnameIntent",
+                    "slots": [
+                        {
+                            "name": "ipAddressValid",
+                            "type": "IPADDRESS_VALID",
+                            "samples": [
+                                "{ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}"
+                            ]
+                        },
+                        {
+                            "name": "ipAddressA",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "ipAddressB",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "ipAddressC",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "ipAddressD",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "hostnameIndex",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "set my bridge hostname",
+                        "set my bridge's hostname",
+                        "set the bridge hostname",
+                        "set the bridge's hostname",
+                        "set my bridge address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set my bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set the bridge  address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set the bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set my bridge I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set my bridge's I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set the bridge I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "set the  bridge's I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "IPADDRESS_VALID",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "yes"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "LGTV_SetHostnameIntent",
+                    "delegationStrategy": "SKILL_RESPONSE",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "ipAddressValid",
+                            "type": "IPADDRESS_VALID",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1199979045736.1143616828312"
+                            }
+                        },
+                        {
+                            "name": "ipAddressA",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.551605045184"
+                            }
+                        },
+                        {
+                            "name": "ipAddressB",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.1236111864417"
+                            }
+                        },
+                        {
+                            "name": "ipAddressC",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.789004997147"
+                            }
+                        },
+                        {
+                            "name": "ipAddressD",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.1141618983256"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1199979045736.1143616828312",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is your bridge's I.P. address?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1141473767652.1141618983256",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the fourth number in your bridge's I.P. address?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1141473767652.789004997147",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the third number in your bridge's I.P. address?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1141473767652.1236111864417",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the second number in your bridge's I.P. address?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1141473767652.551605045184",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is the first number in your bridge's I.P. address?"
+                    }
+                ]
+            }
+        ]
+    }
+}

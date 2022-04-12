@@ -16,6 +16,7 @@
 			"ForLGWebOSTVController",
 			"ForLGwebOSTVGateway",
 			"Hulu",
+			"IPADDRESS_VALID",
 			"isnumeric",
 			"leanback",
 			"LGTV",
