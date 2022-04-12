@@ -1,3 +1,3 @@
-import { handler } from './lib/skill'
+import { handler } from './lib/smartHome'
 
 export { handler }
