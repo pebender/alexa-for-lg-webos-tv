@@ -12,6 +12,7 @@ import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
 import { SmartHomeSkill } from './lib/skill'
 import * as fs from 'fs/promises'
+import { FrontendAuthorization } from './lib/frontend/frontend-authorization'
 const persistPath = require('persist-path')
 
 export async function startBridge (): Promise<void> {
@@ -47,8 +48,9 @@ export async function startBridge (): Promise<void> {
     console.log(error)
   })
   await backend.initialize()
-  const smartHomeSkill = new SmartHomeSkill(frontendDb, backend)
-  const frontend = new Frontend(smartHomeSkill)
+  const frontendAuthorization = new FrontendAuthorization(frontendDb)
+  const smartHomeSkill = new SmartHomeSkill(frontendAuthorization, backend)
+  const frontend = new Frontend(frontendAuthorization, smartHomeSkill)
   await frontend.initialize()
   await frontend.start()
   await backend.start()

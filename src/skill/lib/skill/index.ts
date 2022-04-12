@@ -7,7 +7,7 @@ import { Bridge } from '../bridge-api'
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
   const bridge = new Bridge('')
   try {
-    const alexaResponse = await bridge.sendSkillDirective(alexaRequest)
+    const alexaResponse = await bridge.sendSkillDirective(alexaRequest, alexaRequest.getBearerToken())
     return alexaResponse
   } catch (error) {
     if (error instanceof Error) {
@@ -47,7 +47,7 @@ async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Con
 async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   const bridge = new Bridge('x')
   try {
-    await bridge.send({ path: Bridge.skillPath() }, { log: alexaRequest })
+    await bridge.send({ path: Bridge.skillPath(), token: alexaRequest.getBearerToken() }, { log: alexaRequest })
   } catch (error) {
     //
   }
@@ -64,7 +64,7 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   }
 
   try {
-    await bridge.send({ path: Bridge.skillPath() }, { log: alexaResponse })
+    await bridge.send({ path: Bridge.skillPath(), token: alexaRequest.getBearerToken() }, { log: alexaResponse })
   } catch (error) {
     //
   }

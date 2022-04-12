@@ -73,20 +73,42 @@ export class Request {
     this.directive = (copyElement(opts.directive) as Directive)
   }
 
-  public getBearerToken (): string | undefined {
-    if (this.directive.header.namespace === 'Alexa.Discovery') {
-      if (('scope' in (this.directive.payload as any)) &&
-          ('type' in (this.directive.payload.scope as any)) &&
-          ('token' in (this.directive.payload.scope as any))) {
-        return ((this.directive.payload as any).scope as any).token
+  public getBearerToken (): string | null {
+    switch (this.directive.header.namespace) {
+      case 'Alexa.Discovery': {
+        const payload = (this.directive.payload as any)
+        if ((typeof payload.scope.type === 'undefined') ||
+            (typeof payload.scope.token === 'undefined')) {
+          return null
+        }
+        if (payload.scope.type !== 'BearerToken') {
+          return null
+        }
+        return (payload.scope.token as string)
       }
-    } else {
-      if ((typeof this.directive.endpoint?.scope?.type !== 'undefined') ||
-          (this.directive.endpoint?.scope?.type === 'BearerToken')) {
-        return this.directive.endpoint?.scope?.token
+      case 'Alexa.Authorization': {
+        const payload = (this.directive.payload as any)
+        if ((typeof payload.grantee.type === 'undefined') ||
+            (typeof payload.grantee.token === 'undefined')) {
+          return null
+        }
+        if (payload.grantee.type !== 'BearerToken') {
+          return null
+        }
+        return (payload.grantee.token as string)
+      }
+      default: {
+        const endpoint = (this.directive.endpoint as any)
+        if ((typeof endpoint.scope.type === 'undefined') ||
+            (typeof endpoint.scope.token === 'undefined')) {
+          return null
+        }
+        if (endpoint.scope.type !== 'BearerToken') {
+          return null
+        }
+        return (endpoint.scope.token as string)
       }
     }
-    return undefined
   }
 
   public getCorrelationToken (): string | undefined {

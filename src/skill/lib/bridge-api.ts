@@ -45,6 +45,7 @@ function createBasicOptions (requestOptions: {
 function sendHandler (requestOptions: {
   hostname: string;
   path: string;
+  token: string | null;
 }, requestBody: BridgeRequest): Promise<BridgeResponse> {
   return new Promise((resolve, reject): void => {
     const options: {
@@ -58,6 +59,9 @@ function sendHandler (requestOptions: {
     } = createBasicOptions(requestOptions)
     const content = JSON.stringify(requestBody)
     options.method = 'POST'
+    if (!(requestOptions.token === null)) {
+      options.headers.authorization = `Bearer ${requestOptions.token}`
+    }
     options.headers['content-type'] = 'application/json'
     options.headers['content-length'] = Buffer.byteLength(content).toString()
     const request = https.request(options)
@@ -157,10 +161,11 @@ class Bridge {
     return this._hostname
   }
 
-  public async sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
+  public async sendSkillDirective (request: ASH.Request, token: string | null): Promise<ASH.Response> {
     const options = {
       hostname: this.hostname,
-      path: Bridge.skillPath()
+      path: Bridge.skillPath(),
+      token
     }
     try {
       const response = ((await sendHandler(options, request)) as ASH.Response)
@@ -179,6 +184,7 @@ class Bridge {
     sendOptions: {
       hostname?: string;
       path: string;
+      token: string | null
     },
     request: BridgeRequest
   ): Promise<BridgeResponse> {
@@ -186,7 +192,8 @@ class Bridge {
       hostname: typeof sendOptions.hostname !== 'undefined'
         ? sendOptions.hostname
         : this.hostname,
-      path: sendOptions.path
+      path: sendOptions.path,
+      token: sendOptions.token
     }
     return sendHandler(options, request)
   }

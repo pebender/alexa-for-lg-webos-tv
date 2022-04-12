@@ -8,16 +8,21 @@
 
 import { BaseClass } from '../base-class'
 import { constants } from '../../../common/constants'
+import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../skill'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
+import * as httpErrors from 'http-errors'
+const { auth } = require('express-oauth2-bearer')
 
 export class FrontendExternal extends BaseClass {
+  private readonly _authorization: FrontendAuthorization
   private readonly _smartHomeSkill: SmartHomeSkill
   private readonly _server: expressCore.Express
-  public constructor (smartHomeSkill: SmartHomeSkill) {
+  public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
     super()
 
+    this._authorization = frontendAuthorization
     this._smartHomeSkill = smartHomeSkill
     this._server = express()
   }
@@ -26,7 +31,6 @@ export class FrontendExternal extends BaseClass {
     const that = this
 
     async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
-      console.log(JSON.stringify(request.body, null, 2))
       if (typeof request.body.log !== 'undefined') {
         console.log(JSON.stringify(request.body, null, 2))
         response
@@ -44,9 +48,38 @@ export class FrontendExternal extends BaseClass {
         .end()
     }
 
+    async function authorizeToken (token: string): Promise<any> {
+      const authorized = await that._authorization.authorize(token)
+      if (!authorized) {
+        return
+      }
+      return token
+    }
+
+    async function handleAuthFailure (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+      if (res.headersSent) {
+        return next(err)
+      }
+      if (!httpErrors.isHttpError(err)) {
+        return next(err)
+      }
+      const error = err as httpErrors.HttpError
+      res.status(error.status)
+      if (error.headers) {
+        const headers = (error.headers as { [x: string]: string; })
+        const keys = Object.keys(headers)
+        keys.forEach((key: string): void => {
+          res.header(key, headers[key])
+        })
+      }
+      res.send()
+    }
+
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         that._server.use('/', express.json())
+        that._server.use('/', auth(authorizeToken))
+        that._server.use('/', handleAuthFailure)
         that._server.post(`/${constants.application.name.safe}`, backendSkillHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
