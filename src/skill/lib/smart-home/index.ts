@@ -19,27 +19,31 @@ async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response>
 
 async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   let alexaRequest: ASH.Request | null = null
-  try {
-    alexaRequest = new ASH.Request(event)
-  } catch (error) {
-    if (error instanceof Error) {
-      return new ASH.Response({
-        namespace: 'Alexa',
-        name: 'ErrorResponse',
-        payload: {
-          type: 'INTERNAL_ERROR',
-          message: `${error.name}: ${error.message}`
-        }
-      })
-    } else {
-      return new ASH.Response({
-        namespace: 'Alexa',
-        name: 'ErrorResponse',
-        payload: {
-          type: 'INTERNAL_ERROR',
-          message: 'Unknown: Unknown'
-        }
-      })
+  if (event instanceof ASH.Request) {
+    alexaRequest = event
+  } else {
+    try {
+      alexaRequest = new ASH.Request(event)
+    } catch (error) {
+      if (error instanceof Error) {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: `${error.name}: ${error.message}`
+          }
+        })
+      } else {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: 'Unknown: Unknown'
+          }
+        })
+      }
     }
   }
 
@@ -67,7 +71,36 @@ async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Con
 }
 
 // eslint-disable-next-line no-unused-vars
-async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+async function handlerWithLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+  let alexaRequest: ASH.Request | null = null
+  if (event instanceof ASH.Request) {
+    alexaRequest = event
+  } else {
+    try {
+      alexaRequest = new ASH.Request(event)
+    } catch (error) {
+      if (error instanceof Error) {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: `${error.name}: ${error.message}`
+          }
+        })
+      } else {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: 'Unknown: Unknown'
+          }
+        })
+      }
+    }
+  }
+
   try {
     await Bridge.sendLogMessage(alexaRequest, alexaRequest)
   } catch (error) {
@@ -94,4 +127,4 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   return alexaResponse
 }
 
-export { handlerWithoutLogging as handler }
+export { handlerWithLogging as handler }

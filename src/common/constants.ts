@@ -13,5 +13,17 @@ export const constants = {
       // A version of the name that is displayed to the user.
       pretty: 'For LG webOS TV'
     }
+  },
+  bridge: {
+    path: {
+      // The POST UR
+      base: '/ForLGwebOSTV',
+      // The HTTP PATH for Alexa Smart Home (ASH) skill messages is `${base}/${relativeASH}`.
+      // The HTTP PATH for ASH skill messages must not be a substring of the HTTP PATH for log messages.
+      relativeASH: 'ASH',
+      // The HTTP PATH for log messages is `${base}/$relativeLog}`
+      // The HTTP PATH for log messages must not be a substring of the HTTP PATH for ASH skill messages.
+      relativeLog: 'LOG'
+    }
   }
 }

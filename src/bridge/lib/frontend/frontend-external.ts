@@ -30,23 +30,27 @@ export class FrontendExternal extends BaseClass {
   public initialize (): Promise<void> {
     const that = this
 
-    async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
-      console.log(JSON.stringify(request.body, null, 2))
-      if (typeof request.body.log !== 'undefined') {
-        console.log(JSON.stringify(request.body, null, 2))
+    // Alexa Smart Home (ASH) skill hand1er.
+    async function backendASHHandler (request: express.Request, response: express.Response): Promise<void> {
+      try {
+        const commandResponse = await that._smartHomeSkill.handler(request.body)
         response
           .type('json')
           .status(200)
-          .json({})
+          .json(commandResponse)
           .end()
-        return
+      } catch (error) {
+
       }
-      const commandResponse = await that._smartHomeSkill.handler(request.body)
-      console.log(JSON.stringify(commandResponse, null, 2))
+    }
+
+    // Log message handler.
+    async function backendLogHandler (request: express.Request, response: express.Response): Promise<void> {
+      console.log(JSON.stringify(request.body, null, 2))
       response
         .type('json')
         .status(200)
-        .json(commandResponse)
+        .json({})
         .end()
     }
 
@@ -82,7 +86,8 @@ export class FrontendExternal extends BaseClass {
         that._server.use('/', express.json())
         that._server.use('/', auth(authorizeToken))
         that._server.use('/', handleAuthFailure)
-        that._server.post(`/${constants.application.name.safe}`, backendSkillHandler)
+        that._server.post(`/${constants.bridge.path.base}/${constants.bridge.path.relativeASH}`, backendASHHandler)
+        that._server.post(`/${constants.bridge.path.base}/${constants.bridge.path.relativeLog}`, backendLogHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
         })

@@ -16,98 +16,105 @@ export interface Response {
   [x: string]: number | string | object | undefined;
 }
 
-const skillPath: string = `/${constants.application.name.safe}`
-
 async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | null> {
+  console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
   const ashToken = alexaRequest.getBearerToken()
   if (ashToken === null) {
-    throw Error()
-  }
-  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
-  let hostname: string | null = null
-  const ashTokenQueryParams = {
-    TableName: `${constants.application.name.safe}`,
-    IndexName: 'ashToken_index',
-    KeyConditionExpression: '#ashToken = :ashToken_value',
-    ExpressionAttributeNames: { '#ashToken': 'ashToken' },
-    ExpressionAttributeValues: { ':ashToken_value': ashToken }
-  }
-  try {
-    const data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
-    console.log(data)
-    if ((typeof data.Count !== 'undefined') && (typeof data.Items !== 'undefined')) {
-      if (data.Count > 0) {
-        console.log(`token result: ${JSON.stringify(data.Items[0])}`)
-        if (typeof data.Items[0].hostname !== 'undefined') {
-          hostname = data.Items[0].hostname
-          console.log(`hostname: ${hostname}`)
-          return hostname
-        }
-      }
-      const email = await alexaRequest.getUserEmail()
-      console.log(`email: ${email}`)
-      const ashTokenUpdateParams = {
-        TableName: `${constants.application.name.safe}`,
-        Key: { email },
-        UpdateExpression: 'set ashToken = :newAshToken',
-        ExpressionAttributeValues: { ':newAshToken': ashToken }
-      }
-      console.log(`ashTokenUpdateParams: ${JSON.stringify(ashTokenUpdateParams)}`)
-      try {
-        await dynamoDBDocumentClient.update(ashTokenUpdateParams).promise()
-      } catch (error) {
-        let message: string = 'Unknown'
-        if (error instanceof Error) {
-          message = `${error.name} - ${error.message}`
-        } else {
-          if ('code' in (error as any)) {
-            message = (error as any).code
-          }
-        }
-        console.log(`Smart Home Skill Error: update ashToken: ${message}`)
-        throw Error()
-      }
-    }
-  } catch (error) {
-    let message: string = 'Unknown'
-    if (error instanceof Error) {
-      message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
-    } else {
-      if ('code' in (error as any)) {
-        message = (error as any).code
-      }
-    }
-    console.log(`Smart Home Skill Error: get hostname: ${message}`)
-    throw Error()
+    throw Error('bearer token not found')
   }
 
-  try {
-    const data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
-    console.log(data)
-    if ((typeof data.Count !== 'undefined') && (typeof data.Items !== 'undefined')) {
-      if (data.Count > 0) {
-        console.log(`token result: ${JSON.stringify(data.Items[0])}`)
-        if (typeof data.Items[0].hostname !== 'undefined') {
-          hostname = data.Items[0].hostname
-          console.log(`hostname: ${hostname}`)
-          return hostname
+  let hostname: string | null = null
+
+  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
+
+  async function queryBridgeHostname (dynamoDBDocumentClient: DynamoDB.DocumentClient, ashToken: string): Promise<string | null> {
+    const ashTokenQueryParams = {
+      TableName: `${constants.application.name.safe}`,
+      IndexName: 'ashToken_index',
+      KeyConditionExpression: '#ashToken = :ashToken_value',
+      ExpressionAttributeNames: { '#ashToken': 'ashToken' },
+      ExpressionAttributeValues: { ':ashToken_value': ashToken }
+    }
+    console.log(`getBridgeHostname: queryBridgeHostname: Params: ${JSON.stringify(ashTokenQueryParams)}`)
+    let data
+    try {
+      data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
+    } catch (error) {
+      let message: string = 'Unknown'
+      if (error instanceof Error) {
+        message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
+      } else {
+        if ('code' in (error as any)) {
+          message = (error as any).code
         }
       }
+      console.log(`getBridgeHostname: queryBridgeHostname: Error: ${message}`)
       throw Error()
     }
-    throw Error()
-  } catch (error) {
-    let message: string = 'Unknown'
-    if (error instanceof Error) {
-      message = `${error.name} - ${error.message}`
-    } else {
-      if ('code' in (error as any)) {
-        message = (error as any).code
-      }
+    console.log(`getBridgeHostname ashToken Query result: ${JSON.stringify(data)}`)
+    if ((typeof data.Count !== 'undefined') && (data.Count > 0) &&
+        (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
+      hostname = data.Items[0].hostname
+      console.log(`getBridgeHostname: queryBridgeHostname: hostname: ${hostname}`)
+      return hostname
     }
-    console.log(`Smart Home Skill Error: get hostname again: ${message}`)
-    throw Error()
+
+    return null
   }
+
+  async function setASHToken (dynamoDBDocumentClient: DynamoDB.DocumentClient, ashToken: string): Promise<void> {
+    let email: string | null = null
+    try {
+      email = await alexaRequest.getUserEmail()
+    } catch (error) {
+      let message: string = 'Unknown'
+      if (error instanceof Error) {
+        message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
+      } else {
+        if ('code' in (error as any)) {
+          message = (error as any).code
+        }
+      }
+      console.log(`getBridgeHostname: setASHToken: Error: getUserEMail: ${message}`)
+      throw Error()
+    }
+    if (email === null) {
+      throw Error()
+    }
+    console.log(`getBridgeHostname: setASHToken: email: ${email}`)
+    const ashTokenUpdateParams = {
+      TableName: `${constants.application.name.safe}`,
+      Key: { email },
+      UpdateExpression: 'set ashToken = :newAshToken',
+      ExpressionAttributeValues: { ':newAshToken': ashToken }
+    }
+    console.log(`getBridgeHostname: setASHToken: Params: ${JSON.stringify(ashTokenUpdateParams)}`)
+    try {
+      await dynamoDBDocumentClient.update(ashTokenUpdateParams).promise()
+    } catch (error) {
+      let message: string = 'Unknown'
+      if (error instanceof Error) {
+        message = `${error.name} - ${error.message}`
+      } else {
+        if ('code' in (error as any)) {
+          message = (error as any).code
+        }
+      }
+      console.log(`getBridgeHostname: setASHToken: Error: ${message}`)
+      throw Error()
+    }
+  }
+
+  hostname = await queryBridgeHostname(dynamoDBDocumentClient, ashToken)
+  if (hostname !== null) {
+    return hostname
+  }
+  await setASHToken(dynamoDBDocumentClient, ashToken)
+  hostname = await queryBridgeHostname(dynamoDBDocumentClient, ashToken)
+  if (hostname !== null) {
+    return hostname
+  }
+  return null
 }
 
 async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<Response> {
@@ -115,13 +122,14 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
   try {
     hostname = await getBridgeHostname(alexaRequest)
   } catch (error) {
-    console.log(`sendHandlerError: getBridgeHostname Error: ${JSON.stringify(error)}`)
+    console.log(`sendHandler Error: getBridgeHostname Error: ${JSON.stringify(error)}`)
+    throw Error(`sendHandler Error: getBridgeHostname Error: ${JSON.stringify(error)}`)
   }
   if (hostname === null) {
-    throw Error()
+    throw Error('sendHandler Error: getBridgeHostname Error: hostname is null')
   }
 
-  return new Promise((resolve, reject): void => {
+  return await new Promise((resolve, reject): void => {
     const options: {
       method?: 'POST';
       hostname: string;
@@ -220,13 +228,15 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
   })
 }
 
-export function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : ASH.Request | ASH.Response): Promise<Response> {
-  return send(skillPath, alexaRequest, { log: alexaMessage })
+export async function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : ASH.Request | ASH.Response): Promise<Response> {
+  const logPath: string = `/${constants.bridge.path.base}/${constants.bridge.path.relativeLog}`
+  return await send(logPath, alexaRequest, { log: alexaMessage })
 }
 
 export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
+  const ashPath: string = `/${constants.bridge.path.base}/${constants.bridge.path.relativeASH}`
   try {
-    const response = ((await sendHandler(skillPath, request, request)) as ASH.Response)
+    const response = ((await sendHandler(ashPath, request, request)) as ASH.Response)
     const alexaResponse = new ASH.Response(response)
     return alexaResponse
   } catch (error) {
