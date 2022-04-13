@@ -1,1 +1,2 @@
+* Implement decent error handling.
 * Comment code.
