@@ -17,36 +17,8 @@ async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response>
   }
 }
 
-async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
-  let alexaRequest: ASH.Request | null = null
-  if (event instanceof ASH.Request) {
-    alexaRequest = event
-  } else {
-    try {
-      alexaRequest = new ASH.Request(event)
-    } catch (error) {
-      if (error instanceof Error) {
-        return new ASH.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INTERNAL_ERROR',
-            message: `${error.name}: ${error.message}`
-          }
-        })
-      } else {
-        return new ASH.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INTERNAL_ERROR',
-            message: 'Unknown: Unknown'
-          }
-        })
-      }
-    }
-  }
-
+// eslint-disable-next-line no-unused-vars
+async function handlerWithoutLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   try {
     if (typeof alexaRequest.directive.endpoint === 'undefined' ||
         typeof alexaRequest.directive.endpoint.endpointId === 'undefined') {
@@ -63,44 +35,15 @@ async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Con
     }
   } catch (error) {
     if (error instanceof Error) {
-      return Promise.resolve(ASH.errorResponseFromError(event, error))
+      return Promise.resolve(ASH.errorResponseFromError(alexaRequest, error))
     } else {
-      return Promise.resolve(ASH.errorResponse(event, 'Unknown', 'Unknown'))
+      return Promise.resolve(ASH.errorResponse(alexaRequest, 'Unknown', 'Unknown'))
     }
   }
 }
 
 // eslint-disable-next-line no-unused-vars
-async function handlerWithLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
-  let alexaRequest: ASH.Request | null = null
-  if (event instanceof ASH.Request) {
-    alexaRequest = event
-  } else {
-    try {
-      alexaRequest = new ASH.Request(event)
-    } catch (error) {
-      if (error instanceof Error) {
-        return new ASH.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INTERNAL_ERROR',
-            message: `${error.name}: ${error.message}`
-          }
-        })
-      } else {
-        return new ASH.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INTERNAL_ERROR',
-            message: 'Unknown: Unknown'
-          }
-        })
-      }
-    }
-  }
-
+async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   try {
     await Bridge.sendLogMessage(alexaRequest, alexaRequest)
   } catch (error) {
@@ -127,4 +70,38 @@ async function handlerWithLogging (event: ASH.Request, context: AWSLambda.Contex
   return alexaResponse
 }
 
-export { handlerWithLogging as handler }
+async function handler (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+  let alexaRequest: ASH.Request | null = null
+  if (event instanceof ASH.Request) {
+    alexaRequest = event
+  } else {
+    try {
+      alexaRequest = new ASH.Request(event)
+    } catch (error) {
+      if (error instanceof Error) {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: `${error.name}: ${error.message}`
+          }
+        })
+      } else {
+        return new ASH.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INTERNAL_ERROR',
+            message: 'Unknown: Unknown'
+          }
+        })
+      }
+    }
+  }
+
+  // return await handlerWithoutLogging(alexaRequest, context)
+  return await handlerWithLogging(alexaRequest, context)
+}
+
+export { handler }
