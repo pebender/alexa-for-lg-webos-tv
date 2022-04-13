@@ -2,12 +2,11 @@ import * as ASH from '../../../common/alexa'
 import * as AWSLambda from 'aws-lambda'
 import * as alexaAuthorization from './authorization'
 import * as alexaDiscovery from './discovery'
-import { Bridge } from '../bridge-api'
+import * as Bridge from '../bridge-api'
 
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
-  const bridge = new Bridge('')
   try {
-    const alexaResponse = await bridge.sendSkillDirective(alexaRequest)
+    const alexaResponse = await Bridge.sendSkillDirective(alexaRequest)
     return alexaResponse
   } catch (error) {
     if (error instanceof Error) {
@@ -69,9 +68,8 @@ async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Con
 
 // eslint-disable-next-line no-unused-vars
 async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
-  const bridge = new Bridge('x')
   try {
-    await bridge.send({ path: Bridge.skillPath() }, alexaRequest, { log: alexaRequest })
+    await Bridge.sendLogMessage(alexaRequest, alexaRequest)
   } catch (error) {
     //
   }
@@ -88,7 +86,7 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   }
 
   try {
-    await bridge.send({ path: Bridge.skillPath() }, alexaRequest, { log: alexaResponse })
+    await Bridge.sendLogMessage(alexaRequest, alexaResponse)
   } catch (error) {
     //
   }

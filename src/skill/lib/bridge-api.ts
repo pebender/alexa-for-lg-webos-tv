@@ -4,17 +4,19 @@ import { DynamoDB } from 'aws-sdk'
 import http from 'http'
 import https from 'https'
 
-export interface BridgeRequest {
+export interface Request {
   [x: string]: number | string | object | undefined;
 }
 
-export interface BridgeResponse {
+export interface Response {
   error?: {
     name?: string;
     message?: string;
   };
   [x: string]: number | string | object | undefined;
 }
+
+const skillPath: string = `/${constants.application.name.safe}`
 
 async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | null> {
   const ashToken = alexaRequest.getBearerToken()
@@ -108,9 +110,7 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
   }
 }
 
-async function sendHandler (requestOptions: {
-  path: string;
-}, alexaRequest: ASH.Request, requestBody: BridgeRequest): Promise<BridgeResponse> {
+async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<Response> {
   let hostname: String | null = null
   try {
     hostname = await getBridgeHostname(alexaRequest)
@@ -133,11 +133,11 @@ async function sendHandler (requestOptions: {
     } = {
       hostname: (hostname as string),
       port: 25392,
-      path: requestOptions.path,
+      path,
       headers: {}
     }
 
-    const content = JSON.stringify(requestBody)
+    const content = JSON.stringify(message)
     options.method = 'POST'
     const token = alexaRequest.getBearerToken()
     if (token === null) {
@@ -148,7 +148,7 @@ async function sendHandler (requestOptions: {
     options.headers['content-length'] = Buffer.byteLength(content).toString()
     const request = https.request(options)
     request.once('response', (response): void => {
-      let body: BridgeResponse = {}
+      let body: Response = {}
       let data = ''
       response.setEncoding('utf8')
       response.on('data', (chunk: string): void => {
@@ -220,42 +220,24 @@ async function sendHandler (requestOptions: {
   })
 }
 
-class Bridge {
-  private _null: string
-  public constructor (token: string | null) {
-    this._null = ''
-  }
+export function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : ASH.Request | ASH.Response): Promise<Response> {
+  return send(skillPath, alexaRequest, { log: alexaMessage })
+}
 
-  public static skillPath (): string {
-    return `/${constants.application.name.safe}`
-  }
-
-  public async sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
-    const options = {
-      path: Bridge.skillPath()
+export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
+  try {
+    const response = ((await sendHandler(skillPath, request, request)) as ASH.Response)
+    const alexaResponse = new ASH.Response(response)
+    return alexaResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      return ASH.errorResponseFromError(request, error)
+    } else {
+      return ASH.errorResponse(request, 'Unknown', 'Unknown')
     }
-    try {
-      const response = ((await sendHandler(options, request, request)) as ASH.Response)
-      const alexaResponse = new ASH.Response(response)
-      return alexaResponse
-    } catch (error) {
-      if (error instanceof Error) {
-        return ASH.errorResponseFromError(request, error)
-      } else {
-        return ASH.errorResponse(request, 'Unknown', 'Unknown')
-      }
-    }
-  }
-
-  public send (
-    sendOptions: {
-      path: string;
-    },
-    alexaRequest: ASH.Request,
-    request: BridgeRequest
-  ): Promise<BridgeResponse> {
-    return sendHandler(sendOptions, alexaRequest, request)
   }
 }
 
-export { Bridge }
+export function send (path: string, alexaRequest: ASH.Request, message: Request): Promise<Response> {
+  return sendHandler(path, alexaRequest, message)
+}
