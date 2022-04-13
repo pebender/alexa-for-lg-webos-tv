@@ -18,9 +18,5 @@ export const constants = {
     emails: [
       'pebender@gmail.com'
     ]
-  },
-  bridge: {
-    // The bridge's hostname.
-    hostname: 'home.backinthirty.net'
   }
 }

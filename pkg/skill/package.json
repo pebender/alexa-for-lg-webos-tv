@@ -15,7 +15,7 @@
   "dependencies": {
     "certnames": "1.0.4",
     "ask-sdk": "2.12.1",	  
-    "ask-sdk-dynamodb-persistence-adapter": "2.12.1",
+    "aws-sdk": "2.1113.0",
     "uuid": "8.3.2"
   },
   "devDependencies": {
@@ -26,8 +26,8 @@
   "bundledDependencies": [
     "certnames",
     "ask-sdk-core",
-    "ask-sdk-dynamodb-persistence-adapter",
     "ask-sdk-model",
+    "aws-sdk",
     "uuid"
   ],
   "scripts": {

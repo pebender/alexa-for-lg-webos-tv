@@ -11,7 +11,7 @@ async function handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
   let alexaResponse: ASH.Response | null = null
 
   try {
-    alexaResponse = await bridge.sendSkillDirective(alexaRequest, alexaRequest.getBearerToken())
+    alexaResponse = await bridge.sendSkillDirective(alexaRequest)
   } catch (error) {
     if (error instanceof Error) {
       alexaResponse = ASH.errorResponseFromError(alexaRequest, error)

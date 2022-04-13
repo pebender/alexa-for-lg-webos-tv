@@ -2,12 +2,6 @@ import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
 import { constants } from '../../../common/constants'
 import * as LGTVSetHostname from './lgtv-set-hostname'
-import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter'
-
-const persistenceAdapter = new DynamoDbPersistenceAdapter({
-  tableName: constants.application.name.safe,
-  createTable: true
-})
 
 const LaunchRequestHandler = {
   canHandle (handlerInput: ASKCore.HandlerInput): boolean {
@@ -113,7 +107,6 @@ const skillHandler = async function (request: ASKModel.RequestEnvelope, context:
   return ASKCore.SkillBuilders.custom()
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
-    .withPersistenceAdapter(persistenceAdapter)
     .withCustomUserAgent(constants.application.name.safe)
     .create()
     .invoke(request, context)

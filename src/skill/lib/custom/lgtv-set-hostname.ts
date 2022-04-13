@@ -1,6 +1,7 @@
 import { constants } from '../../../common/constants'
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
+import { DynamoDB } from 'aws-sdk'
 import * as https from 'https'
 import tls from 'tls'
 const certnames = require('certnames')
@@ -57,11 +58,6 @@ const SetHostnameIntentHandler = {
       })
     }
     console.log(JSON.stringify(handlerInput.requestEnvelope))
-
-    const bearerToken = (handlerInput.requestEnvelope.context.System.apiAccessToken as string)
-    console.log(`bearer token: ${bearerToken}`)
-    const email = await getUserEmail(bearerToken)
-    console.log(`email: ${JSON.stringify(email, null, 2)}`)
 
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
 
@@ -253,47 +249,33 @@ const SetHostnameIntentHandler = {
 
     if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
-        let persistentAttributes: {
-          hostname?: string;
-        } = {}
-        try {
-          persistentAttributes = await handlerInput.attributesManager.getPersistentAttributes()
-        } catch (error) {
-          if (error instanceof Error) {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', `${error.name}: ${error.message}`)
-              .getResponse()
-          } else {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', 'Unknown: Unknown')
-              .getResponse()
-          }
+        const apiAccessToken = ASKCore.getApiAccessToken(handlerInput.requestEnvelope)
+        console.log(`apiAccessToken: ${apiAccessToken}`)
+        const email = await getUserEmail(apiAccessToken)
+        console.log(`email: ${JSON.stringify(email, null, 2)}`)
+        const hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
+        const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
+        const hostnameUpdateParams = {
+          TableName: `${constants.application.name.safe}`,
+          Key: { email },
+          UpdateExpression: 'set hostname = :newHostname',
+          ExpressionAttributeValues: { ':newHostname': hostname }
         }
-        Reflect.deleteProperty(persistentAttributes, 'hostname')
-        Reflect.deleteProperty(persistentAttributes, 'password')
-        Reflect.deleteProperty(persistentAttributes, 'tvmap')
-        persistentAttributes.hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
         try {
-          await handlerInput.attributesManager.savePersistentAttributes()
+          await dynamoDBDocumentClient.update(hostnameUpdateParams).promise()
+          console.log('success')
         } catch (error) {
+          let message: string = 'Unknown'
           if (error instanceof Error) {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', `${error.name}: ${error.message}`)
-              .getResponse()
+            message = `${error.name} - ${error.message}`
           } else {
-            return handlerInput.responseBuilder
-              .speak('I had a problem and we will have to start over.' +
-                              ' A card in the Alexa App shows more.')
-              .withSimpleCard('Error', 'Unknown: Unknown')
-              .getResponse()
+            if ('code' in (error as any)) {
+              message = (error as any).code
+            }
           }
+          console.log(`LGTV_SetHostnameIntent Error: update hostname: ${message}`)
         }
+
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)

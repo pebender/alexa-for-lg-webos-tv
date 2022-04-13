@@ -4,6 +4,7 @@ import {
   Namespace
 } from './common'
 import { copyElement } from './copy'
+import https from 'https'
 
 export interface RequestDirectivePayload {
   [x: string]: boolean | number | string | [] | object;
@@ -79,9 +80,11 @@ export class Request {
         const payload = (this.directive.payload as any)
         if ((typeof payload.scope.type === 'undefined') ||
             (typeof payload.scope.token === 'undefined')) {
+          console.log('getBearerToken: Alexa.Discovery: this.directive.payload.scope is missing')
           return null
         }
         if (payload.scope.type !== 'BearerToken') {
+          console.log('getBearerToken: Alexa.Discovery: this.directive.payload.scope.type is no BearerToken')
           return null
         }
         return (payload.scope.token as string)
@@ -90,9 +93,11 @@ export class Request {
         const payload = (this.directive.payload as any)
         if ((typeof payload.grantee.type === 'undefined') ||
             (typeof payload.grantee.token === 'undefined')) {
+          console.log('getBearerToken: Alexa.Authorization: this.directive.payload.scope is missing')
           return null
         }
         if (payload.grantee.type !== 'BearerToken') {
+          console.log('getBearerToken: Alexa.Authorization: this.directive.payload.scope.type is no BearerToken')
           return null
         }
         return (payload.grantee.token as string)
@@ -101,9 +106,11 @@ export class Request {
         const endpoint = (this.directive.endpoint as any)
         if ((typeof endpoint.scope.type === 'undefined') ||
             (typeof endpoint.scope.token === 'undefined')) {
+          console.log('getBearerToken: Alexa.*: this.directive.endpoint.scope is missing')
           return null
         }
         if (endpoint.scope.type !== 'BearerToken') {
+          console.log('getBearerToken: Alexa.*: this.directive.payload.scope.type is no BearerToken')
           return null
         }
         return (endpoint.scope.token as string)
@@ -117,5 +124,59 @@ export class Request {
 
   public getEndpointId (): string | undefined {
     return this.directive.endpoint && this.directive.endpoint.endpointId
+  }
+
+  public async getUserProfile (): Promise<any> {
+    const bearerToken = this.getBearerToken()
+    if (bearerToken === null) {
+      console.log('getUserProfile: bearerToken is null')
+    }
+
+    try {
+      return await new Promise((resolve, reject) => {
+        const options = {
+          method: 'GET',
+          hostname: 'api.amazon.com',
+          path: '/user/profile',
+          headers: {
+            Authorization: `Bearer ${bearerToken}`
+          }
+        }
+        const req = https.request(options, (response) => {
+          let returnData = ''
+
+          response.on('data', (chunk) => {
+            returnData += chunk
+          })
+
+          response.on('end', () => {
+            resolve(JSON.parse(returnData))
+          })
+
+          response.on('error', (error) => {
+            console.log(`getUserProfile: HTTPS response: ${JSON.stringify(error)}`)
+            reject(error)
+          })
+        })
+        req.end()
+      })
+    } catch (error) {
+      console.log(`getUserProfile: ${JSON.stringify(error)}`)
+      console.log(JSON.stringify(error))
+    }
+  }
+
+  public async getUserEmail (): Promise<string | null> {
+    try {
+      const userProfile = await this.getUserProfile()
+      if (typeof userProfile === 'undefined') {
+        console.log('getUserEmail: userProfile is getUserProfile returned undefined')
+        return null
+      }
+      return (userProfile.email as string)
+    } catch (error) {
+      console.log(`getUserEmail: ${JSON.stringify(error)}`)
+      return null
+    }
   }
 }

@@ -7,7 +7,7 @@ import { Bridge } from '../bridge-api'
 async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response> {
   const bridge = new Bridge('')
   try {
-    const alexaResponse = await bridge.sendSkillDirective(alexaRequest, alexaRequest.getBearerToken())
+    const alexaResponse = await bridge.sendSkillDirective(alexaRequest)
     return alexaResponse
   } catch (error) {
     if (error instanceof Error) {
@@ -19,8 +19,32 @@ async function remoteResponse (alexaRequest: ASH.Request): Promise<ASH.Response>
 }
 
 async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+  let alexaRequest: ASH.Request | null = null
   try {
-    const alexaRequest = new ASH.Request(event)
+    alexaRequest = new ASH.Request(event)
+  } catch (error) {
+    if (error instanceof Error) {
+      return new ASH.Response({
+        namespace: 'Alexa',
+        name: 'ErrorResponse',
+        payload: {
+          type: 'INTERNAL_ERROR',
+          message: `${error.name}: ${error.message}`
+        }
+      })
+    } else {
+      return new ASH.Response({
+        namespace: 'Alexa',
+        name: 'ErrorResponse',
+        payload: {
+          type: 'INTERNAL_ERROR',
+          message: 'Unknown: Unknown'
+        }
+      })
+    }
+  }
+
+  try {
     if (typeof alexaRequest.directive.endpoint === 'undefined' ||
         typeof alexaRequest.directive.endpoint.endpointId === 'undefined') {
       switch (alexaRequest.directive.header.namespace) {
@@ -47,7 +71,7 @@ async function handlerWithoutLogging (event: ASH.Request, context: AWSLambda.Con
 async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
   const bridge = new Bridge('x')
   try {
-    await bridge.send({ path: Bridge.skillPath(), token: alexaRequest.getBearerToken() }, { log: alexaRequest })
+    await bridge.send({ path: Bridge.skillPath() }, alexaRequest, { log: alexaRequest })
   } catch (error) {
     //
   }
@@ -64,7 +88,7 @@ async function handlerWithLogging (alexaRequest: ASH.Request, context: AWSLambda
   }
 
   try {
-    await bridge.send({ path: Bridge.skillPath(), token: alexaRequest.getBearerToken() }, { log: alexaResponse })
+    await bridge.send({ path: Bridge.skillPath() }, alexaRequest, { log: alexaResponse })
   } catch (error) {
     //
   }

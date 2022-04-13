@@ -31,6 +31,7 @@ export class FrontendExternal extends BaseClass {
     const that = this
 
     async function backendSkillHandler (request: express.Request, response: express.Response): Promise<void> {
+      console.log(JSON.stringify(request.body, null, 2))
       if (typeof request.body.log !== 'undefined') {
         console.log(JSON.stringify(request.body, null, 2))
         response
@@ -41,6 +42,7 @@ export class FrontendExternal extends BaseClass {
         return
       }
       const commandResponse = await that._smartHomeSkill.handler(request.body)
+      console.log(JSON.stringify(commandResponse, null, 2))
       response
         .type('json')
         .status(200)

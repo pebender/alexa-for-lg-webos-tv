@@ -1,5 +1,6 @@
 import * as ASH from '../../common/alexa'
 import { constants } from '../../common/constants'
+import { DynamoDB } from 'aws-sdk'
 import http from 'http'
 import https from 'https'
 
@@ -15,38 +16,111 @@ export interface BridgeResponse {
   [x: string]: number | string | object | undefined;
 }
 
-function createBasicOptions (requestOptions: {
-  hostname: string;
-  path: string;
-}): {
-    hostname: string;
-    port: number;
-    path: string;
-    headers: {
-      [x: string]: string;
-    };
-} {
-  if (typeof requestOptions.hostname === 'undefined' || requestOptions.hostname === null) {
-    throw new RangeError('Bridge hostname not set.')
+async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | null> {
+  const ashToken = alexaRequest.getBearerToken()
+  if (ashToken === null) {
+    throw Error()
   }
-  if (typeof requestOptions.path === 'undefined' || requestOptions.path === null) {
-    throw new RangeError('Bridge path not set.')
+  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
+  let hostname: string | null = null
+  const ashTokenQueryParams = {
+    TableName: `${constants.application.name.safe}`,
+    IndexName: 'ashToken_index',
+    KeyConditionExpression: '#ashToken = :ashToken_value',
+    ExpressionAttributeNames: { '#ashToken': 'ashToken' },
+    ExpressionAttributeValues: { ':ashToken_value': ashToken }
+  }
+  try {
+    const data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
+    console.log(data)
+    if ((typeof data.Count !== 'undefined') && (typeof data.Items !== 'undefined')) {
+      if (data.Count > 0) {
+        console.log(`token result: ${JSON.stringify(data.Items[0])}`)
+        if (typeof data.Items[0].hostname !== 'undefined') {
+          hostname = data.Items[0].hostname
+          console.log(`hostname: ${hostname}`)
+          return hostname
+        }
+      }
+      const email = await alexaRequest.getUserEmail()
+      console.log(`email: ${email}`)
+      const ashTokenUpdateParams = {
+        TableName: `${constants.application.name.safe}`,
+        Key: { email },
+        UpdateExpression: 'set ashToken = :newAshToken',
+        ExpressionAttributeValues: { ':newAshToken': ashToken }
+      }
+      console.log(`ashTokenUpdateParams: ${JSON.stringify(ashTokenUpdateParams)}`)
+      try {
+        await dynamoDBDocumentClient.update(ashTokenUpdateParams).promise()
+      } catch (error) {
+        let message: string = 'Unknown'
+        if (error instanceof Error) {
+          message = `${error.name} - ${error.message}`
+        } else {
+          if ('code' in (error as any)) {
+            message = (error as any).code
+          }
+        }
+        console.log(`Smart Home Skill Error: update ashToken: ${message}`)
+        throw Error()
+      }
+    }
+  } catch (error) {
+    let message: string = 'Unknown'
+    if (error instanceof Error) {
+      message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
+    } else {
+      if ('code' in (error as any)) {
+        message = (error as any).code
+      }
+    }
+    console.log(`Smart Home Skill Error: get hostname: ${message}`)
+    throw Error()
   }
 
-  const options = {
-    hostname: requestOptions.hostname,
-    port: 25392,
-    path: requestOptions.path,
-    headers: {}
+  try {
+    const data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
+    console.log(data)
+    if ((typeof data.Count !== 'undefined') && (typeof data.Items !== 'undefined')) {
+      if (data.Count > 0) {
+        console.log(`token result: ${JSON.stringify(data.Items[0])}`)
+        if (typeof data.Items[0].hostname !== 'undefined') {
+          hostname = data.Items[0].hostname
+          console.log(`hostname: ${hostname}`)
+          return hostname
+        }
+      }
+      throw Error()
+    }
+    throw Error()
+  } catch (error) {
+    let message: string = 'Unknown'
+    if (error instanceof Error) {
+      message = `${error.name} - ${error.message}`
+    } else {
+      if ('code' in (error as any)) {
+        message = (error as any).code
+      }
+    }
+    console.log(`Smart Home Skill Error: get hostname again: ${message}`)
+    throw Error()
   }
-  return options
 }
 
-function sendHandler (requestOptions: {
-  hostname: string;
+async function sendHandler (requestOptions: {
   path: string;
-  token: string | null;
-}, requestBody: BridgeRequest): Promise<BridgeResponse> {
+}, alexaRequest: ASH.Request, requestBody: BridgeRequest): Promise<BridgeResponse> {
+  let hostname: String | null = null
+  try {
+    hostname = await getBridgeHostname(alexaRequest)
+  } catch (error) {
+    console.log(`sendHandlerError: getBridgeHostname Error: ${JSON.stringify(error)}`)
+  }
+  if (hostname === null) {
+    throw Error()
+  }
+
   return new Promise((resolve, reject): void => {
     const options: {
       method?: 'POST';
@@ -56,12 +130,20 @@ function sendHandler (requestOptions: {
       headers: {
         [x: string]: string;
       };
-    } = createBasicOptions(requestOptions)
+    } = {
+      hostname: (hostname as string),
+      port: 25392,
+      path: requestOptions.path,
+      headers: {}
+    }
+
     const content = JSON.stringify(requestBody)
     options.method = 'POST'
-    if (!(requestOptions.token === null)) {
-      options.headers.authorization = `Bearer ${requestOptions.token}`
+    const token = alexaRequest.getBearerToken()
+    if (token === null) {
+      throw Error()
     }
+    options.headers.authorization = `Bearer ${token}`
     options.headers['content-type'] = 'application/json'
     options.headers['content-length'] = Buffer.byteLength(content).toString()
     const request = https.request(options)
@@ -139,13 +221,8 @@ function sendHandler (requestOptions: {
 }
 
 class Bridge {
-  private _userId: string
-  private _hostname: string
   private _null: string
-  public constructor (userId: string) {
-    this._userId = userId
-    // These will be in a database indexed by userId.
-    this._hostname = constants.bridge.hostname
+  public constructor (token: string | null) {
     this._null = ''
   }
 
@@ -153,22 +230,12 @@ class Bridge {
     return `/${constants.application.name.safe}`
   }
 
-  public set hostname (hostname: string) {
-    this._null = hostname
-  }
-
-  public get hostname (): string {
-    return this._hostname
-  }
-
-  public async sendSkillDirective (request: ASH.Request, token: string | null): Promise<ASH.Response> {
+  public async sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
     const options = {
-      hostname: this.hostname,
-      path: Bridge.skillPath(),
-      token
+      path: Bridge.skillPath()
     }
     try {
-      const response = ((await sendHandler(options, request)) as ASH.Response)
+      const response = ((await sendHandler(options, request, request)) as ASH.Response)
       const alexaResponse = new ASH.Response(response)
       return alexaResponse
     } catch (error) {
@@ -182,20 +249,12 @@ class Bridge {
 
   public send (
     sendOptions: {
-      hostname?: string;
       path: string;
-      token: string | null
     },
+    alexaRequest: ASH.Request,
     request: BridgeRequest
   ): Promise<BridgeResponse> {
-    const options = {
-      hostname: typeof sendOptions.hostname !== 'undefined'
-        ? sendOptions.hostname
-        : this.hostname,
-      path: sendOptions.path,
-      token: sendOptions.token
-    }
-    return sendHandler(options, request)
+    return sendHandler(sendOptions, alexaRequest, request)
   }
 }
 
