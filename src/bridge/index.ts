@@ -32,6 +32,25 @@ export async function startBridge (): Promise<void> {
     }
   }
 
+  let authorizedEmails: string[] = []
+  try {
+    const raw = await fs.readFile(`${configurationDir}/config.json`)
+    const config = JSON.parse(raw as any)
+    if ((typeof config.authorizedEmails !== 'undefined')) {
+      authorizedEmails = config.authorizedEmails
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(`error: ${error.name}: ${error.message}`)
+    } else {
+      if ('code' in (error as any)) {
+        console.log(`error: ${(error as any).code}`)
+      } else {
+        console.log('error: unknown')
+      }
+    }
+  }
+
   //
   // I keep long term information needed to connect to each TV in a database.
   // The long term information is the TV's unique device name (udn), friendly name
@@ -48,7 +67,7 @@ export async function startBridge (): Promise<void> {
     console.log(error)
   })
   await backend.initialize()
-  const frontendAuthorization = new FrontendAuthorization(frontendDb)
+  const frontendAuthorization = new FrontendAuthorization(authorizedEmails, frontendDb)
   const smartHomeSkill = new SmartHomeSkill(frontendAuthorization, backend)
   const frontend = new Frontend(frontendAuthorization, smartHomeSkill)
   await frontend.initialize()

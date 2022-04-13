@@ -1,14 +1,16 @@
 
 import { BaseClass } from '../base-class'
-import { constants } from '../../../common/constants'
 import { DatabaseTable } from '../database'
 import * as https from 'https'
 
 export class FrontendAuthorization extends BaseClass {
+  private readonly _authorizedEmails: string[]
+
   private readonly _db: DatabaseTable
-  public constructor (frontendDb: DatabaseTable) {
+  public constructor (authorizedEmails: string[], frontendDb: DatabaseTable) {
     super()
 
+    this._authorizedEmails = authorizedEmails
     this._db = frontendDb
   }
 
@@ -59,7 +61,7 @@ export class FrontendAuthorization extends BaseClass {
       const userId = userProfile.user_id
       const email = userProfile.email
 
-      const found = constants.user.emails.find((element) => (element === email))
+      const found = this._authorizedEmails.find((element) => (element === email))
       if (typeof found === 'undefined') {
         return false
       }

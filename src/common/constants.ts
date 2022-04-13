@@ -6,17 +6,12 @@ export const constants = {
     // It is prefaced with 'For' to comply with Amazon's requirement that skills containing
     // company/product names not misrepresent themselves as being official skills.
     name: {
-      // A version of the name that is safe to use for things such as directory names.
-      // Use of special characters or whitespace might cause unexpected behavior..
+      // A version of the name that is safe to use for things such as directory and database names.
+      // Use of special characters or whitespace might cause unexpected behavior.
+      //
       safe: 'ForLGwebOSTV',
       // A version of the name that is displayed to the user.
       pretty: 'For LG webOS TV'
     }
-  },
-  user: {
-    // List of valid email addresses. These email address is the email address associated with your Amazon account.
-    emails: [
-      'pebender@gmail.com'
-    ]
   }
 }
