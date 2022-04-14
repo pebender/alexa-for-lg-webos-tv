@@ -4,7 +4,7 @@
   "description": "A daemon/service to bridge the Alexa Smart Home Skill protocol to the LG webOS TV control protocol",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
-  "license": "ISC",
+  "license": "MIT",
   "files": [
     "lib",
     "src",

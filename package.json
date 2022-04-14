@@ -4,7 +4,7 @@
   "description": "An Alexa skill and a bridge for adding Alexa support to LG WebOS TVs that don't have native Alexa Support",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "4.6.3",
     "eslint": "^8.13.0",
