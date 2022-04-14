@@ -99,6 +99,6 @@ export class FrontendExternal extends BaseClass {
 
   public start (): void {
     this.throwIfUninitialized('start')
-    this._server.listen(25391, 'localhost')
+    this._server.listen(constants.bridge.port.http, 'localhost')
   }
 }

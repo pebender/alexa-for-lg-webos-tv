@@ -25,12 +25,12 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
 
   let hostname: string | null = null
 
-  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
+  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
 
   async function queryBridgeHostname (dynamoDBDocumentClient: DynamoDB.DocumentClient, ashToken: string): Promise<string | null> {
     const ashTokenQueryParams = {
-      TableName: `${constants.application.name.safe}`,
-      IndexName: 'ashToken_index',
+      TableName: constants.aws.dynamoDB.tableName,
+      IndexName: constants.aws.dynamoDB.indexName,
       KeyConditionExpression: '#ashToken = :ashToken_value',
       ExpressionAttributeNames: { '#ashToken': 'ashToken' },
       ExpressionAttributeValues: { ':ashToken_value': ashToken }
@@ -83,7 +83,7 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
     }
     console.log(`getBridgeHostname: setASHToken: email: ${email}`)
     const ashTokenUpdateParams = {
-      TableName: `${constants.application.name.safe}`,
+      TableName: constants.aws.dynamoDB.tableName,
       Key: { email },
       UpdateExpression: 'set ashToken = :newAshToken',
       ExpressionAttributeValues: { ':newAshToken': ashToken }
@@ -140,7 +140,7 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
       };
     } = {
       hostname: (hostname as string),
-      port: 25392,
+      port: constants.bridge.port.https,
       path,
       headers: {}
     }

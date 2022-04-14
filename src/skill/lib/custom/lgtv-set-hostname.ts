@@ -254,9 +254,9 @@ const SetHostnameIntentHandler = {
         const email = await getUserEmail(apiAccessToken)
         console.log(`email: ${JSON.stringify(email, null, 2)}`)
         const hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
-        const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: 'us-east-1' })
+        const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
         const hostnameUpdateParams = {
-          TableName: `${constants.application.name.safe}`,
+          TableName: constants.aws.dynamoDB.tableName,
           Key: { email },
           UpdateExpression: 'set hostname = :newHostname',
           ExpressionAttributeValues: { ':newHostname': hostname }
