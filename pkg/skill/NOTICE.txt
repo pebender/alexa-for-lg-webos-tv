@@ -1,3 +1,0 @@
-alexa-lg-webos-tv-controller
-
-Copyright 2018 Paul E. Bender
