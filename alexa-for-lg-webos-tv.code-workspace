@@ -15,6 +15,7 @@
 			"ForLGwebOSTV",
 			"ForLGWebOSTVController",
 			"ForLGwebOSTVGateway",
+			"hostnames",
 			"Hulu",
 			"IPADDRESS_VALID",
 			"isnumeric",
