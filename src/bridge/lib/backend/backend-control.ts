@@ -1,14 +1,14 @@
+import { randomUUID } from 'crypto'
+import { Mutex } from 'async-mutex'
 import * as wol from 'wake_on_lan'
+import { BaseClass } from '../base-class'
 import {
   Client as SsdpClient,
   SsdpHeaders
 } from 'node-ssdp'
-import { BaseClass } from '../base-class'
-import LGTV from 'lgtv2'
 import { DatabaseTable } from '../database'
-import { Mutex } from 'async-mutex'
+import LGTV from 'lgtv2'
 import { TV } from '../tv'
-import { v4 as uuid } from 'uuid'
 
 export class BackendControl extends BaseClass {
   private _poweredOn: boolean
@@ -162,7 +162,7 @@ export class BackendControl extends BaseClass {
             resolve(null)
             return
           }
-          finishUUID = uuid()
+          finishUUID = randomUUID()
 
           if (wolTimeoutObject !== null) {
             clearInterval(wolTimeoutObject)

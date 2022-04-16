@@ -1,10 +1,10 @@
+import { randomUUID } from 'crypto'
+import { copyElement } from './copy'
 import {
   Endpoint,
   Header,
   Namespace
 } from './common'
-import { copyElement } from './copy'
-import { v4 as uuid } from 'uuid'
 
 export interface ResponseEventPayloadEndpointCapability {
   type: string;
@@ -112,7 +112,7 @@ export class Response {
           namespace: optsB.namespace,
           name: optsB.name,
           instance: optsB.instance,
-          messageId: uuid(),
+          messageId: randomUUID(),
           correlationToken: optsB.correlationToken,
           payloadVersion: '3'
         },
