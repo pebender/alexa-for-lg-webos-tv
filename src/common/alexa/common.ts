@@ -1,7 +1,7 @@
-export type Namespace = string;
+export type AlexaMessageNamespace = string;
 
-export interface Header {
-  namespace: Namespace;
+export interface AlexaMessageHeader {
+  namespace: AlexaMessageNamespace;
   name: string;
   instance?: string;
   messageId: string;
@@ -10,7 +10,7 @@ export interface Header {
   [x: string]: string | undefined;
 }
 
-export interface Endpoint {
+export interface AlexaMessageEndpoint {
   endpointId: string;
   scope?: {
     type: 'BearerToken';

@@ -5,7 +5,7 @@ import { constants } from '../../../common/constants'
 import * as Bridge from '../bridge-api'
 import * as AWSLambda from 'aws-lambda'
 
-async function handlerWithErrors (alexaRequest: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
+async function handlerWithErrors (alexaRequest: ASH.AlexaRequest, context: AWSLambda.Context): Promise<ASH.AlexaResponse> {
   if (typeof alexaRequest.directive.endpoint === 'undefined' ||
         typeof alexaRequest.directive.endpoint.endpointId === 'undefined') {
     switch (alexaRequest.directive.header.namespace) {
@@ -21,15 +21,15 @@ async function handlerWithErrors (alexaRequest: ASH.Request, context: AWSLambda.
   }
 }
 
-async function handler (event: ASH.Request, context: AWSLambda.Context): Promise<ASH.Response> {
-  const alexaRequest = new ASH.Request(event)
+async function handler (event: ASH.AlexaRequest, context: AWSLambda.Context): Promise<ASH.AlexaResponse> {
+  const alexaRequest = new ASH.AlexaRequest(event)
 
   if (constants.development.skill.debug) {
     console.log('smart home skill request message')
     console.log(JSON.stringify(alexaRequest, null, 2))
   }
 
-  let alexaResponse: ASH.Response
+  let alexaResponse: ASH.AlexaResponse
 
   try {
     alexaResponse = await handlerWithErrors(alexaRequest, context)

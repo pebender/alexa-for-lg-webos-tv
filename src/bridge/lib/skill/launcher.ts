@@ -56,14 +56,14 @@ const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = 
   }
 }
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
-  return [ASH.Response.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa.Launcher',
     propertyNames: ['identifier', 'name']
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   if (backendControl.getPowerState() === 'OFF') {
     return []
   }
@@ -80,7 +80,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
     return lgtvToAlexa[input.appId]
   }
 
-  const targetState = ASH.Response.buildContextProperty({
+  const targetState = ASH.AlexaResponse.buildContextProperty({
     namespace: 'Alexa.Launcher',
     name: 'target',
     value
@@ -94,7 +94,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
 // A list of LG webOS TV target ids can be found by issuing the command
 // "ssap://com.webos.applicationManager/listLaunchPoints".
 //
-async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+async function launchTargetHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (typeof alexaRequest.directive.payload.identifier !== 'string' ||
       typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === 'undefined') {
     throw ASH.errorResponse(
@@ -109,7 +109,7 @@ async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: B
     payload: alexaToLGTV[alexaRequest.directive.payload.identifier]
   }
   await backendControl.lgtvCommand(lgtvRequest)
-  return new ASH.Response({
+  return new ASH.AlexaResponse({
     namespace: 'Alexa',
     name: 'Response',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -117,7 +117,7 @@ async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: B
   })
 }
 
-function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.Launcher') {
     throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Launcher')
   }

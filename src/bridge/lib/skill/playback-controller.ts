@@ -2,7 +2,7 @@ import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 import LGTV from 'lgtv2'
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
   return [
     Promise.resolve({
       type: 'AlexaInterface',
@@ -19,16 +19,16 @@ function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEven
   ]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   return []
 }
 
-async function genericHandler (alexaRequest: ASH.Request, backendControl: BackendControl, lgtvRequestURI: string): Promise<ASH.Response> {
+async function genericHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl, lgtvRequestURI: string): Promise<ASH.AlexaResponse> {
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI
   }
   await backendControl.lgtvCommand(lgtvRequest)
-  return new ASH.Response({
+  return new ASH.AlexaResponse({
     namespace: 'Alexa',
     name: 'Response',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -36,7 +36,7 @@ async function genericHandler (alexaRequest: ASH.Request, backendControl: Backen
   })
 }
 
-function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.PlaybackController') {
     throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PlaybackController')
   }

@@ -3,25 +3,25 @@ import { BackendControl } from '../backend'
 import LGTV from 'lgtv2'
 const isNumeric = require('isnumeric')
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
-  return [ASH.Response.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa.ChannelController'
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   return []
 }
 
-function skipChannelsHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function skipChannelsHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   return Promise.resolve(ASH.errorResponse(alexaRequest, null, 'UNKNOWN_ERROR', '\'Alexa.ChannelController.SkipChannels\' is not supported.').response)
 }
 
-function unknownChannelError (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
+function unknownChannelError (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): ASH.AlexaResponse {
   return ASH.errorResponse(alexaRequest, null, 'INVALID_VALUE', 'The bridge  doesn\'t recognize channel.').response
 }
 
-async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+async function changeChannelHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   function getCommand (): LGTV.Request | null {
     const lgtvRequest: LGTV.Request = {
       uri: 'ssap://tv/openChannel'
@@ -70,7 +70,7 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
     return (lgtvRequest as LGTV.Request)
   }
 
-  async function setChannel (lgtvRequest: LGTV.Request | null): Promise<ASH.Response> {
+  async function setChannel (lgtvRequest: LGTV.Request | null): Promise<ASH.AlexaResponse> {
     if (lgtvRequest === null) {
       return unknownChannelError(alexaRequest, backendControl)
     }
@@ -84,7 +84,7 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
     // X const [state] = await states(lgtv, null);
     // Dummy 'value' values.
     //
-    const state: ASH.ResponseContextProperty = {
+    const state: ASH.AlexaResponseContextProperty = {
       namespace: 'Alexa.ChannelController',
       name: 'channel',
       value: {
@@ -95,13 +95,13 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
       timeOfSample: new Date().toISOString(),
       uncertaintyInMilliseconds: 0
     }
-    const alexaResponse = new ASH.Response({
+    const alexaResponse = new ASH.AlexaResponse({
       namespace: 'Alexa',
       name: 'Response',
       correlationToken: alexaRequest.getCorrelationToken(),
       endpointId: alexaRequest.getEndpointId()
     })
-    alexaResponse.addContextProperty(await ASH.Response.buildContextProperty({
+    alexaResponse.addContextProperty(await ASH.AlexaResponse.buildContextProperty({
       namespace: 'Alexa.ChannelController',
       name: 'channel',
       value: (): {
@@ -128,7 +128,7 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
   return setChannel(channelCommand)
 }
 
-function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.ChannelController') {
     throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.ChannelController')
   }

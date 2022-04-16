@@ -4,8 +4,8 @@ import * as AWSLambda from 'aws-lambda'
 import { handler as customSkillHandler } from './lib/custom'
 import { handler as smartHomeSkillHandler } from './lib/smart-home'
 
-async function skillHandler (request: ASKModel.RequestEnvelope | ASH.Request, context: ASKModel.Context | AWSLambda.Context): Promise<ASKModel.ResponseEnvelope | ASH.Response> {
-  let response: ASKModel.ResponseEnvelope | ASH.Response
+async function skillHandler (request: ASKModel.RequestEnvelope | ASH.AlexaRequest, context: ASKModel.Context | AWSLambda.Context): Promise<ASKModel.ResponseEnvelope | ASH.AlexaResponse> {
+  let response: ASKModel.ResponseEnvelope | ASH.AlexaResponse
   if ('session' in request) {
     response = await customSkillHandler((request as ASKModel.RequestEnvelope), (context as ASKModel.Context))
 
@@ -13,7 +13,7 @@ async function skillHandler (request: ASKModel.RequestEnvelope | ASH.Request, co
   }
 
   if ('directive' in request) {
-    response = await smartHomeSkillHandler((request as ASH.Request), (context as AWSLambda.Context))
+    response = await smartHomeSkillHandler((request as ASH.AlexaRequest), (context as AWSLambda.Context))
 
     return response
   }

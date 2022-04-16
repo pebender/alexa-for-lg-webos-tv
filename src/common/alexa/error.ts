@@ -1,8 +1,8 @@
-import { Request } from './request'
-import { Response } from './response'
+import { AlexaRequest } from './request'
+import { AlexaResponse } from './response'
 
 export class AlexaError {
-  public response: Response
+  public response: AlexaResponse
   public httpStatusCode?: number
   public stack?: string
 
@@ -11,7 +11,7 @@ export class AlexaError {
       this.httpStatusCode = httpStatusCode
     }
     if (request !== null) {
-      this.response = new Response({
+      this.response = new AlexaResponse({
         namespace: 'Alexa',
         name: 'ErrorResponse',
         endpointId: request.getEndpointId(),
@@ -21,7 +21,7 @@ export class AlexaError {
         }
       })
     } else {
-      this.response = new Response({
+      this.response = new AlexaResponse({
         namespace: 'Alexa',
         name: 'ErrorResponse',
         payload: {
@@ -34,11 +34,11 @@ export class AlexaError {
   }
 }
 
-export function errorResponse (request: Request | null, httpStatusCode: number | null, type: string, message: string): AlexaError {
+export function errorResponse (request: AlexaRequest | null, httpStatusCode: number | null, type: string, message: string): AlexaError {
   return new AlexaError(request, httpStatusCode, type, message)
 }
 
-export function errorResponseFromError (alexaRequest: Request | null, error: any): AlexaError {
+export function errorResponseFromError (alexaRequest: AlexaRequest | null, error: any): AlexaError {
   let message: string = 'unknown'
   let name: string = 'unknown'
   if ('message' in error) {
@@ -58,7 +58,7 @@ export function errorResponseFromError (alexaRequest: Request | null, error: any
   )
 }
 
-export function errorResponseForWrongDirectiveNamespace (alexaRequest: Request, namespace: string): AlexaError {
+export function errorResponseForWrongDirectiveNamespace (alexaRequest: AlexaRequest, namespace: string): AlexaError {
   return new AlexaError(
     alexaRequest,
     400,
@@ -67,7 +67,7 @@ export function errorResponseForWrongDirectiveNamespace (alexaRequest: Request, 
   )
 }
 
-export function errorResponseForInvalidDirectiveNamespace (alexaRequest: Request): AlexaError {
+export function errorResponseForInvalidDirectiveNamespace (alexaRequest: AlexaRequest): AlexaError {
   return new AlexaError(
     alexaRequest,
     400,
@@ -76,7 +76,7 @@ export function errorResponseForInvalidDirectiveNamespace (alexaRequest: Request
   )
 }
 
-export function errorResponseForInvalidDirectiveName (alexaRequest: Request): AlexaError {
+export function errorResponseForInvalidDirectiveName (alexaRequest: AlexaRequest): AlexaError {
   return new AlexaError(
     alexaRequest,
     400,
@@ -85,7 +85,7 @@ export function errorResponseForInvalidDirectiveName (alexaRequest: Request): Al
   )
 }
 
-export function errorResponseForInvalidValue (alexaRequest: Request, parameter: string): AlexaError {
+export function errorResponseForInvalidValue (alexaRequest: AlexaRequest, parameter: string): AlexaError {
   return new AlexaError(
     alexaRequest,
     400,

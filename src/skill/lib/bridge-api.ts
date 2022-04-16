@@ -15,7 +15,7 @@ export interface Response {
   [x: string]: number | string | object | undefined;
 }
 
-async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string> {
+async function getBridgeHostname (alexaRequest: ASH.AlexaRequest): Promise<string> {
   console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
 
   const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
@@ -100,10 +100,10 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string> {
   )
 }
 
-async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<ASH.Response> {
+async function sendHandler (path: string, alexaRequest: ASH.AlexaRequest, message: Request) : Promise<ASH.AlexaResponse> {
   const hostname = await getBridgeHostname(alexaRequest)
 
-  const response: ASH.Response = await new Promise((resolve, reject): void => {
+  const response: ASH.AlexaResponse = await new Promise((resolve, reject): void => {
     const options: {
       method?: 'POST';
       hostname: string;
@@ -166,7 +166,7 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
           reject(ASH.errorResponseFromError(alexaRequest, error))
         }
         // Return the body.
-        resolve((body as ASH.Response))
+        resolve((body as ASH.AlexaResponse))
       })
     })
     req.on('error', (error: Error): void => {
@@ -183,7 +183,7 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
   return response
 }
 
-export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
+export async function sendSkillDirective (request: ASH.AlexaRequest): Promise<ASH.AlexaResponse> {
   const outputStack = true
   const ashPath: string = `/${constants.bridge.path}`
   try {

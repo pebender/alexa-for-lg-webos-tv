@@ -1,18 +1,18 @@
 import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
-  return [ASH.Response.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa'
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   return []
 }
 
-function reportStateHandler (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
-  return new ASH.Response({
+function reportStateHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): ASH.AlexaResponse {
+  return new ASH.AlexaResponse({
     namespace: 'Alexa.',
     name: 'StateReport',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -20,7 +20,7 @@ function reportStateHandler (alexaRequest: ASH.Request, backendControl: BackendC
   })
 }
 
-function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa') {
     throw ASH.errorResponse(
       alexaRequest,

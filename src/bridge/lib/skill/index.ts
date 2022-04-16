@@ -15,7 +15,7 @@ import {
 import { FrontendAuthorization } from '../frontend/frontend-authorization'
 
 interface HandlerFunction {
-  (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response>;
+  (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse>;
 }
 
 const handlers: {
@@ -30,7 +30,7 @@ const handlers: {
   'Alexa.Speaker': alexaSpeaker.handler
 }
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
   return [
     ...alexa.capabilities(backendControl),
     ...alexaPowerController.capabilities(backendControl),
@@ -42,7 +42,7 @@ function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEven
   ]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   return [
     ...alexa.states(backendControl),
     ...alexaPowerController.states(backendControl),
@@ -54,7 +54,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   ]
 }
 
-async function addStates (alexaResponse: ASH.Response, backendControl: BackendControl): Promise<ASH.Response> {
+async function addStates (alexaResponse: ASH.AlexaResponse, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
       if (typeof state === 'undefined' || state === null ||
@@ -69,8 +69,8 @@ async function addStates (alexaResponse: ASH.Response, backendControl: BackendCo
   }
 }
 
-async function privateHandler (event: ASH.Request, authorization: FrontendAuthorization, backend: Backend): Promise<ASH.Response> {
-  const alexaRequest = new ASH.Request(event)
+async function privateHandler (event: ASH.AlexaRequest, authorization: FrontendAuthorization, backend: Backend): Promise<ASH.AlexaResponse> {
+  const alexaRequest = new ASH.AlexaRequest(event)
 
   const bearerToken: string = alexaRequest.getBearerToken()
   try {
@@ -122,7 +122,7 @@ async function privateHandler (event: ASH.Request, authorization: FrontendAuthor
       }
 
       const controllerHandler = handlers[alexaRequest.directive.header.namespace]
-      let handlerResponse: ASH.Response
+      let handlerResponse: ASH.AlexaResponse
       try {
         handlerResponse = await controllerHandler(alexaRequest, backendControl)
       } catch (error) {
@@ -154,7 +154,7 @@ export class SmartHomeSkill {
     this._backend = backend
   }
 
-  public async handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
+  public async handler (alexaRequest: ASH.AlexaRequest): Promise<ASH.AlexaResponse> {
     return await privateHandler(alexaRequest, this._authorization, this._backend)
   }
 }

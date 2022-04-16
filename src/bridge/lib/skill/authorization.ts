@@ -1,15 +1,15 @@
 import * as ASH from '../../../common/alexa'
 import { Backend } from '../backend'
 
-function capabilities (backend: Backend): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
+function capabilities (backend: Backend): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
   return []
 }
 
-function states (backend: Backend): Promise<ASH.ResponseContextProperty>[] {
+function states (backend: Backend): Promise<ASH.AlexaResponseContextProperty>[] {
   return []
 }
 
-function handler (alexaRequest: ASH.Request, backend: Backend): ASH.Response {
+function handler (alexaRequest: ASH.AlexaRequest, backend: Backend): ASH.AlexaResponse {
   throw ASH.errorResponse(alexaRequest, null, 'INVALID_DIRECTIVE', '')
 }
 

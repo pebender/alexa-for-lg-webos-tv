@@ -3,7 +3,7 @@ import { Backend, BackendControl } from '../backend'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
 import { constants } from '../../../common/constants'
 
-async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<ASH.Response> {
+async function handler (alexaRequest: ASH.AlexaRequest, backend: Backend): Promise<ASH.AlexaResponse> {
   //
   // This looks strange at first. However, once it is explained, this
   // convolution of promises and async/awaits should make sense. The goal is
@@ -34,15 +34,15 @@ async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<AS
   // 'Promise.all' to ensure the array of promises is resolve. After that, we
   // use 'await' to ensure we have the values from the resolved promises.
   //
-  async function buildEndpoint (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpoint> {
-    let capabilities: ASH.ResponseEventPayloadEndpointCapability[] = []
+  async function buildEndpoint (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpoint> {
+    let capabilities: ASH.AlexaResponseEventPayloadEndpointCapability[] = []
     try {
       // Determine capabilities in parallel.
       capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl))
     } catch (error) {
       capabilities = []
     }
-    const endpoint: ASH.ResponseEventPayloadEndpoint = {
+    const endpoint: ASH.AlexaResponseEventPayloadEndpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
       description: constants.application.name.pretty,
@@ -59,16 +59,16 @@ async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<AS
     return endpoint
   }
 
-  function buildEndpoints (backendControls: BackendControl[]): Promise<ASH.ResponseEventPayloadEndpoint[]> {
+  function buildEndpoints (backendControls: BackendControl[]): Promise<ASH.AlexaResponseEventPayloadEndpoint[]> {
     return Promise.all(backendControls.map(buildEndpoint))
   }
 
-  function buildResponse (endpoints: ASH.ResponseEventPayloadEndpoint[]): ASH.Response {
-    const alexaResponse = new ASH.Response({
+  function buildResponse (endpoints: ASH.AlexaResponseEventPayloadEndpoint[]): ASH.AlexaResponse {
+    const alexaResponse = new ASH.AlexaResponse({
       namespace: 'Alexa.Discovery',
       name: 'Discover.Response'
     })
-    endpoints.forEach((endpoint: ASH.ResponseEventPayloadEndpoint): void => {
+    endpoints.forEach((endpoint: ASH.AlexaResponseEventPayloadEndpoint): void => {
       if (endpoint !== null) {
         alexaResponse.addPayloadEndpoint(endpoint)
       }

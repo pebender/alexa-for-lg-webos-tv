@@ -43,14 +43,14 @@ const lgtvToAlexa: {[key: string]: string} = {
   AV_3: 'VIDEO 3'
 }
 
-function capabilities (backendControl: BackendControl): Promise<ASH.ResponseEventPayloadEndpointCapability>[] {
-  return [ASH.Response.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa.InputController',
     propertyNames: ['input']
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.ResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
   async function value (): Promise<string | null> {
     async function getExternalInputList (): Promise<LGTV.ResponseExternalInputListDevice[]> {
       if (backendControl.getPowerState() === 'OFF') {
@@ -107,7 +107,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
     return input
   }
 
-  const inputState = ASH.Response.buildContextProperty({
+  const inputState = ASH.AlexaResponse.buildContextProperty({
     namespace: 'Alexa.InputController',
     name: 'input',
     value
@@ -115,7 +115,7 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
   return [inputState]
 }
 
-async function selectInputHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+async function selectInputHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   async function getExternalInputList (): Promise<LGTV.ResponseExternalInputListDevice[]> {
     if (backendControl.getPowerState() === 'OFF') {
       return []
@@ -163,7 +163,7 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
     return device
   }
 
-  async function setExternalInput (input: string | null): Promise<ASH.Response> {
+  async function setExternalInput (input: string | null): Promise<ASH.AlexaResponse> {
     if (input === null) {
       throw ASH.errorResponse(
         alexaRequest,
@@ -174,7 +174,7 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
     }
 
     if (backendControl.getPowerState() === 'OFF') {
-      return new ASH.Response({
+      return new ASH.AlexaResponse({
         namespace: 'Alexa',
         name: 'Response',
         correlationToken: alexaRequest.getCorrelationToken(),
@@ -187,7 +187,7 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
       payload: { inputId: input }
     }
     await backendControl.lgtvCommand(lgtvRequest)
-    return new ASH.Response({
+    return new ASH.AlexaResponse({
       namespace: 'Alexa',
       name: 'Response',
       correlationToken: alexaRequest.getCorrelationToken(),
@@ -201,7 +201,7 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
   return setExternalInput(lgtvInput)
 }
 
-function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
+function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.InputController') {
     throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.InputController')
   }

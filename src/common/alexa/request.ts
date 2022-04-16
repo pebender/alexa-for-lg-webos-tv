@@ -1,13 +1,13 @@
 import {
-  Endpoint,
-  Header,
-  Namespace
+  AlexaMessageEndpoint,
+  AlexaMessageHeader,
+  AlexaMessageNamespace
 } from './common'
 import * as ASHError from './error'
 import * as Profile from '../profile'
 import { copyElement } from './copy'
 
-export interface RequestDirectivePayload {
+export interface AlexaRequestDirectivePayload {
   scope?: {
     type: 'BearerToken';
     token: string;
@@ -23,20 +23,20 @@ export interface RequestDirectivePayload {
   [x: string]: boolean | number | string | [] | object | undefined;
 };
 
-export interface Directive {
-  header: Header;
-  endpoint?: Endpoint;
-  payload: RequestDirectivePayload;
+export interface AlexaRequestDirective {
+  header: AlexaMessageHeader;
+  endpoint?: AlexaMessageEndpoint;
+  payload: AlexaRequestDirectivePayload;
   [x: string]: object | undefined;
 }
 
-export class Request {
-  public directive: Directive;
+export class AlexaRequest {
+  public directive: AlexaRequestDirective;
   [x: string]: object | undefined;
   public constructor (opts: {
     directive: {
       header: {
-        namespace?: Namespace;
+        namespace?: AlexaMessageNamespace;
         name?: string;
         instance?: string;
         messageId?: string;
@@ -44,10 +44,10 @@ export class Request {
         payloadVersion?: '3';
       };
       endpoint?: object;
-      payload: RequestDirectivePayload;
+      payload: AlexaRequestDirectivePayload;
     };
   }) {
-    this.directive = (copyElement(opts.directive) as Directive)
+    this.directive = (copyElement(opts.directive) as AlexaRequestDirective)
   }
 
   public getCorrelationToken (): string | undefined {

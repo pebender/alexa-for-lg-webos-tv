@@ -1,12 +1,12 @@
 import { randomUUID } from 'crypto'
 import { copyElement } from './copy'
 import {
-  Endpoint,
-  Header,
-  Namespace
+  AlexaMessageEndpoint,
+  AlexaMessageHeader,
+  AlexaMessageNamespace
 } from './common'
 
-export interface ResponseEventPayloadEndpointCapability {
+export interface AlexaResponseEventPayloadEndpointCapability {
   type: string;
   interface: string;
   version: string;
@@ -34,7 +34,7 @@ export interface ResponseEventPayloadEndpointCapability {
   [x: string]: string | object | undefined;
 }
 
-export interface ResponseEventPayloadEndpoint {
+export interface AlexaResponseEventPayloadEndpoint {
   description: string;
   displayCategories: string[];
   endpointId: string;
@@ -43,26 +43,26 @@ export interface ResponseEventPayloadEndpoint {
   cookie?: {
     [x: string]: string;
   };
-  capabilities: ResponseEventPayloadEndpointCapability[];
+  capabilities: AlexaResponseEventPayloadEndpointCapability[];
   [x: string]: string | object | undefined;
 }
 
-export interface ResponseEventPayload {
-  endpoints?: ResponseEventPayloadEndpoint[];
+export interface AlexaResponseEventPayload {
+  endpoints?: AlexaResponseEventPayloadEndpoint[];
   type?: string;
   message?: string;
   [x: string]: string | object | undefined;
 }
 
-export interface ResponseEvent {
-  header: Header;
-  endpoint?: Endpoint;
-  payload: ResponseEventPayload;
+export interface AlexaResponseEvent {
+  header: AlexaMessageHeader;
+  endpoint?: AlexaMessageEndpoint;
+  payload: AlexaResponseEventPayload;
   [x: string]: object | undefined;
 }
 
-export interface ResponseContextProperty {
-  namespace: Namespace;
+export interface AlexaResponseContextProperty {
+  namespace: AlexaMessageNamespace;
   name: string;
   instance?: string;
   value: boolean | number | string | object;
@@ -71,43 +71,43 @@ export interface ResponseContextProperty {
   [x: string]: boolean | number | string | [] | object | undefined;
 }
 
-export interface ResponseContext {
-  properties?: ResponseContextProperty[];
-  [x: string]: ResponseContextProperty[] | undefined;
+export interface AlexaResponseContext {
+  properties?: AlexaResponseContextProperty[];
+  [x: string]: AlexaResponseContextProperty[] | undefined;
 }
 
-export class Response {
-  public event: ResponseEvent
-  public context?: ResponseContext;
+export class AlexaResponse {
+  public event: AlexaResponseEvent
+  public context?: AlexaResponseContext;
   [x: string]: object | undefined;
   public constructor (opts: {
-    event: ResponseEvent;
-    context?: ResponseContext;
+    event: AlexaResponseEvent;
+    context?: AlexaResponseContext;
   } | {
-    namespace: Namespace;
+    namespace: AlexaMessageNamespace;
     name: string;
     instance?: string;
     correlationToken?: string;
     endpointId?: string;
     token?: string;
-    payload?: ResponseEventPayload;
+    payload?: AlexaResponseEventPayload;
   }) {
     const optsA = (opts as {
-      event: ResponseEvent;
-      context?: ResponseContext;
+      event: AlexaResponseEvent;
+      context?: AlexaResponseContext;
     })
     const optsB = (opts as {
-      namespace: Namespace;
+      namespace: AlexaMessageNamespace;
       name: string;
       instance?: string;
       correlationToken?: string;
       endpointId?: string;
       token?: string;
-      payload?: ResponseEventPayload;
+      payload?: AlexaResponseEventPayload;
     })
 
     const response = {
-      event: (copyElement(optsA.event) as ResponseEvent) || {
+      event: (copyElement(optsA.event) as AlexaResponseEvent) || {
         header: {
           namespace: optsB.namespace,
           name: optsB.name,
@@ -123,7 +123,7 @@ export class Response {
             token: optsB.token
           }
         },
-        payload: (copyElement(optsB.payload) as ResponseEventPayload) || {}
+        payload: (copyElement(optsB.payload) as AlexaResponseEventPayload) || {}
       },
       context: optsA.context
     }
@@ -140,9 +140,9 @@ export class Response {
       Reflect.deleteProperty(response.event, 'endpoint')
     }
 
-    this.event = (copyElement(response.event) as ResponseEvent)
+    this.event = (copyElement(response.event) as AlexaResponseEvent)
     if (typeof response.context !== 'undefined') {
-      this.response = (copyElement(response.context) as ResponseContext)
+      this.response = (copyElement(response.context) as AlexaResponseContext)
     }
   }
 
@@ -151,10 +151,10 @@ export class Response {
       this.endpoint = {}
     }
 
-    (this.endpoint as Endpoint).endpointId = endpointId
+    (this.endpoint as AlexaMessageEndpoint).endpointId = endpointId
   }
 
-  public addContextProperty (contextProperty: ResponseContextProperty): void {
+  public addContextProperty (contextProperty: AlexaResponseContextProperty): void {
     if (typeof this.context === 'undefined') {
       this.context = {}
     }
@@ -165,7 +165,7 @@ export class Response {
     this.context.properties.push(contextProperty)
   }
 
-  public addPayloadEndpoint (payloadEndpoint: ResponseEventPayloadEndpoint): void {
+  public addPayloadEndpoint (payloadEndpoint: AlexaResponseEventPayloadEndpoint): void {
     if (typeof this.event.payload.endpoints === 'undefined') {
       this.event.payload.endpoints = []
     }
@@ -178,7 +178,7 @@ export class Response {
     'name': string;
     'instance'?: string;
     'value': () => boolean | number | string | [] | object;
-  }): Promise<ResponseContextProperty> {
+  }): Promise<AlexaResponseContextProperty> {
     const startTime = new Date()
     const value = await opts.value()
     const endTime = new Date()
@@ -192,10 +192,10 @@ export class Response {
   }
 
   public static buildPayloadEndpointCapability (opts: {
-    'namespace': Namespace;
+    'namespace': AlexaMessageNamespace;
     'propertyNames'?: string[];
-  }): Promise<ResponseEventPayloadEndpointCapability> {
-    const capability: ResponseEventPayloadEndpointCapability = {
+  }): Promise<AlexaResponseEventPayloadEndpointCapability> {
+    const capability: AlexaResponseEventPayloadEndpointCapability = {
       type: 'AlexaInterface',
       interface: opts.namespace,
       version: '3'
