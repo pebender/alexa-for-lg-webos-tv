@@ -1,8 +1,8 @@
 
 import { BaseClass } from '../base-class'
-import { DatabaseTable } from '../database'
-import * as https from 'https'
-
+import { DatabaseRecord, DatabaseTable } from '../database'
+import * as ASH from '../../../common/alexa'
+import * as Profile from '../../../common/profile'
 export class FrontendAuthorization extends BaseClass {
   private readonly _authorizedEmails: string[]
 
@@ -18,55 +18,27 @@ export class FrontendAuthorization extends BaseClass {
     return this.initializeHandler(() => Promise.resolve())
   }
 
-  public async authorize (bearerToken: string | null): Promise<boolean> {
-    if (bearerToken === null) {
-      return false
+  public async authorize (bearerToken: string): Promise<boolean> {
+    let record: DatabaseRecord | null
+    try {
+      record = await this._db.getRecord({ bearerToken })
+    } catch (error) {
+      throw ASH.errorResponseFromError(null, error)
     }
-
-    async function getUserProfile (bearerToken: string): Promise<any> {
-      return new Promise((resolve, reject) => {
-        const options = {
-          method: 'GET',
-          hostname: 'api.amazon.com',
-          path: '/user/profile',
-          headers: {
-            Authorization: `Bearer ${bearerToken}`
-          }
-        }
-        const req = https.request(options, (response) => {
-          let returnData = ''
-
-          response.on('data', (chunk) => {
-            returnData += chunk
-          })
-
-          response.on('end', () => {
-            resolve(JSON.parse(returnData))
-          })
-
-          response.on('error', (error) => {
-            reject(error)
-          })
-        })
-        req.end()
-      })
-    }
-
-    const record = await this._db.getRecord({ bearerToken })
     if (record === null) {
-      const userProfile = await getUserProfile(bearerToken)
-      if ((!('user_id' in userProfile)) || (!('email' in userProfile))) {
-        return false
-      }
-      const userId = userProfile.user_id
-      const email = userProfile.email
+      const profile = await Profile.getUserProfile(bearerToken)
+      const userId = profile.user_id
+      const email = profile.email
 
       const found = this._authorizedEmails.find((element) => (element === email))
       if (typeof found === 'undefined') {
         return false
       }
-
-      await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
+      try {
+        await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
+      } catch (error) {
+        throw ASH.errorResponseFromError(null, error)
+      }
     }
 
     return true

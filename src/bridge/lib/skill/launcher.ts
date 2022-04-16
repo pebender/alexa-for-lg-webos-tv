@@ -96,11 +96,12 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
 //
 async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (typeof alexaRequest.directive.payload.identifier !== 'string' ||
-        typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === 'undefined') {
-    return ASH.errorResponse(
+      typeof alexaToLGTV[(alexaRequest.directive.payload.identifier as string)] === 'undefined') {
+    throw ASH.errorResponse(
       alexaRequest,
-      'INTERNAL_ERROR',
-            `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
+      400,
+      'INVALID_VALUE',
+      `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
     )
   }
   const lgtvRequest: LGTV.Request = {
@@ -118,13 +119,13 @@ async function launchTargetHandler (alexaRequest: ASH.Request, backendControl: B
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.Launcher') {
-    return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.Launcher'))
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Launcher')
   }
   switch (alexaRequest.directive.header.name) {
     case 'LaunchTarget':
       return launchTargetHandler(alexaRequest, backendControl)
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

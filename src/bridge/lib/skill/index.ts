@@ -70,123 +70,76 @@ async function addStates (alexaResponse: ASH.Response, backendControl: BackendCo
 }
 
 async function privateHandler (event: ASH.Request, authorization: FrontendAuthorization, backend: Backend): Promise<ASH.Response> {
-  let alexaRequest: ASH.Request | null = null
-  try {
-    alexaRequest = new ASH.Request(event)
-  } catch (error) {
-    if (error instanceof Error) {
-      return new ASH.Response({
-        namespace: 'Alexa',
-        name: 'ErrorResponse',
-        payload: {
-          type: 'INTERNAL_ERROR',
-          message: `${error.name}: ${error.message}`
-        }
-      })
-    } else {
-      return new ASH.Response({
-        namespace: 'Alexa',
-        name: 'ErrorResponse',
-        payload: {
-          type: 'INTERNAL_ERROR',
-          message: 'Unknown: Unknown'
-        }
-      })
-    }
-  }
+  const alexaRequest = new ASH.Request(event)
 
-  const bearerToken: string | null = alexaRequest.getBearerToken()
-  if (bearerToken === null) {
-    return ASH.errorResponse(
-      alexaRequest,
-      'INTERNAL_ERROR',
-      `Missing BearerToken: namespace='${alexaRequest.directive.header.namespace}'`
-    )
-  }
+  const bearerToken: string = alexaRequest.getBearerToken()
   try {
     const authorized = await authorization.authorize(bearerToken)
     if (!authorized) {
-      return ASH.errorResponse(
-        alexaRequest,
-        'INTERNAL_ERROR',
-        `Invalid BearerToken: namespace='${alexaRequest.directive.header.namespace}'`
-      )
+      throw ASH.errorResponse(alexaRequest, 401, 'INVALID_AUTHORIZATION_CREDENTIAL', '')
     }
   } catch (error) {
-    return ASH.errorResponse(
-      alexaRequest,
-      'INTERNAL_ERROR',
-      `Authorization Error: namespace='${alexaRequest.directive.header.namespace}'`
-    )
+    if (error instanceof ASH.AlexaError) {
+      throw error
+    } else {
+      throw ASH.errorResponse(
+        alexaRequest,
+        500,
+        'INTERNAL_ERROR',
+        `Authorization Error: namespace='${alexaRequest.directive.header.namespace}'`
+      )
+    }
   }
 
   switch (alexaRequest.directive.header.namespace) {
-    case 'Alexa.Discovery': {
-      try {
-        return await alexaDiscovery.handler(alexaRequest, backend)
-      } catch {
-        return ASH.errorResponse(
-          alexaRequest,
-          'INTERNAL_ERROR',
-          `handler Error: namespace='${alexaRequest.directive.header.namespace}'`
-        )
-      }
-    }
-    case 'Alexa.Authorization': {
-      try {
-        return await alexaAuthorization.handler(alexaRequest, backend)
-      } catch {
-        return ASH.errorResponse(
-          alexaRequest,
-          'INTERNAL_ERROR',
-          `handler failed: namespace='${alexaRequest.directive.header.namespace}'`
-        )
-      }
-    }
+    case 'Alexa.Discovery':
+      return await alexaDiscovery.handler(alexaRequest, backend)
+    case 'Alexa.Authorization':
+      return await alexaAuthorization.handler(alexaRequest, backend)
     default: {
       const udn = alexaRequest.getEndpointId()
       if (typeof udn === 'undefined') {
-        return ASH.errorResponse(
+        throw ASH.errorResponse(
           alexaRequest,
-          'INTERNAL_ERROR',
-          `missing endpointId: namespace='${alexaRequest.directive.header.namespace}'`
+          400,
+          'NO_SUCH_ENDPOINT',
+          `namespace='${alexaRequest.directive.header.namespace}' has no endpointId'`
         )
       }
 
       const backendControl = backend.control(udn)
       if (typeof backendControl === 'undefined') {
-        return ASH.errorResponse(
+        throw ASH.errorResponse(
           alexaRequest,
-          'INTERNAL_ERROR',
-          `unknown endpointId: namespace='${alexaRequest.directive.header.namespace}', endpointId='${udn}'`
+          400,
+          'NO_SUCH_ENDPOINT',
+          `namespace='${alexaRequest.directive.header.namespace}' has no endpointId='${udn}'`
         )
       }
 
       if (!(alexaRequest.directive.header.namespace in handlers)) {
-        return ASH.errorResponse(
-          alexaRequest,
-          'INTERNAL_ERROR',
-          `unknown namespace: namespace='${alexaRequest.directive.header.namespace}'`
-        )
+        throw ASH.errorResponseForInvalidDirectiveNamespace(alexaRequest)
       }
 
       const controllerHandler = handlers[alexaRequest.directive.header.namespace]
+      let handlerResponse: ASH.Response
       try {
-        const handlerResponse = await controllerHandler(alexaRequest, backendControl)
-        try {
-          return await addStates(handlerResponse, backendControl)
-        } catch (error) {
-          return ASH.errorResponse(
-            alexaRequest,
-            'INTERNAL_ERROR',
-              `addStates failed: namespace='${alexaRequest.directive.header.namespace}'`
-          )
-        }
+        handlerResponse = await controllerHandler(alexaRequest, backendControl)
       } catch (error) {
-        return ASH.errorResponse(
+        if (error instanceof ASH.AlexaError) {
+          handlerResponse = error.response
+        } else {
+          handlerResponse = ASH.errorResponseFromError(alexaRequest, error).response
+        }
+      }
+      try {
+        return await addStates(handlerResponse, backendControl)
+      } catch (error) {
+        throw ASH.errorResponse(
           alexaRequest,
+          500,
           'INTERNAL_ERROR',
-            `handler failed: namespace='${alexaRequest.directive.header.namespace}'`
+          `addStates failed: namespace='${alexaRequest.directive.header.namespace}'`
         )
       }
     }
@@ -202,8 +155,7 @@ export class SmartHomeSkill {
   }
 
   public async handler (alexaRequest: ASH.Request): Promise<ASH.Response> {
-    const alexaResponse = await privateHandler(alexaRequest, this._authorization, this._backend)
-    return alexaResponse
+    return await privateHandler(alexaRequest, this._authorization, this._backend)
   }
 }
 

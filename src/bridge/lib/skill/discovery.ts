@@ -77,7 +77,7 @@ async function handler (alexaRequest: ASH.Request, backend: Backend): Promise<AS
   }
 
   if (alexaRequest.directive.header.namespace !== 'Alexa.Discovery') {
-    return ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.Discovery')
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Discovery')
   }
 
   const backendControls = await backend.controls()

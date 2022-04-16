@@ -38,7 +38,7 @@ async function genericHandler (alexaRequest: ASH.Request, backendControl: Backen
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.PlaybackController') {
-    return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.PlaybackController'))
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PlaybackController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'Play':
@@ -52,7 +52,7 @@ function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Pr
     case 'FastForward':
       return genericHandler(alexaRequest, backendControl, 'ssap://media.controls/fastForward')
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

@@ -165,9 +165,10 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
 
   async function setExternalInput (input: string | null): Promise<ASH.Response> {
     if (input === null) {
-      return ASH.errorResponse(
+      throw ASH.errorResponse(
         alexaRequest,
-        'INTERNAL_ERROR',
+        500,
+        'INVALID_VALUE',
         'I do not recognize the input.'
       )
     }
@@ -202,13 +203,13 @@ async function selectInputHandler (alexaRequest: ASH.Request, backendControl: Ba
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.InputController') {
-    return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.InputController'))
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.InputController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'SelectInput':
       return selectInputHandler(alexaRequest, backendControl)
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

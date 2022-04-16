@@ -21,14 +21,21 @@ function reportStateHandler (alexaRequest: ASH.Request, backendControl: BackendC
 }
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
-  if (alexaRequest.directive.header.namespace !== 'ASH.') {
-    return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa'))
+  if (alexaRequest.directive.header.namespace !== 'Alexa') {
+    throw ASH.errorResponse(
+      alexaRequest,
+      null,
+      'INVALID_DIRECTIVE',
+      `received namespace='${alexaRequest.directive.header.namespace}' expected namespace='Alexa'.`)
   }
   switch (alexaRequest.directive.header.name) {
     case 'ReportState':
       return Promise.resolve(reportStateHandler(alexaRequest, backendControl))
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponse(
+        alexaRequest, null,
+        'INVALID_DIRECTIVE',
+        `namespace='${alexaRequest.directive.header.namespace}' does not support name='${alexaRequest.directive.header.name}`)
   }
 }
 

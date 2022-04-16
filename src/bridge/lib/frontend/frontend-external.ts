@@ -10,6 +10,7 @@ import { BaseClass } from '../base-class'
 import { constants } from '../../../common/constants'
 import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../skill'
+import * as ASH from '../../../common/alexa'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
 import * as httpErrors from 'http-errors'
@@ -40,7 +41,15 @@ export class FrontendExternal extends BaseClass {
           .json(commandResponse)
           .end()
       } catch (error) {
-
+        const alexaError = (error as ASH.AlexaError)
+        console.log((alexaError as any).stack)
+        const commandResponse = alexaError.response
+        const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
+        response
+          .type('json')
+          .status(statusCode)
+          .json(commandResponse)
+          .end()
       }
     }
 

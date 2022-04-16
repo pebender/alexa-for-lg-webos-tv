@@ -1,7 +1,6 @@
 import * as ASH from '../../common/alexa'
 import { constants } from '../../common/constants'
 import { DynamoDB } from 'aws-sdk'
-import http from 'http'
 import https from 'https'
 
 export interface Request {
@@ -19,9 +18,6 @@ export interface Response {
 async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | null> {
   console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
   const ashToken = alexaRequest.getBearerToken()
-  if (ashToken === null) {
-    throw Error('bearer token not found')
-  }
 
   let hostname: string | null = null
 
@@ -40,16 +36,7 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
     try {
       data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
     } catch (error) {
-      let message: string = 'Unknown'
-      if (error instanceof Error) {
-        message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
-      } else {
-        if ('code' in (error as any)) {
-          message = (error as any).code
-        }
-      }
-      console.log(`getBridgeHostname: queryBridgeHostname: Error: ${message}`)
-      throw Error()
+      throw ASH.errorResponseFromError(alexaRequest, error)
     }
     console.log(`getBridgeHostname ashToken Query result: ${JSON.stringify(data)}`)
     if ((typeof data.Count !== 'undefined') && (data.Count > 0) &&
@@ -67,16 +54,7 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
     try {
       email = await alexaRequest.getUserEmail()
     } catch (error) {
-      let message: string = 'Unknown'
-      if (error instanceof Error) {
-        message = `${error.name} - ${error.message} : ${JSON.stringify(error, null, 0)}`
-      } else {
-        if ('code' in (error as any)) {
-          message = (error as any).code
-        }
-      }
-      console.log(`getBridgeHostname: setASHToken: Error: getUserEMail: ${message}`)
-      throw Error()
+      throw ASH.errorResponseFromError(alexaRequest, error)
     }
     if (email === null) {
       throw Error()
@@ -117,19 +95,33 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
   return null
 }
 
-async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<Response> {
+async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<ASH.Response> {
+  const outputStack = true
+
   let hostname: String | null = null
   try {
     hostname = await getBridgeHostname(alexaRequest)
   } catch (error) {
-    console.log(`sendHandler Error: getBridgeHostname Error: ${JSON.stringify(error)}`)
-    throw Error(`sendHandler Error: getBridgeHostname Error: ${JSON.stringify(error)}`)
+    const response = ASH.errorResponseFromError(alexaRequest, error)
+    if ((outputStack) && ('stack' in (response as any))) {
+      console.log((response as any).stack)
+    }
+    return response.response
   }
   if (hostname === null) {
-    throw Error('sendHandler Error: getBridgeHostname Error: hostname is null')
+    const response = ASH.errorResponse(
+      alexaRequest,
+      null,
+      'BRIDGE_UNREACHABLE',
+      'Bridge hostname has not been configured'
+    )
+    if ((outputStack) && ('stack' in (response as any))) {
+      console.log((response as any).stack)
+    }
+    return response.response
   }
 
-  return await new Promise((resolve, reject): void => {
+  const response: ASH.Response | ASH.ResponseCapsule = await new Promise((resolve): void => {
     const options: {
       method?: 'POST';
       hostname: string;
@@ -148,84 +140,70 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
     const content = JSON.stringify(message)
     options.method = 'POST'
     const token = alexaRequest.getBearerToken()
-    if (token === null) {
-      throw Error()
-    }
     options.headers.authorization = `Bearer ${token}`
     options.headers['content-type'] = 'application/json'
     options.headers['content-length'] = Buffer.byteLength(content).toString()
-    const request = https.request(options)
-    request.once('response', (response): void => {
-      let body: Response = {}
+    const req = https.request(options, (res): void => {
+      let body: Response
       let data = ''
-      response.setEncoding('utf8')
-      response.on('data', (chunk: string): void => {
+      res.setEncoding('utf8')
+      res.on('data', (chunk: string): void => {
         data += chunk
       })
-      response.on('end', (): void => {
+      res.on('end', (): void => {
         // The expected HTTP/1.1 status code is 200.
-        const statusCode = response.statusCode
+        const statusCode = res.statusCode
         if (typeof statusCode === 'undefined') {
-          const message = 'The bridge returned no HTTP/1.1 status code.'
-          return reject(new Error(message))
-        }
-        if (statusCode !== 200) {
-          if (typeof http.STATUS_CODES[statusCode] === 'undefined') {
-            const message = 'The bridge returned HTTP/1.1 status code: ' +
-                            `'${statusCode}'.`
-            return reject(new Error(message))
-          } else {
-            const message = 'The bridge returned HTTP/1.1 status code: ' +
-                            `'${statusCode}' ('${http.STATUS_CODES[statusCode]}').`
-            return reject(new Error(message))
-          }
+          resolve(ASH.errorResponse(
+            alexaRequest,
+            null,
+            'INTERNAL_ERROR',
+            'Bridge response did not return an HTTP StatusCode.'
+          ))
         }
         // The expected HTTP/1.1 'content-type' header is 'application/json'
-        const contentType = response.headers['content-type']
+        const contentType = res.headers['content-type']
         if (typeof contentType === 'undefined') {
-          const message = 'The bridge returned no \'content-type\' header.'
-          return reject(new Error(message))
+          resolve(ASH.errorResponse(
+            alexaRequest,
+            null,
+            'INTERNAL_ERROR',
+            'Bridge response did not return HTTP header \'content-type\'.'))
         }
-        if (!(/^application\/json/).test(contentType.toLowerCase())) {
-          const message = 'The bridge returned the wrong \'content-type\' header:' +
-                          `'${contentType.toLowerCase()}'.`
-          return reject(new Error(message))
+        if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
+          resolve(ASH.errorResponse(
+            alexaRequest,
+            null,
+            'INTERNAL_ERROR',
+            `Bridge response included an incorrect HTTP header 'content-type' of '${contentType?.toLocaleLowerCase()}'.`))
         }
         // Validate the body.
         try {
           body = JSON.parse(data)
         } catch (error) {
-          const message = 'The bridge returned invalid JSON in its body.'
-          return reject(new Error(message))
-        }
-        if (typeof body.error !== 'undefined') {
-          if (typeof body.error.name !== 'undefined') {
-            const message = 'The bridge returned the error: ' +
-                            `'${body.error.name}: ${body.error.message}'.`
-            return reject(new Error(message))
-          } else {
-            const message = 'The bridge returned the error: ' +
-                            `'${body.error.message}'.`
-            return reject(new Error(message))
-          }
+          resolve(ASH.errorResponseFromError(alexaRequest, error))
         }
         // Return the body.
-        return resolve(body)
-      })
-      response.on('error', (error: Error): void => {
-        const message = 'There was a problem talking to the bridge. ' +
-                        `The error was [${error.toString()}].`
-        return reject(new Error(message))
+        resolve((body as ASH.Response))
       })
     })
-    request.on('error', (error: Error): void => {
-      const message = 'There was a problem talking to the bridge.' +
-                      `The error was [${error.name}: ${error.message}].`
-      return reject(new Error(message))
+    req.on('error', (error: Error): void => {
+      resolve(ASH.errorResponse(
+        alexaRequest,
+        null,
+        'INTERNAL_ERROR',
+        `${error.message} (${error.name})'.`).response)
     })
-    request.write(content)
-    request.end()
+    req.write(content)
+    req.end()
   })
+  if (response instanceof ASH.ResponseCapsule) {
+    if ((outputStack) && ('stack' in (response as any))) {
+      console.log((response as any).stack)
+    }
+    return response.response
+  }
+  return response
 }
 
 export async function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : ASH.Request | ASH.Response): Promise<Response> {
@@ -234,17 +212,23 @@ export async function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : 
 }
 
 export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
+  const outputStack = true
   const ashPath: string = `/${constants.bridge.path.base}/${constants.bridge.path.relativeASH}`
   try {
-    const response = ((await sendHandler(ashPath, request, request)) as ASH.Response)
-    const alexaResponse = new ASH.Response(response)
-    return alexaResponse
-  } catch (error) {
-    if (error instanceof Error) {
-      return ASH.errorResponseFromError(request, error)
-    } else {
-      return ASH.errorResponse(request, 'Unknown', 'Unknown')
+    const response = await sendHandler(ashPath, request, request)
+    if (response instanceof ASH.ResponseCapsule) {
+      if ((outputStack) && ('stack' in (response as any))) {
+        console.log((response as any).stack)
+      }
+      return response.response
     }
+    return response
+  } catch (error) {
+    const response = ASH.errorResponseFromError(request, error)
+    if ((outputStack) && ('stack' in (response as any))) {
+      console.log((response as any).stack)
+    }
+    return response.response
   }
 }
 

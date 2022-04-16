@@ -14,11 +14,11 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
 }
 
 function skipChannelsHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
-  return Promise.resolve(ASH.errorResponse(alexaRequest, 'UNKNOWN_ERROR', '\'Alexa.ChannelController.SkipChannels\' is not supported.'))
+  return Promise.resolve(ASH.errorResponse(alexaRequest, null, 'UNKNOWN_ERROR', '\'Alexa.ChannelController.SkipChannels\' is not supported.').response)
 }
 
 function unknownChannelError (alexaRequest: ASH.Request, backendControl: BackendControl): ASH.Response {
-  return ASH.errorResponse(alexaRequest, 'INVALID_VALUE', 'The bridge  doesn\'t recognize channel.')
+  return ASH.errorResponse(alexaRequest, null, 'INVALID_VALUE', 'The bridge  doesn\'t recognize channel.').response
 }
 
 async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
@@ -77,11 +77,7 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
     try {
       await backendControl.lgtvCommand(lgtvRequest)
     } catch (error) {
-      if (error instanceof Error) {
-        return ASH.errorResponseFromError(alexaRequest, error)
-      } else {
-        return ASH.errorResponse(alexaRequest, 'Unknown', 'Unknown')
-      }
+      return ASH.errorResponseFromError(alexaRequest, error).response
     }
 
     //
@@ -134,7 +130,7 @@ async function changeChannelHandler (alexaRequest: ASH.Request, backendControl: 
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.ChannelController') {
-    ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.ChannelController')
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.ChannelController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'ChangeChannel':
@@ -142,7 +138,7 @@ function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Pr
     case 'SkipChannels':
       return skipChannelsHandler(alexaRequest, backendControl)
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

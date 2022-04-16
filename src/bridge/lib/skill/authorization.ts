@@ -10,7 +10,7 @@ function states (backend: Backend): Promise<ASH.ResponseContextProperty>[] {
 }
 
 function handler (alexaRequest: ASH.Request, backend: Backend): ASH.Response {
-  return ASH.errorResponse(alexaRequest, 'INTERNAL_ERROR', '')
+  throw ASH.errorResponse(alexaRequest, null, 'INVALID_DIRECTIVE', '')
 }
 
 export { capabilities, states, handler }

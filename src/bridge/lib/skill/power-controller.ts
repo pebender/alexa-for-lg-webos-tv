@@ -24,7 +24,11 @@ function states (backendControl: BackendControl): Promise<ASH.ResponseContextPro
 async function turnOffHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   const poweredOff = await backendControl.turnOff()
   if (poweredOff === false) {
-    return ASH.errorResponse(alexaRequest, 'INTERNAL_ERROR', `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`)
+    throw ASH.errorResponse(
+      alexaRequest,
+      500,
+      'INTERNAL_ERROR',
+      `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`)
   }
   return new ASH.Response({
     namespace: 'Alexa',
@@ -37,7 +41,11 @@ async function turnOffHandler (alexaRequest: ASH.Request, backendControl: Backen
 async function turnOnHandler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   const poweredOn = await backendControl.turnOn()
   if (poweredOn === false) {
-    return ASH.errorResponse(alexaRequest, 'INTERNAL_ERROR', `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`)
+    throw ASH.errorResponse(
+      alexaRequest,
+      500,
+      'INTERNAL_ERROR',
+      `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`)
   }
   return new ASH.Response({
     namespace: 'Alexa',
@@ -49,7 +57,7 @@ async function turnOnHandler (alexaRequest: ASH.Request, backendControl: Backend
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.PowerController') {
-    return Promise.resolve(ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.PowerController'))
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PowerController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'TurnOff':
@@ -57,7 +65,7 @@ function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Pr
     case 'TurnOn':
       return turnOnHandler(alexaRequest, backendControl)
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

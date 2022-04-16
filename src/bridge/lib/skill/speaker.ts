@@ -64,7 +64,7 @@ async function setVolumeHandler (alexaRequest: ASH.Request, backendControl: Back
   function getVolume (): number {
     const { volume } = alexaRequest.directive.payload
     if (typeof volume !== 'number' || volume < 0 || volume > 100) {
-      throw new RangeError('volume must be between 0 and 100 inclusive')
+      throw ASH.errorResponseForInvalidValue(alexaRequest, 'volume')
     }
     return volume
   }
@@ -87,18 +87,10 @@ async function setVolumeHandler (alexaRequest: ASH.Request, backendControl: Back
   try {
     lgtvVolume = await getVolume()
   } catch (error) {
-    if (error instanceof Error) {
-      return Promise.resolve(ASH.errorResponse(
-        alexaRequest,
-        error.name,
-        error.message
-      ))
+    if (error instanceof ASH.AlexaError) {
+      throw error
     } else {
-      return Promise.resolve(ASH.errorResponse(
-        alexaRequest,
-        'Unknown',
-        'Unknown'
-      ))
+      throw ASH.errorResponseFromError(alexaRequest, error)
     }
   }
   return setVolume(lgtvVolume)
@@ -114,14 +106,16 @@ async function adjustVolumeHandler (alexaRequest: ASH.Request, backendControl: B
       throw new Error("the T.V. did not return it's volume")
     }
     let volume = (lgtvResponse.volume as number)
-    if (alexaRequest.directive.payload.volumeDefault === true) {
-      if (alexaRequest.directive.payload.volume < 0) {
-        volume -= 3
-      } else if (alexaRequest.directive.payload.volume > 0) {
-        volume += 3
+    if (typeof alexaRequest.directive.payload.volume !== 'undefined') {
+      if (alexaRequest.directive.payload.volumeDefault === true) {
+        if (alexaRequest.directive.payload.volume < 0) {
+          volume -= 3
+        } else if (alexaRequest.directive.payload.volume > 0) {
+          volume += 3
+        }
+      } else {
+        volume += (alexaRequest.directive.payload.volume as number)
       }
-    } else {
-      volume += (alexaRequest.directive.payload.volume as number)
     }
     if (volume < 0) {
       volume = 0
@@ -150,20 +144,9 @@ async function adjustVolumeHandler (alexaRequest: ASH.Request, backendControl: B
   try {
     lgtvVolume = await getVolume()
   } catch (error) {
-    if (error instanceof Error) {
-      return Promise.resolve(ASH.errorResponse(
-        alexaRequest,
-        'INTERNAL_ERROR',
-        error.message
-      ))
-    } else {
-      return Promise.resolve(ASH.errorResponse(
-        alexaRequest,
-        'INTERNAL_ERROR',
-        'Unknown'
-      ))
-    }
+    throw ASH.errorResponseFromError(alexaRequest, error)
   }
+
   return setVolume(lgtvVolume)
 }
 
@@ -189,7 +172,7 @@ function setMuteHandler (alexaRequest: ASH.Request, backendControl: BackendContr
 
 function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.Speaker') {
-    ASH.errorResponseForWrongNamespace(alexaRequest, 'Alexa.Speaker')
+    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Speaker')
   }
   switch (alexaRequest.directive.header.name) {
     case 'SetVolume':
@@ -199,7 +182,7 @@ function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Pr
     case 'SetMute':
       return setMuteHandler(alexaRequest, backendControl)
     default:
-      return Promise.resolve(ASH.errorResponseForUnknownDirective(alexaRequest))
+      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 
