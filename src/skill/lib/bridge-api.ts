@@ -188,7 +188,7 @@ export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Res
   const ashPath: string = `/${constants.bridge.path}`
   try {
     const response = await sendHandler(ashPath, request, request)
-    if (response instanceof ASH.ResponseCapsule) {
+    if (response instanceof ASH.AlexaError) {
       if ((outputStack) && ('stack' in (response as any))) {
         console.log((response as any).stack)
       }

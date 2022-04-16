@@ -1,7 +1,7 @@
 import { Request } from './request'
-import { Response, ResponseCapsule } from './response'
+import { Response } from './response'
 
-export class AlexaError implements ResponseCapsule {
+export class AlexaError {
   public response: Response
   public httpStatusCode?: number
   public stack?: string

@@ -210,15 +210,3 @@ export class Response {
     return Promise.resolve(capability)
   }
 }
-
-export class ResponseCapsule {
-  public httpStatusCode?: number
-  public response: Response
-
-  constructor (response: Response, httpStatusCode: number | null) {
-    if (httpStatusCode !== null) {
-      this.httpStatusCode = httpStatusCode
-    }
-    this.response = response
-  }
-}
