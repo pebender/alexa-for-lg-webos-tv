@@ -85,16 +85,6 @@ export class FrontendExternal extends BaseClass {
       }
     }
 
-    // Log message handler.
-    async function backendLogHandler (request: express.Request, response: express.Response): Promise<void> {
-      console.log(JSON.stringify(request.body, null, 2))
-      response
-        .type('json')
-        .status(200)
-        .json({})
-        .end()
-    }
-
     async function authorizeToken (token: string): Promise<any> {
       const authorized = await that._authorization.authorize(token)
       if (!authorized) {
@@ -127,8 +117,7 @@ export class FrontendExternal extends BaseClass {
         that._server.use('/', express.json())
         that._server.use('/', auth(authorizeToken))
         that._server.use('/', handleAuthFailure)
-        that._server.post(`/${constants.bridge.path.base}/${constants.bridge.path.relativeASH}`, backendASHHandler)
-        that._server.post(`/${constants.bridge.path.base}/${constants.bridge.path.relativeLog}`, backendLogHandler)
+        that._server.post(`/${constants.bridge.path}`, backendASHHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
         })

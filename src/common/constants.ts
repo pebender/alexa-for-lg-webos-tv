@@ -30,15 +30,6 @@ export const constants = {
       http: 25391,
       https: 25392
     },
-    path: {
-      // The POST UR
-      base: `/${applicationNameSafe}`,
-      // The HTTP PATH for Alexa Smart Home (ASH) skill messages is `${base}/${relativeASH}`.
-      // The HTTP PATH for ASH skill messages must not be a substring of the HTTP PATH for log messages.
-      relativeASH: 'ASH',
-      // The HTTP PATH for log messages is `${base}/$relativeLog}`
-      // The HTTP PATH for log messages must not be a substring of the HTTP PATH for ASH skill messages.
-      relativeLog: 'LOG'
-    }
+    path: `/${applicationNameSafe}`
   }
 }

@@ -206,14 +206,9 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
   return response
 }
 
-export async function sendLogMessage (alexaRequest: ASH.Request, alexaMessage : ASH.Request | ASH.Response): Promise<Response> {
-  const logPath: string = `/${constants.bridge.path.base}/${constants.bridge.path.relativeLog}`
-  return await send(logPath, alexaRequest, { log: alexaMessage })
-}
-
 export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Response> {
   const outputStack = true
-  const ashPath: string = `/${constants.bridge.path.base}/${constants.bridge.path.relativeASH}`
+  const ashPath: string = `/${constants.bridge.path}`
   try {
     const response = await sendHandler(ashPath, request, request)
     if (response instanceof ASH.ResponseCapsule) {
