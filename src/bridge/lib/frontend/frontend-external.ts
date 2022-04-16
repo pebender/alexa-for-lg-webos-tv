@@ -10,7 +10,9 @@ import { BaseClass } from '../base-class'
 import { constants } from '../../../common/constants'
 import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../skill'
+import schema from '../../../common/alexa/alexa_smart_home_message_schema.json'
 import * as ASH from '../../../common/alexa'
+import Ajv from 'ajv'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
 import * as httpErrors from 'http-errors'
@@ -19,12 +21,16 @@ const { auth } = require('express-oauth2-bearer')
 export class FrontendExternal extends BaseClass {
   private readonly _authorization: FrontendAuthorization
   private readonly _smartHomeSkill: SmartHomeSkill
+  private readonly _ajv: Ajv.Ajv
+  private readonly _schemaValidator: Ajv.ValidateFunction
   private readonly _server: expressCore.Express
   public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
     super()
 
     this._authorization = frontendAuthorization
     this._smartHomeSkill = smartHomeSkill
+    this._ajv = new Ajv()
+    this._schemaValidator = this._ajv.compile(schema)
     this._server = express()
   }
 
@@ -34,7 +40,22 @@ export class FrontendExternal extends BaseClass {
     // Alexa Smart Home (ASH) skill hand1er.
     async function backendASHHandler (request: express.Request, response: express.Response): Promise<void> {
       try {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('request message')
+          console.log(JSON.stringify(request.body, null, 2))
+        }
         const commandResponse = await that._smartHomeSkill.handler(request.body)
+        if (process.env.NODE_ENV === 'development') {
+          console.log('response message')
+          console.log(JSON.stringify(commandResponse, null, 2))
+          const valid = await that._schemaValidator(commandResponse)
+          if (!valid) {
+            console.log('response message is invalid')
+            console.log(that._schemaValidator.errors)
+          } else {
+            console.log('response message is valid')
+          }
+        }
         response
           .type('json')
           .status(200)
@@ -44,6 +65,17 @@ export class FrontendExternal extends BaseClass {
         const alexaError = (error as ASH.AlexaError)
         console.log((alexaError as any).stack)
         const commandResponse = alexaError.response
+        if (process.env.NODE_ENV === 'development') {
+          console.log('error response message')
+          console.log(JSON.stringify(commandResponse, null, 2))
+          const valid = await that._schemaValidator(commandResponse)
+          if (!valid) {
+            console.log('error response message is invalid')
+            console.log(that._schemaValidator.errors)
+          } else {
+            console.log('error response message is valid')
+          }
+        }
         const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
         response
           .type('json')
