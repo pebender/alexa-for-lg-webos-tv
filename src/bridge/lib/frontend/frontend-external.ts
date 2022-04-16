@@ -75,6 +75,9 @@ export class FrontendExternal extends BaseClass {
           } else {
             console.log('error response message is valid')
           }
+          if (typeof alexaError.stack !== 'undefined') {
+            console.log(alexaError.stack)
+          }
         }
         const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
         response

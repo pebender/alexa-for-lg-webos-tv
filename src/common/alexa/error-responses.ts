@@ -2,8 +2,9 @@ import { Request } from './request'
 import { Response, ResponseCapsule } from './response'
 
 export class AlexaError implements ResponseCapsule {
-  public httpStatusCode?: number
   public response: Response
+  public httpStatusCode?: number
+  public stack?: string
 
   constructor (request: any, httpStatusCode: number | null, type: string, message: string) {
     if (httpStatusCode !== null) {

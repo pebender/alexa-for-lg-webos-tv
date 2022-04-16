@@ -15,11 +15,8 @@ export interface Response {
   [x: string]: number | string | object | undefined;
 }
 
-async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | null> {
+async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string> {
   console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
-  const ashToken = alexaRequest.getBearerToken()
-
-  let hostname: string | null = null
 
   const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
 
@@ -41,7 +38,7 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
     console.log(`getBridgeHostname ashToken Query result: ${JSON.stringify(data)}`)
     if ((typeof data.Count !== 'undefined') && (data.Count > 0) &&
         (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
-      hostname = data.Items[0].hostname
+      const hostname = (data.Items[0].hostname as string)
       console.log(`getBridgeHostname: queryBridgeHostname: hostname: ${hostname}`)
       return hostname
     }
@@ -83,6 +80,8 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
     }
   }
 
+  const ashToken = alexaRequest.getBearerToken()
+  let hostname: string | null = null
   hostname = await queryBridgeHostname(dynamoDBDocumentClient, ashToken)
   if (hostname !== null) {
     return hostname
@@ -92,36 +91,19 @@ async function getBridgeHostname (alexaRequest: ASH.Request): Promise<string | n
   if (hostname !== null) {
     return hostname
   }
-  return null
+
+  throw ASH.errorResponse(
+    alexaRequest,
+    null,
+    'BRIDGE_UNREACHABLE',
+    'Bridge hostname has not been configured'
+  )
 }
 
 async function sendHandler (path: string, alexaRequest: ASH.Request, message: Request) : Promise<ASH.Response> {
-  const outputStack = true
+  const hostname = await getBridgeHostname(alexaRequest)
 
-  let hostname: String | null = null
-  try {
-    hostname = await getBridgeHostname(alexaRequest)
-  } catch (error) {
-    const response = ASH.errorResponseFromError(alexaRequest, error)
-    if ((outputStack) && ('stack' in (response as any))) {
-      console.log((response as any).stack)
-    }
-    return response.response
-  }
-  if (hostname === null) {
-    const response = ASH.errorResponse(
-      alexaRequest,
-      null,
-      'BRIDGE_UNREACHABLE',
-      'Bridge hostname has not been configured'
-    )
-    if ((outputStack) && ('stack' in (response as any))) {
-      console.log((response as any).stack)
-    }
-    return response.response
-  }
-
-  const response: ASH.Response | ASH.ResponseCapsule = await new Promise((resolve): void => {
+  const response: ASH.Response = await new Promise((resolve, reject): void => {
     const options: {
       method?: 'POST';
       hostname: string;
@@ -154,7 +136,7 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
         // The expected HTTP/1.1 status code is 200.
         const statusCode = res.statusCode
         if (typeof statusCode === 'undefined') {
-          resolve(ASH.errorResponse(
+          reject(ASH.errorResponse(
             alexaRequest,
             null,
             'INTERNAL_ERROR',
@@ -164,14 +146,14 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
         // The expected HTTP/1.1 'content-type' header is 'application/json'
         const contentType = res.headers['content-type']
         if (typeof contentType === 'undefined') {
-          resolve(ASH.errorResponse(
+          reject(ASH.errorResponse(
             alexaRequest,
             null,
             'INTERNAL_ERROR',
             'Bridge response did not return HTTP header \'content-type\'.'))
         }
         if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-          resolve(ASH.errorResponse(
+          reject(ASH.errorResponse(
             alexaRequest,
             null,
             'INTERNAL_ERROR',
@@ -181,14 +163,14 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
         try {
           body = JSON.parse(data)
         } catch (error) {
-          resolve(ASH.errorResponseFromError(alexaRequest, error))
+          reject(ASH.errorResponseFromError(alexaRequest, error))
         }
         // Return the body.
         resolve((body as ASH.Response))
       })
     })
     req.on('error', (error: Error): void => {
-      resolve(ASH.errorResponse(
+      reject(ASH.errorResponse(
         alexaRequest,
         null,
         'INTERNAL_ERROR',
@@ -197,12 +179,7 @@ async function sendHandler (path: string, alexaRequest: ASH.Request, message: Re
     req.write(content)
     req.end()
   })
-  if (response instanceof ASH.ResponseCapsule) {
-    if ((outputStack) && ('stack' in (response as any))) {
-      console.log((response as any).stack)
-    }
-    return response.response
-  }
+
   return response
 }
 
@@ -225,8 +202,4 @@ export async function sendSkillDirective (request: ASH.Request): Promise<ASH.Res
     }
     return response.response
   }
-}
-
-export function send (path: string, alexaRequest: ASH.Request, message: Request): Promise<Response> {
-  return sendHandler(path, alexaRequest, message)
 }
