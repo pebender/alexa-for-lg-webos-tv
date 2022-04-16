@@ -3,7 +3,7 @@ import {
   Header,
   Namespace
 } from './common'
-import * as ASHError from './error-responses'
+import * as ASHError from './error'
 import * as Profile from '../profile'
 import { copyElement } from './copy'
 

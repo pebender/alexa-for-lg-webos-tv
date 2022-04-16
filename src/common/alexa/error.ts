@@ -50,7 +50,7 @@ export function errorResponseFromError (alexaRequest: Request | null, error: any
   if ('code' in error) {
     name = error.code
   }
-  return errorResponse(
+  return new AlexaError(
     alexaRequest,
     500,
     'INTERNAL_ERROR',
@@ -59,7 +59,7 @@ export function errorResponseFromError (alexaRequest: Request | null, error: any
 }
 
 export function errorResponseForWrongDirectiveNamespace (alexaRequest: Request, namespace: string): AlexaError {
-  return errorResponse(
+  return new AlexaError(
     alexaRequest,
     400,
     'INVALID_DIRECTIVE',
@@ -68,7 +68,7 @@ export function errorResponseForWrongDirectiveNamespace (alexaRequest: Request, 
 }
 
 export function errorResponseForInvalidDirectiveNamespace (alexaRequest: Request): AlexaError {
-  return errorResponse(
+  return new AlexaError(
     alexaRequest,
     400,
     'INVALID_DIRECTIVE',
@@ -77,7 +77,7 @@ export function errorResponseForInvalidDirectiveNamespace (alexaRequest: Request
 }
 
 export function errorResponseForInvalidDirectiveName (alexaRequest: Request): AlexaError {
-  return errorResponse(
+  return new AlexaError(
     alexaRequest,
     400,
     'INVALID_DIRECTIVE',
@@ -86,7 +86,7 @@ export function errorResponseForInvalidDirectiveName (alexaRequest: Request): Al
 }
 
 export function errorResponseForInvalidValue (alexaRequest: Request, parameter: string): AlexaError {
-  return errorResponse(
+  return new AlexaError(
     alexaRequest,
     400,
     'INVALID_VALUE',

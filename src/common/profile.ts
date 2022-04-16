@@ -1,4 +1,4 @@
-import * as ASHError from './alexa/error-responses'
+import * as ASHError from './alexa/error'
 import https from 'https'
 
 export async function getUserProfile (bearerToken: string): Promise<{ user_id: string; email: string; [x: string]: string}> {
