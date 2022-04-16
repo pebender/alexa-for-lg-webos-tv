@@ -10,7 +10,7 @@ This software is in early development. I started the project some years ago and 
 
 However, there are many things left to do
 
-- Support error handling,
+- Support Alexa Smart Home Skill error handling,
 - Support for multiple TVs,
 - Simplify installation,
 - Document installation procedures, and
@@ -18,7 +18,6 @@ However, there are many things left to do
 
 ## Table of Contents
 
-- [Introduction](./doc/introduction.md#introduction.md)
 - [Installation](./doc/installation.md#installation)
   - [Development Environment](./doc/installation.md#development-environment)
   - [Compilation](./doc/installation.md#compilation)
