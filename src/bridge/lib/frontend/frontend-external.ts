@@ -43,6 +43,16 @@ export class FrontendExternal extends BaseClass {
         if (process.env.NODE_ENV === 'development') {
           console.log('request message')
           console.log(JSON.stringify(request.body, null, 2))
+          // schema used for validation does not support request messages.
+          /*
+          const valid = await that._schemaValidator(request.body)
+          if (!valid) {
+            console.log('response message is invalid')
+            console.log(that._schemaValidator.errors)
+          } else {
+            console.log('response message is valid')
+          }
+          */
         }
         const commandResponse = await that._smartHomeSkill.handler(request.body)
         if (process.env.NODE_ENV === 'development') {
