@@ -39,7 +39,7 @@
     "@types/fs-extra": "9.0.13",
     "@types/http-errors": "1.8.2",
     "@types/wake_on_lan": "0.0.30",
-    "@types/xml2js": "0.4.10"
+    "@types/xml2js": "0.4.11"
   },
   "bundledDependencies": [
     "ajv",

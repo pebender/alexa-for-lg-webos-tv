@@ -1,0 +1,676 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 11:43:03.371539679 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 11:42:35.804663667 -0700
+@@ -118,24 +118,21 @@
+                                         "exclusiveMaximum": false,
+                                         "minimum": 0,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "saturation": {
+                                         "maximum": 1,
+                                         "exclusiveMaximum": false,
+                                         "minimum": 0,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "brightness": {
+                                         "maximum": 1,
+                                         "exclusiveMaximum": false,
+                                         "minimum": 0,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     }
+                                 },
+                                 "additionalProperties": false
+@@ -224,8 +221,7 @@
+                                         "exclusiveMaximum": false,
+                                         "minimum": -100,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "scale": {
+                                         "type": "string",
+@@ -281,8 +277,7 @@
+                                         "exclusiveMaximum": false,
+                                         "minimum": -100,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "scale": {
+                                         "type": "string",
+@@ -380,8 +375,7 @@
+                                         "exclusiveMaximum": false,
+                                         "minimum": -100,
+                                         "exclusiveMinimum": false,
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "scale": {
+                                         "type": "string",
+@@ -510,8 +504,7 @@
+                                 "exclusiveMaximum": false,
+                                 "minimum": 0,
+                                 "exclusiveMinimum": false,
+-                                "type": "integer",
+-                                "format": "int32"
++                                "type": "integer"
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -548,8 +541,7 @@
+                             "value": {
+                                 "maximum": 10000,
+                                 "minimum": 1000,
+-                                "type": "integer",
+-                                "format": "int32"
++                                "type": "integer"
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -672,8 +664,7 @@
+                                 "exclusiveMaximum": false,
+                                 "minimum": 0,
+                                 "exclusiveMinimum": false,
+-                                "type": "integer",
+-                                "format": "int32"
++                                "type": "integer"
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -712,8 +703,7 @@
+                                 "exclusiveMaximum": false,
+                                 "minimum": 0,
+                                 "exclusiveMinimum": false,
+-                                "type": "integer",
+-                                "format": "int32"
++                                "type": "integer"
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -754,8 +744,7 @@
+                                 "type": "object",
+                                 "properties": {
+                                     "value": {
+-                                        "type": "number",
+-                                        "format": "double"
++                                        "type": "number"
+                                     },
+                                     "scale": {
+                                         "type": "string",
+@@ -918,8 +907,7 @@
+                                 "exclusiveMaximum": false,
+                                 "minimum": 0,
+                                 "exclusiveMinimum": false,
+-                                "type": "integer",
+-                                "format": "int32"
++                                "type": "integer"
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -1610,8 +1598,7 @@
+                                                     ]
+                                                 },
+                                                 "value": {
+-                                                    "type": "integer",
+-                                                    "format": "int32"
++                                                    "type": "integer"
+                                                 }
+                                             },
+                                             "additionalProperties": false
+@@ -1632,8 +1619,7 @@
+                                                     ]
+                                                 },
+                                                 "level": {
+-                                                    "type": "integer",
+-                                                    "format": "int32"
++                                                    "type": "integer"
+                                                 }
+                                             },
+                                             "additionalProperties": false
+@@ -1789,8 +1775,7 @@
+                             },
+                             "value": {
+                                 "type": "number",
+-                                "additionalProperties": false,
+-                                "format": "double"
++                                "additionalProperties": false
+                             },
+                             "timeOfSample": {
+                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
+@@ -3129,7 +3114,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3155,7 +3139,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3193,7 +3176,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3287,7 +3269,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3376,7 +3357,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3402,7 +3382,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3440,7 +3419,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3506,7 +3484,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3616,7 +3593,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3642,7 +3618,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3680,7 +3655,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3791,7 +3765,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3817,7 +3790,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -3855,7 +3827,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -3979,7 +3950,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4073,7 +4043,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4355,7 +4324,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4444,7 +4412,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -4470,7 +4437,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -4508,7 +4474,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4634,7 +4599,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4770,7 +4734,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -4894,7 +4857,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -5158,7 +5120,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -5282,7 +5243,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -5372,7 +5332,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -5398,7 +5357,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -5436,7 +5394,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -6053,12 +6010,10 @@
+                                                         "properties": {
+                                                             "minimum": {
+                                                                 "type": "integer",
+-                                                                "format": "int32",
+                                                                 "default": 0
+                                                             },
+                                                             "maximum": {
+                                                                 "type": "integer",
+-                                                                "format": "int32",
+                                                                 "default": 0
+                                                             }
+                                                         },
+@@ -6177,7 +6132,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6203,7 +6157,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6241,7 +6194,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -6697,7 +6649,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6723,7 +6674,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6766,7 +6716,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -6885,7 +6834,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6911,7 +6859,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -6937,7 +6884,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7272,7 +7218,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7298,7 +7243,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7339,7 +7283,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -7537,7 +7480,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7563,7 +7505,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7601,7 +7542,6 @@
+                                             },
+                                             {
+                                                 "type": "integer",
+-                                                "format": "int32",
+                                                 "enum": [
+                                                     3
+                                                 ]
+@@ -7724,7 +7664,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7750,7 +7689,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7837,7 +7775,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -7863,7 +7800,6 @@
+                                                     },
+                                                     {
+                                                         "type": "integer",
+-                                                        "format": "int32",
+                                                         "enum": [
+                                                             0,
+                                                             1
+@@ -8366,8 +8302,7 @@
+                                                 ]
+                                             },
+                                             {
+-                                                "type": "integer",
+-                                                "format": "int32"
++                                                "type": "integer"
+                                             }
+                                         ]
+                                     }
+@@ -8483,13 +8418,11 @@
+                                                         "properties": {
+                                                             "width": {
+                                                                 "minimum": 1,
+-                                                                "type": "integer",
+-                                                                "format": "int32"
++                                                                "type": "integer"
+                                                             },
+                                                             "height": {
+                                                                 "minimum": 1,
+-                                                                "type": "integer",
+-                                                                "format": "int32"
++                                                                "type": "integer"
+                                                             }
+                                                         }
+                                                     },
+@@ -9925,8 +9858,7 @@
+                                         "exitDelayInSeconds": {
+                                             "maximum": 255,
+                                             "minimum": 0,
+-                                            "type": "integer",
+-                                            "format": "int32"
++                                            "type": "integer"
+                                         },
+                                         "bypassedEndpoints": {
+                                             "type": "array",
+@@ -10098,8 +10030,7 @@
+                                                         "exclusiveMaximum": false,
+                                                         "minimum": 0,
+                                                         "exclusiveMinimum": false,
+-                                                        "type": "integer",
+-                                                        "format": "int32"
++                                                        "type": "integer"
+                                                     }
+                                                 },
+                                                 "additionalProperties": false
+@@ -10424,8 +10355,7 @@
+                                                     },
+                                                     "idleTimeoutSeconds": {
+                                                         "minimum": 1,
+-                                                        "type": "integer",
+-                                                        "format": "int32"
++                                                        "type": "integer"
+                                                     },
+                                                     "uri": {
+                                                         "minLength": 1,
+@@ -10446,13 +10376,11 @@
+                                                         "properties": {
+                                                             "width": {
+                                                                 "minimum": 1,
+-                                                                "type": "integer",
+-                                                                "format": "int32"
++                                                                "type": "integer"
+                                                             },
+                                                             "height": {
+                                                                 "minimum": 1,
+-                                                                "type": "integer",
+-                                                                "format": "int32"
++                                                                "type": "integer"
+                                                             }
+                                                         }
+                                                     },
+@@ -10760,8 +10688,7 @@
+                                                     "type": "string"
+                                                 },
+                                                 "percentageState": {
+-                                                    "type": "number",
+-                                                    "format": "double"
++                                                    "type": "number"
+                                                 }
+                                             },
+                                             "additionalProperties": false
+@@ -11080,12 +11007,10 @@
+                                                     "type": "object",
+                                                     "properties": {
+                                                         "minimumValue": {
+-                                                            "type": "number",
+-                                                            "format": "double"
++                                                            "type": "number"
+                                                         },
+                                                         "maximumValue": {
+-                                                            "type": "number",
+-                                                            "format": "double"
++                                                            "type": "number"
+                                                         }
+                                                     }
+                                                 }
+@@ -11118,8 +11043,7 @@
+                                                             "type": "object",
+                                                             "properties": {
+                                                                 "value": {
+-                                                                    "type": "number",
+-                                                                    "format": "double"
++                                                                    "type": "number"
+                                                                 },
+                                                                 "scale": {
+                                                                     "type": "string",
+@@ -11139,8 +11063,7 @@
+                                                             "type": "object",
+                                                             "properties": {
+                                                                 "value": {
+-                                                                    "type": "number",
+-                                                                    "format": "double"
++                                                                    "type": "number"
+                                                                 },
+                                                                 "scale": {
+                                                                     "type": "string",
+@@ -11265,8 +11188,7 @@
+                                                             "exclusiveMaximum": false,
+                                                             "minimum": -100,
+                                                             "exclusiveMinimum": false,
+-                                                            "type": "number",
+-                                                            "format": "double"
++                                                            "type": "number"
+                                                         },
+                                                         "scale": {
+                                                             "type": "string",
+@@ -11859,8 +11781,7 @@
+                             "type": "object",
+                             "properties": {
+                                 "estimatedDeferralInSeconds": {
+-                                    "type": "integer",
+-                                    "format": "int32"
++                                    "type": "integer"
+                                 }
+                             }
+                         }
