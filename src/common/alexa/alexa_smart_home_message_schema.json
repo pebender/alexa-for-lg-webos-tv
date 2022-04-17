@@ -78,7 +78,6 @@
         "state.properties": {
             "type": "array",
             "uniqueItems": true,
-            "additionalItems": false,
             "items": {
                 "anyOf": [
                     {
@@ -3026,7 +3025,6 @@
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "additionalItems": false,
             "items": {
                 "anyOf": [
                     {
