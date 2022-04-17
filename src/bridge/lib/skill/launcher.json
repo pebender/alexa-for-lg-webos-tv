@@ -1,0 +1,30 @@
+{"map":[
+	{"alexa":{"name":"Live TV","identifier":"amzn1.alexa-ask-target.app.38061"},"lgtv":{"title":"Live TV","id":"com.webos.app.livetv"}},
+
+	{"alexa":{"name":"Apple TV","identifier":"amzn1.alexa-ask-target.app.67098"},"lgtv":{"title":"Apple TV+","id":"com.apple.appletv.web"}},
+	{"alexa":{"name":"BritBox","identifier":"amzn1.alexa-ask-target.app.30560"},"lgtv":{"title":"BritBox by BBC & ITV","id":"com.britbox.webos"}},
+	{"alexa":{"name":"Disney+","identifier":"amzn1.alexa-ask-target.app.47714"},"lgtv":{"title":"Disney+","id":"com.disney.disneyplus-prod"}},
+	{"alexa":{"name":"Hulu","identifier":"amzn1.alexa-ask-target.app.77683"},"lgtv":{"title":"Hulu","id":"hulu"}},
+	{"alexa":{"name":"NBCU Peacock","identifier":"amzn1.alexa-ask-target.app.94721"},"lgtv":{"title":"Peacock","id":"com.peacock.tv"}},
+	{"alexa":{"name":"Netflix","identifier":"amzn1.alexa-ask-target.app.36377"},"lgtv":{"title":"Netflix","id":"netflix"}},
+	{"alexa":{"name":"Plex","identifier":"amzn1.alexa-ask-target.app.78079"},"lgtv":{"title":"Plex","id":"cdp-30"}},
+	{"alexa":{"name":"Pluto TV","identifier":"amzn1.alexa-ask-target.app.93822"},"lgtv":{"title":"Pluto TV","id":"com.plutotv.app"}},
+	{"alexa":{"name":"Prime Video","identifier":"amzn1.alexa-ask-target.app.72095"},"lgtv":{"title":"Amazon Prime Video","id":"amazon"}},
+	{"alexa":{"name":"Showtime","identifier":"amzn1.alexa-ask-target.app.27166"},"lgtv":{"title":"Showtime","id":"com.showtime.app.showtime"}},
+	{"alexa":{"name":"Showtime Anytime","identifier":"amzn1.alexa-ask-target.app.40448"},"lgtv":{"title":"Showtime Anytime","id":"com.showtime.app.showtimeanytime"}},
+	{"alexa":{"name":"Sling TV","identifier":"amzn1.alexa-ask-target.app.39861"},"lgtv":{"title":"Sling TV","id":"com.movenetworks.app.sling-tv-sling-production"}},
+	{"alexa":{"name":"Spotify","identifier":"amzn1.alexa-ask-target.app.43818"},"lgtv":{"title":"Spotify - Music and Podcasts","id":"spotify-beehive"}},
+	{"alexa":{"name":"Starz","identifier":"amzn1.alexa-ask-target.app.10530"},"lgtv":{"title":"STARZ","id":"com.starz.app.starz-lgtv"}},
+	{"alexa":{"name":"Tablo TV","identifier":"amzn1.alexa-ask-target.app.68252"},"lgtv":{"title":"Tablo","id":"com.nuvyyo.tablo"}},
+	{"alexa":{"name":"Vudu","identifier":"amzn1.alexa-ask-target.app.64811"},"lgtv":{"title":"VUDU","id":"vudu"}},
+	{"alexa":{"name":"YouTube","identifier":"amzn1.alexa-ask-target.app.70045"},"lgtv":{"title":"YouTube","id":"youtube.leanback.v4"}},
+	{"alexa":{"name":"YouTube Kids","identifier":"amzn1.alexa-ask-target.app.09817"},"lgtv":{"title":"YouTube Kids","id":"youtube.leanback.kids.v4"}},
+	{"alexa":{"name":"YouTube TV","identifier":"amzn1.alexa-ask-target.app.50623"},"lgtv":{"title":"YouTube TV","id":"youtube.leanback.ytv.v1"}},
+
+	{"alexa":{"name":"Miracast","identifier":"amzn1.alexa-ask-target.app.17561"},"lgtv":{"title":"Screen Share","id":"com.webos.app.miracast"}},
+	{"alexa":{"name":"Internet Browser","identifier":"amzn1.alexa-ask-target.app.66182"},"lgtv":{"title":"Web Browser","id":"com.webos.app.browser"}},
+
+	{"alexa":{"name":"Settings","identifier":"amzn1.alexa-ask-target.app.33709"},"lgtv":{"title":"Settings","id":"com.palm.app.settings"}},
+	{"alexa":{"name":"Accessibility Settings","identifier":"amzn1.alexa-ask-target.shortcut.87246"},"lgtv":{"title":"Accessibility","id":"com.webos.app.accessibility"}},
+	{"alexa":{"name":"Channel Manager","identifier":"amzn1.alexa-ask-target.app.51226"},"lgtv":{"title":"CHANNEL MANAGER","id":"com.webos.app.channeledit"}}
+]}

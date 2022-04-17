@@ -1,65 +1,20 @@
+import LGTV from 'lgtv2'
 import * as ASH from '../../../common/alexa'
 import { BackendControl } from '../backend'
-import LGTV from 'lgtv2'
+import launchMap from './launcher.json'
 
-const alexaToLGTV: {[lgtvInput: string]: {[alexaInput: string]: string}} = {
-  // Amazon Video
-  'amzn1.alexa-ask-target.app.72095': {
-    id: 'amazon'
-  },
-  // Hulu
-  'amzn1.alexa-ask-target.app.77683': {
-    id: 'hulu'
-  },
-  // Netflix
-  'amzn1.alexa-ask-target.app.36377': {
-    id: 'netflix'
-  },
-  // Plex
-  'amzn1.alexa-ask-target.app.78079': {
-    id: 'cdp-30'
-  },
-  // Vudu
-  'amzn1.alexa-ask-target.app.64811': {
-    id: 'vudu'
-  },
-  // YouTube
-  'amzn1.alexa-ask-target.app.70045': {
-    id: 'youtube.leanback.v4'
-  }
-}
+type LaunchMapItem = { alexa: { name: string; identifier: string; }; lgtv: { title: string; id: string; }; }
+type LaunchMap = { map: LaunchMapItem[] }
+type AlexaToLGTV = { [alexaIdentifier: string]: { id: string; title: string; }; }
+type LGTVToAlexa = { [lgtvId: string]: { identifier: string; name: string; }; }
 
-const lgtvToAlexa: {[AlexaInput: string]: {identifier: string; name: string}} = {
-  amazon: {
-    identifier: 'amzn1.alexa-ask-target.app.72095',
-    name: 'Amazon Video'
-  },
-  hulu: {
-    identifier: 'amzn1.alexa-ask-target.app.77683',
-    name: 'Hulu'
-  },
-  netflix: {
-    identifier: 'amzn1.alexa-ask-target.app.36377',
-    name: 'Netflix'
-  },
-  'cdp-30': {
-    identifier: 'amzn1.alexa-ask-target.app.78079',
-    name: 'Plex'
-  },
-  vudu: {
-    identifier: 'amzn1.alexa-ask-target.app.64811',
-    name: 'Vudu'
-  },
-  'youtube.leanback.v4': {
-    identifier: 'amzn1.alexa-ask-target.app.70045',
-    name: 'YouTube'
-  }
-}
+let alexaToLGTV: AlexaToLGTV
+let lgtvToAlexa: LGTVToAlexa
 
 function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
   return [ASH.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa.Launcher',
-    propertyNames: ['identifier', 'name']
+    propertyNames: ['name', 'identifier']
   })]
 }
 
@@ -74,7 +29,7 @@ function states (backendControl: BackendControl): Promise<ASH.AlexaResponseConte
     }
     const input: LGTV.Response = await backendControl.lgtvCommand(lgtvRequest)
     if (typeof input.appId !== 'string' ||
-            typeof lgtvToAlexa[input.appId] === 'undefined') {
+        typeof lgtvToAlexa[input.appId] === 'undefined') {
       return null
     }
     return lgtvToAlexa[input.appId]
@@ -109,6 +64,21 @@ async function launchTargetHandler (alexaRequest: ASH.AlexaRequest, backendContr
     payload: alexaToLGTV[alexaRequest.directive.payload.identifier]
   }
   await backendControl.lgtvCommand(lgtvRequest)
+  /*
+  const lgtvRequest: LGTV.Request = {
+    uri: 'ssap://com.webos.applicationManager/listApps'
+  }
+  type appType = { [x: string]: undefined | null | string | number | object; };
+  const response = await backendControl.lgtvCommand(lgtvRequest)
+  const apps: appType[] = (response as any).apps
+  apps.forEach((app) => {
+    const output = {
+      title: app.title,
+      id: app.id
+    }
+    console.log(`${JSON.stringify(output)},`)
+  })
+  */
   return new ASH.AlexaResponse({
     namespace: 'Alexa',
     name: 'Response',
@@ -118,6 +88,15 @@ async function launchTargetHandler (alexaRequest: ASH.AlexaRequest, backendContr
 }
 
 function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+  if ((typeof lgtvToAlexa === 'undefined') || (typeof alexaToLGTV === 'undefined')) {
+    alexaToLGTV = {}
+    lgtvToAlexa = {}
+    const items = (launchMap as LaunchMap).map
+    items.forEach((item) => {
+      alexaToLGTV[item.alexa.identifier] = { id: item.lgtv.id, title: item.lgtv.title }
+      lgtvToAlexa[item.lgtv.id] = { identifier: item.alexa.identifier, name: item.alexa.name }
+    })
+  }
   if (alexaRequest.directive.header.namespace !== 'Alexa.Launcher') {
     throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Launcher')
   }

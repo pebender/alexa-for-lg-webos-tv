@@ -7,22 +7,17 @@
 	"settings": {
 		"cSpell.words": [
 			"Alexa",
-			"amazonalexa",
 			"backinthirty",
-			"callsign",
 			"certnames",
 			"Datafile",
 			"ForLGwebOSTV",
 			"ForLGWebOSTVController",
 			"ForLGwebOSTVGateway",
 			"hostnames",
-			"Hulu",
 			"IPADDRESS_VALID",
 			"isnumeric",
 			"lamba",
-			"leanback",
 			"LGTV",
-			"Plex",
 			"reprompt",
 			"seald",
 			"ssap",
@@ -33,7 +28,7 @@
 			"webOS"
 		],
 		"cSpell.ignorePaths" : [
-			"src/common/alexa/alexa_smart_home_message_schema.json",
+			"*.json",
 		],
 		"eslint.validate": [
 			"javascript",
