@@ -1,0 +1,14 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 17:13:50.215873637 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 17:14:29.371872081 -0700
+@@ -2669,10 +2669,7 @@
+                                         ]
+                                     },
+                                     "foodQuantity": {
+-                                        "type": "object",
+-                                        "discriminator": {
+-                                            "propertyName": "@type"
+-                                        }
++                                        "type": "object"
+                                     },
+                                     "foodState": {
+                                         "type": "string",

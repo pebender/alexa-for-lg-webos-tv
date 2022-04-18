@@ -1,0 +1,9 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 17:37:45.971816565 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 17:38:25.823814980 -0700
+@@ -1,5 +1,5 @@
+ {
+-    "$schema": "http://json-schema.org/draft-04/schema#",
++    "$schema": "https://json-schema.org/draft/2019-09/schema#",
+     "title": "Alexa Smart Home Message Schema",
+     "description": "A JSON message sent from a skill to Alexa, either proactively or as a response to a directive",
+     "definitions": {

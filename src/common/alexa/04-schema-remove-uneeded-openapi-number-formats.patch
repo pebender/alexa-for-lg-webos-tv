@@ -1,74 +1,75 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 11:43:03.371539679 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 11:42:35.804663667 -0700
-@@ -118,24 +118,21 @@
-                                         "exclusiveMaximum": false,
+--- alexa_smart_home_message_schema.json.old	2022-04-17 17:09:54.599883003 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 17:12:26.223876976 -0700
+@@ -115,21 +115,15 @@
+                                     "hue": {
+                                         "maximum": 360,
                                          "minimum": 0,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     },
+-                                    },
++                                        "type": "number"                                    },
                                      "saturation": {
                                          "maximum": 1,
-                                         "exclusiveMaximum": false,
                                          "minimum": 0,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     },
+-                                    },
++                                        "type": "number"                                    },
                                      "brightness": {
                                          "maximum": 1,
-                                         "exclusiveMaximum": false,
                                          "minimum": 0,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     }
+-                                    }
++                                        "type": "number"                                    }
                                  },
                                  "additionalProperties": false
-@@ -224,8 +221,7 @@
-                                         "exclusiveMaximum": false,
+                             },
+@@ -215,9 +209,7 @@
+                                     "value": {
+                                         "maximum": 100,
                                          "minimum": -100,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     },
+-                                    },
++                                        "type": "number"                                    },
                                      "scale": {
                                          "type": "string",
-@@ -281,8 +277,7 @@
-                                         "exclusiveMaximum": false,
+                                         "enum": [
+@@ -270,9 +262,7 @@
+                                     "value": {
+                                         "maximum": 100,
                                          "minimum": -100,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     },
+-                                    },
++                                        "type": "number"                                    },
                                      "scale": {
                                          "type": "string",
-@@ -380,8 +375,7 @@
-                                         "exclusiveMaximum": false,
+                                         "enum": [
+@@ -367,9 +357,7 @@
+                                     "value": {
+                                         "maximum": 100,
                                          "minimum": -100,
-                                         "exclusiveMinimum": false,
 -                                        "type": "number",
 -                                        "format": "double"
-+                                        "type": "number"
-                                     },
+-                                    },
++                                        "type": "number"                                    },
                                      "scale": {
                                          "type": "string",
-@@ -510,8 +504,7 @@
-                                 "exclusiveMaximum": false,
+                                         "enum": [
+@@ -495,9 +483,7 @@
+                             "value": {
+                                 "maximum": 100,
                                  "minimum": 0,
-                                 "exclusiveMinimum": false,
 -                                "type": "integer",
 -                                "format": "int32"
-+                                "type": "integer"
-                             },
+-                            },
++                                "type": "integer"                            },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -548,8 +541,7 @@
+                             },
+@@ -533,8 +519,7 @@
                              "value": {
                                  "maximum": 10000,
                                  "minimum": 1000,
@@ -78,27 +79,29 @@
                              },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -672,8 +664,7 @@
-                                 "exclusiveMaximum": false,
+@@ -655,9 +640,7 @@
+                             "value": {
+                                 "maximum": 100,
                                  "minimum": 0,
-                                 "exclusiveMinimum": false,
 -                                "type": "integer",
 -                                "format": "int32"
-+                                "type": "integer"
-                             },
+-                            },
++                                "type": "integer"                            },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -712,8 +703,7 @@
-                                 "exclusiveMaximum": false,
+                             },
+@@ -693,9 +676,7 @@
+                             "value": {
+                                 "maximum": 100,
                                  "minimum": 0,
-                                 "exclusiveMinimum": false,
 -                                "type": "integer",
 -                                "format": "int32"
-+                                "type": "integer"
-                             },
+-                            },
++                                "type": "integer"                            },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -754,8 +744,7 @@
+                             },
+@@ -735,8 +716,7 @@
                                  "type": "object",
                                  "properties": {
                                      "value": {
@@ -108,17 +111,18 @@
                                      },
                                      "scale": {
                                          "type": "string",
-@@ -918,8 +907,7 @@
-                                 "exclusiveMaximum": false,
+@@ -897,9 +877,7 @@
+                             "value": {
+                                 "maximum": 100,
                                  "minimum": 0,
-                                 "exclusiveMinimum": false,
 -                                "type": "integer",
 -                                "format": "int32"
-+                                "type": "integer"
-                             },
+-                            },
++                                "type": "integer"                            },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -1610,8 +1598,7 @@
+                             },
+@@ -1589,8 +1567,7 @@
                                                      ]
                                                  },
                                                  "value": {
@@ -128,7 +132,7 @@
                                                  }
                                              },
                                              "additionalProperties": false
-@@ -1632,8 +1619,7 @@
+@@ -1611,8 +1588,7 @@
                                                      ]
                                                  },
                                                  "level": {
@@ -138,7 +142,7 @@
                                                  }
                                              },
                                              "additionalProperties": false
-@@ -1789,8 +1775,7 @@
+@@ -1768,8 +1744,7 @@
                              },
                              "value": {
                                  "type": "number",
@@ -148,7 +152,7 @@
                              },
                              "timeOfSample": {
                                  "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
-@@ -3129,7 +3114,6 @@
+@@ -3107,7 +3082,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -156,7 +160,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3155,7 +3139,6 @@
+@@ -3133,7 +3107,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -164,7 +168,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3193,7 +3176,6 @@
+@@ -3171,7 +3144,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -172,7 +176,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3287,7 +3269,6 @@
+@@ -3265,7 +3237,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -180,7 +184,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3376,7 +3357,6 @@
+@@ -3354,7 +3325,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -188,7 +192,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3402,7 +3382,6 @@
+@@ -3380,7 +3350,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -196,7 +200,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3440,7 +3419,6 @@
+@@ -3418,7 +3387,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -204,7 +208,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3506,7 +3484,6 @@
+@@ -3484,7 +3452,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -212,7 +216,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3616,7 +3593,6 @@
+@@ -3594,7 +3561,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -220,7 +224,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3642,7 +3618,6 @@
+@@ -3620,7 +3586,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -228,7 +232,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3680,7 +3655,6 @@
+@@ -3658,7 +3623,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -236,7 +240,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3791,7 +3765,6 @@
+@@ -3769,7 +3733,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -244,7 +248,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3817,7 +3790,6 @@
+@@ -3795,7 +3758,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -252,7 +256,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -3855,7 +3827,6 @@
+@@ -3833,7 +3795,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -260,7 +264,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -3979,7 +3950,6 @@
+@@ -3957,7 +3918,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -268,7 +272,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4073,7 +4043,6 @@
+@@ -4051,7 +4011,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -276,7 +280,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4355,7 +4324,6 @@
+@@ -4333,7 +4292,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -284,7 +288,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4444,7 +4412,6 @@
+@@ -4422,7 +4380,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -292,7 +296,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -4470,7 +4437,6 @@
+@@ -4448,7 +4405,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -300,7 +304,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -4508,7 +4474,6 @@
+@@ -4486,7 +4442,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -308,7 +312,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4634,7 +4599,6 @@
+@@ -4612,7 +4567,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -316,7 +320,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4770,7 +4734,6 @@
+@@ -4748,7 +4702,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -324,7 +328,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -4894,7 +4857,6 @@
+@@ -4872,7 +4825,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -332,7 +336,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -5158,7 +5120,6 @@
+@@ -5136,7 +5088,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -340,7 +344,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -5282,7 +5243,6 @@
+@@ -5260,7 +5211,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -348,7 +352,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -5372,7 +5332,6 @@
+@@ -5350,7 +5300,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -356,7 +360,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -5398,7 +5357,6 @@
+@@ -5376,7 +5325,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -364,7 +368,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -5436,7 +5394,6 @@
+@@ -5414,7 +5362,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -372,7 +376,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -6053,12 +6010,10 @@
+@@ -6031,12 +5978,10 @@
                                                          "properties": {
                                                              "minimum": {
                                                                  "type": "integer",
@@ -385,7 +389,7 @@
                                                                  "default": 0
                                                              }
                                                          },
-@@ -6177,7 +6132,6 @@
+@@ -6155,7 +6100,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -393,7 +397,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6203,7 +6157,6 @@
+@@ -6181,7 +6125,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -401,7 +405,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6241,7 +6194,6 @@
+@@ -6219,7 +6162,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -409,7 +413,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -6697,7 +6649,6 @@
+@@ -6675,7 +6617,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -417,7 +421,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6723,7 +6674,6 @@
+@@ -6701,7 +6642,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -425,7 +429,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6766,7 +6716,6 @@
+@@ -6744,7 +6684,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -433,7 +437,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -6885,7 +6834,6 @@
+@@ -6863,7 +6802,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -441,7 +445,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6911,7 +6859,6 @@
+@@ -6889,7 +6827,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -449,7 +453,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -6937,7 +6884,6 @@
+@@ -6915,7 +6852,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -457,7 +461,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7272,7 +7218,6 @@
+@@ -7250,7 +7186,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -465,7 +469,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7298,7 +7243,6 @@
+@@ -7276,7 +7211,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -473,7 +477,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7339,7 +7283,6 @@
+@@ -7317,7 +7251,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -481,7 +485,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -7537,7 +7480,6 @@
+@@ -7515,7 +7448,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -489,7 +493,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7563,7 +7505,6 @@
+@@ -7541,7 +7473,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -497,7 +501,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7601,7 +7542,6 @@
+@@ -7579,7 +7510,6 @@
                                              },
                                              {
                                                  "type": "integer",
@@ -505,7 +509,7 @@
                                                  "enum": [
                                                      3
                                                  ]
-@@ -7724,7 +7664,6 @@
+@@ -7702,7 +7632,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -513,7 +517,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7750,7 +7689,6 @@
+@@ -7728,7 +7657,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -521,7 +525,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7837,7 +7775,6 @@
+@@ -7815,7 +7743,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -529,7 +533,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -7863,7 +7800,6 @@
+@@ -7841,7 +7768,6 @@
                                                      },
                                                      {
                                                          "type": "integer",
@@ -537,7 +541,7 @@
                                                          "enum": [
                                                              0,
                                                              1
-@@ -8366,8 +8302,7 @@
+@@ -8344,8 +8270,7 @@
                                                  ]
                                              },
                                              {
@@ -547,7 +551,7 @@
                                              }
                                          ]
                                      }
-@@ -8483,13 +8418,11 @@
+@@ -8461,13 +8386,11 @@
                                                          "properties": {
                                                              "width": {
                                                                  "minimum": 1,
@@ -563,7 +567,7 @@
                                                              }
                                                          }
                                                      },
-@@ -9925,8 +9858,7 @@
+@@ -9903,8 +9826,7 @@
                                          "exitDelayInSeconds": {
                                              "maximum": 255,
                                              "minimum": 0,
@@ -573,17 +577,18 @@
                                          },
                                          "bypassedEndpoints": {
                                              "type": "array",
-@@ -10098,8 +10030,7 @@
-                                                         "exclusiveMaximum": false,
+@@ -10074,9 +9996,7 @@
+                                                     "value": {
+                                                         "maximum": 86400000,
                                                          "minimum": 0,
-                                                         "exclusiveMinimum": false,
 -                                                        "type": "integer",
 -                                                        "format": "int32"
-+                                                        "type": "integer"
-                                                     }
+-                                                    }
++                                                        "type": "integer"                                                    }
                                                  },
                                                  "additionalProperties": false
-@@ -10424,8 +10355,7 @@
+                                             }
+@@ -10400,8 +10320,7 @@
                                                      },
                                                      "idleTimeoutSeconds": {
                                                          "minimum": 1,
@@ -593,7 +598,7 @@
                                                      },
                                                      "uri": {
                                                          "minLength": 1,
-@@ -10446,13 +10376,11 @@
+@@ -10422,13 +10341,11 @@
                                                          "properties": {
                                                              "width": {
                                                                  "minimum": 1,
@@ -609,7 +614,7 @@
                                                              }
                                                          }
                                                      },
-@@ -10760,8 +10688,7 @@
+@@ -10736,8 +10653,7 @@
                                                      "type": "string"
                                                  },
                                                  "percentageState": {
@@ -619,7 +624,7 @@
                                                  }
                                              },
                                              "additionalProperties": false
-@@ -11080,12 +11007,10 @@
+@@ -11056,12 +10972,10 @@
                                                      "type": "object",
                                                      "properties": {
                                                          "minimumValue": {
@@ -634,7 +639,7 @@
                                                          }
                                                      }
                                                  }
-@@ -11118,8 +11043,7 @@
+@@ -11094,8 +11008,7 @@
                                                              "type": "object",
                                                              "properties": {
                                                                  "value": {
@@ -644,7 +649,7 @@
                                                                  },
                                                                  "scale": {
                                                                      "type": "string",
-@@ -11139,8 +11063,7 @@
+@@ -11115,8 +11028,7 @@
                                                              "type": "object",
                                                              "properties": {
                                                                  "value": {
@@ -654,17 +659,18 @@
                                                                  },
                                                                  "scale": {
                                                                      "type": "string",
-@@ -11265,8 +11188,7 @@
-                                                             "exclusiveMaximum": false,
+@@ -11239,9 +11151,7 @@
+                                                         "value": {
+                                                             "maximum": 100,
                                                              "minimum": -100,
-                                                             "exclusiveMinimum": false,
 -                                                            "type": "number",
 -                                                            "format": "double"
-+                                                            "type": "number"
-                                                         },
+-                                                        },
++                                                            "type": "number"                                                        },
                                                          "scale": {
                                                              "type": "string",
-@@ -11859,8 +11781,7 @@
+                                                             "enum": [
+@@ -11833,8 +11743,7 @@
                              "type": "object",
                              "properties": {
                                  "estimatedDeferralInSeconds": {

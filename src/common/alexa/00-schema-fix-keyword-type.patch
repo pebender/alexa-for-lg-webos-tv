@@ -1,0 +1,109 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 17:26:57.163597009 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 17:26:25.411843618 -0700
+@@ -12475,16 +12475,16 @@
+                                                             ]
+                                                         },
+                                                         "macAddress": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "homeId": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "nodeId": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "value": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         }
+                                                     },
+                                                     "additionalProperties": false
+@@ -12498,23 +12498,23 @@
+                                                         "maxLength": 256
+                                                     },
+                                                     "model": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "serialNumber": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "firmwareVersion": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "softwareVersion": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "customIdentifier": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     }
+                                                 },
+@@ -12693,16 +12693,16 @@
+                                                             ]
+                                                         },
+                                                         "macAddress": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "homeId": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "nodeId": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         },
+                                                         "value": {
+-                                                            "type:": "string"
++                                                            "type": "string"
+                                                         }
+                                                     },
+                                                     "additionalProperties": false
+@@ -12716,23 +12716,23 @@
+                                                         "maxLength": 256
+                                                     },
+                                                     "model": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "serialNumber": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "firmwareVersion": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "softwareVersion": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     },
+                                                     "customIdentifier": {
+-                                                        "type:": "string",
++                                                        "type": "string",
+                                                         "maxLength": 256
+                                                     }
+                                                 },
+@@ -12766,4 +12766,4 @@
+             }
+         }
+     ]
+-}
+\ No newline at end of file
++}

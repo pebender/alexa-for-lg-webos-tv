@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json-schema.org/draft/2019-09/schema#",
     "title": "Alexa Smart Home Message Schema",
     "description": "A JSON message sent from a skill to Alexa, either proactively or as a response to a directive",
     "definitions": {
@@ -114,18 +115,15 @@
                                     "hue": {
                                         "maximum": 360,
                                         "minimum": 0,
-                                        "type": "number"
-                                    },
+                                        "type": "number"                                    },
                                     "saturation": {
                                         "maximum": 1,
                                         "minimum": 0,
-                                        "type": "number"
-                                    },
+                                        "type": "number"                                    },
                                     "brightness": {
                                         "maximum": 1,
                                         "minimum": 0,
-                                        "type": "number"
-                                    }
+                                        "type": "number"                                    }
                                 },
                                 "additionalProperties": false
                             },
@@ -211,8 +209,7 @@
                                     "value": {
                                         "maximum": 100,
                                         "minimum": -100,
-                                        "type": "number"
-                                    },
+                                        "type": "number"                                    },
                                     "scale": {
                                         "type": "string",
                                         "enum": [
@@ -265,8 +262,7 @@
                                     "value": {
                                         "maximum": 100,
                                         "minimum": -100,
-                                        "type": "number"
-                                    },
+                                        "type": "number"                                    },
                                     "scale": {
                                         "type": "string",
                                         "enum": [
@@ -361,8 +357,7 @@
                                     "value": {
                                         "maximum": 100,
                                         "minimum": -100,
-                                        "type": "number"
-                                    },
+                                        "type": "number"                                    },
                                     "scale": {
                                         "type": "string",
                                         "enum": [
@@ -488,8 +483,7 @@
                             "value": {
                                 "maximum": 100,
                                 "minimum": 0,
-                                "type": "integer"
-                            },
+                                "type": "integer"                            },
                             "timeOfSample": {
                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
                             },
@@ -646,8 +640,7 @@
                             "value": {
                                 "maximum": 100,
                                 "minimum": 0,
-                                "type": "integer"
-                            },
+                                "type": "integer"                            },
                             "timeOfSample": {
                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
                             },
@@ -683,8 +676,7 @@
                             "value": {
                                 "maximum": 100,
                                 "minimum": 0,
-                                "type": "integer"
-                            },
+                                "type": "integer"                            },
                             "timeOfSample": {
                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
                             },
@@ -885,8 +877,7 @@
                             "value": {
                                 "maximum": 100,
                                 "minimum": 0,
-                                "type": "integer"
-                            },
+                                "type": "integer"                            },
                             "timeOfSample": {
                                 "$ref": "#/definitions/common/model.StatePropertyBase.TimeOfSample"
                             },
@@ -2678,10 +2669,7 @@
                                         ]
                                     },
                                     "foodQuantity": {
-                                        "type": "object",
-                                        "discriminator": {
-                                            "propertyName": "@type"
-                                        }
+                                        "type": "object"
                                     },
                                     "foodState": {
                                         "type": "string",
@@ -10005,8 +9993,7 @@
                                                     "value": {
                                                         "maximum": 86400000,
                                                         "minimum": 0,
-                                                        "type": "integer"
-                                                    }
+                                                        "type": "integer"                                                    }
                                                 },
                                                 "additionalProperties": false
                                             }
@@ -11161,8 +11148,7 @@
                                                         "value": {
                                                             "maximum": 100,
                                                             "minimum": -100,
-                                                            "type": "number"
-                                                        },
+                                                            "type": "number"                                                        },
                                                         "scale": {
                                                             "type": "string",
                                                             "enum": [
@@ -12369,16 +12355,16 @@
                                                             ]
                                                         },
                                                         "macAddress": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "homeId": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "nodeId": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "value": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         }
                                                     },
                                                     "additionalProperties": false
@@ -12392,23 +12378,23 @@
                                                         "maxLength": 256
                                                     },
                                                     "model": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "serialNumber": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "firmwareVersion": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "softwareVersion": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "customIdentifier": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     }
                                                 },
@@ -12587,16 +12573,16 @@
                                                             ]
                                                         },
                                                         "macAddress": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "homeId": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "nodeId": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         },
                                                         "value": {
-                                                            "type:": "string"
+                                                            "type": "string"
                                                         }
                                                     },
                                                     "additionalProperties": false
@@ -12610,23 +12596,23 @@
                                                         "maxLength": 256
                                                     },
                                                     "model": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "serialNumber": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "firmwareVersion": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "softwareVersion": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     },
                                                     "customIdentifier": {
-                                                        "type:": "string",
+                                                        "type": "string",
                                                         "maxLength": 256
                                                     }
                                                 },

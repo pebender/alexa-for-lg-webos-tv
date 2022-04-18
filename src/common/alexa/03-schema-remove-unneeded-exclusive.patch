@@ -1,116 +1,118 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 11:58:02.292626838 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 13:06:31.120463508 -0700
-@@ -115,23 +115,17 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 15:23:07.556137691 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 15:30:35.868119870 -0700
+@@ -114,25 +114,19 @@
                                  "properties": {
                                      "hue": {
                                          "maximum": 360,
 -                                        "exclusiveMaximum": false,
                                          "minimum": 0,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      },
                                      "saturation": {
                                          "maximum": 1,
 -                                        "exclusiveMaximum": false,
                                          "minimum": 0,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      },
                                      "brightness": {
                                          "maximum": 1,
 -                                        "exclusiveMaximum": false,
                                          "minimum": 0,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      }
-                                 },
-@@ -218,9 +212,7 @@
+@@ -220,9 +214,7 @@
                                  "properties": {
                                      "value": {
                                          "maximum": 100,
 -                                        "exclusiveMaximum": false,
                                          "minimum": -100,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      },
-                                     "scale": {
-@@ -274,9 +266,7 @@
+@@ -277,9 +269,7 @@
                                  "properties": {
                                      "value": {
                                          "maximum": 100,
 -                                        "exclusiveMaximum": false,
                                          "minimum": -100,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      },
-                                     "scale": {
-@@ -372,9 +362,7 @@
+@@ -376,9 +366,7 @@
                                  "properties": {
                                      "value": {
                                          "maximum": 100,
 -                                        "exclusiveMaximum": false,
                                          "minimum": -100,
 -                                        "exclusiveMinimum": false,
-                                         "type": "number"
+                                         "type": "number",
+                                         "format": "double"
                                      },
-                                     "scale": {
-@@ -501,9 +489,7 @@
+@@ -506,9 +494,7 @@
                              },
                              "value": {
                                  "maximum": 100,
 -                                "exclusiveMaximum": false,
                                  "minimum": 0,
 -                                "exclusiveMinimum": false,
-                                 "type": "integer"
+                                 "type": "integer",
+                                 "format": "int32"
                              },
-                             "timeOfSample": {
-@@ -661,9 +647,7 @@
-                             },
-                             "value": {
-                                 "maximum": 100,
--                                "exclusiveMaximum": false,
-                                 "minimum": 0,
--                                "exclusiveMinimum": false,
-                                 "type": "integer"
-                             },
-                             "timeOfSample": {
-@@ -700,9 +684,7 @@
+@@ -668,9 +654,7 @@
                              },
                              "value": {
                                  "maximum": 100,
 -                                "exclusiveMaximum": false,
                                  "minimum": 0,
 -                                "exclusiveMinimum": false,
-                                 "type": "integer"
+                                 "type": "integer",
+                                 "format": "int32"
                              },
-                             "timeOfSample": {
-@@ -904,9 +886,7 @@
+@@ -708,9 +692,7 @@
                              },
                              "value": {
                                  "maximum": 100,
 -                                "exclusiveMaximum": false,
                                  "minimum": 0,
 -                                "exclusiveMinimum": false,
-                                 "type": "integer"
+                                 "type": "integer",
+                                 "format": "int32"
                              },
-                             "timeOfSample": {
-@@ -10027,9 +10007,7 @@
+@@ -914,9 +896,7 @@
+                             },
+                             "value": {
+                                 "maximum": 100,
+-                                "exclusiveMaximum": false,
+                                 "minimum": 0,
+-                                "exclusiveMinimum": false,
+                                 "type": "integer",
+                                 "format": "int32"
+                             },
+@@ -10093,9 +10073,7 @@
                                                      },
                                                      "value": {
                                                          "maximum": 86400000,
 -                                                        "exclusiveMaximum": false,
                                                          "minimum": 0,
 -                                                        "exclusiveMinimum": false,
-                                                         "type": "integer"
+                                                         "type": "integer",
+                                                         "format": "int32"
                                                      }
-                                                 },
-@@ -11185,9 +11163,7 @@
+@@ -11260,9 +11238,7 @@
                                                      "properties": {
                                                          "value": {
                                                              "maximum": 100,
 -                                                            "exclusiveMaximum": false,
                                                              "minimum": -100,
 -                                                            "exclusiveMinimum": false,
-                                                             "type": "number"
+                                                             "type": "number",
+                                                             "format": "double"
                                                          },
-                                                         "scale": {

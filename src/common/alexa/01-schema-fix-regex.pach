@@ -1,6 +1,6 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 11:53:17.680638152 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 11:56:58.232629385 -0700
-@@ -10137,7 +10137,7 @@
+--- alexa_smart_home_message_schema.json.old	2022-04-17 15:21:41.888143686 -0700
++++ alexa_smart_home_message_schema.json.new	2022-04-17 15:22:11.044139937 -0700
+@@ -10206,7 +10206,7 @@
                                                  "properties": {
                                                      "id": {
                                                          "type": "string",
@@ -9,7 +9,7 @@
                                                          "minLength": 1,
                                                          "maxLength": 256
                                                      },
-@@ -12039,7 +12039,7 @@
+@@ -12118,7 +12118,7 @@
                                              "properties": {
                                                  "id": {
                                                      "type": "string",
@@ -18,7 +18,7 @@
                                                      "minLength": 1,
                                                      "maxLength": 256
                                                  },
-@@ -12219,7 +12219,7 @@
+@@ -12298,7 +12298,7 @@
                                              "minItems": 1,
                                              "items": {
                                                  "type": "string",
