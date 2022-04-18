@@ -6,6 +6,7 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
+import * as Debug from '../common/debug'
 import { Backend } from './lib/backend'
 import { constants } from '../common/constants'
 import { DatabaseTable } from './lib/database'
@@ -21,15 +22,8 @@ export async function startBridge (): Promise<void> {
   try {
     await fs.mkdir(configurationDir, { recursive: true })
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(`error: ${error.name}: ${error.message}`)
-    } else {
-      if ('code' in (error as any)) {
-        console.log(`error: ${(error as any).code}`)
-      } else {
-        console.log('error: unknown')
-      }
-    }
+    Debug.debugErrorWithStack(error)
+    throw Error
   }
 
   let authorizedEmails: string[] = []
@@ -40,15 +34,8 @@ export async function startBridge (): Promise<void> {
       authorizedEmails = config.authorizedEmails
     }
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(`error: ${error.name}: ${error.message}`)
-    } else {
-      if ('code' in (error as any)) {
-        console.log(`error: ${(error as any).code}`)
-      } else {
-        console.log('error: unknown')
-      }
-    }
+    Debug.debugErrorWithStack(error)
+    process.exit(1)
   }
 
   //
@@ -63,8 +50,8 @@ export async function startBridge (): Promise<void> {
   await frontendDb.initialize()
   const backend = new Backend(backendDb)
   backend.on('error', (error: Error, id: string): void => {
-    console.log(id)
-    console.log(error)
+    Debug.debug(id)
+    Debug.debugErrorWithStack(error)
   })
   await backend.initialize()
   const frontendAuthorization = new FrontendAuthorization(authorizedEmails, frontendDb)

@@ -31,10 +31,5 @@ export const constants = {
       https: 25392
     },
     path: `/${applicationNameSafe}`
-  },
-  development: {
-    skill: {
-      debug: true
-    }
   }
 }

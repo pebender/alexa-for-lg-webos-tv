@@ -1,3 +1,4 @@
+import * as Debug from '../../../common/debug'
 import { BaseClass } from '../base-class'
 import { FrontendAuthorization } from './frontend-authorization'
 import { FrontendExternal } from './frontend-external'
@@ -18,15 +19,8 @@ export class Frontend extends BaseClass {
       try {
         await that._external.initialize()
       } catch (error) {
-        if (error instanceof Error) {
-          console.log(`error: ${error.name}: ${error.message}`)
-          if ('stack' in Error) {
-            console.log(error.stack)
-          }
-        } else {
-          console.log('error: unknown')
-          process.exit(1)
-        }
+        Debug.debugErrorWithStack(error)
+        process.exit(1)
       }
     }
 

@@ -1,4 +1,5 @@
 import { constants } from '../../../common/constants'
+import * as Debug from '../../../common/debug'
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
 import * as Database from '../database'
@@ -57,22 +58,24 @@ const SetHostnameIntentHandler = {
         })
       })
     }
-    console.log(JSON.stringify(handlerInput.requestEnvelope))
+    Debug.debugJSON(handlerInput.requestEnvelope)
 
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
 
     if (typeof handlerInput.requestEnvelope.request === 'undefined') {
       const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: request undefined'
-      console.log(errorMessage)
-      throw new Error(errorMessage)
+      const error = new Error(errorMessage)
+      Debug.debugErrorWithStack(error)
+      throw error
     }
 
     const intentRequest = (handlerInput.requestEnvelope.request as ASKModel.IntentRequest)
 
     if (typeof intentRequest.intent.slots === 'undefined') {
       const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: intents has no slots'
-      console.log(errorMessage)
-      throw new Error(errorMessage)
+      const error = new Error(errorMessage)
+      Debug.debugErrorWithStack(error)
+      throw error
     }
 
     if ((typeof intentRequest.intent.slots.ipAddressValid === 'undefined') ||
@@ -82,12 +85,13 @@ const SetHostnameIntentHandler = {
         (typeof intentRequest.intent.slots.ipAddressD === 'undefined') ||
         (typeof intentRequest.intent.slots.hostnameIndex === 'undefined')) {
       const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: missing slot(s)'
-      console.log(errorMessage)
-      throw new Error(errorMessage)
+      const error = new Error(errorMessage)
+      Debug.debugErrorWithStack(error)
+      throw error
     }
 
     const dialogState: ASKModel.DialogState = ASKCore.getDialogState(handlerInput.requestEnvelope)
-    console.log(`dialogState: ${dialogState}`)
+    Debug.debug(`dialogState: ${dialogState}`)
 
     const ipAddressValidString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressValid')
     const ipAddressAString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')
@@ -95,7 +99,7 @@ const SetHostnameIntentHandler = {
     const ipAddressCString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')
     const ipAddressDString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')
     const hostnameIndexString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
-    console.log(`(dirty) set: ${ipAddressValidString}, address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
+    Debug.debug(`(dirty) set: ${ipAddressValidString}, address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
 
     const ipAddressA: Number = Number(ipAddressAString)
     const ipAddressB: Number = Number(ipAddressBString)
@@ -104,7 +108,7 @@ const SetHostnameIntentHandler = {
     const hostnameIndex: Number = Number(hostnameIndexString)
     const ipAddressValid: Boolean = (typeof ipAddressValidString !== 'undefined') && (ipAddressValidString.toLowerCase() === 'yes')
 
-    console.log(`(clean) set: ${ipAddressValid}, address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`)
+    Debug.debug(`(clean) set: ${ipAddressValid}, address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`)
 
     if (dialogState === 'STARTED') {
       Reflect.deleteProperty(sessionAttributes, 'ipAddress')
@@ -165,11 +169,11 @@ const SetHostnameIntentHandler = {
         sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        console.log(`LGTV_SetHostnameIntent: IPv4 address is ${sessionAttributes.hostname}`)
+        Debug.debug(`LGTV_SetHostnameIntent: IPv4 address is ${sessionAttributes.hostname}`)
         try {
           sessionAttributes.hostnames = await getHostnames(sessionAttributes.ipAddress, 25392)
         } catch (error) {
-          console.log(`LGTV_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
+          Debug.debug(`LGTV_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
             const cardTitle = `${constants.application.name.pretty} Error`
             const cardContent = 'I heard the I.P. Address: ' +
@@ -191,7 +195,7 @@ const SetHostnameIntentHandler = {
               .getResponse()
           }
         }
-        console.log(`LGTV_SetHostnameIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
+        Debug.debug(`LGTV_SetHostnameIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
         const cardTitle = 'Bridge  Hostname Configuration'
         let cardContent: string = ''
         let index = 0
@@ -203,7 +207,7 @@ const SetHostnameIntentHandler = {
         index += 1
         cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        console.log(`LGTV_SetHostnameIntent: bridge FQDN prompt: ${cardContent}`)
+        Debug.debug(`LGTV_SetHostnameIntent: bridge FQDN prompt: ${cardContent}`)
         const speechOutput = 'Thank you. ' +
             'Now, could you look at the card in your Alexa App and ' +
             'tell me the number next to your bridge\'s hostname?'
@@ -250,13 +254,15 @@ const SetHostnameIntentHandler = {
     if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
         const apiAccessToken = ASKCore.getApiAccessToken(handlerInput.requestEnvelope)
-        console.log(`apiAccessToken: ${apiAccessToken}`)
+        if (process.env.NODE_DEV === 'development') {
+          Debug.debug(`apiAccessToken: ${apiAccessToken}`)
+        }
         const email = await getUserEmail(apiAccessToken)
-        console.log(`email: ${JSON.stringify(email, null, 2)}`)
+        Debug.debug(`email: ${email}`)
         const hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
         try {
           await Database.setHostname(email, hostname)
-          console.log('success')
+          Debug.debug('success')
         } catch (error) {
           let message: string = 'Unknown'
           if (error instanceof Error) {
@@ -266,7 +272,7 @@ const SetHostnameIntentHandler = {
               message = (error as any).code
             }
           }
-          console.log(`LGTV_SetHostnameIntent Error: update hostname: ${message}`)
+          Debug.debug(`LGTV_SetHostnameIntent Error: update hostname: ${message}`)
         }
 
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')

@@ -1,3 +1,4 @@
+import * as Debug from '../debug'
 import { AlexaRequest } from './request'
 import { AlexaResponse } from './response'
 
@@ -31,6 +32,10 @@ export class AlexaError {
       })
     }
     Error.captureStackTrace(this)
+
+    Debug.debug(`error: ${message} (${type}).`)
+    Debug.debugJSON(this.response)
+    Debug.debug(this.stack)
   }
 }
 

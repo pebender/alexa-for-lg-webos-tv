@@ -1,6 +1,7 @@
 import * as Database from './database'
 import * as ASH from '../../common/alexa'
 import { constants } from '../../common/constants'
+import * as Debug from '../../common/debug'
 import https from 'https'
 
 export interface Request {
@@ -16,7 +17,7 @@ export interface Response {
 }
 
 async function getBridgeHostname (alexaRequest: ASH.AlexaRequest): Promise<string> {
-  console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
+  Debug.debug(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
 
   async function queryBridgeHostname (ashToken: string): Promise<string | null> {
     let hostname
@@ -151,7 +152,7 @@ export async function sendSkillDirective (request: ASH.AlexaRequest): Promise<AS
     const response = await sendHandler(ashPath, request, request)
     if (response instanceof ASH.AlexaError) {
       if ((outputStack) && ('stack' in (response as any))) {
-        console.log((response as any).stack)
+        Debug.debug((response as any).stack)
       }
       return response.response
     }
@@ -159,7 +160,7 @@ export async function sendSkillDirective (request: ASH.AlexaRequest): Promise<AS
   } catch (error) {
     const response = ASH.errorResponseFromError(request, error)
     if ((outputStack) && ('stack' in (response as any))) {
-      console.log((response as any).stack)
+      Debug.debug((response as any).stack)
     }
     return response.response
   }

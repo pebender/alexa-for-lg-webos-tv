@@ -1,6 +1,7 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb'
 import https from 'https'
 import { constants } from '../../common/constants'
+import * as Debug from '../../common/debug'
 
 let dynamoDBDocumentClient: DynamoDB.DocumentClient
 
@@ -29,7 +30,14 @@ export async function setHostname (email: string, hostname: string): Promise<voi
     ExpressionAttributeValues: { ':newHostname': hostname }
 
   }
-  await database.update(hostnameUpdateParams).promise()
+  Debug.debug(hostnameUpdateParams)
+  Debug.debugJSON(hostnameUpdateParams)
+  try {
+    await database.update(hostnameUpdateParams).promise()
+  } catch (error) {
+    Debug.debugErrorWithStack(error)
+    throw error
+  }
 }
 
 export async function getHostname (ashToken: string): Promise<string | null> {
@@ -43,12 +51,19 @@ export async function getHostname (ashToken: string): Promise<string | null> {
     ExpressionAttributeValues: { ':ashToken_value': ashToken }
   }
 
-  const data = await database.query(ashTokenQueryParams).promise()
+  let data
+  try {
+    data = await database.query(ashTokenQueryParams).promise()
+  } catch (error) {
+    Debug.debugErrorWithStack(error)
+    throw error
+  }
 
-  if ((typeof data.Count !== 'undefined') && (data.Count > 0) &&
-    (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
+  if ((typeof data !== 'undefined') &&
+      (typeof data.Count !== 'undefined') && (data.Count > 0) &&
+      (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
     const hostname = (data.Items[0].hostname as string)
-    console.log(`getBridgeHostname: queryBridgeHostname: hostname: ${hostname}`)
+    Debug.debug(`getBridgeHostname: queryBridgeHostname: hostname: ${hostname}`)
     return hostname
   }
 
@@ -65,5 +80,10 @@ export async function setASHToken (email: string, ashToken: string): Promise<voi
     ExpressionAttributeValues: { ':newAshToken': ashToken }
   }
 
-  await database.update(ashTokenUpdateParams).promise()
+  try {
+    await database.update(ashTokenUpdateParams).promise()
+  } catch (error) {
+    Debug.debugErrorWithStack(error)
+    throw error
+  }
 }

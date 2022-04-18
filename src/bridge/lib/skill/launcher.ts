@@ -76,7 +76,7 @@ async function launchTargetHandler (alexaRequest: ASH.AlexaRequest, backendContr
       title: app.title,
       id: app.id
     }
-    console.log(`${JSON.stringify(output)},`)
+    Debug.debugJSON(output)
   })
   */
   return new ASH.AlexaResponse({

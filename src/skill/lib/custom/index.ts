@@ -1,6 +1,7 @@
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
 import { constants } from '../../../common/constants'
+import * as Debug from '../../../common/debug'
 import * as LGTVSetHostname from './lgtv-set-hostname'
 
 const LaunchRequestHandler = {
@@ -27,7 +28,7 @@ const HelpIntentHandler = {
       .speak(speechOutput)
       .reprompt(speechOutput)
       .getResponse()
-    console.log(JSON.stringify(response))
+    Debug.debug(JSON.stringify(response))
     return response
   }
 }
@@ -94,7 +95,8 @@ const ErrorHandler = {
   },
   handle (handlerInput: ASKCore.HandlerInput, error: Error): ASKModel.Response {
     const speechOutput = 'Sorry, I can\'t understand the command. Please say again.'
-    console.log(`~~~~ Error handled: ${error.name} - ${error.message}: ${JSON.stringify(handlerInput)}`)
+    Debug.debugError(error)
+    Debug.debugJSON(handlerInput)
     return handlerInput.responseBuilder
       .speak(speechOutput)
       .reprompt(speechOutput)
