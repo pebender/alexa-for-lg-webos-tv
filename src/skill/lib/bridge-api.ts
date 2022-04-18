@@ -1,6 +1,6 @@
+import * as Database from './database'
 import * as ASH from '../../common/alexa'
 import { constants } from '../../common/constants'
-import { DynamoDB } from 'aws-sdk'
 import https from 'https'
 
 export interface Request {
@@ -18,76 +18,37 @@ export interface Response {
 async function getBridgeHostname (alexaRequest: ASH.AlexaRequest): Promise<string> {
   console.log(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
 
-  const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
-
-  async function queryBridgeHostname (dynamoDBDocumentClient: DynamoDB.DocumentClient, ashToken: string): Promise<string | null> {
-    const ashTokenQueryParams = {
-      TableName: constants.aws.dynamoDB.tableName,
-      IndexName: constants.aws.dynamoDB.indexName,
-      KeyConditionExpression: '#ashToken = :ashToken_value',
-      ExpressionAttributeNames: { '#ashToken': 'ashToken' },
-      ExpressionAttributeValues: { ':ashToken_value': ashToken }
-    }
-    console.log(`getBridgeHostname: queryBridgeHostname: Params: ${JSON.stringify(ashTokenQueryParams)}`)
-    let data
+  async function queryBridgeHostname (ashToken: string): Promise<string | null> {
+    let hostname
     try {
-      data = await dynamoDBDocumentClient.query(ashTokenQueryParams).promise()
+      hostname = await Database.getHostname(ashToken)
+      if (hostname !== null) {
+        return hostname
+      } else {
+        return null
+      }
     } catch (error) {
       throw ASH.errorResponseFromError(alexaRequest, error)
     }
-    console.log(`getBridgeHostname ashToken Query result: ${JSON.stringify(data)}`)
-    if ((typeof data.Count !== 'undefined') && (data.Count > 0) &&
-        (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
-      const hostname = (data.Items[0].hostname as string)
-      console.log(`getBridgeHostname: queryBridgeHostname: hostname: ${hostname}`)
-      return hostname
-    }
-
-    return null
   }
 
-  async function setASHToken (dynamoDBDocumentClient: DynamoDB.DocumentClient, ashToken: string): Promise<void> {
-    let email: string | null = null
+  async function setASHToken (email: string, ashToken: string): Promise<void> {
     try {
-      email = await alexaRequest.getUserEmail()
+      await Database.setASHToken(email, ashToken)
     } catch (error) {
       throw ASH.errorResponseFromError(alexaRequest, error)
-    }
-    if (email === null) {
-      throw Error()
-    }
-    console.log(`getBridgeHostname: setASHToken: email: ${email}`)
-    const ashTokenUpdateParams = {
-      TableName: constants.aws.dynamoDB.tableName,
-      Key: { email },
-      UpdateExpression: 'set ashToken = :newAshToken',
-      ExpressionAttributeValues: { ':newAshToken': ashToken }
-    }
-    console.log(`getBridgeHostname: setASHToken: Params: ${JSON.stringify(ashTokenUpdateParams)}`)
-    try {
-      await dynamoDBDocumentClient.update(ashTokenUpdateParams).promise()
-    } catch (error) {
-      let message: string = 'Unknown'
-      if (error instanceof Error) {
-        message = `${error.name} - ${error.message}`
-      } else {
-        if ('code' in (error as any)) {
-          message = (error as any).code
-        }
-      }
-      console.log(`getBridgeHostname: setASHToken: Error: ${message}`)
-      throw Error()
     }
   }
 
   const ashToken = alexaRequest.getBearerToken()
   let hostname: string | null = null
-  hostname = await queryBridgeHostname(dynamoDBDocumentClient, ashToken)
+  hostname = await queryBridgeHostname(ashToken)
   if (hostname !== null) {
     return hostname
   }
-  await setASHToken(dynamoDBDocumentClient, ashToken)
-  hostname = await queryBridgeHostname(dynamoDBDocumentClient, ashToken)
+  const email = await alexaRequest.getUserEmail()
+  await setASHToken(email, ashToken)
+  hostname = await await queryBridgeHostname(ashToken)
   if (hostname !== null) {
     return hostname
   }

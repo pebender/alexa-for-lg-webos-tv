@@ -1,7 +1,7 @@
 import { constants } from '../../../common/constants'
 import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
-import { DynamoDB } from 'aws-sdk'
+import * as Database from '../database'
 import * as https from 'https'
 import tls from 'tls'
 const certnames = require('certnames')
@@ -254,15 +254,8 @@ const SetHostnameIntentHandler = {
         const email = await getUserEmail(apiAccessToken)
         console.log(`email: ${JSON.stringify(email, null, 2)}`)
         const hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
-        const dynamoDBDocumentClient = new DynamoDB.DocumentClient({ region: constants.aws.region })
-        const hostnameUpdateParams = {
-          TableName: constants.aws.dynamoDB.tableName,
-          Key: { email },
-          UpdateExpression: 'set hostname = :newHostname',
-          ExpressionAttributeValues: { ':newHostname': hostname }
-        }
         try {
-          await dynamoDBDocumentClient.update(hostnameUpdateParams).promise()
+          await Database.setHostname(email, hostname)
           console.log('success')
         } catch (error) {
           let message: string = 'Unknown'

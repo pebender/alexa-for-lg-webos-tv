@@ -88,7 +88,7 @@ export class AlexaRequest {
     }
   }
 
-  public async getUserEmail (): Promise<string | null> {
+  public async getUserEmail (): Promise<string> {
     const userProfile = await this.getUserProfile()
     return userProfile.email
   }
