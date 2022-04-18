@@ -12,7 +12,9 @@ import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../skill'
 import schema from '../../../common/alexa/alexa_smart_home_message_schema.json'
 import * as ASH from '../../../common/alexa'
-import Ajv from 'ajv'
+import Ajv from 'ajv/dist/2019'
+import * as AjvTypes from 'ajv'
+import ajvFormats from 'ajv-formats'
 import express from 'express'
 import expressCore from 'express-serve-static-core'
 import * as httpErrors from 'http-errors'
@@ -21,15 +23,39 @@ const { auth } = require('express-oauth2-bearer')
 export class FrontendExternal extends BaseClass {
   private readonly _authorization: FrontendAuthorization
   private readonly _smartHomeSkill: SmartHomeSkill
-  private readonly _ajv: Ajv.Ajv
-  private readonly _schemaValidator: Ajv.ValidateFunction
+  private readonly _ajv: Ajv
+  private readonly _schemaValidator: AjvTypes.ValidateFunction
   private readonly _server: expressCore.Express
   public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
     super()
 
     this._authorization = frontendAuthorization
     this._smartHomeSkill = smartHomeSkill
-    this._ajv = new Ajv()
+    // 'strictTypes: false' suppresses the warning:
+    //   strict mode: missing type "object" for keyword "additionalProperties"
+    this._ajv = new Ajv({
+      strictTypes: false,
+      discriminator: true
+    })
+    // ajv-formats does not support the following formats defined in draft-2019-09
+    //   'idn-email', 'idn-hostname', 'iri', 'iri-reference'
+    ajvFormats(this._ajv, [
+      'date-time',
+      'date',
+      'time',
+      'duration',
+      'email',
+      'hostname',
+      'ipv4',
+      'ipv6',
+      'uri',
+      'uri-reference',
+      'uri-template',
+      'uuid',
+      'json-pointer',
+      'relative-json-pointer',
+      'regex'
+    ])
     this._schemaValidator = this._ajv.compile(schema)
     this._server = express()
   }

@@ -18,7 +18,8 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "ajv": "^6.12.6",
+    "ajv": "8.11.0",
+    "ajv-formats": "2.1.1",
     "async-mutex": "0.3.2",
     "axios": "0.26.1",
     "express": "4.17.3",
@@ -43,6 +44,7 @@
   },
   "bundledDependencies": [
     "ajv",
+    "ajv-formats",
     "async-mutex",
     "axios",
     "express",
