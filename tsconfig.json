@@ -1,6 +1,6 @@
 {
     "include": [
-        "./**/*"
+        "./src/**/*"
     ],
     "exclude": [
 
@@ -23,14 +23,18 @@
         "baseUrl": ".",
         "paths": {
             "*": [
-                "../src/skill/types/*",
-                "../src/bridge/types/*",
-                "../src/common/types/*",
-                "../pkg/skill/node_modules/*",
-                "../pkg/bridge/node_modules/*",
-                "../pkg/skill/node_modules/@types/*",
-                "../pkg/bridge/node_modules/@types/*"
+                "src/skill/types/*",
+                "src/bridge/types/*",
+                "src/common/types/*",
+                "pkg/skill/node_modules/*",
+                "pkg/bridge/node_modules/*",
+                "pkg/skill/node_modules/@types/*",
+                "pkg/bridge/node_modules/@types/*"
             ]
         }
+    },
+    "typedocOptions": {
+        "entryPoints": ["src/common/index.ts", "src/skill/index.ts", "src/bridge/index.ts"],
+        "out": "docs"
     }
 }
