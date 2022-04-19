@@ -1,4 +1,4 @@
-import * as ASH from '../../../common/smart-home-skill'
+import * as Common from '../../../common'
 import * as alexa from './alexa'
 import * as alexaAuthorization from './authorization'
 import * as alexaChannelController from './channel-controller'
@@ -15,7 +15,7 @@ import {
 import { FrontendAuthorization } from '../frontend/frontend-authorization'
 
 interface HandlerFunction {
-  (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse>;
+  (alexaRequest: Common.SHS.AlexaRequest, backendControl: BackendControl): Promise<Common.SHS.AlexaResponse>;
 }
 
 const handlers: {
@@ -30,7 +30,7 @@ const handlers: {
   'Alexa.Speaker': alexaSpeaker.handler
 }
 
-function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities (backendControl: BackendControl): Promise<Common.SHS.AlexaResponseEventPayloadEndpointCapability>[] {
   return [
     ...alexa.capabilities(backendControl),
     ...alexaPowerController.capabilities(backendControl),
@@ -42,7 +42,7 @@ function capabilities (backendControl: BackendControl): Promise<ASH.AlexaRespons
   ]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<Common.SHS.AlexaResponseContextProperty>[] {
   return [
     ...alexa.states(backendControl),
     ...alexaPowerController.states(backendControl),
@@ -54,7 +54,7 @@ function states (backendControl: BackendControl): Promise<ASH.AlexaResponseConte
   ]
 }
 
-async function addStates (alexaResponse: ASH.AlexaResponse, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+async function addStates (alexaResponse: Common.SHS.AlexaResponse, backendControl: BackendControl): Promise<Common.SHS.AlexaResponse> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
       if (typeof state === 'undefined' || state === null ||
@@ -69,20 +69,20 @@ async function addStates (alexaResponse: ASH.AlexaResponse, backendControl: Back
   }
 }
 
-async function privateHandler (event: ASH.AlexaRequest, authorization: FrontendAuthorization, backend: Backend): Promise<ASH.AlexaResponse> {
-  const alexaRequest = new ASH.AlexaRequest(event)
+async function privateHandler (event: Common.SHS.AlexaRequest, authorization: FrontendAuthorization, backend: Backend): Promise<Common.SHS.AlexaResponse> {
+  const alexaRequest = new Common.SHS.AlexaRequest(event)
 
   const bearerToken: string = alexaRequest.getBearerToken()
   try {
     const authorized = await authorization.authorize(bearerToken)
     if (!authorized) {
-      throw ASH.errorResponse(alexaRequest, 401, 'INVALID_AUTHORIZATION_CREDENTIAL', '')
+      throw Common.SHS.errorResponse(alexaRequest, 401, 'INVALID_AUTHORIZATION_CREDENTIAL', '')
     }
   } catch (error) {
-    if (error instanceof ASH.AlexaError) {
+    if (error instanceof Common.SHS.AlexaError) {
       throw error
     } else {
-      throw ASH.errorResponse(
+      throw Common.SHS.errorResponse(
         alexaRequest,
         500,
         'INTERNAL_ERROR',
@@ -99,7 +99,7 @@ async function privateHandler (event: ASH.AlexaRequest, authorization: FrontendA
     default: {
       const udn = alexaRequest.getEndpointId()
       if (typeof udn === 'undefined') {
-        throw ASH.errorResponse(
+        throw Common.SHS.errorResponse(
           alexaRequest,
           400,
           'NO_SUCH_ENDPOINT',
@@ -109,7 +109,7 @@ async function privateHandler (event: ASH.AlexaRequest, authorization: FrontendA
 
       const backendControl = backend.control(udn)
       if (typeof backendControl === 'undefined') {
-        throw ASH.errorResponse(
+        throw Common.SHS.errorResponse(
           alexaRequest,
           400,
           'NO_SUCH_ENDPOINT',
@@ -118,24 +118,24 @@ async function privateHandler (event: ASH.AlexaRequest, authorization: FrontendA
       }
 
       if (!(alexaRequest.directive.header.namespace in handlers)) {
-        throw ASH.errorResponseForInvalidDirectiveNamespace(alexaRequest)
+        throw Common.SHS.errorResponseForInvalidDirectiveNamespace(alexaRequest)
       }
 
       const controllerHandler = handlers[alexaRequest.directive.header.namespace]
-      let handlerResponse: ASH.AlexaResponse
+      let handlerResponse: Common.SHS.AlexaResponse
       try {
         handlerResponse = await controllerHandler(alexaRequest, backendControl)
       } catch (error) {
-        if (error instanceof ASH.AlexaError) {
+        if (error instanceof Common.SHS.AlexaError) {
           handlerResponse = error.response
         } else {
-          handlerResponse = ASH.errorResponseFromError(alexaRequest, error).response
+          handlerResponse = Common.SHS.errorResponseFromError(alexaRequest, error).response
         }
       }
       try {
         return await addStates(handlerResponse, backendControl)
       } catch (error) {
-        throw ASH.errorResponse(
+        throw Common.SHS.errorResponse(
           alexaRequest,
           500,
           'INTERNAL_ERROR',
@@ -154,7 +154,7 @@ export class SmartHomeSkill {
     this._backend = backend
   }
 
-  public async handler (alexaRequest: ASH.AlexaRequest): Promise<ASH.AlexaResponse> {
+  public async handler (alexaRequest: Common.SHS.AlexaRequest): Promise<Common.SHS.AlexaResponse> {
     return await privateHandler(alexaRequest, this._authorization, this._backend)
   }
 }

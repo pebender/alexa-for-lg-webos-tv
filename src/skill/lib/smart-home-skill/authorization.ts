@@ -1,7 +1,7 @@
-import * as ASH from '../../../common/smart-home-skill'
+import * as Common from '../../../common'
 
-function handler (alexaRequest: ASH.AlexaRequest): Promise<ASH.AlexaResponse> {
-  throw ASH.errorResponseForInvalidDirectiveNamespace(alexaRequest)
+function handler (alexaRequest: Common.SHS.AlexaRequest): Promise<Common.SHS.AlexaResponse> {
+  throw Common.SHS.errorResponseForInvalidDirectiveNamespace(alexaRequest)
 }
 
 export { handler }

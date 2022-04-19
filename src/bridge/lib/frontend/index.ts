@@ -1,4 +1,4 @@
-import * as Debug from '../../../common/debug'
+import * as Common from '../../../common'
 import { BaseClass } from '../base-class'
 import { FrontendAuthorization } from './frontend-authorization'
 import { FrontendExternal } from './frontend-external'
@@ -19,7 +19,7 @@ export class Frontend extends BaseClass {
       try {
         await that._external.initialize()
       } catch (error) {
-        Debug.debugErrorWithStack(error)
+        Common.Debug.debugErrorWithStack(error)
         process.exit(1)
       }
     }

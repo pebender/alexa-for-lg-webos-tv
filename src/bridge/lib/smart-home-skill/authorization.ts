@@ -1,16 +1,16 @@
-import * as ASH from '../../../common/smart-home-skill'
+import * as Common from '../../../common'
 import { Backend } from '../backend'
 
-function capabilities (backend: Backend): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities (backend: Backend): Promise<Common.SHS.AlexaResponseEventPayloadEndpointCapability>[] {
   return []
 }
 
-function states (backend: Backend): Promise<ASH.AlexaResponseContextProperty>[] {
+function states (backend: Backend): Promise<Common.SHS.AlexaResponseContextProperty>[] {
   return []
 }
 
-function handler (alexaRequest: ASH.AlexaRequest, backend: Backend): ASH.AlexaResponse {
-  throw ASH.errorResponse(alexaRequest, null, 'INVALID_DIRECTIVE', '')
+function handler (alexaRequest: Common.SHS.AlexaRequest, backend: Backend): Common.SHS.AlexaResponse {
+  throw Common.SHS.errorResponse(alexaRequest, null, 'INVALID_DIRECTIVE', '')
 }
 
 export { capabilities, states, handler }

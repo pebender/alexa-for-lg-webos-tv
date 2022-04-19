@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb'
 import https from 'https'
-import { constants } from '../../common/constants'
+import * as Common from '../../common'
 import * as Debug from '../../common/debug'
 
 let dynamoDBDocumentClient: DynamoDB.DocumentClient
@@ -14,7 +14,7 @@ function getDatabase (): DynamoDB.DocumentClient {
       httpOptions: {
         agent
       },
-      region: constants.aws.region
+      region: Common.constants.aws.region
     })
   }
   return dynamoDBDocumentClient
@@ -24,7 +24,7 @@ export async function setHostname (email: string, hostname: string): Promise<voi
   const database = getDatabase()
 
   const hostnameUpdateParams = {
-    TableName: constants.aws.dynamoDB.tableName,
+    TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
     UpdateExpression: 'set hostname = :newHostname',
     ExpressionAttributeValues: { ':newHostname': hostname }
@@ -44,8 +44,8 @@ export async function getHostname (ashToken: string): Promise<string | null> {
   const database = getDatabase()
 
   const ashTokenQueryParams = {
-    TableName: constants.aws.dynamoDB.tableName,
-    IndexName: constants.aws.dynamoDB.indexName,
+    TableName: Common.constants.aws.dynamoDB.tableName,
+    IndexName: Common.constants.aws.dynamoDB.indexName,
     KeyConditionExpression: '#ashToken = :ashToken_value',
     ExpressionAttributeNames: { '#ashToken': 'ashToken' },
     ExpressionAttributeValues: { ':ashToken_value': ashToken }
@@ -74,7 +74,7 @@ export async function setASHToken (email: string, ashToken: string): Promise<voi
   const database = getDatabase()
 
   const ashTokenUpdateParams = {
-    TableName: constants.aws.dynamoDB.tableName,
+    TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
     UpdateExpression: 'set ashToken = :newAshToken',
     ExpressionAttributeValues: { ':newAshToken': ashToken }

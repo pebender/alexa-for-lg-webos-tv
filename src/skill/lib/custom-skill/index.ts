@@ -2,8 +2,7 @@ import * as ASKModel from 'ask-sdk-model'
 import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/request/handler/HandlerInput'
 import { SkillBuilders as ASKSkillBuilders } from 'ask-sdk-core/dist/skill/SkillBuilders.js'
 import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
-import { constants } from '../../../common/constants'
-import * as Debug from '../../../common/debug'
+import * as Common from '../../../common'
 import * as LGTVSetHostname from './lgtv-set-hostname'
 
 const LaunchRequestHandler = {
@@ -30,7 +29,7 @@ const HelpIntentHandler = {
       .speak(speechOutput)
       .reprompt(speechOutput)
       .getResponse()
-    Debug.debug(JSON.stringify(response))
+    Common.Debug.debug(JSON.stringify(response))
     return response
   }
 }
@@ -97,8 +96,8 @@ const ErrorHandler = {
   },
   handle (handlerInput: ASKHandlerInput, error: Error): ASKModel.Response {
     const speechOutput = 'Sorry, I can\'t understand the command. Please say again.'
-    Debug.debugError(error)
-    Debug.debugJSON(handlerInput)
+    Common.Debug.debugError(error)
+    Common.Debug.debugJSON(handlerInput)
     return handlerInput.responseBuilder
       .speak(speechOutput)
       .reprompt(speechOutput)
@@ -111,7 +110,7 @@ const skillHandler = async function (request: ASKModel.RequestEnvelope, context:
   return ASKSkillBuilders.custom()
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
-    .withCustomUserAgent(constants.application.name.safe)
+    .withCustomUserAgent(Common.constants.application.name.safe)
     .create()
     .invoke(request, context)
 }

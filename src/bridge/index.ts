@@ -6,9 +6,8 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
-import * as Debug from '../common/debug'
+import * as Common from '../common'
 import { Backend } from './lib/backend'
-import { constants } from '../common/constants'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
 import { SmartHomeSkill } from './lib/smart-home-skill'
@@ -17,12 +16,12 @@ import { FrontendAuthorization } from './lib/frontend/frontend-authorization'
 const persistPath = require('persist-path')
 
 export async function startBridge (): Promise<void> {
-  const configurationDir = persistPath(constants.application.name.safe)
+  const configurationDir = persistPath(Common.constants.application.name.safe)
 
   try {
     await fs.mkdir(configurationDir, { recursive: true })
   } catch (error) {
-    Debug.debugErrorWithStack(error)
+    Common.Debug.debugErrorWithStack(error)
     throw Error
   }
 
@@ -34,7 +33,7 @@ export async function startBridge (): Promise<void> {
       authorizedEmails = config.authorizedEmails
     }
   } catch (error) {
-    Debug.debugErrorWithStack(error)
+    Common.Debug.debugErrorWithStack(error)
     process.exit(1)
   }
 
@@ -50,8 +49,8 @@ export async function startBridge (): Promise<void> {
   await frontendDb.initialize()
   const backend = new Backend(backendDb)
   backend.on('error', (error: Error, id: string): void => {
-    Debug.debug(id)
-    Debug.debugErrorWithStack(error)
+    Common.Debug.debug(id)
+    Common.Debug.debugErrorWithStack(error)
   })
   await backend.initialize()
   const frontendAuthorization = new FrontendAuthorization(authorizedEmails, frontendDb)

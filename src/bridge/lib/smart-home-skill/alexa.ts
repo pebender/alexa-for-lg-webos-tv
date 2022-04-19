@@ -1,18 +1,18 @@
-import * as ASH from '../../../common/smart-home-skill'
+import * as Common from '../../../common'
 import { BackendControl } from '../backend'
 
-function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
-  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<Common.SHS.AlexaResponseEventPayloadEndpointCapability>[] {
+  return [Common.SHS.AlexaResponse.buildPayloadEndpointCapability({
     namespace: 'Alexa'
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<Common.SHS.AlexaResponseContextProperty>[] {
   return []
 }
 
-function reportStateHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): ASH.AlexaResponse {
-  return new ASH.AlexaResponse({
+function reportStateHandler (alexaRequest: Common.SHS.AlexaRequest, backendControl: BackendControl): Common.SHS.AlexaResponse {
+  return new Common.SHS.AlexaResponse({
     namespace: 'Alexa.',
     name: 'StateReport',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -20,9 +20,9 @@ function reportStateHandler (alexaRequest: ASH.AlexaRequest, backendControl: Bac
   })
 }
 
-function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+function handler (alexaRequest: Common.SHS.AlexaRequest, backendControl: BackendControl): Promise<Common.SHS.AlexaResponse> {
   if (alexaRequest.directive.header.namespace !== 'Alexa') {
-    throw ASH.errorResponse(
+    throw Common.SHS.errorResponse(
       alexaRequest,
       null,
       'INVALID_DIRECTIVE',
@@ -32,7 +32,7 @@ function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl
     case 'ReportState':
       return Promise.resolve(reportStateHandler(alexaRequest, backendControl))
     default:
-      throw ASH.errorResponse(
+      throw Common.SHS.errorResponse(
         alexaRequest, null,
         'INVALID_DIRECTIVE',
         `namespace='${alexaRequest.directive.header.namespace}' does not support name='${alexaRequest.directive.header.name}`)

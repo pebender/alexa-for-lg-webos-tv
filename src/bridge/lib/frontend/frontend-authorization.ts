@@ -1,8 +1,7 @@
 
 import { BaseClass } from '../base-class'
 import { DatabaseRecord, DatabaseTable } from '../database'
-import * as ASH from '../../../common/smart-home-skill'
-import * as Profile from '../../../common/profile/smart-home-skill'
+import * as Common from '../../../common'
 export class FrontendAuthorization extends BaseClass {
   private readonly _authorizedEmails: string[]
 
@@ -23,10 +22,10 @@ export class FrontendAuthorization extends BaseClass {
     try {
       record = await this._db.getRecord({ bearerToken })
     } catch (error) {
-      throw ASH.errorResponseFromError(null, error)
+      throw Common.SHS.errorResponseFromError(null, error)
     }
     if (record === null) {
-      const profile = await Profile.getUserProfile(bearerToken)
+      const profile = await Common.Profile.SHS.getUserProfile(bearerToken)
       const userId = profile.user_id
       const email = profile.email
 
@@ -37,7 +36,7 @@ export class FrontendAuthorization extends BaseClass {
       try {
         await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
       } catch (error) {
-        throw ASH.errorResponseFromError(null, error)
+        throw Common.SHS.errorResponseFromError(null, error)
       }
     }
 

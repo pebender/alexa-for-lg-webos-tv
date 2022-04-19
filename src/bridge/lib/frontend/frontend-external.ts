@@ -6,13 +6,10 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
-import * as Debug from '../../../common/debug'
+import * as Common from '../../../common'
 import { BaseClass } from '../base-class'
-import { constants } from '../../../common/constants'
 import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../smart-home-skill'
-import schema from '../../../common/smart-home-skill/alexa_smart_home_message_schema.json'
-import * as ASH from '../../../common/smart-home-skill'
 import Ajv from 'ajv/dist/2019'
 import * as AjvTypes from 'ajv'
 import ajvFormats from 'ajv-formats'
@@ -57,7 +54,7 @@ export class FrontendExternal extends BaseClass {
       'relative-json-pointer',
       'regex'
     ])
-    this._schemaValidator = this._ajv.compile(schema)
+    this._schemaValidator = this._ajv.compile(Common.SHS.schema)
     this._server = express()
   }
 
@@ -67,28 +64,28 @@ export class FrontendExternal extends BaseClass {
     // Alexa Smart Home (ASH) skill hand1er.
     async function backendASHHandler (request: express.Request, response: express.Response): Promise<void> {
       try {
-        Debug.debug('request message')
-        Debug.debugJSON(request.body)
+        Common.Debug.debug('request message')
+        Common.Debug.debugJSON(request.body)
         // schema used for validation does not support request messages.
         /*
         const valid = await that._schemaValidator(request.body)
         if (!valid) {
-          Debug.debug('response message is invalid')
-          Debug.debug(that._schemaValidator.errors)
+          Common.Debug.debug('response message is invalid')
+          Common.Debug.debug(that._schemaValidator.errors)
         } else {
-          Debug.debug('response message is valid')
+          Common.Debug.debug('response message is valid')
         }
         */
 
         const commandResponse = await that._smartHomeSkill.handler(request.body)
-        Debug.debug('response message')
-        Debug.debugJSON(commandResponse)
+        Common.Debug.debug('response message')
+        Common.Debug.debugJSON(commandResponse)
         const valid = await that._schemaValidator(commandResponse)
         if (!valid) {
-          Debug.debug('response message is invalid')
-          Debug.debugJSON(that._schemaValidator.errors)
+          Common.Debug.debug('response message is invalid')
+          Common.Debug.debugJSON(that._schemaValidator.errors)
         } else {
-          Debug.debug('response message is valid')
+          Common.Debug.debug('response message is valid')
         }
         response
           .type('json')
@@ -96,7 +93,7 @@ export class FrontendExternal extends BaseClass {
           .json(commandResponse)
           .end()
       } catch (error) {
-        const alexaError = (error as ASH.AlexaError)
+        const alexaError = (error as Common.SHS.AlexaError)
         const commandResponse = alexaError.response
 
         const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
@@ -140,7 +137,7 @@ export class FrontendExternal extends BaseClass {
         that._server.use('/', express.json())
         that._server.use('/', auth(authorizeToken))
         that._server.use('/', handleAuthFailure)
-        that._server.post(`/${constants.bridge.path}`, backendASHHandler)
+        that._server.post(`/${Common.constants.bridge.path}`, backendASHHandler)
         that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
           res.status(401).end()
         })
@@ -152,6 +149,6 @@ export class FrontendExternal extends BaseClass {
 
   public start (): void {
     this.throwIfUninitialized('start')
-    this._server.listen(constants.bridge.port.http, 'localhost')
+    this._server.listen(Common.constants.bridge.port.http, 'localhost')
   }
 }
