@@ -57,8 +57,8 @@
   "scripts": {
     "clean": "rm -rf lib node_modules package-lock.json *.tgz",
     "install_modules": "npm install",
-    "build": "../../node_modules/.bin/tsc",
-    "watch": "../../node_modules/.bin/tsc --watch",
+    "build": "npx tsc",
+    "watch": "npx tsc --watch",
     "pack": "npm pack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
