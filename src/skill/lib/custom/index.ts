@@ -1,14 +1,16 @@
-import * as ASKCore from 'ask-sdk-core'
 import * as ASKModel from 'ask-sdk-model'
+import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/request/handler/HandlerInput'
+import { SkillBuilders as ASKSkillBuilders } from 'ask-sdk-core/dist/skill/SkillBuilders.js'
+import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
 import { constants } from '../../../common/constants'
 import * as Debug from '../../../common/debug'
 import * as LGTVSetHostname from './lgtv-set-hostname'
 
 const LaunchRequestHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'
   },
-  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'Ground control to major Tom.'
     return handlerInput.responseBuilder
       .speak(speechOutput)
@@ -18,11 +20,11 @@ const LaunchRequestHandler = {
 }
 
 const HelpIntentHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+    ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent'
   },
-  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'There is a manual around here somewhere.'
     const response: ASKModel.Response = handlerInput.responseBuilder
       .speak(speechOutput)
@@ -34,11 +36,11 @@ const HelpIntentHandler = {
 }
 
 const CancelIntentHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
   },
-  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'There is a big red button around here somewhere.'
     return handlerInput.responseBuilder
       .speak(speechOutput)
@@ -48,32 +50,32 @@ const CancelIntentHandler = {
 }
 
 const StopIntentHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
   },
-  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'But I don\'t want to stop.'
     return handlerInput.responseBuilder.speak(speechOutput).getResponse()
   }
 }
 
 const FallbackIntentHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent'
   },
-  handle (handlerInput: ASKCore.HandlerInput): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'It\'s time to fall back.'
     return handlerInput.responseBuilder.speak(speechOutput).getResponse()
   }
 }
 
 const SessionEndedRequestHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest'
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest'
   },
-  async handle (handlerInput: ASKCore.HandlerInput): Promise<ASKModel.Response> {
+  async handle (handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
     await handlerInput.attributesManager.savePersistentAttributes()
     return handlerInput.responseBuilder.getResponse()
   }
@@ -93,7 +95,7 @@ const ErrorHandler = {
   canHandle (): boolean {
     return true
   },
-  handle (handlerInput: ASKCore.HandlerInput, error: Error): ASKModel.Response {
+  handle (handlerInput: ASKHandlerInput, error: Error): ASKModel.Response {
     const speechOutput = 'Sorry, I can\'t understand the command. Please say again.'
     Debug.debugError(error)
     Debug.debugJSON(handlerInput)
@@ -106,7 +108,7 @@ const ErrorHandler = {
 
 // Function has three arguments skillHandler(event, context, callback).
 const skillHandler = async function (request: ASKModel.RequestEnvelope, context: ASKModel.Context): Promise<ASKModel.ResponseEnvelope> {
-  return ASKCore.SkillBuilders.custom()
+  return ASKSkillBuilders.custom()
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
     .withCustomUserAgent(constants.application.name.safe)

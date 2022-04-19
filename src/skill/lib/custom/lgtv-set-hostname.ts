@@ -1,83 +1,84 @@
 import { constants } from '../../../common/constants'
 import * as Debug from '../../../common/debug'
-import * as ASKCore from 'ask-sdk-core'
+import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/request/handler/HandlerInput'
+import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
 import * as ASKModel from 'ask-sdk-model'
 import * as Database from '../database'
 import * as https from 'https'
 import tls from 'tls'
 const certnames = require('certnames')
 
-const SetHostnameIntentHandler = {
-  canHandle (handlerInput: ASKCore.HandlerInput): boolean {
-    return ASKCore.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKCore.getIntentName(handlerInput.requestEnvelope) === 'LGTV_SetHostnameIntent'
-  },
-  async handle (handlerInput: ASKCore.HandlerInput): Promise<ASKModel.Response> {
-    function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
-      return new Promise((resolve, reject): void => {
-        const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false })
-        sock.on('secureConnect', (): void => {
-          const cert = sock.getPeerCertificate().raw
-          sock.on('close', (): void => {
-            const hostnames = certnames.getCommonNames(cert)
-            return resolve(hostnames)
-          })
-          sock.end()
-        })
-        sock.on('error', (error): void => {
-          reject(error)
-        })
+function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
+  return new Promise((resolve, reject): void => {
+    const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false })
+    sock.on('secureConnect', (): void => {
+      const cert = sock.getPeerCertificate().raw
+      sock.on('close', (): void => {
+        const hostnames = certnames.getCommonNames(cert)
+        return resolve(hostnames)
       })
-    }
+      sock.end()
+    })
+    sock.on('error', (error): void => {
+      reject(error)
+    })
+  })
+}
 
-    async function getUserEmail (bearerToken: string): Promise<any> {
-      return await new Promise((resolve, reject) => {
-        const options = {
-          method: 'GET',
-          hostname: 'api.amazonalexa.com',
-          path: '/v2/accounts/~current/settings/Profile.email',
-          headers: {
-            Authorization: `Bearer ${bearerToken}`
-          }
+async function getUserEmail (bearerToken: string): Promise<any> {
+  return await new Promise((resolve, reject) => {
+    const options = {
+      method: 'GET',
+      hostname: 'api.amazonalexa.com',
+      path: '/v2/accounts/~current/settings/Profile.email',
+      headers: {
+        Authorization: `Bearer ${bearerToken}`
+      }
+    }
+    const req = https.request(options, (res) => {
+      let data = ''
+
+      res.on('data', (chunk) => {
+        data += chunk
+      })
+
+      res.on('end', () => {
+        const statusCode = res.statusCode
+        if (typeof statusCode === 'undefined') {
+          reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP status code.'))
         }
-        const req = https.request(options, (res) => {
-          let data = ''
-
-          res.on('data', (chunk) => {
-            data += chunk
-          })
-
-          res.on('end', () => {
-            const statusCode = res.statusCode
-            if (typeof statusCode === 'undefined') {
-              reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP status code.'))
-            }
-            // The expected HTTP/1.1 'content-type' header is 'application/json'
-            const contentType = res.headers['content-type']
-            if (typeof contentType === 'undefined') {
-              reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP header \'content-type\'.'))
-            }
-            if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-              reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an incorrect HTTP header 'content-type' of '${contentType?.toLocaleLowerCase()}'.`))
-            }
-            Debug.debug('getUserEmail: Amazon Alexa profile server response:')
-            Debug.debugJSON(data)
-            if (statusCode !== 200) {
-              reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an HTTP StatusCode of ${statusCode}.`))
-            }
-            resolve(JSON.parse(data))
-          })
-
-          res.on('error', (error: any) => {
-            const message = error.message ? error.message : 'unknown'
-            const name = error.name ? error.name : error.code ? error.code : 'unknown'
-            reject(new Error(`getUserEmail: error: ${message} (${name}).`))
-          })
-        })
-        req.end()
+        // The expected HTTP/1.1 'content-type' header is 'application/json'
+        const contentType = res.headers['content-type']
+        if (typeof contentType === 'undefined') {
+          reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP header \'content-type\'.'))
+        }
+        if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
+          reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an incorrect HTTP header 'content-type' of '${contentType?.toLocaleLowerCase()}'.`))
+        }
+        Debug.debug('getUserEmail: Amazon Alexa profile server response:')
+        Debug.debugJSON(data)
+        if (statusCode !== 200) {
+          reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an HTTP StatusCode of ${statusCode}.`))
+        }
+        resolve(JSON.parse(data))
       })
-    }
 
+      res.on('error', (error: any) => {
+        const message = error.message ? error.message : 'unknown'
+        const name = error.name ? error.name : error.code ? error.code : 'unknown'
+        reject(new Error(`getUserEmail: error: ${message} (${name}).`))
+      })
+    })
+    req.end()
+  })
+}
+
+const SetHostnameIntentHandler = {
+  canHandle (handlerInput: ASKHandlerInput): boolean {
+    return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'LGTV_SetHostnameIntent'
+  },
+  async handle (handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
     Debug.debugJSON(handlerInput.requestEnvelope)
 
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
@@ -110,15 +111,15 @@ const SetHostnameIntentHandler = {
       throw error
     }
 
-    const dialogState: ASKModel.DialogState = ASKCore.getDialogState(handlerInput.requestEnvelope)
+    const dialogState: ASKModel.DialogState = ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope)
     Debug.debug(`dialogState: ${dialogState}`)
 
-    const ipAddressValidString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressValid')
-    const ipAddressAString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')
-    const ipAddressBString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')
-    const ipAddressCString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')
-    const ipAddressDString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')
-    const hostnameIndexString: String | undefined = ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
+    const ipAddressValidString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressValid')
+    const ipAddressAString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')
+    const ipAddressBString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')
+    const ipAddressCString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')
+    const ipAddressDString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')
+    const hostnameIndexString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
     Debug.debug(`(dirty) set: ${ipAddressValidString}, address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
 
     const ipAddressA: Number = Number(ipAddressAString)
@@ -266,15 +267,15 @@ const SetHostnameIntentHandler = {
       }
       if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
         return handlerInput.responseBuilder
-          .speak(`Is your hostname ${sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`)
+          .speak(`Is your hostname ${sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`)
           .addConfirmIntentDirective()
           .getResponse()
       }
     }
 
-    if (ASKCore.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
+    if (ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
-        const apiAccessToken = ASKCore.getApiAccessToken(handlerInput.requestEnvelope)
+        const apiAccessToken = ASKRequestEnvelope.getApiAccessToken(handlerInput.requestEnvelope)
         Debug.debug(`apiAccessToken: ${apiAccessToken}`)
         let email
         try {
@@ -286,7 +287,7 @@ const SetHostnameIntentHandler = {
             .speak('Error encountered retrieving your user profile. Your bridge\'s hostname has not been set.')
             .getResponse()
         }
-        const hostname = sessionAttributes.hostnames[ASKCore.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
+        const hostname = sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
         try {
           await Database.setHostname(email, hostname)
           Debug.debug('LGTV_SetHostnameIntent: setHostname: success')
