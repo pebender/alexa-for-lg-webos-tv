@@ -285,6 +285,7 @@ const SetHostnameIntentHandler = {
           Debug.debug(`LGTV_SetHostnameIntent: ${error.message}`)
           return handlerInput.responseBuilder
             .speak('Error encountered retrieving your user profile. Your bridge\'s hostname has not been set.')
+            .withShouldEndSession(true)
             .getResponse()
         }
         const hostname = sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
@@ -296,6 +297,7 @@ const SetHostnameIntentHandler = {
           Debug.debugError(error)
           return handlerInput.responseBuilder
             .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
+            .withShouldEndSession(true)
             .getResponse()
         }
 
@@ -304,6 +306,7 @@ const SetHostnameIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
           .speak('Your bridge\'s hostname has been set.')
+          .withShouldEndSession(true)
           .getResponse()
       } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'DENIED') {
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
@@ -311,6 +314,7 @@ const SetHostnameIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
           .speak('Your bridge\'s hostname has not been set.')
+          .withShouldEndSession(true)
           .getResponse()
       }
       return handlerInput.responseBuilder
