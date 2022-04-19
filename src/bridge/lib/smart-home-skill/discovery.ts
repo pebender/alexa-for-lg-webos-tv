@@ -1,4 +1,4 @@
-import * as ASH from '../../../common/alexa'
+import * as ASH from '../../../common/smart-home-skill'
 import { Backend, BackendControl } from '../backend'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
 import { constants } from '../../../common/constants'

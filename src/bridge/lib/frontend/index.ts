@@ -2,7 +2,7 @@ import * as Debug from '../../../common/debug'
 import { BaseClass } from '../base-class'
 import { FrontendAuthorization } from './frontend-authorization'
 import { FrontendExternal } from './frontend-external'
-import { SmartHomeSkill } from '../skill'
+import { SmartHomeSkill } from '../smart-home-skill'
 
 export class Frontend extends BaseClass {
   private _external: FrontendExternal

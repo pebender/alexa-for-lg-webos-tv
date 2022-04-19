@@ -1,4 +1,4 @@
-import * as ASH from '../../../common/alexa'
+import * as ASH from '../../../common/smart-home-skill'
 import { Backend } from '../backend'
 
 function capabilities (backend: Backend): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {

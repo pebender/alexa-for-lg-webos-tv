@@ -1,4 +1,4 @@
-import * as ASH from '../../../common/alexa'
+import * as ASH from '../../../common/smart-home-skill'
 import * as alexa from './alexa'
 import * as alexaAuthorization from './authorization'
 import * as alexaChannelController from './channel-controller'

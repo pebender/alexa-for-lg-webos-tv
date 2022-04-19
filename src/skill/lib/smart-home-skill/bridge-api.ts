@@ -1,7 +1,7 @@
-import * as Database from './database'
-import * as ASH from '../../common/alexa'
-import { constants } from '../../common/constants'
-import * as Debug from '../../common/debug'
+import * as Database from '../database'
+import * as ASH from '../../../common/smart-home-skill'
+import { constants } from '../../../common/constants'
+import * as Debug from '../../../common/debug'
 import https from 'https'
 
 export interface Request {

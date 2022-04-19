@@ -1,8 +1,8 @@
 import * as alexaAuthorization from './authorization'
 import * as alexaDiscovery from './discovery'
-import * as ASH from '../../../common/alexa'
+import * as ASH from '../../../common/smart-home-skill'
 import * as Debug from '../../../common/debug'
-import * as Bridge from '../bridge-api'
+import * as Bridge from './bridge-api'
 import * as AWSLambda from 'aws-lambda'
 
 async function handlerWithErrors (alexaRequest: ASH.AlexaRequest, context: AWSLambda.Context): Promise<ASH.AlexaResponse> {

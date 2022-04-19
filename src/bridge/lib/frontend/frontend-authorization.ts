@@ -1,7 +1,7 @@
 
 import { BaseClass } from '../base-class'
 import { DatabaseRecord, DatabaseTable } from '../database'
-import * as ASH from '../../../common/alexa'
+import * as ASH from '../../../common/smart-home-skill'
 import * as Profile from '../../../common/profile'
 export class FrontendAuthorization extends BaseClass {
   private readonly _authorizedEmails: string[]

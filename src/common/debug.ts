@@ -1,4 +1,4 @@
-import { AlexaError } from './alexa/error'
+import { AlexaError } from './smart-home-skill/error'
 
 export function debug (message?: any, optionalParams?: any[]) {
   if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {

@@ -11,7 +11,7 @@ import { Backend } from './lib/backend'
 import { constants } from '../common/constants'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
-import { SmartHomeSkill } from './lib/skill'
+import { SmartHomeSkill } from './lib/smart-home-skill'
 import * as fs from 'fs/promises'
 import { FrontendAuthorization } from './lib/frontend/frontend-authorization'
 const persistPath = require('persist-path')
