@@ -25,9 +25,10 @@
             "*": [
                 "../../src/bridge/types/*",
                 "../../src/common/types/*",
-		"../../src/node_modules/@types",
                 "node_modules/*",
-                "node_modules/@types/*"
+                "node_modules/@types/*",
+                "../../node_modules/*",
+                "../../node_modules/@types/*"
             ]
         }
     }
