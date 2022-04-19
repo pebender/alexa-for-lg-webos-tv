@@ -1,6 +1,18 @@
 import * as HTTPSRequest from '../https-request'
 import * as ASHError from '../smart-home-skill/error'
 
+const responseErrorMessages = {
+  CONNECTION_INTERRUPTED: 'Sorry. I could not retrieve your profile. The connection to the server was interrupted.',
+  STATUS_CODE_MISSING: 'Sorry, I could not retrieve your profile. The response from the server was invalid.',
+  INVALID_AUTHORIZATION_CREDENTIAL: 'Sorry, I could not retrieve your profile. The server did not recognize the user',
+  INTERNAL_ERROR: 'Sorry, I could not retrieve your profile.',
+  CONTENT_TYPE_MISSING: 'Sorry, I could not retrieve your profile. The response from the server was invalid.',
+  CONTENT_TYPE_INCORRECT: 'Sorry, I could not retrieve your profile. The response from the server was invalid.',
+  BODY_MISSING: 'Sorry, I could not retrieve your profile. The response from the server was invalid.',
+  BODY_INVALID_FORMAT: 'Sorry, I could not retrieve your profile. The response from the server was invalid.',
+  UNKNOWN_ERROR: 'Sorry, I could not retrieve your profile.'
+}
+
 export async function getUserProfile (bearerToken: string): Promise<{ user_id: string; email: string; [x: string]: string}> {
   const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: 'api.amazon.com',
@@ -9,65 +21,23 @@ export async function getUserProfile (bearerToken: string): Promise<{ user_id: s
     method: 'GET',
     headers: {}
   }
-
   let response
   try {
     response = await HTTPSRequest.request(requestOptions, bearerToken)
   } catch (error) {
     const requestError = (error as HTTPSRequest.ResponseError)
-    switch (requestError.name) {
-      case 'CONNECTION_INTERRUPTED':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          'Profile server connect interrupted.')
-      case 'STATUS_CODE_MISSING':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          'Profile server response included no HTTP status code.')
-      case 'INVALID_AUTHORIZATION_CREDENTIAL':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INVALID_AUTHORIZATION_CREDENTIAL', 'Failed to retrieve user profile.')
-      case 'INTERNAL_ERROR':
-        throw ASHError.errorResponse(null, null, 'INTERNAL_ERROR', 'Failed to retrieve user profile.')
-      case 'CONTENT_TYPE_MISSING':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          'Profile server response did not return HTTP header \'content-type\'.')
-      case 'CONTENT_TYPE_INCORRECT':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          `Profile server response included an incorrect HTTP header 'content-type' of '${requestError.http?.contentType?.toLocaleLowerCase()}'.`)
-      case 'BODY_MISSING':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          'Profile server did not return a body.')
-      case 'BODY_INVALID_FORMAT':
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR',
-          'Profile server returned a malformed body.')
-      case 'UNKNOWN_ERROR':
-        throw ASHError.errorResponseFromError(
-          null,
-          requestError.error)
-      default:
-        throw ASHError.errorResponse(
-          null,
-          null,
-          'INTERNAL_ERROR', 'error: unknown.')
+    if (typeof responseErrorMessages[requestError.name] === 'string') {
+      throw ASHError.errorResponse(
+        null,
+        requestError.http?.statusCode ? requestError.http?.statusCode : null,
+        'INTERNAL_ERROR',
+        responseErrorMessages[requestError.name])
+    } else {
+      throw ASHError.errorResponse(
+        null,
+        requestError.http?.statusCode ? requestError.http?.statusCode : null,
+        'INTERNAL_ERROR',
+        'Sorry. I could not retrieve your profile.')
     }
   }
 
@@ -76,17 +46,17 @@ export async function getUserProfile (bearerToken: string): Promise<{ user_id: s
       null,
       null,
       'INTERNAL_ERROR',
-      'Profile server did not return \'user_id\'.')
+      'Sorry. I could not retrieve your profile.')
   }
   if (typeof response.email === 'undefined') {
     throw ASHError.errorResponse(
       null,
       null,
       'INTERNAL_ERROR',
-      'Profile server did not return \'email\'.')
+      'Sorry. I could not retrieve your profile.')
   }
 
-  return response
+  return (response as {user_id: string; email: string; [x: string]: string})
 }
 
 export async function getUserEmail (bearerToken: string): Promise<string> {
