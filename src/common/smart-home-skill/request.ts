@@ -4,7 +4,7 @@ import {
   AlexaMessageNamespace
 } from './common'
 import * as ASHError from './error'
-import * as Profile from '../profile'
+import * as Profile from '../profile/smart-home-skill'
 import { copyElement } from './copy'
 
 export interface AlexaRequestDirectivePayload {

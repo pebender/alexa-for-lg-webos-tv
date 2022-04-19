@@ -1,8 +1,8 @@
+import * as HTTPSRequest from '../../../common/https-request'
 import * as Database from '../database'
 import * as ASH from '../../../common/smart-home-skill'
 import { constants } from '../../../common/constants'
 import * as Debug from '../../../common/debug'
-import https from 'https'
 
 export interface Request {
   [x: string]: number | string | object | undefined;
@@ -64,85 +64,77 @@ async function getBridgeHostname (alexaRequest: ASH.AlexaRequest): Promise<strin
 
 async function sendHandler (path: string, alexaRequest: ASH.AlexaRequest, message: Request) : Promise<ASH.AlexaResponse> {
   const hostname = await getBridgeHostname(alexaRequest)
+  const requestOptions: HTTPSRequest.RequestOptions = {
+    hostname,
+    path,
+    port: constants.bridge.port.https,
+    method: 'POST',
+    headers: {}
+  }
+  const bearerToken = alexaRequest.getBearerToken()
 
-  const response: ASH.AlexaResponse = await new Promise((resolve, reject): void => {
-    const options: {
-      method?: 'POST';
-      hostname: string;
-      port: number;
-      path: string;
-      headers: {
-        [x: string]: string;
-      };
-    } = {
-      hostname: (hostname as string),
-      port: constants.bridge.port.https,
-      path,
-      headers: {}
+  let response
+  try {
+    response = await HTTPSRequest.request(requestOptions, bearerToken, alexaRequest)
+  } catch (error) {
+    const requestError = (error as HTTPSRequest.ResponseError)
+    switch (requestError.name) {
+      case 'CONNECTION_INTERRUPTED':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          'Bridge connect interrupted.')
+      case 'STATUS_CODE_MISSING':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          'Bridge response included no HTTP status code.')
+      case 'INVALID_AUTHORIZATION_CREDENTIAL':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INVALID_AUTHORIZATION_CREDENTIAL', 'Failed to retrieve user profile.')
+      case 'INTERNAL_ERROR':
+        throw ASH.errorResponse(null, null, 'INTERNAL_ERROR', 'Failed to retrieve user profile.')
+      case 'CONTENT_TYPE_MISSING':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          'Bridge response did not return HTTP header \'content-type\'.')
+      case 'CONTENT_TYPE_INCORRECT':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          `Bridge response included an incorrect HTTP header 'content-type' of '${requestError.http?.contentType?.toLocaleLowerCase()}'.`)
+      case 'BODY_MISSING':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          'Bridge did not return a body.')
+      case 'BODY_INVALID_FORMAT':
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR',
+          'Bridge returned a malformed body.')
+      case 'UNKNOWN_ERROR':
+        throw ASH.errorResponseFromError(
+          null,
+          requestError.error)
+      default:
+        throw ASH.errorResponse(
+          null,
+          null,
+          'INTERNAL_ERROR', 'error: unknown.')
     }
+  }
 
-    const content = JSON.stringify(message)
-    options.method = 'POST'
-    const token = alexaRequest.getBearerToken()
-    options.headers.authorization = `Bearer ${token}`
-    options.headers['content-type'] = 'application/json'
-    options.headers['content-length'] = Buffer.byteLength(content).toString()
-    const req = https.request(options, (res): void => {
-      let body: Response
-      let data = ''
-      res.setEncoding('utf8')
-      res.on('data', (chunk: string): void => {
-        data += chunk
-      })
-      res.on('end', (): void => {
-        // The expected HTTP/1.1 status code is 200.
-        const statusCode = res.statusCode
-        if (typeof statusCode === 'undefined') {
-          reject(ASH.errorResponse(
-            alexaRequest,
-            null,
-            'INTERNAL_ERROR',
-            'Bridge response did not return an HTTP StatusCode.'
-          ))
-        }
-        // The expected HTTP/1.1 'content-type' header is 'application/json'
-        const contentType = res.headers['content-type']
-        if (typeof contentType === 'undefined') {
-          reject(ASH.errorResponse(
-            alexaRequest,
-            null,
-            'INTERNAL_ERROR',
-            'Bridge response did not return HTTP header \'content-type\'.'))
-        }
-        if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-          reject(ASH.errorResponse(
-            alexaRequest,
-            null,
-            'INTERNAL_ERROR',
-            `Bridge response included an incorrect HTTP header 'content-type' of '${contentType?.toLocaleLowerCase()}'.`))
-        }
-        // Validate the body.
-        try {
-          body = JSON.parse(data)
-        } catch (error) {
-          reject(ASH.errorResponseFromError(alexaRequest, error))
-        }
-        // Return the body.
-        resolve((body as ASH.AlexaResponse))
-      })
-    })
-    req.on('error', (error: Error): void => {
-      reject(ASH.errorResponse(
-        alexaRequest,
-        null,
-        'INTERNAL_ERROR',
-        `${error.message} (${error.name})'.`).response)
-    })
-    req.write(content)
-    req.end()
-  })
-
-  return response
+  return (response as ASH.AlexaResponse)
 }
 
 export async function sendSkillDirective (request: ASH.AlexaRequest): Promise<ASH.AlexaResponse> {

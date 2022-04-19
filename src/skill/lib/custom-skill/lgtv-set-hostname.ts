@@ -4,8 +4,8 @@ import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/re
 import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
 import * as ASKModel from 'ask-sdk-model'
 import * as Database from '../database'
-import * as https from 'https'
 import tls from 'tls'
+import { getUserEmail } from '../../../common/profile/custom-skill'
 const certnames = require('certnames')
 
 function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
@@ -22,54 +22,6 @@ function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
     sock.on('error', (error): void => {
       reject(error)
     })
-  })
-}
-
-async function getUserEmail (bearerToken: string): Promise<any> {
-  return await new Promise((resolve, reject) => {
-    const options = {
-      method: 'GET',
-      hostname: 'api.amazonalexa.com',
-      path: '/v2/accounts/~current/settings/Profile.email',
-      headers: {
-        Authorization: `Bearer ${bearerToken}`
-      }
-    }
-    const req = https.request(options, (res) => {
-      let data = ''
-
-      res.on('data', (chunk) => {
-        data += chunk
-      })
-
-      res.on('end', () => {
-        const statusCode = res.statusCode
-        if (typeof statusCode === 'undefined') {
-          reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP status code.'))
-        }
-        // The expected HTTP/1.1 'content-type' header is 'application/json'
-        const contentType = res.headers['content-type']
-        if (typeof contentType === 'undefined') {
-          reject(new Error('getUserEmail: error: Amazon Alexa profile server response included no HTTP header \'content-type\'.'))
-        }
-        if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-          reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an incorrect HTTP header 'content-type' of '${contentType?.toLocaleLowerCase()}'.`))
-        }
-        Debug.debug('getUserEmail: Amazon Alexa profile server response:')
-        Debug.debugJSON(data)
-        if (statusCode !== 200) {
-          reject(new Error(`getUserEmail: error: Amazon Alexa profile server response included an HTTP StatusCode of ${statusCode}.`))
-        }
-        resolve(JSON.parse(data))
-      })
-
-      res.on('error', (error: any) => {
-        const message = error.message ? error.message : 'unknown'
-        const name = error.name ? error.name : error.code ? error.code : 'unknown'
-        reject(new Error(`getUserEmail: error: ${message} (${name}).`))
-      })
-    })
-    req.end()
   })
 }
 
