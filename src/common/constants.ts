@@ -22,7 +22,7 @@ export const constants = {
     region: 'us-east-1',
     dynamoDB: {
       tableName: applicationNameSafe,
-      indexName: 'ashToken_index'
+      indexName: 'bearerToken_index'
     }
   },
   bridge: {

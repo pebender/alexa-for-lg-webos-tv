@@ -17,10 +17,10 @@ export interface Response {
 async function getBridgeHostname (alexaRequest: Common.SHS.AlexaRequest): Promise<string> {
   Common.Debug.debug(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
 
-  async function queryBridgeHostname (ashToken: string): Promise<string | null> {
+  async function queryBridgeHostname (bearerToken: string): Promise<string | null> {
     let hostname
     try {
-      hostname = await Database.getHostname(ashToken)
+      hostname = await Database.getHostname(bearerToken)
       if (hostname !== null) {
         return hostname
       } else {
@@ -31,23 +31,23 @@ async function getBridgeHostname (alexaRequest: Common.SHS.AlexaRequest): Promis
     }
   }
 
-  async function setASHToken (email: string, ashToken: string): Promise<void> {
+  async function setBearerToken (email: string, bearerToken: string): Promise<void> {
     try {
-      await Database.setASHToken(email, ashToken)
+      await Database.setBearerToken(email, bearerToken)
     } catch (error) {
       throw Common.SHS.errorResponseFromError(alexaRequest, error)
     }
   }
 
-  const ashToken = alexaRequest.getBearerToken()
+  const bearerToken = alexaRequest.getBearerToken()
   let hostname: string | null = null
-  hostname = await queryBridgeHostname(ashToken)
+  hostname = await queryBridgeHostname(bearerToken)
   if (hostname !== null) {
     return hostname
   }
   const email = await alexaRequest.getUserEmail()
-  await setASHToken(email, ashToken)
-  hostname = await await queryBridgeHostname(ashToken)
+  await setBearerToken(email, bearerToken)
+  hostname = await await queryBridgeHostname(bearerToken)
   if (hostname !== null) {
     return hostname
   }

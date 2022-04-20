@@ -40,20 +40,20 @@ export async function setHostname (email: string, hostname: string): Promise<voi
   }
 }
 
-export async function getHostname (ashToken: string): Promise<string | null> {
+export async function getHostname (bearerToken: string): Promise<string | null> {
   const database = getDatabase()
 
-  const ashTokenQueryParams = {
+  const bearerTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
-    KeyConditionExpression: '#ashToken = :ashToken_value',
-    ExpressionAttributeNames: { '#ashToken': 'ashToken' },
-    ExpressionAttributeValues: { ':ashToken_value': ashToken }
+    KeyConditionExpression: '#bearerToken = :bearerToken_value',
+    ExpressionAttributeNames: { '#bearerToken': 'bearerToken' },
+    ExpressionAttributeValues: { ':bearerToken_value': bearerToken }
   }
 
   let data
   try {
-    data = await database.query(ashTokenQueryParams).promise()
+    data = await database.query(bearerTokenQueryParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -70,18 +70,18 @@ export async function getHostname (ashToken: string): Promise<string | null> {
   return null
 }
 
-export async function setASHToken (email: string, ashToken: string): Promise<void> {
+export async function setBearerToken (email: string, bearerToken: string): Promise<void> {
   const database = getDatabase()
 
-  const ashTokenUpdateParams = {
+  const bearerTokenUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
-    UpdateExpression: 'set ashToken = :newAshToken',
-    ExpressionAttributeValues: { ':newAshToken': ashToken }
+    UpdateExpression: 'set bearerToken = :newBearerToken',
+    ExpressionAttributeValues: { ':newBearerToken': bearerToken }
   }
 
   try {
-    await database.update(ashTokenUpdateParams).promise()
+    await database.update(bearerTokenUpdateParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
