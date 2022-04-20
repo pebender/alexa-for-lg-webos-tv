@@ -7,13 +7,7 @@ let dynamoDBDocumentClient: DynamoDB.DocumentClient
 
 function getDatabase (): DynamoDB.DocumentClient {
   if (typeof dynamoDBDocumentClient === 'undefined') {
-    const agent = new https.Agent({
-      keepAlive: true
-    })
     dynamoDBDocumentClient = new DynamoDB.DocumentClient({
-      httpOptions: {
-        agent
-      },
       region: Common.constants.aws.region
     })
   }
