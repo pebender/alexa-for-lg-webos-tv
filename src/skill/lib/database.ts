@@ -2,20 +2,11 @@ import DynamoDB from 'aws-sdk/clients/dynamodb'
 import * as Common from '../../common'
 import * as Debug from '../../common/debug'
 
-let dynamoDBDocumentClient: DynamoDB.DocumentClient
-
-function getDatabase (): DynamoDB.DocumentClient {
-  if (typeof dynamoDBDocumentClient === 'undefined') {
-    dynamoDBDocumentClient = new DynamoDB.DocumentClient({
-      region: Common.constants.aws.region
-    })
-  }
-  return dynamoDBDocumentClient
-}
+const dynamoDBDocumentClient = new DynamoDB.DocumentClient({
+  region: Common.constants.aws.region
+})
 
 export async function setHostname (email: string, hostname: string): Promise<void> {
-  const database = getDatabase()
-
   const hostnameUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
@@ -26,7 +17,7 @@ export async function setHostname (email: string, hostname: string): Promise<voi
   Debug.debug(hostnameUpdateParams)
   Debug.debugJSON(hostnameUpdateParams)
   try {
-    await database.update(hostnameUpdateParams).promise()
+    await dynamoDBDocumentClient.update(hostnameUpdateParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -34,8 +25,6 @@ export async function setHostname (email: string, hostname: string): Promise<voi
 }
 
 export async function getHostname (bearerToken: string): Promise<string | null> {
-  const database = getDatabase()
-
   const bearerTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
@@ -46,7 +35,7 @@ export async function getHostname (bearerToken: string): Promise<string | null> 
 
   let data
   try {
-    data = await database.query(bearerTokenQueryParams).promise()
+    data = await dynamoDBDocumentClient.query(bearerTokenQueryParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -64,8 +53,6 @@ export async function getHostname (bearerToken: string): Promise<string | null> 
 }
 
 export async function setBearerToken (email: string, bearerToken: string): Promise<void> {
-  const database = getDatabase()
-
   const bearerTokenUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
@@ -74,7 +61,7 @@ export async function setBearerToken (email: string, bearerToken: string): Promi
   }
 
   try {
-    await database.update(bearerTokenUpdateParams).promise()
+    await dynamoDBDocumentClient.update(bearerTokenUpdateParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
