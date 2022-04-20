@@ -12,9 +12,9 @@ const responseErrorMessages = {
   UNKNOWN_ERROR: 'Sorry, I could not retrieve your profile.'
 }
 
-export async function getUserEmail (bearerToken: string): Promise<string> {
+export async function getUserEmail (apiEndpoint: string, apiAccessToken: string): Promise<string> {
   const requestOptions: HTTPSRequest.RequestOptions = {
-    hostname: 'api.amazonalexa.com',
+    hostname: apiEndpoint,
     port: 443,
     path: '/v2/accounts/~current/settings/Profile.email',
     method: 'GET',
@@ -22,7 +22,7 @@ export async function getUserEmail (bearerToken: string): Promise<string> {
   }
   let response
   try {
-    response = await HTTPSRequest.request(requestOptions, bearerToken)
+    response = await HTTPSRequest.request(requestOptions, apiAccessToken)
   } catch (error) {
     const requestError = (error as HTTPSRequest.ResponseError)
     if (typeof responseErrorMessages[requestError.name] === 'string') {

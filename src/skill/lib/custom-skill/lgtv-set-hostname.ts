@@ -4,7 +4,6 @@ import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils
 import * as ASKModel from 'ask-sdk-model'
 import * as Database from '../database'
 import tls from 'tls'
-import { getUserEmail } from '../../../common/profile/custom-skill'
 const certnames = require('certnames')
 
 function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
@@ -226,11 +225,18 @@ const SetHostnameIntentHandler = {
 
     if (ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
-        const apiAccessToken = ASKRequestEnvelope.getApiAccessToken(handlerInput.requestEnvelope)
+        const apiEndpoint = handlerInput.requestEnvelope.context.System.apiEndpoint
+        const apiAccessToken = handlerInput.requestEnvelope.context.System.apiAccessToken
+        if (typeof apiAccessToken === 'undefined') {
+          return handlerInput.responseBuilder
+            .speak('An error occurred with account linking. Please re-link the skill and try again.')
+            .withShouldEndSession(true)
+            .getResponse()
+        }
         Common.Debug.debug(`apiAccessToken: ${apiAccessToken}`)
         let email
         try {
-          email = await getUserEmail(apiAccessToken)
+          email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken)
           Common.Debug.debug(`LGTV_SetHostnameIntent: getUserEmail: success: email: ${email}`)
         } catch (error: any) {
           Common.Debug.debug(`LGTV_SetHostnameIntent: ${error.message}`)
