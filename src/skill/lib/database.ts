@@ -1,5 +1,4 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb'
-import https from 'https'
 import * as Common from '../../common'
 import * as Debug from '../../common/debug'
 
