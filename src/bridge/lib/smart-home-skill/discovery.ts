@@ -3,7 +3,7 @@ import { Backend, BackendControl } from '../backend'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
 import { constants } from '../../../common/constants'
 
-async function handler (alexaRequest: Common.SHS.AlexaRequest, backend: Backend): Promise<Common.SHS.AlexaResponse> {
+async function handler (alexaRequest: Common.SHS.Request, backend: Backend): Promise<Common.SHS.Response> {
   //
   // This looks strange at first. However, once it is explained, this
   // convolution of promises and async/awaits should make sense. The goal is
@@ -34,15 +34,15 @@ async function handler (alexaRequest: Common.SHS.AlexaRequest, backend: Backend)
   // 'Promise.all' to ensure the array of promises is resolve. After that, we
   // use 'await' to ensure we have the values from the resolved promises.
   //
-  async function buildEndpoint (backendControl: BackendControl): Promise<Common.SHS.AlexaResponseEventPayloadEndpoint> {
-    let capabilities: Common.SHS.AlexaResponseEventPayloadEndpointCapability[] = []
+  async function buildEndpoint (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint> {
+    let capabilities: Common.SHS.Event.Payload.Endpoint.Capability[] = []
     try {
       // Determine capabilities in parallel.
       capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl))
     } catch (error) {
       capabilities = []
     }
-    const endpoint: Common.SHS.AlexaResponseEventPayloadEndpoint = {
+    const endpoint: Common.SHS.Event.Payload.Endpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
       description: constants.application.name.pretty,
@@ -59,16 +59,16 @@ async function handler (alexaRequest: Common.SHS.AlexaRequest, backend: Backend)
     return endpoint
   }
 
-  function buildEndpoints (backendControls: BackendControl[]): Promise<Common.SHS.AlexaResponseEventPayloadEndpoint[]> {
+  function buildEndpoints (backendControls: BackendControl[]): Promise<Common.SHS.Event.Payload.Endpoint[]> {
     return Promise.all(backendControls.map(buildEndpoint))
   }
 
-  function buildResponse (endpoints: Common.SHS.AlexaResponseEventPayloadEndpoint[]): Common.SHS.AlexaResponse {
-    const alexaResponse = new Common.SHS.AlexaResponse({
+  function buildResponse (endpoints: Common.SHS.Event.Payload.Endpoint[]): Common.SHS.Response {
+    const alexaResponse = new Common.SHS.Response({
       namespace: 'Alexa.Discovery',
       name: 'Discover.Response'
     })
-    endpoints.forEach((endpoint: Common.SHS.AlexaResponseEventPayloadEndpoint): void => {
+    endpoints.forEach((endpoint: Common.SHS.Event.Payload.Endpoint): void => {
       if (endpoint !== null) {
         alexaResponse.addPayloadEndpoint(endpoint)
       }
@@ -77,7 +77,7 @@ async function handler (alexaRequest: Common.SHS.AlexaRequest, backend: Backend)
   }
 
   if (alexaRequest.directive.header.namespace !== 'Alexa.Discovery') {
-    throw Common.SHS.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Discovery')
+    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Discovery')
   }
 
   const backendControls = await backend.controls()

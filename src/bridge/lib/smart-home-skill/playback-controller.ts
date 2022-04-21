@@ -2,7 +2,7 @@ import * as ASH from '../../../common/smart-home-skill'
 import { BackendControl } from '../backend'
 import LGTV from 'lgtv2'
 
-function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
+function capabilities (backendControl: BackendControl): Promise<ASH.Event.Payload.Endpoint.Capability>[] {
   return [
     Promise.resolve({
       type: 'AlexaInterface',
@@ -19,16 +19,16 @@ function capabilities (backendControl: BackendControl): Promise<ASH.AlexaRespons
   ]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<ASH.Context.Property>[] {
   return []
 }
 
-async function genericHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl, lgtvRequestURI: string): Promise<ASH.AlexaResponse> {
+async function genericHandler (alexaRequest: ASH.Request, backendControl: BackendControl, lgtvRequestURI: string): Promise<ASH.Response> {
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI
   }
   await backendControl.lgtvCommand(lgtvRequest)
-  return new ASH.AlexaResponse({
+  return new ASH.Response({
     namespace: 'Alexa',
     name: 'Response',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -36,9 +36,9 @@ async function genericHandler (alexaRequest: ASH.AlexaRequest, backendControl: B
   })
 }
 
-function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+function handler (alexaRequest: ASH.Request, backendControl: BackendControl): Promise<ASH.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.PlaybackController') {
-    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PlaybackController')
+    throw ASH.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PlaybackController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'Play':
@@ -52,7 +52,7 @@ function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl
     case 'FastForward':
       return genericHandler(alexaRequest, backendControl, 'ssap://media.controls/fastForward')
     default:
-      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
+      throw ASH.Error.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

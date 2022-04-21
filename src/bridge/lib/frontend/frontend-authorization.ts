@@ -22,7 +22,7 @@ export class FrontendAuthorization extends BaseClass {
     try {
       record = await this._db.getRecord({ bearerToken })
     } catch (error) {
-      throw Common.SHS.errorResponseFromError(null, error)
+      throw Common.SHS.Error.errorResponseFromError(null, error)
     }
     if (record === null) {
       const profile = await Common.Profile.SHS.getUserProfile(bearerToken)
@@ -36,7 +36,7 @@ export class FrontendAuthorization extends BaseClass {
       try {
         await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
       } catch (error) {
-        throw Common.SHS.errorResponseFromError(null, error)
+        throw Common.SHS.Error.errorResponseFromError(null, error)
       }
     }
 

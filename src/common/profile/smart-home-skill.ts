@@ -1,5 +1,5 @@
 import * as HTTPSRequest from '../https-request'
-import * as ASHError from '../smart-home-skill/error'
+import * as SHS from '../smart-home-skill'
 
 const responseErrorMessages = {
   CONNECTION_INTERRUPTED: 'Sorry. I could not retrieve your profile. The connection to the server was interrupted.',
@@ -27,13 +27,13 @@ export async function getUserProfile (bearerToken: string): Promise<{ user_id: s
   } catch (error) {
     const requestError = (error as HTTPSRequest.ResponseError)
     if (typeof responseErrorMessages[requestError.name] === 'string') {
-      throw ASHError.errorResponse(
+      throw SHS.Error.errorResponse(
         null,
         requestError.http?.statusCode ? requestError.http?.statusCode : null,
         'INTERNAL_ERROR',
         responseErrorMessages[requestError.name])
     } else {
-      throw ASHError.errorResponse(
+      throw SHS.Error.errorResponse(
         null,
         requestError.http?.statusCode ? requestError.http?.statusCode : null,
         'INTERNAL_ERROR',
@@ -42,14 +42,14 @@ export async function getUserProfile (bearerToken: string): Promise<{ user_id: s
   }
 
   if (typeof response.user_id === 'undefined') {
-    throw ASHError.errorResponse(
+    throw SHS.Error.errorResponse(
       null,
       null,
       'INTERNAL_ERROR',
       'Sorry. I could not retrieve your profile.')
   }
   if (typeof response.email === 'undefined') {
-    throw ASHError.errorResponse(
+    throw SHS.Error.errorResponse(
       null,
       null,
       'INTERNAL_ERROR',

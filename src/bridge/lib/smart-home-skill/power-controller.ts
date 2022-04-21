@@ -1,19 +1,19 @@
-import * as ASH from '../../../common/smart-home-skill'
+import * as Common from '../../../common/'
 import { BackendControl } from '../backend'
 
-function capabilities (backendControl: BackendControl): Promise<ASH.AlexaResponseEventPayloadEndpointCapability>[] {
-  return [ASH.AlexaResponse.buildPayloadEndpointCapability({
+function capabilities (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+  return [Common.SHS.Response.buildPayloadEndpointCapability({
     namespace: 'Alexa.PowerController',
     propertyNames: ['powerState']
   })]
 }
 
-function states (backendControl: BackendControl): Promise<ASH.AlexaResponseContextProperty>[] {
+function states (backendControl: BackendControl): Promise<Common.SHS.Context.Property>[] {
   function value (): 'ON' | 'OFF' {
     return backendControl.getPowerState()
   }
 
-  const powerStateState = ASH.AlexaResponse.buildContextProperty({
+  const powerStateState = Common.SHS.Response.buildContextProperty({
     namespace: 'Alexa.PowerController',
     name: 'powerState',
     value
@@ -21,16 +21,16 @@ function states (backendControl: BackendControl): Promise<ASH.AlexaResponseConte
   return [powerStateState]
 }
 
-async function turnOffHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+async function turnOffHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
   const poweredOff = await backendControl.turnOff()
   if (poweredOff === false) {
-    throw ASH.errorResponse(
+    throw Common.SHS.Error.errorResponse(
       alexaRequest,
       500,
       'INTERNAL_ERROR',
       `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`)
   }
-  return new ASH.AlexaResponse({
+  return new Common.SHS.Response({
     namespace: 'Alexa',
     name: 'Response',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -38,16 +38,16 @@ async function turnOffHandler (alexaRequest: ASH.AlexaRequest, backendControl: B
   })
 }
 
-async function turnOnHandler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+async function turnOnHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
   const poweredOn = await backendControl.turnOn()
   if (poweredOn === false) {
-    throw ASH.errorResponse(
+    throw Common.SHS.Error.errorResponse(
       alexaRequest,
       500,
       'INTERNAL_ERROR',
       `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`)
   }
-  return new ASH.AlexaResponse({
+  return new Common.SHS.Response({
     namespace: 'Alexa',
     name: 'Response',
     correlationToken: alexaRequest.getCorrelationToken(),
@@ -55,9 +55,9 @@ async function turnOnHandler (alexaRequest: ASH.AlexaRequest, backendControl: Ba
   })
 }
 
-function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl): Promise<ASH.AlexaResponse> {
+function handler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
   if (alexaRequest.directive.header.namespace !== 'Alexa.PowerController') {
-    throw ASH.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PowerController')
+    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.PowerController')
   }
   switch (alexaRequest.directive.header.name) {
     case 'TurnOff':
@@ -65,7 +65,7 @@ function handler (alexaRequest: ASH.AlexaRequest, backendControl: BackendControl
     case 'TurnOn':
       return turnOnHandler(alexaRequest, backendControl)
     default:
-      throw ASH.errorResponseForInvalidDirectiveName(alexaRequest)
+      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest)
   }
 }
 

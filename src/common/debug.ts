@@ -1,4 +1,4 @@
-import { AlexaError } from './smart-home-skill/error'
+import * as SHS from './smart-home-skill'
 
 export function debug (message?: any, optionalParams?: any[]) {
   if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
@@ -8,8 +8,8 @@ export function debug (message?: any, optionalParams?: any[]) {
 
 export function debugError (error: any) {
   if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
-    // Already output by the AlexaError constructor.
-    if (error instanceof AlexaError) {
+    // Already output by the SHS.Error constructor.
+    if (error instanceof SHS.Error) {
       return
     }
 
@@ -21,8 +21,8 @@ export function debugError (error: any) {
 
 export function debugErrorWithStack (error: any) {
   if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
-    // Already output by the AlexaError constructor.
-    if (error instanceof AlexaError) {
+    // Already output by the SHS.Error constructor.
+    if (error instanceof SHS.Error) {
       return
     }
 

@@ -92,7 +92,7 @@ export class FrontendExternal extends BaseClass {
           .json(commandResponse)
           .end()
       } catch (error) {
-        const alexaError = (error as Common.SHS.AlexaError)
+        const alexaError = (error as Common.SHS.Error)
         const commandResponse = alexaError.response
 
         const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
@@ -134,7 +134,7 @@ export class FrontendExternal extends BaseClass {
           res.header(key, headers[key])
         })
       }
-      res.send()
+      res.json().send()
     }
 
     function initializeFunction (): Promise<void> {
@@ -145,14 +145,14 @@ export class FrontendExternal extends BaseClass {
         // Only accept POST requests and only access JSON content-type.
         that._server.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
           if (req.method !== 'POST') {
-            return res.send(405)
+            return res.json().send(405)
           }
           const contentType = req.headers['content-type']
           if (typeof contentType === 'undefined') {
-            return res.send(400)
+            return res.json().send(400)
           }
           if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-            return res.send(415)
+            return res.json().send(415)
           }
           next()
         })
