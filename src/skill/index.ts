@@ -4,9 +4,9 @@ import * as Common from '../common'
 import { handler as customSkillHandler } from './lib/custom-skill'
 import { handler as smartHomeSkillHandler } from './lib/smart-home-skill'
 
-async function skillHandler (request: ASKModel.RequestEnvelope | Common.SHS.AlexaRequest, context: ASKModel.Context | AWSLambda.Context): Promise<ASKModel.ResponseEnvelope | Common.SHS.AlexaResponse> {
+async function skillHandler (request: ASKModel.RequestEnvelope | Common.SHS.Request, context: ASKModel.Context | AWSLambda.Context): Promise<ASKModel.ResponseEnvelope | Common.SHS.Response> {
   Common.Debug.debugJSON(request)
-  let response: ASKModel.ResponseEnvelope | Common.SHS.AlexaResponse
+  let response: ASKModel.ResponseEnvelope | Common.SHS.Response
   if ('session' in request) {
     response = await customSkillHandler((request as ASKModel.RequestEnvelope), (context as ASKModel.Context))
     Common.Debug.debugJSON(response)
@@ -15,7 +15,7 @@ async function skillHandler (request: ASKModel.RequestEnvelope | Common.SHS.Alex
   }
 
   if ('directive' in request) {
-    response = await smartHomeSkillHandler((request as Common.SHS.AlexaRequest), (context as AWSLambda.Context))
+    response = await smartHomeSkillHandler((request as Common.SHS.Request), (context as AWSLambda.Context))
     Common.Debug.debugJSON(response)
 
     return response

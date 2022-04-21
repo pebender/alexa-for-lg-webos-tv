@@ -1,113 +1,141 @@
 import { randomUUID } from 'crypto'
 import { copyElement } from './copy'
-import {
-  AlexaMessageEndpoint,
-  AlexaMessageHeader,
-  AlexaMessageNamespace
-} from './common'
+import { SHSDirective } from './request'
 
-export interface AlexaResponseEventPayloadEndpointCapability {
-  type: string;
-  interface: string;
-  version: string;
-  properties?: {
-    supported: {
-      name: string;
-    }[];
-    proactivelyReported: boolean;
-    retrievable: boolean;
-  };
-  // 'supportedOperations' for 'Alexa.PlaybackController'
-  supportedOperations?: string[];
-  // 'instance', capabilityResources' and 'configuration' for 'Alexa.RangeController'
-  instance?: string;
-  configuration?: object;
-  capabilityResources?: {
-    friendlyNames: {
-      '@type': 'text';
-      value: {
-        text: string;
-        locale: 'en-US';
+export namespace SHSEvent {
+  export namespace Header {
+    export type Namespace = SHSDirective.Header.Namespace
+  }
+  export interface Header {
+    namespace: Header.Namespace;
+    name: string;
+    instance?: string;
+    messageId: string;
+    correlationToken?: string;
+    payloadVersion: '3';
+    [x: string]: string | undefined;
+  }
+  export interface Endpoint {
+    endpointId: string;
+    scope?: {
+      type: 'BearerToken';
+      token: string;
+      [x: string]: string;
+    };
+    cookie?: {[x: string]: string};
+    [x: string]: string | object | undefined;
+  }
+  export namespace Payload {
+    export namespace Endpoint {
+      export namespace Capability {
+
+      }
+      export interface Capability {
+        type: string;
+        interface: string;
+        version: string;
+        properties?: {
+          supported: {
+            name: string;
+          }[];
+          proactivelyReported: boolean;
+          retrievable: boolean;
+        };
+        // 'supportedOperations' for 'Alexa.PlaybackController'
+        supportedOperations?: string[];
+        // 'instance', capabilityResources' and 'configuration' for 'Alexa.RangeController'
+        instance?: string;
+        configuration?: object;
+        capabilityResources?: {
+          friendlyNames: {
+            '@type': 'text';
+            value: {
+              text: string;
+              locale: 'en-US';
+            };
+          }[];
+        };
+        [x: string]: string | object | undefined;
+      }
+
+    }
+    export interface Endpoint {
+      description: string;
+      displayCategories: string[];
+      endpointId: string;
+      friendlyName: string;
+      manufacturerName: string;
+      cookie?: {
+        [x: string]: string;
       };
-    }[];
-  };
-  [x: string]: string | object | undefined;
+      capabilities: Endpoint.Capability[];
+      [x: string]: string | object | undefined;
+    }
+  }
+  export interface Payload {
+    endpoints?: Payload.Endpoint[];
+    type?: string;
+    message?: string;
+    [x: string]: string | object | undefined;
+  }
 }
-
-export interface AlexaResponseEventPayloadEndpoint {
-  description: string;
-  displayCategories: string[];
-  endpointId: string;
-  friendlyName: string;
-  manufacturerName: string;
-  cookie?: {
-    [x: string]: string;
-  };
-  capabilities: AlexaResponseEventPayloadEndpointCapability[];
-  [x: string]: string | object | undefined;
-}
-
-export interface AlexaResponseEventPayload {
-  endpoints?: AlexaResponseEventPayloadEndpoint[];
-  type?: string;
-  message?: string;
-  [x: string]: string | object | undefined;
-}
-
-export interface AlexaResponseEvent {
-  header: AlexaMessageHeader;
-  endpoint?: AlexaMessageEndpoint;
-  payload: AlexaResponseEventPayload;
+export interface SHSEvent {
+  header: SHSEvent.Header;
+  endpoint?: SHSEvent.Endpoint;
+  payload: SHSEvent.Payload;
   [x: string]: object | undefined;
 }
-
-export interface AlexaResponseContextProperty {
-  namespace: AlexaMessageNamespace;
-  name: string;
-  instance?: string;
-  value: boolean | number | string | object;
-  timeOfSample: string;
-  uncertaintyInMilliseconds: number;
-  [x: string]: boolean | number | string | [] | object | undefined;
+export namespace SHSContext {
+  export namespace Property {
+    export type Namespace = SHSEvent.Header.Namespace
+  }
+  export interface Property {
+    namespace: Property.Namespace;
+    name: string;
+    instance?: string;
+    value: boolean | number | string | object;
+    timeOfSample: string;
+    uncertaintyInMilliseconds: number;
+    [x: string]: boolean | number | string | [] | object | undefined;
+  }
+}
+export interface SHSContext {
+  properties?: SHSContext.Property[];
+  [x: string]: SHSContext.Property[] | undefined;
 }
 
-export interface AlexaResponseContext {
-  properties?: AlexaResponseContextProperty[];
-  [x: string]: AlexaResponseContextProperty[] | undefined;
-}
-
-export class AlexaResponse {
-  public event: AlexaResponseEvent
-  public context?: AlexaResponseContext;
+export class SHSResponse {
+  public event: SHSEvent
+  public context?: SHSContext;
   [x: string]: object | undefined;
   public constructor (opts: {
-    event: AlexaResponseEvent;
-    context?: AlexaResponseContext;
+    event: SHSEvent;
+    context?: SHSContext;
   } | {
-    namespace: AlexaMessageNamespace;
+    namespace: SHSEvent.Header.Namespace;
     name: string;
     instance?: string;
     correlationToken?: string;
     endpointId?: string;
     token?: string;
-    payload?: AlexaResponseEventPayload;
+    payload?: SHSEvent.Payload;
   }) {
     const optsA = (opts as {
-      event: AlexaResponseEvent;
-      context?: AlexaResponseContext;
+      event: SHSEvent;
+      context?: SHSContext;
     })
     const optsB = (opts as {
-      namespace: AlexaMessageNamespace;
+      namespace: SHSEvent.Header.Namespace;
       name: string;
       instance?: string;
       correlationToken?: string;
       endpointId?: string;
       token?: string;
-      payload?: AlexaResponseEventPayload;
+      payload?: SHSEvent.Payload;
     })
 
     const response = {
-      event: (copyElement(optsA.event) as AlexaResponseEvent) || {
+      event: (copyElement(optsA.event) as SHSEvent) || {
         header: {
           namespace: optsB.namespace,
           name: optsB.name,
@@ -123,7 +151,7 @@ export class AlexaResponse {
             token: optsB.token
           }
         },
-        payload: (copyElement(optsB.payload) as AlexaResponseEventPayload) || {}
+        payload: (copyElement(optsB.payload) as SHSEvent.Payload) || {}
       },
       context: optsA.context
     }
@@ -140,9 +168,9 @@ export class AlexaResponse {
       Reflect.deleteProperty(response.event, 'endpoint')
     }
 
-    this.event = (copyElement(response.event) as AlexaResponseEvent)
+    this.event = (copyElement(response.event) as SHSEvent)
     if (typeof response.context !== 'undefined') {
-      this.response = (copyElement(response.context) as AlexaResponseContext)
+      this.response = (copyElement(response.context) as SHSContext)
     }
   }
 
@@ -151,10 +179,10 @@ export class AlexaResponse {
       this.endpoint = {}
     }
 
-    (this.endpoint as AlexaMessageEndpoint).endpointId = endpointId
+    (this.endpoint as SHSEvent.Endpoint).endpointId = endpointId
   }
 
-  public addContextProperty (contextProperty: AlexaResponseContextProperty): void {
+  public addContextProperty (contextProperty: SHSContext.Property): void {
     if (typeof this.context === 'undefined') {
       this.context = {}
     }
@@ -165,7 +193,7 @@ export class AlexaResponse {
     this.context.properties.push(contextProperty)
   }
 
-  public addPayloadEndpoint (payloadEndpoint: AlexaResponseEventPayloadEndpoint): void {
+  public addPayloadEndpoint (payloadEndpoint: SHSEvent.Payload.Endpoint): void {
     if (typeof this.event.payload.endpoints === 'undefined') {
       this.event.payload.endpoints = []
     }
@@ -174,11 +202,11 @@ export class AlexaResponse {
   }
 
   public static async buildContextProperty (opts: {
-    'namespace': string;
+    'namespace': SHSContext.Property.Namespace;
     'name': string;
     'instance'?: string;
     'value': () => boolean | number | string | [] | object;
-  }): Promise<AlexaResponseContextProperty> {
+  }): Promise<SHSContext.Property> {
     const startTime = new Date()
     const value = await opts.value()
     const endTime = new Date()
@@ -192,10 +220,10 @@ export class AlexaResponse {
   }
 
   public static buildPayloadEndpointCapability (opts: {
-    'namespace': AlexaMessageNamespace;
+    'namespace': SHSEvent.Header.Namespace;
     'propertyNames'?: string[];
-  }): Promise<AlexaResponseEventPayloadEndpointCapability> {
-    const capability: AlexaResponseEventPayloadEndpointCapability = {
+  }): Promise<SHSEvent.Payload.Endpoint.Capability> {
+    const capability: SHSEvent.Payload.Endpoint.Capability = {
       type: 'AlexaInterface',
       interface: opts.namespace,
       version: '3'
