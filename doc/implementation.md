@@ -97,7 +97,7 @@ The bridge has a configuration file with the email addresses of authorized users
 
 Following the procedure outlined in [Acquiring the Email Address Using the Smart Home Skill](#acquiring-the-email-address-using-the-smart-home-skill), the bridge can acquire the user's email address. After that, the bridge can compare the email address to the email addresses in the configuration file to determine whether the request directive should processed.
 
-There are two problems with this naive approach.
+There are three problems with this naive approach.
 
 The first problem is that the bridge would need to parse the request directive before it could authorize the user. The alexa-for-lg-webos-tv solves this problem by using the bearerToken to authorize the HTTP request. Just as in [Retrieving the email Address](#retrieving-the-email-address), the SHS includes the HTTP authorization header
 
@@ -106,3 +106,5 @@ The first problem is that the bridge would need to parse the request directive b
 in the HTTP POST requests to the bridge. This allows the bridge to accept or reject the request without processing the contents of the POST.
 
 The second problem is the problem mentioned in [The Database](#the-database): retrieving the profile every time the bridge receives a message would add needless delay in processing the message as well as add needless load on the LWA profile server. The bridge solves this problem the same way SMS solved the problem when looking up the bridge hostname. The bridge maintains a database containing the bearerToken and its associated email address. The bridge looks up the bearerToken in the database. If it finds the bearerToken in the database, then it authorizes the request. If it doesn't then it acquires the user's email address. If the email address is in the configuration file, then it adds the bearerToken to the database. After that, it looks then it looks up the bearerToken in the database again. If it still doesn't find it, then it does not authorize the request.
+
+The third problem is an attacker deliberately making requests with invalid bearerTokens. Each new bearerToken results in the bridge contacting the LWA profile server. If something is not done to mitigate this, then an attacker could use the bridge to launch an attack on the LWA profile server. To mitigate this risk, the bridge blacklists an IP address after a small number of failed authorization attempts originating from the IP address.
