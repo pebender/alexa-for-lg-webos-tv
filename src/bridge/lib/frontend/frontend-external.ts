@@ -16,8 +16,10 @@ import ajvFormats from 'ajv-formats'
 import express from 'express'
 import * as httpErrors from 'http-errors'
 const { auth } = require('express-oauth2-bearer')
+const IPBlacklist = require('@outofsync/express-ip-blacklist')
 
 export class FrontendExternal extends BaseClass {
+  private readonly _ipBlacklist
   private readonly _authorization: FrontendAuthorization
   private readonly _smartHomeSkill: SmartHomeSkill
   private readonly _ajv: Ajv
@@ -26,8 +28,14 @@ export class FrontendExternal extends BaseClass {
   public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
     super()
 
+    // The blacklist is due to auth failures so blacklist quickly.
+    // There should be no auth failures and each auth failure results
+    // in sending a profile request to Amazon.
+    this._ipBlacklist = new IPBlacklist('blacklist', { count: 5 })
+
     this._authorization = frontendAuthorization
     this._smartHomeSkill = smartHomeSkill
+
     // 'strictTypes: false' suppresses the warning:
     //   strict mode: missing type "object" for keyword "additionalProperties"
     this._ajv = new Ajv({
@@ -112,13 +120,26 @@ export class FrontendExternal extends BaseClass {
       return token
     }
 
+    function checkBlacklist (req: express.Request, res: express.Response, next: express.NextFunction) {
+      return that._ipBlacklist.checkBlacklist(req, res, next)
+    }
+
     async function handleAuthFailure (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+      if (typeof err === 'undefined') {
+        return next(err)
+      }
+
       // It's not an http-errors error so move along.
       if (!httpErrors.isHttpError(err)) {
         return next(err)
       }
 
       const error = err as httpErrors.HttpError
+
+      // express-oauth2-bearer sets the www-authentication
+      if ((typeof error.headers !== 'undefined') && (typeof error.headers['www-authentication'] !== 'undefined')) {
+        that._ipBlacklist.increment(req, res)
+      }
 
       // Too late to send a response.
       // This should not happen as neither express-oauth2-bearer nor @outofsync/express-ip-blacklist send a response.
@@ -140,6 +161,7 @@ export class FrontendExternal extends BaseClass {
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         // Check the IP address blacklist.
+        that._server.use(checkBlacklist)
         that._server.use(auth(authorizeToken))
         that._server.use(handleAuthFailure)
         // Only accept POST requests and only access JSON content-type.
