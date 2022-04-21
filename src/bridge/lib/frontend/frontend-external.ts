@@ -14,7 +14,6 @@ import Ajv from 'ajv/dist/2019'
 import * as AjvTypes from 'ajv'
 import ajvFormats from 'ajv-formats'
 import express from 'express'
-import expressCore from 'express-serve-static-core'
 import * as httpErrors from 'http-errors'
 const { auth } = require('express-oauth2-bearer')
 
@@ -23,7 +22,7 @@ export class FrontendExternal extends BaseClass {
   private readonly _smartHomeSkill: SmartHomeSkill
   private readonly _ajv: Ajv
   private readonly _schemaValidator: AjvTypes.ValidateFunction
-  private readonly _server: expressCore.Express
+  private readonly _server: express.Express
   public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
     super()
 
@@ -114,13 +113,19 @@ export class FrontendExternal extends BaseClass {
     }
 
     async function handleAuthFailure (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-      if (res.headersSent) {
-        return next(err)
-      }
+      // It's not an http-errors error so move along.
       if (!httpErrors.isHttpError(err)) {
         return next(err)
       }
+
       const error = err as httpErrors.HttpError
+
+      // Too late to send a response.
+      // This should not happen as neither express-oauth2-bearer nor @outofsync/express-ip-blacklist send a response.
+      if (res.headersSent) {
+        return next(err)
+      }
+
       res.status(error.status)
       if (error.headers) {
         const headers = (error.headers as { [x: string]: string; })
@@ -134,11 +139,27 @@ export class FrontendExternal extends BaseClass {
 
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
-        that._server.use('/', express.json())
-        that._server.use('/', auth(authorizeToken))
-        that._server.use('/', handleAuthFailure)
+        // Check the IP address blacklist.
+        that._server.use(auth(authorizeToken))
+        that._server.use(handleAuthFailure)
+        // Only accept POST requests and only access JSON content-type.
+        that._server.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+          if (req.method !== 'POST') {
+            return res.send(405)
+          }
+          const contentType = req.headers['content-type']
+          if (typeof contentType === 'undefined') {
+            return res.send(400)
+          }
+          if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
+            return res.send(415)
+          }
+          next()
+        })
+        // Parse the JSON content.
+        that._server.use(express.json())
         that._server.post(`/${Common.constants.bridge.path}`, backendASHHandler)
-        that._server.post('/', (_req: expressCore.Request, res: expressCore.Response): void => {
+        that._server.post('/', (_req: express.Request, res: express.Response): void => {
           res.status(401).end()
         })
         resolve()
