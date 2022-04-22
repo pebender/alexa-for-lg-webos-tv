@@ -1,4 +1,3 @@
-import * as HTTPSRequest from '../../../common/https-request'
 import * as Database from '../database'
 import * as Common from '../../../common'
 
@@ -62,7 +61,7 @@ async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<str
 
 async function sendHandler (path: string, alexaRequest: Common.SHS.Request, message: Request) : Promise<Common.SHS.Response> {
   const hostname = await getBridgeHostname(alexaRequest)
-  const requestOptions: HTTPSRequest.RequestOptions = {
+  const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
     path,
     port: Common.constants.bridge.port.https,
@@ -73,9 +72,9 @@ async function sendHandler (path: string, alexaRequest: Common.SHS.Request, mess
 
   let response
   try {
-    response = await HTTPSRequest.request(requestOptions, bearerToken, alexaRequest)
+    response = await Common.HTTPSRequest.request(requestOptions, bearerToken, alexaRequest)
   } catch (error) {
-    const requestError = (error as HTTPSRequest.ResponseError)
+    const requestError = (error as Common.HTTPSRequest.ResponseError)
     switch (requestError.name) {
       case 'CONNECTION_INTERRUPTED':
         throw Common.SHS.Error.errorResponse(
