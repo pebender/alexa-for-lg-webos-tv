@@ -1,5 +1,5 @@
-import * as Common from '../../../common/'
-import { BackendControl } from '../backend'
+import * as Common from '../../../../common'
+import { BackendControl } from '../../backend'
 
 function capabilities (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [Common.SHS.Response.buildPayloadEndpointCapability({

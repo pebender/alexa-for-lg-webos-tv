@@ -1,5 +1,5 @@
-import * as Common from '../../../common'
-import { Backend } from '../backend'
+import * as Common from '../../../../common'
+import { Backend } from '../../backend'
 
 function capabilities (backend: Backend): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return []

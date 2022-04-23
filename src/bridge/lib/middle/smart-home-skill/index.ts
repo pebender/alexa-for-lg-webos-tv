@@ -1,4 +1,4 @@
-import * as Common from '../../../common'
+import * as Common from '../../../../common'
 import * as alexa from './alexa'
 import * as alexaAuthorization from './authorization'
 import * as alexaChannelController from './channel-controller'
@@ -11,8 +11,8 @@ import * as alexaSpeaker from './speaker'
 import {
   Backend,
   BackendControl
-} from '../backend'
-import { Authorization as DirectiveAuthorization } from '../authorization/directive'
+} from '../../backend'
+import { Authorization as DirectiveAuthorization } from '../authorization'
 
 interface HandlerFunction {
   (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response>;
@@ -69,7 +69,7 @@ async function addStates (alexaResponse: Common.SHS.Response, backendControl: Ba
   }
 }
 
-async function privateHandler (event: Common.SHS.Request, authorization: DirectiveAuthorization, backend: Backend): Promise<Common.SHS.Response> {
+async function handler (event: Common.SHS.Request, authorization: DirectiveAuthorization, backend: Backend): Promise<Common.SHS.Response> {
   const alexaRequest = new Common.SHS.Request(event)
 
   const bearerToken: string = alexaRequest.getBearerToken()
@@ -146,17 +146,4 @@ async function privateHandler (event: Common.SHS.Request, authorization: Directi
   }
 }
 
-export class SmartHomeSkill {
-  private readonly _authorization: DirectiveAuthorization
-  private readonly _backend: Backend
-  public constructor (directiveAuthorization: DirectiveAuthorization, backend: Backend) {
-    this._authorization = directiveAuthorization
-    this._backend = backend
-  }
-
-  public async handler (alexaRequest: Common.SHS.Request): Promise<Common.SHS.Response> {
-    return await privateHandler(alexaRequest, this._authorization, this._backend)
-  }
-}
-
-export { capabilities, states }
+export { capabilities, states, handler }

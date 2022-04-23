@@ -1,7 +1,7 @@
-import * as Common from '../../../common'
-import { Backend, BackendControl } from '../backend'
+import * as Common from '../../../../common'
+import { Backend, BackendControl } from '../../backend'
 import { capabilities as alexaSmartHomeCapabilities } from './index'
-import { constants } from '../../../common/constants'
+import { constants } from '../../../../common/constants'
 
 async function handler (alexaRequest: Common.SHS.Request, backend: Backend): Promise<Common.SHS.Response> {
   //

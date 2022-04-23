@@ -1,16 +1,16 @@
 
-import { BaseClass } from '../base-class'
-import { DatabaseRecord, DatabaseTable } from '../database'
-import * as Common from '../../../common'
+import { BaseClass } from '../../base-class'
+import { DatabaseRecord, DatabaseTable } from '../../database'
+import * as Common from '../../../../common'
 export class Authorization extends BaseClass {
   private readonly _authorizedEmails: string[]
 
   private readonly _db: DatabaseTable
-  public constructor (authorizedEmails: string[], frontendDb: DatabaseTable) {
+  public constructor (authorizedEmails: string[], middleDb: DatabaseTable) {
     super()
 
     this._authorizedEmails = authorizedEmails
-    this._db = frontendDb
+    this._db = middleDb
   }
 
   public initialize (): Promise<void> {

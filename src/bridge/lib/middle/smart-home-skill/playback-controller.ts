@@ -1,5 +1,5 @@
-import * as ASH from '../../../common/smart-home-skill'
-import { BackendControl } from '../backend'
+import * as ASH from '../../../../common/smart-home-skill'
+import { BackendControl } from '../../backend'
 import LGTV from 'lgtv2'
 
 function capabilities (backendControl: BackendControl): Promise<ASH.Event.Payload.Endpoint.Capability>[] {

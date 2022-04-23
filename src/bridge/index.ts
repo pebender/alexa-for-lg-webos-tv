@@ -10,9 +10,8 @@ import * as Common from '../common'
 import { Backend } from './lib/backend'
 import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
-import { SmartHomeSkill } from './lib/smart-home-skill'
+import { Middle } from './lib/middle'
 import * as fs from 'fs/promises'
-import { Authorization as DirectiveAuthorization } from './lib/authorization/directive'
 const persistPath = require('persist-path')
 
 export async function startBridge (): Promise<void> {
@@ -56,17 +55,16 @@ export async function startBridge (): Promise<void> {
   //
   const backendDb = new DatabaseTable(configurationDir, 'backend', ['udn'], 'udn')
   await backendDb.initialize()
-  const frontendDb = new DatabaseTable(configurationDir, 'frontend', ['email', 'bearerToken'], 'email')
-  await frontendDb.initialize()
+  const middleDb = new DatabaseTable(configurationDir, 'middle', ['email', 'bearerToken'], 'email')
+  await middleDb.initialize()
   const backend = new Backend(backendDb)
   backend.on('error', (error: Error, id: string): void => {
     Common.Debug.debug(id)
     Common.Debug.debugErrorWithStack(error)
   })
   await backend.initialize()
-  const directiveAuthorization = new DirectiveAuthorization(authorizedEmails, frontendDb)
-  const smartHomeSkill = new SmartHomeSkill(directiveAuthorization, backend)
-  const frontend = new Frontend(hostname, authorizedEmails, smartHomeSkill)
+  const middle = new Middle(authorizedEmails, middleDb, backend)
+  const frontend = new Frontend(hostname, authorizedEmails, middle)
   await frontend.initialize()
   await frontend.start()
   await backend.start()

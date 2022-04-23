@@ -1,6 +1,6 @@
 import LGTV from 'lgtv2'
-import * as ASH from '../../../common/smart-home-skill'
-import { BackendControl } from '../backend'
+import * as ASH from '../../../../common/smart-home-skill'
+import { BackendControl } from '../../backend'
 import launchMap from './launcher.json'
 
 type LaunchMapItem = { alexa: { name: string; identifier: string; }; lgtv: { title: string; id: string; }; }

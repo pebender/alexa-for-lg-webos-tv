@@ -1,5 +1,5 @@
-import * as Common from '../../../common'
-import { BackendControl } from '../backend'
+import * as Common from '../../../../common'
+import { BackendControl } from '../../backend'
 import LGTV from 'lgtv2'
 
 function capabilities (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {

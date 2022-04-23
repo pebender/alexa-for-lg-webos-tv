@@ -1,7 +1,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import * as Common from '../../../common'
+import * as Common from '../../../../common'
 import { JwtPayload } from 'jsonwebtoken'
 
 export class Authorization {
