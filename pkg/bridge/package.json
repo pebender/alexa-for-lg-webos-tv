@@ -69,6 +69,6 @@
     "pack": "npm pack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
-    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/*.crt\" \"../pkg/bridge/lib/\")"
+    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/authorization/*.crt\" \"../pkg/bridge/lib/\")"
   }
 }
