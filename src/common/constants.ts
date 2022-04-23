@@ -30,6 +30,11 @@ export const constants = {
       http: 25391,
       https: 25392
     },
-    path: `/${applicationNameSafe}`
+    path: `/${applicationNameSafe}`,
+    jwt: {
+      iss: applicationNamePretty,
+      x509KeyFile: `${applicationNameSafe}.key`,
+      x509CertificateFile: `${applicationNameSafe}.crt`
+    }
   }
 }

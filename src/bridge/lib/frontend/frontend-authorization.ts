@@ -1,43 +1,51 @@
 
-import { BaseClass } from '../base-class'
-import { DatabaseRecord, DatabaseTable } from '../database'
+import * as fs from 'fs'
+import * as path from 'path'
 import * as Common from '../../../common'
-export class FrontendAuthorization extends BaseClass {
+import { JwtPayload } from 'jsonwebtoken'
+
+export class Authorization {
+  private readonly _x509Cert: Buffer
+  private readonly _hostname: string
   private readonly _authorizedEmails: string[]
-
-  private readonly _db: DatabaseTable
-  public constructor (authorizedEmails: string[], frontendDb: DatabaseTable) {
-    super()
-
+  public constructor (hostname: string, authorizedEmails: string[]) {
+    this._x509Cert = fs.readFileSync(path.join(__dirname, Common.constants.bridge.jwt.x509CertificateFile))
+    this._hostname = hostname
     this._authorizedEmails = authorizedEmails
-    this._db = frontendDb
   }
 
-  public initialize (): Promise<void> {
-    return this.initializeHandler(() => Promise.resolve())
+  public x509Cert (): Buffer {
+    return this._x509Cert
   }
 
-  public async authorize (bearerToken: string): Promise<boolean> {
-    let record: DatabaseRecord | null
-    try {
-      record = await this._db.getRecord({ bearerToken })
-    } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(null, error)
+  public authorize (jwtPayload: JwtPayload): boolean {
+    const that = this
+
+    Common.Debug.debugJSON(jwtPayload)
+    if (typeof jwtPayload.iss === 'undefined') {
+      Common.Debug.debug('payload.iss failed: missing')
+      return false
     }
-    if (record === null) {
-      const profile = await Common.Profile.SHS.getUserProfile(bearerToken)
-      const userId = profile.user_id
-      const email = profile.email
-
-      const found = this._authorizedEmails.find((element) => (element === email))
-      if (typeof found === 'undefined') {
-        return false
-      }
-      try {
-        await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
-      } catch (error) {
-        throw Common.SHS.Error.errorResponseFromError(null, error)
-      }
+    if (jwtPayload.iss !== Common.constants.bridge.jwt.iss) {
+      Common.Debug.debug(`payload.iss failed: ${jwtPayload.iss} ${Common.constants.bridge.jwt.iss}`)
+      return false
+    }
+    if (typeof jwtPayload.sub === 'undefined') {
+      Common.Debug.debug('payload.sub failed: missing')
+      return false
+    }
+    const found = that._authorizedEmails.find((authorizedEmail) => (jwtPayload.sub === authorizedEmail))
+    if (typeof found === 'undefined') {
+      Common.Debug.debug('payload.sub failed')
+      return false
+    }
+    if (typeof jwtPayload.aud === 'undefined') {
+      Common.Debug.debug('payload.aud failed: missing')
+      return false
+    }
+    if (jwtPayload.aud !== `https://${that._hostname}/`) {
+      Common.Debug.debug(`payload.sub failed ${jwtPayload.aud} https://${that._hostname}/`)
+      return false
     }
 
     return true

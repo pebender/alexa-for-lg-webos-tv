@@ -1,15 +1,14 @@
 import * as Common from '../../../common'
 import { BaseClass } from '../base-class'
-import { FrontendAuthorization } from './frontend-authorization'
 import { FrontendExternal } from './frontend-external'
 import { SmartHomeSkill } from '../smart-home-skill'
 
 export class Frontend extends BaseClass {
   private _external: FrontendExternal
-  public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
+  public constructor (hostname: string, authorizedEmails: string[], smartHomeSkill: SmartHomeSkill) {
     super()
 
-    this._external = new FrontendExternal(frontendAuthorization, smartHomeSkill)
+    this._external = new FrontendExternal(hostname, authorizedEmails, smartHomeSkill)
   }
 
   public initialize (): Promise<void> {

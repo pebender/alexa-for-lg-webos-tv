@@ -23,9 +23,11 @@
     "async-mutex": "0.3.2",
     "axios": "0.26.1",
     "express": "4.17.3",
+    "express-jwt": "7.4.3",
     "express-oauth2-bearer": "0.4.1",
     "http-errors": "2.0.0",
     "isnumeric": "0.3.3",
+    "jsonwebtoken": "8.5.1",
     "lgtv2": "1.6.3",
     "@outofsync/express-ip-blacklist": "1.3.2",
     "@seald-io/nedb": "3.0.0",
@@ -43,10 +45,12 @@
     "async-mutex",
     "axios",
     "express",
+    "express-jwt",
     "express-oauth2-bearer",
     "fs-extra",
     "http-errors",
     "isnumeric",
+    "jsonwebtoken",
     "lgtv2",
     "@outofsync/express-ip-blacklist",
     "@seald-io/nedb",
@@ -60,9 +64,11 @@
     "clean": "rm -rf lib node_modules package-lock.json *.tgz",
     "install_modules": "npm install",
     "build": "npx tsc",
+    "postbuild": "npm run copy_files",
     "watch": "npx tsc --watch",
     "pack": "npm pack",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
+    "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
+    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/*.crt\" \"../pkg/bridge/lib/\")"
   }
 }

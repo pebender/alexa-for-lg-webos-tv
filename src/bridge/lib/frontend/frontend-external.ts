@@ -8,33 +8,32 @@
 
 import * as Common from '../../../common'
 import { BaseClass } from '../base-class'
-import { FrontendAuthorization } from './frontend-authorization'
 import { SmartHomeSkill } from '../smart-home-skill'
 import Ajv from 'ajv/dist/2019'
 import * as AjvTypes from 'ajv'
 import ajvFormats from 'ajv-formats'
 import express from 'express'
-import * as httpErrors from 'http-errors'
-const { auth } = require('express-oauth2-bearer')
+import { expressjwt, ExpressJwtRequest } from 'express-jwt'
+import { Authorization } from './frontend-authorization'
 const IPBlacklist = require('@outofsync/express-ip-blacklist')
 
 export class FrontendExternal extends BaseClass {
-  private readonly _ipBlacklist
-  private readonly _authorization: FrontendAuthorization
+  private readonly _authorization: Authorization
   private readonly _smartHomeSkill: SmartHomeSkill
+  private readonly _ipBlacklist
   private readonly _ajv: Ajv
   private readonly _schemaValidator: AjvTypes.ValidateFunction
   private readonly _server: express.Express
-  public constructor (frontendAuthorization: FrontendAuthorization, smartHomeSkill: SmartHomeSkill) {
+  public constructor (hostname: string, authorizedEmails: string[], smartHomeSkill: SmartHomeSkill) {
     super()
+
+    this._authorization = new Authorization(hostname, authorizedEmails)
+    this._smartHomeSkill = smartHomeSkill
 
     // The blacklist is due to auth failures so blacklist quickly.
     // There should be no auth failures and each auth failure results
     // in sending a profile request to Amazon.
     this._ipBlacklist = new IPBlacklist('blacklist', { count: 5 })
-
-    this._authorization = frontendAuthorization
-    this._smartHomeSkill = smartHomeSkill
 
     // 'strictTypes: false' suppresses the warning:
     //   strict mode: missing type "object" for keyword "additionalProperties"
@@ -68,8 +67,86 @@ export class FrontendExternal extends BaseClass {
   public initialize (): Promise<void> {
     const that = this
 
-    // Alexa Smart Home (ASH) skill hand1er.
-    async function backendASHHandler (request: express.Request, response: express.Response): Promise<void> {
+    function checkBlacklist (req: express.Request, res: express.Response, next: express.NextFunction) {
+      return that._ipBlacklist.checkBlacklist(req, res, next)
+    }
+
+    function handleJwtError (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+      if (res.headersSent) {
+        return next(err)
+      }
+
+      if (err) {
+        that._ipBlacklist.increment(req, res)
+
+        Common.Debug.debug('handlerJwtError 1')
+        const response = new Common.SHS.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
+            message: 'Bridge connection failed due to invalid authorization credentials.'
+          }
+        })
+
+        Common.Debug.debug('failed signature')
+        res.status(200)
+          .json(response)
+          .end()
+        return
+      }
+
+      next(err)
+    }
+
+    function handleJwtPayload (req: express.Request, res: express.Response, next: express.NextFunction) {
+      const jwtPayload = ((req as unknown) as ExpressJwtRequest).auth
+
+      if (typeof jwtPayload === 'undefined') {
+        that._ipBlacklist.increment(req, res)
+
+        Common.Debug.debug('handleJwtPayload 1')
+        const response = new Common.SHS.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
+            message: 'Bridge connection failed due to invalid authorization credentials.'
+          }
+        })
+
+        Common.Debug.debug('failed signature')
+        res.status(200)
+          .json(response)
+          .end()
+        return
+      }
+
+      if (!that._authorization.authorize(jwtPayload)) {
+        that._ipBlacklist.increment(req, res)
+
+        Common.Debug.debug('handleJwtPayload 2')
+        const response = new Common.SHS.Response({
+          namespace: 'Alexa',
+          name: 'ErrorResponse',
+          payload: {
+            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
+            message: 'Bridge connection failed due to invalid authorization credentials.'
+          }
+        })
+
+        Common.Debug.debug('failed authorization')
+        res.status(200)
+          .json(response)
+          .end()
+        return
+      }
+
+      next()
+    }
+
+    // SHS hand1er.
+    async function backendSHSHandler (request: express.Request, response: express.Response): Promise<void> {
       try {
         Common.Debug.debug('request message')
         Common.Debug.debugJSON(request.body)
@@ -100,10 +177,10 @@ export class FrontendExternal extends BaseClass {
           .json(commandResponse)
           .end()
       } catch (error) {
-        const alexaError = (error as Common.SHS.Error)
-        const commandResponse = alexaError.response
+        const shsError = (error as Common.SHS.Error)
+        const commandResponse = shsError.response
 
-        const statusCode = (typeof alexaError.httpStatusCode !== 'undefined') ? alexaError.httpStatusCode : 500
+        const statusCode = (typeof shsError.httpStatusCode !== 'undefined') ? shsError.httpStatusCode : 500
         response
           .type('json')
           .status(statusCode)
@@ -112,58 +189,18 @@ export class FrontendExternal extends BaseClass {
       }
     }
 
-    async function authorizeToken (token: string): Promise<any> {
-      const authorized = await that._authorization.authorize(token)
-      if (!authorized) {
-        return
-      }
-      return token
-    }
-
-    function checkBlacklist (req: express.Request, res: express.Response, next: express.NextFunction) {
-      return that._ipBlacklist.checkBlacklist(req, res, next)
-    }
-
-    async function handleAuthFailure (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-      if (typeof err === 'undefined') {
-        return next(err)
-      }
-
-      // It's not an http-errors error so move along.
-      if (!httpErrors.isHttpError(err)) {
-        return next(err)
-      }
-
-      const error = err as httpErrors.HttpError
-
-      // express-oauth2-bearer sets the www-authentication
-      if ((typeof error.headers !== 'undefined') && (typeof error.headers['www-authentication'] !== 'undefined')) {
-        that._ipBlacklist.increment(req, res)
-      }
-
-      // Too late to send a response.
-      // This should not happen as neither express-oauth2-bearer nor @outofsync/express-ip-blacklist send a response.
-      if (res.headersSent) {
-        return next(err)
-      }
-
-      res.status(error.status)
-      if (error.headers) {
-        const headers = (error.headers as { [x: string]: string; })
-        const keys = Object.keys(headers)
-        keys.forEach((key: string): void => {
-          res.header(key, headers[key])
-        })
-      }
-      res.json().send()
-    }
-
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
         // Check the IP address blacklist.
         that._server.use(checkBlacklist)
-        that._server.use(auth(authorizeToken))
-        that._server.use(handleAuthFailure)
+        that._server.use(
+          expressjwt({
+            secret: that._authorization.x509Cert(),
+            algorithms: ['RS256']
+          }),
+          handleJwtError,
+          handleJwtPayload
+        )
         // Only accept POST requests and only access JSON content-type.
         that._server.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
           if (req.method !== 'POST') {
@@ -180,7 +217,7 @@ export class FrontendExternal extends BaseClass {
         })
         // Parse the JSON content.
         that._server.use(express.json())
-        that._server.post(`/${Common.constants.bridge.path}`, backendASHHandler)
+        that._server.post(`/${Common.constants.bridge.path}`, backendSHSHandler)
         that._server.post('/', (_req: express.Request, res: express.Response): void => {
           res.status(401).end()
         })

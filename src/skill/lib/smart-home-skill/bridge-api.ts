@@ -1,5 +1,6 @@
 import * as Database from '../database'
 import * as Common from '../../../common'
+import * as Jwt from './jwt'
 
 export interface Request {
   [x: string]: number | string | object | undefined;
@@ -59,8 +60,58 @@ async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<str
   )
 }
 
+async function getUserEmail (alexaRequest: Common.SHS.Request): Promise<string> {
+  Common.Debug.debug(`getUserHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
+
+  async function queryUserEmail (bearerToken: string): Promise<string | null> {
+    let email
+    try {
+      email = await Database.getEmail(bearerToken)
+      if (email !== null) {
+        return email
+      } else {
+        return null
+      }
+    } catch (error) {
+      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
+    }
+  }
+
+  async function setBearerToken (email: string, bearerToken: string): Promise<void> {
+    try {
+      await Database.setBearerToken(email, bearerToken)
+    } catch (error) {
+      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
+    }
+  }
+
+  const bearerToken = alexaRequest.getBearerToken()
+  let email: string | null = null
+  email = await queryUserEmail(bearerToken)
+  if (email !== null) {
+    return email
+  }
+  const emailFromProfile = await alexaRequest.getUserEmail()
+  await setBearerToken(emailFromProfile, bearerToken)
+  email = await queryUserEmail(bearerToken)
+  if (email !== null) {
+    return email
+  }
+
+  throw Common.SHS.Error.errorResponse(
+    alexaRequest,
+    null,
+    'BRIDGE_UNREACHABLE',
+    'User email has not been configured'
+  )
+}
+
 async function sendHandler (path: string, alexaRequest: Common.SHS.Request, message: Request) : Promise<Common.SHS.Response> {
   const hostname = await getBridgeHostname(alexaRequest)
+  const email = await getUserEmail(alexaRequest)
+
+  const token = await Jwt.create(Jwt.x509Key, email, hostname)
+
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
     path,
@@ -68,11 +119,10 @@ async function sendHandler (path: string, alexaRequest: Common.SHS.Request, mess
     method: 'POST',
     headers: {}
   }
-  const bearerToken = alexaRequest.getBearerToken()
 
   let response
   try {
-    response = await Common.HTTPSRequest.request(requestOptions, bearerToken, alexaRequest)
+    response = await Common.HTTPSRequest.request(requestOptions, token, alexaRequest)
   } catch (error) {
     const requestError = (error as Common.HTTPSRequest.ResponseError)
     switch (requestError.name) {

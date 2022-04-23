@@ -12,7 +12,7 @@ import {
   Backend,
   BackendControl
 } from '../backend'
-import { FrontendAuthorization } from '../frontend/frontend-authorization'
+import { Authorization as DirectiveAuthorization } from '../authorization/directive'
 
 interface HandlerFunction {
   (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response>;
@@ -69,7 +69,7 @@ async function addStates (alexaResponse: Common.SHS.Response, backendControl: Ba
   }
 }
 
-async function privateHandler (event: Common.SHS.Request, authorization: FrontendAuthorization, backend: Backend): Promise<Common.SHS.Response> {
+async function privateHandler (event: Common.SHS.Request, authorization: DirectiveAuthorization, backend: Backend): Promise<Common.SHS.Response> {
   const alexaRequest = new Common.SHS.Request(event)
 
   const bearerToken: string = alexaRequest.getBearerToken()
@@ -147,10 +147,10 @@ async function privateHandler (event: Common.SHS.Request, authorization: Fronten
 }
 
 export class SmartHomeSkill {
-  private readonly _authorization: FrontendAuthorization
+  private readonly _authorization: DirectiveAuthorization
   private readonly _backend: Backend
-  public constructor (frontendAuthorization: FrontendAuthorization, backend: Backend) {
-    this._authorization = frontendAuthorization
+  public constructor (directiveAuthorization: DirectiveAuthorization, backend: Backend) {
+    this._authorization = directiveAuthorization
     this._backend = backend
   }
 

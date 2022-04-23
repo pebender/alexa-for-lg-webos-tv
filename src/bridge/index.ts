@@ -12,7 +12,7 @@ import { DatabaseTable } from './lib/database'
 import { Frontend } from './lib/frontend'
 import { SmartHomeSkill } from './lib/smart-home-skill'
 import * as fs from 'fs/promises'
-import { FrontendAuthorization } from './lib/frontend/frontend-authorization'
+import { Authorization as DirectiveAuthorization } from './lib/authorization/directive'
 const persistPath = require('persist-path')
 
 export async function startBridge (): Promise<void> {
@@ -25,13 +25,24 @@ export async function startBridge (): Promise<void> {
     throw Error
   }
 
+  let hostname: string = ''
   let authorizedEmails: string[] = []
   try {
     const raw = await fs.readFile(`${configurationDir}/config.json`)
     const config = JSON.parse(raw as any)
-    if ((typeof config.authorizedEmails !== 'undefined')) {
-      authorizedEmails = config.authorizedEmails
+
+    if (typeof config.hostname === 'undefined') {
+      const error = new Error('config.json is missing "hostname".')
+      Common.Debug.debugErrorWithStack(error)
+      process.exit(1)
     }
+    hostname = config.hostname
+    if (typeof config.authorizedEmails === 'undefined') {
+      const error = new Error('config.json is missing "authorizedEmails".')
+      Common.Debug.debugErrorWithStack(error)
+      process.exit(1)
+    }
+    authorizedEmails = config.authorizedEmails
   } catch (error) {
     Common.Debug.debugErrorWithStack(error)
     process.exit(1)
@@ -53,9 +64,9 @@ export async function startBridge (): Promise<void> {
     Common.Debug.debugErrorWithStack(error)
   })
   await backend.initialize()
-  const frontendAuthorization = new FrontendAuthorization(authorizedEmails, frontendDb)
-  const smartHomeSkill = new SmartHomeSkill(frontendAuthorization, backend)
-  const frontend = new Frontend(frontendAuthorization, smartHomeSkill)
+  const directiveAuthorization = new DirectiveAuthorization(authorizedEmails, frontendDb)
+  const smartHomeSkill = new SmartHomeSkill(directiveAuthorization, backend)
+  const frontend = new Frontend(hostname, authorizedEmails, smartHomeSkill)
   await frontend.initialize()
   await frontend.start()
   await backend.start()
