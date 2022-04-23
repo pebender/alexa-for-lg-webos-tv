@@ -1,6 +1,6 @@
 .DS_Store
 ._.DS_Store
-._
+._*
 node_modules/
 docs
 pkg/*/lib
