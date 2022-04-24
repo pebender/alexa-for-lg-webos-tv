@@ -1,4 +1,5 @@
 import https from 'https'
+import * as Debug from './debug'
 
 export type RequestOptions = {
   hostname: string;
@@ -45,6 +46,10 @@ export async function request (requestOptions: RequestOptions, bearerToken: stri
     options.headers['content-length'] = Buffer.byteLength(content).toString()
   }
 
+  Debug.debug('HTTP Request')
+  Debug.debugJSON(options)
+  Debug.debugJSON(content)
+
   let body: object
   let data = ''
   const response = new Promise((resolve, reject): void => {
@@ -61,6 +66,11 @@ export async function request (requestOptions: RequestOptions, bearerToken: stri
           Error.captureStackTrace(responseError)
           reject(responseError)
         }
+
+        Debug.debug('HTTP Response')
+        Debug.debug(res.statusCode)
+        Debug.debugJSON(res.headers)
+        Debug.debugJSON(data)
 
         const statusCode = res.statusCode
         const contentType = res.headers['content-type']
@@ -149,6 +159,8 @@ export async function request (requestOptions: RequestOptions, bearerToken: stri
       })
     })
     req.on('error', (error: Error): void => {
+      Debug.debug('HTTP Error')
+      Debug.debugError(error)
       const name = error.name ? error.name : 'unknown'
       const message = error.message
       const responseErrorError = new Error(message)
