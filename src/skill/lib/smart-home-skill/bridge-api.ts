@@ -30,9 +30,9 @@ async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<str
     }
   }
 
-  async function setBearerToken (email: string, bearerToken: string): Promise<void> {
+  async function setSkillToken (email: string, bearerToken: string): Promise<void> {
     try {
-      await Database.setBearerToken(email, bearerToken)
+      await Database.setSkillToken(email, bearerToken)
     } catch (error) {
       throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
     }
@@ -45,7 +45,7 @@ async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<str
     return hostname
   }
   const email = await alexaRequest.getUserEmail()
-  await setBearerToken(email, bearerToken)
+  await setSkillToken(email, bearerToken)
   hostname = await await queryBridgeHostname(bearerToken)
   if (hostname !== null) {
     return hostname
@@ -76,9 +76,9 @@ async function getBridgeToken (alexaRequest: Common.SHS.Request): Promise<string
     }
   }
 
-  async function setBearerToken (email: string, bearerToken: string): Promise<void> {
+  async function setSkillToken (email: string, bearerToken: string): Promise<void> {
     try {
-      await Database.setBearerToken(email, bearerToken)
+      await Database.setSkillToken(email, bearerToken)
     } catch (error) {
       throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
     }
@@ -91,7 +91,7 @@ async function getBridgeToken (alexaRequest: Common.SHS.Request): Promise<string
     return bridgeToken
   }
   const email = await alexaRequest.getUserEmail()
-  await setBearerToken(email, bearerToken)
+  await setSkillToken(email, bearerToken)
   bridgeToken = await await queryBridgeToken(bearerToken)
   if (bridgeToken !== null) {
     return bridgeToken

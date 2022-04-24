@@ -44,13 +44,13 @@ You can find more information at ["Request Customer Contact Information for Use 
 
 #### Retrieving the Bearer Token from a Smart Home Skill Request Directive
 
-When an SMS in linked to the user's Amazon account, request directives will contain a bearerToken (bearerToken). The SMS can use this bearerToken to retrieve the user's profile. Assuming the user granted access to their email address during account linking, the user's profile will contain user's email address.
+When an SHS in linked to the user's Amazon account, request directives will contain a bearerToken (bearerToken). The SHS can use this bearerToken to retrieve the user's profile. Assuming the user granted access to their email address during account linking, the user's profile will contain user's email address.
 
-The location of the bearerToken in the SMS request directive depends the type of directive. For the ["Alexa.Authorization" "AcceptGrant" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#acceptgrant-directive-example), it is found at `directive.payload.grantee.token`. For the ["Alexa.Discovery" "Discover" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#discover-directive-example) it is found at `directive.payload.scope.token`. For directives sent to a specific endpoint such as the ["Alexa.PowerController" "TurnOn" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html#directives), it is found at `directive.endpoint.scope.token`. The alexa-for-lg-webos-tv's SMS implements the retrieval of the bearerToken in the [getBearerToken](../src/common/smart-home-skill/request.ts) function.
+The location of the bearerToken in the SHS request directive depends the type of directive. For the ["Alexa.Authorization" "AcceptGrant" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#acceptgrant-directive-example), it is found at `directive.payload.grantee.token`. For the ["Alexa.Discovery" "Discover" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#discover-directive-example) it is found at `directive.payload.scope.token`. For directives sent to a specific endpoint such as the ["Alexa.PowerController" "TurnOn" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html#directives), it is found at `directive.endpoint.scope.token`. The alexa-for-lg-webos-tv's SHS implements the retrieval of the bearerToken in the [getBearerToken](../src/common/smart-home-skill/request.ts) function.
 
 #### Retrieving the email Address
 
-Once the SMS has the user's bearerToken, it can request the user's profile from
+Once the SHS has the user's bearerToken, it can request the user's profile from
 
 > <https://api.amazon.com/user/profile>
 
@@ -71,17 +71,17 @@ The response contains the items the user agreed to share, including the email ad
 
 The alexa-for-lg-webos-tv's skill uses DynamoDB as its database.
 
-The database has a table named ForLGwebOSTV. This table uses the user's email address as its key. And it contains contains the email address, bridge hostname and SHS bearerToken for each user. In addition, the database table has an associated Global Secondary Index (GSI) named bearerToken_index. This GSI uses the user's SHS bearerToken as its index. And it contains the SHS bearerToken, email address and bridge hostname for each user.
+The database has a table named ForLGwebOSTV. This table uses the user's email address as its key. And it contains contains the user's email address (email), bridge hostname (hostname), the bridge bearer token (bridgeToken) and SHS bearer token (skillToken) for each user. In addition, the database table has an associated Global Secondary Index (GSI) named skillToken_index. This GSI uses skillToken as its index. And it contains skillToken, email, hostname and bridgeToken for each user.
 
-Using the email address as the table's key makes it easy for both the CS and the SHS to look up the bridge hostname after they have used their respective tokens to retrieve the email address. When the user configures their bridge hostname through interaction with the skill, the CS stores the bridge hostname in the table keyed to email address. When the SHS needs to send a message to the bridge, it can look up the bridge hostname in the table using the email address.
+Using email as the table's key makes it easy for both the CS and the SHS to look up hostname and bridgeToken after they have used their respective tokens to retrieve the user's email address. When the user configures their bridge through interaction with the skill, the CS stores the bridge hostname (hostname) and bridge bearer token (bridgeToken) in the table keyed to user's email address (email). When the SHS needs to send a message to the bridge, it can look up hostname and bridgeToken in the table using email.
 
-However, the SHS looking up the hostname using the email address is inefficient. If it used the email address to look up the bridge hostname, it would first need to use the bearerToken to retrieve the user's profile from LWA profile server. Retrieving the profile every time it had a message to send would add needless delay in sending the message as well as add needless load on the LWA profile server. Instead, the looks up the hostname in the GSI using the bearerToken. If it does not find the bearerToken in the GSI, it uses the bearerToken to retrieve the user's profile and uses the uses the user's email address to add the bearerToken to the table. After adding bearerToken to the table, the SHS as able to look up the bridge hostname in the GSI using the bearToken.
+However, the SHS looking up hostname and bridgeToken using email inefficient. If it used the email to look up hostname and bridgeToken, it would first need to use its bearer token to retrieve the user's profile from LWA profile server. Retrieving the profile every time it had a message to send would add needless delay in sending the message as well as add needless load on the LWA profile server. Instead, the SHS looks up hostname and bridgeToken in the GSI using the skillToken. If it does not find skillToken in the GSI, it uses the skillToken to retrieve the user's profile and uses the uses the user's email address to add skillToken to the table. After adding skillToken to the table, the SHS as able to look up hostname and bridgeToken in the GSI using the skillToken.
 
 The alexa-for-lg-webos-tv skill's database functions are found [here](../src/skill/lib/database.ts).
 
 #### Database Performance
 
-There are a couple things to notice besides the functions for setting the bridge hostname (setHostname), getting the bridge hostname (getHostname) and setting the bearerToken (setBearerToken).
+There are a couple things to notice besides the functions for setting the bridge hostname (setHostname), getting the bridge hostname (getHostname), setting the bridge's bearer token (setBridgeToken), getting the bridge's bearer token (getBridgeToken) and setting the SHS's bearer token (setSkillToken).
 
 [Amazon provides recommendations on how to improve the performance of lambda functions by Amazon](https://aws.amazon.com/blogs/compute/operating-lambda-performance-optimization-part-2/). First, Amazon suggests maintaining the connection to databases outside of the handler. This ensures the lambda function establishes its connection to the database outside of the handler function. Doing this causes the lambda function to connect to the database once when it is loaded rather than every time the handler function is called. Second, Amazon suggests loading needed parts of the modules. Doing this reduces the lambda function load time. The alexa-for-lg-webos-tv's skill implements both of these suggestions.
 
@@ -95,24 +95,34 @@ While it is the SHS that receives the request directives, it is the bridge that 
 
 Following the procedure outlined in [Acquiring the Email Address Using the Smart Home Skill](#acquiring-the-email-address-using-the-smart-home-skill), the bridge can acquire the user's email address. After that, the bridge can compare the email address to the email addresses in the configuration file to determine whether the request directive should processed. However, following this naive approach has some problems.
 
-The first problem is the problem mentioned in [The Database](#the-database): retrieving the profile every time the bridge receives a message would add needless delay in processing the message as well as add needless load on the LWA profile server. The bridge solves this problem the same way SMS solved the problem when looking up the bridge hostname. The bridge maintains a database containing the bearerToken and its associated email address. The bridge looks up the bearerToken in the database. If it finds the bearerToken in the database, then it authorizes the request. If it doesn't then it acquires the user's email address. If the email address is in the configuration file, then it adds the bearerToken to the database. After that, it looks then it looks up the bearerToken in the database again. If it still doesn't find it, then it does not authorize the request.
+The first problem is the problem mentioned in [The Database](#the-database): retrieving the profile every time the bridge receives a message would add needless delay in processing the message as well as add needless load on the LWA profile server. The bridge solves this problem the same way SHS solved the problem when looking up the bridge hostname. The bridge maintains a database containing the SHS's bearer token (skillToken) and its associated user email address (email). The bridge looks up skillToken in the database. If it finds skillToken in the database, then it authorizes the request. If it doesn't then it acquires the user's email address. If the email address is in the configuration file, then it adds skillToken to the database. After that, it looks up skillToken in the database again. If it still doesn't find it, then it does not authorize the request.
 
-The second problem is the problem of attackers misusing the bridge. The skill receives Directive messages from Amazon, so it can trust that the bearerToken in a Directive message is valid. However, without further protections, the bridge can't be sure it is just receiving Directive messages from the skill. This can a problem. Suppose an attacker decides to send Directive messages and changes the bearerToken each time. In this scenario, the bridge would attempt and fail to acquire an email address for every Directive message it receives. Without further protection, the attacker could launch an attack on the LWA profile server using the bridge.
+The second problem is the problem of attackers misusing the bridge. The skill receives Directive messages from Amazon, so it can trust that the bearer token in a Directive message is valid. However, without further protections, the bridge can't be sure it is just receiving Directive messages forwarded from the skill. This can a problem. Suppose an attacker decides to send Directive messages and changes the bearer token each time. In this scenario, the bridge would attempt and fail to acquire an email address for every Directive message it receives. Without further protection, the attacker could launch an attack on the LWA profile server using the bridge.
 
-To address this problem, the skill and bridge use a JSON Web Token (JWT) to protect the bridge from unauthorized access. The skill issues a JWT that asserting that user's email address has been authorized to use the service located at the bridge's URL. The JWT has the form
+To address this problem, the skill and bridge establish a bearer token that the skill uses when communicating with the bridge.
+
+First, the skill sends the bridge a JSON Web Token (JWT). The skill sends it to a URL responsible for exchanging the JWT for a bearer token:
+
+> <https://HOSTNAME/login>
+
+Where HOSTNAME is the bridge's hostname. The JWT asserts that user's email address has been authorized to use the service located at the bridge's skill interface URL:
+
+> <https://HOSTNAME/api/ForLGwebOSTV/v1>
+
+The JWT has the form
 
 ``` JSON
 {
     "iss": "For LG webOS TV",
     "sub": "EMAIL",
-    "aud": "https://HOSTNAME/",
+    "aud": "https://HOSTNAME/api/ForLGwebOSTV/v1",
     "exp": "NOW + 1m"
 }
 
-where EMAIL is the user's email address and HOSTNAME is the bridge's hostname. The expiration time is just 1m into the future to reduce the chance of replay attacks. 
+where EMAIL is the user's email address and HOSTNAME is the bridge's hostname. The expiration time is just 1m into the future to reduce the chance of replay attacks. The skill signs JWT using and x509 private key. The bridge authenticates the JWT using the corresponding x509 public key.
 
-The skill signs JWT using and x509 private key. The bridge authenticates the JWT using the corresponding x509 public key.
+It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the JWT came from the skill and that the skill believes the authorization is genuine. So, as part of the JWT validation, the bridge compares the email address against its list of authorized emails and the service against its URL before accepting the JWT.
 
-It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the JWT came from the skill and that the skill believes the authorization is genuine. So, as part of the JWT validation, the bridge compares the email address against its list of authorized emails and the service against its URL before accepting the JWT. (In order to decrease load and delay, it would be better to exchange the JWT for a bearer token.)
+If the bridge accepts the JWT, then it responses with a bearer token. The skill uses this bearer token when communicating with the bridge's skill interface.
 
 As further protection, the bridge implements dynamic IP address blocking. After a small number of JWT authorization failures originating from a IP address, the IP address is temporarily blocked.

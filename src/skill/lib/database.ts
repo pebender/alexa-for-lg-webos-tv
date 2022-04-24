@@ -24,18 +24,18 @@ export async function setHostname (email: string, hostname: string): Promise<voi
   }
 }
 
-export async function getHostname (bearerToken: string): Promise<string | null> {
-  const bearerTokenQueryParams = {
+export async function getHostname (skillToken: string): Promise<string | null> {
+  const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
-    KeyConditionExpression: '#bearerToken = :bearerToken_value',
-    ExpressionAttributeNames: { '#bearerToken': 'bearerToken' },
-    ExpressionAttributeValues: { ':bearerToken_value': bearerToken }
+    KeyConditionExpression: '#skillToken = :skillToken_value',
+    ExpressionAttributeNames: { '#skillToken': 'skillToken' },
+    ExpressionAttributeValues: { ':skillToken_value': skillToken }
   }
 
   let data
   try {
-    data = await dynamoDBDocumentClient.query(bearerTokenQueryParams).promise()
+    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -70,18 +70,18 @@ export async function setBridgeToken (email: string, bridgeToken: string): Promi
   }
 }
 
-export async function getBridgeToken (bearerToken: string): Promise<string | null> {
-  const bearerTokenQueryParams = {
+export async function getBridgeToken (skillToken: string): Promise<string | null> {
+  const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
-    KeyConditionExpression: '#bearerToken = :bearerToken_value',
-    ExpressionAttributeNames: { '#bearerToken': 'bearerToken' },
-    ExpressionAttributeValues: { ':bearerToken_value': bearerToken }
+    KeyConditionExpression: '#skillToken = :skillToken_value',
+    ExpressionAttributeNames: { '#skillToken': 'skillToken' },
+    ExpressionAttributeValues: { ':skillToken_value': skillToken }
   }
 
   let data
   try {
-    data = await dynamoDBDocumentClient.query(bearerTokenQueryParams).promise()
+    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -98,18 +98,18 @@ export async function getBridgeToken (bearerToken: string): Promise<string | nul
   return null
 }
 
-export async function getEmail (bearerToken: string): Promise<string | null> {
-  const bearerTokenQueryParams = {
+export async function getEmail (skillToken: string): Promise<string | null> {
+  const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
-    KeyConditionExpression: '#bearerToken = :bearerToken_value',
-    ExpressionAttributeNames: { '#bearerToken': 'bearerToken' },
-    ExpressionAttributeValues: { ':bearerToken_value': bearerToken }
+    KeyConditionExpression: '#skillToken = :skillToken_value',
+    ExpressionAttributeNames: { '#skillToken': 'skillToken' },
+    ExpressionAttributeValues: { ':skillToken_value': skillToken }
   }
 
   let data
   try {
-    data = await dynamoDBDocumentClient.query(bearerTokenQueryParams).promise()
+    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
@@ -126,16 +126,16 @@ export async function getEmail (bearerToken: string): Promise<string | null> {
   return null
 }
 
-export async function setBearerToken (email: string, bearerToken: string): Promise<void> {
-  const bearerTokenUpdateParams = {
+export async function setSkillToken (email: string, skillToken: string): Promise<void> {
+  const skillTokenUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
-    UpdateExpression: 'set bearerToken = :newBearerToken',
-    ExpressionAttributeValues: { ':newBearerToken': bearerToken }
+    UpdateExpression: 'set skillToken = :newSkillToken',
+    ExpressionAttributeValues: { ':newSkillToken': skillToken }
   }
 
   try {
-    await dynamoDBDocumentClient.update(bearerTokenUpdateParams).promise()
+    await dynamoDBDocumentClient.update(skillTokenUpdateParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error

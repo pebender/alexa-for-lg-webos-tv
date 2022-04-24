@@ -17,15 +17,15 @@ export class Authorization extends BaseClass {
     return this.initializeHandler(() => Promise.resolve())
   }
 
-  public async authorize (bearerToken: string): Promise<boolean> {
+  public async authorize (skillToken: string): Promise<boolean> {
     let record: DatabaseRecord | null
     try {
-      record = await this._db.getRecord({ bearerToken })
+      record = await this._db.getRecord({ skillToken })
     } catch (error) {
       throw Common.SHS.Error.errorResponseFromError(null, error)
     }
     if (record === null) {
-      const profile = await Common.Profile.SHS.getUserProfile(bearerToken)
+      const profile = await Common.Profile.SHS.getUserProfile(skillToken)
       const userId = profile.user_id
       const email = profile.email
 
@@ -34,7 +34,7 @@ export class Authorization extends BaseClass {
         return false
       }
       try {
-        await this._db.updateOrInsertRecord({ email }, { email, userId, bearerToken })
+        await this._db.updateOrInsertRecord({ email }, { email, userId, skillToken })
       } catch (error) {
         throw Common.SHS.Error.errorResponseFromError(null, error)
       }
