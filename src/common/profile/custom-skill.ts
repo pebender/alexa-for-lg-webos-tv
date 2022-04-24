@@ -1,3 +1,4 @@
+import { URL } from 'url'
 import * as HTTPSRequest from '../https-request'
 
 const responseErrorMessages = {
@@ -13,9 +14,12 @@ const responseErrorMessages = {
 }
 
 export async function getUserEmail (apiEndpoint: string, apiAccessToken: string): Promise<string> {
+  const url = new URL(apiEndpoint)
+  const hostname = url.hostname
+  const port = url.port ? Number(url.port) : 443
   const requestOptions: HTTPSRequest.RequestOptions = {
-    hostname: apiEndpoint,
-    port: 443,
+    hostname,
+    port,
     path: '/v2/accounts/~current/settings/Profile.email',
     method: 'GET',
     headers: {}
