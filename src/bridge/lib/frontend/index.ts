@@ -11,11 +11,14 @@ import * as AjvTypes from 'ajv'
 import ajvFormats from 'ajv-formats'
 import express from 'express'
 import { expressjwt, ExpressJwtRequest } from 'express-jwt'
+import * as httpErrors from 'http-errors'
 import * as Common from '../../../common'
 import { BaseClass } from '../base-class'
+import { DatabaseTable } from '../database'
 import { Middle } from '../middle'
 import { Authorization } from './authorization'
 const IPBlacklist = require('@outofsync/express-ip-blacklist')
+const { auth } = require('express-oauth2-bearer')
 
 export class Frontend extends BaseClass {
   private readonly _authorization: Authorization
@@ -24,10 +27,10 @@ export class Frontend extends BaseClass {
   private readonly _ajv: Ajv
   private readonly _schemaValidator: AjvTypes.ValidateFunction
   private readonly _server: express.Express
-  public constructor (hostname: string, authorizedEmails: string[], middle: Middle) {
+  public constructor (hostname: string, authorizedEmails: string[], frontendDb: DatabaseTable, middle: Middle) {
     super()
 
-    this._authorization = new Authorization(hostname, authorizedEmails)
+    this._authorization = new Authorization(hostname, authorizedEmails, frontendDb)
     this._middle = middle
 
     // The blacklist is due to auth failures so blacklist quickly.
@@ -78,20 +81,10 @@ export class Frontend extends BaseClass {
 
       if (err) {
         that._ipBlacklist.increment(req, res)
-
-        Common.Debug.debug('handlerJwtError 1')
-        const response = new Common.SHS.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
-            message: 'Bridge connection failed due to invalid authorization credentials.'
-          }
-        })
-
-        Common.Debug.debug('failed signature')
-        res.status(200)
-          .json(response)
+        Common.Debug.debug('handleJwtError: Failed Validation:')
+        Common.Debug.debugError(err)
+        res.status(401)
+          .json({})
           .end()
         return
       }
@@ -99,50 +92,86 @@ export class Frontend extends BaseClass {
       next(err)
     }
 
-    function handleJwtPayload (req: express.Request, res: express.Response, next: express.NextFunction) {
+    async function handleJwtPayload (req: express.Request, res: express.Response, _next: express.NextFunction) {
       const jwtPayload = ((req as unknown) as ExpressJwtRequest).auth
 
       if (typeof jwtPayload === 'undefined') {
         that._ipBlacklist.increment(req, res)
-
-        Common.Debug.debug('handleJwtPayload 1')
-        const response = new Common.SHS.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
-            message: 'Bridge connection failed due to invalid authorization credentials.'
-          }
-        })
-
-        Common.Debug.debug('failed signature')
-        res.status(200)
-          .json(response)
+        Common.Debug.debug('handleJwtPayload: error: no \'req.auth\'.')
+        res.status(401)
+          .json({})
           .end()
         return
       }
 
-      if (!that._authorization.authorize(jwtPayload)) {
+      Common.Debug.debugJSON(jwtPayload)
+
+      if (!that._authorization.authorizeJwTPayload(jwtPayload)) {
         that._ipBlacklist.increment(req, res)
-
-        Common.Debug.debug('handleJwtPayload 2')
-        const response = new Common.SHS.Response({
-          namespace: 'Alexa',
-          name: 'ErrorResponse',
-          payload: {
-            type: 'INVALID_AUTHORIZATION_CREDENTIAL',
-            message: 'Bridge connection failed due to invalid authorization credentials.'
-          }
-        })
-
-        Common.Debug.debug('failed authorization')
-        res.status(200)
-          .json(response)
+        Common.Debug.debug('handleJwtPayload: failed authorization')
+        res.status(401)
+          .json({})
           .end()
         return
       }
 
-      next()
+      const bridgeToken = that._authorization.generateBridgeToken()
+      if (typeof jwtPayload.sub === 'undefined') {
+        res.status(500)
+          .json({})
+          .end()
+        return
+      }
+      try {
+        await that._authorization.setBridgeToken(jwtPayload.sub, bridgeToken)
+      } catch (error) {
+        res.status(500)
+          .json({})
+          .end()
+        return
+      }
+
+      res.status(200)
+        .json({
+          token: bridgeToken
+        })
+        .end()
+    }
+
+    async function authorizeBridgeToken (token: string): Promise<any> {
+      try {
+        const authorized = await that._authorization.authorizeBridgeToken(token)
+        if (!authorized) {
+          return
+        }
+        return token
+      } catch (error) {
+        Common.Debug.debug('authorizeBridgeToken')
+        Common.Debug.debugError(error)
+      }
+    }
+
+    async function handleBridgeTokenError (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+      if (res.headersSent) {
+        return next(err)
+      }
+      if (!httpErrors.isHttpError(err)) {
+        return next(err)
+      }
+      that._ipBlacklist.increment(req, res)
+      const response = new Common.SHS.Response({
+        namespace: 'Alexa',
+        name: 'ErrorResponse',
+        payload: {
+          type: 'INVALID_AUTHORIZATION_CREDENTIAL',
+          message: 'Bridge connection failed due to invalid authorization credentials.'
+        }
+      })
+
+      Common.Debug.debug('failed authorization')
+      res.status(200)
+        .json(response)
+        .end()
     }
 
     async function backendSHSHandler (request: express.Request, response: express.Response): Promise<void> {
@@ -190,35 +219,45 @@ export class Frontend extends BaseClass {
 
     function initializeFunction (): Promise<void> {
       return new Promise<void>((resolve): void => {
+        that._server.use((req, res, next) => {
+          Common.Debug.debug('express request:')
+          Common.Debug.debug(`hostname: ${req.hostname}`)
+          Common.Debug.debug(`path: ${req.path}`)
+          Common.Debug.debug(`method: ${req.method}`)
+          Common.Debug.debugJSON(req.headers)
+          next()
+        })
         // Check the IP address blacklist.
         that._server.use(checkBlacklist)
-        that._server.use(
+        that._server.use(Common.constants.bridge.path.login,
           expressjwt({
-            secret: that._authorization.x509Cert(),
+            secret: that._authorization.x509PublicCert(),
             algorithms: ['RS256']
           }),
           handleJwtError,
           handleJwtPayload
         )
-        // Only accept POST requests and only access JSON content-type.
-        that._server.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-          if (req.method !== 'POST') {
-            return res.json().send(405)
-          }
-          const contentType = req.headers['content-type']
-          if (typeof contentType === 'undefined') {
-            return res.json().send(400)
-          }
-          if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
-            return res.json().send(415)
-          }
-          next()
-        })
-        // Parse the JSON content.
-        that._server.use(express.json())
-        that._server.post(`/${Common.constants.bridge.path.skill}`, backendSHSHandler)
-        that._server.post('/', (_req: express.Request, res: express.Response): void => {
-          res.status(401).end()
+        that._server.use(Common.constants.bridge.path.skill,
+          auth(authorizeBridgeToken),
+          handleBridgeTokenError,
+          (req: express.Request, res: express.Response, next: express.NextFunction) => {
+            if (req.method !== 'POST') {
+              return res.json().send(405)
+            }
+            const contentType = req.headers['content-type']
+            if (typeof contentType === 'undefined') {
+              return res.json().send(400)
+            }
+            if (!(/^application\/json/).test((contentType as string).toLowerCase())) {
+              return res.json().send(415)
+            }
+            next()
+          },
+          express.json(),
+          backendSHSHandler
+        )
+        that._server.use((req: express.Request, res: express.Response): void => {
+          res.status(500).end()
         })
         resolve()
       })

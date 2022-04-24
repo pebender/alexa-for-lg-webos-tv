@@ -57,6 +57,9 @@ export async function startBridge (): Promise<void> {
   await backendDb.initialize()
   const middleDb = new DatabaseTable(configurationDir, 'middle', ['email', 'bearerToken'], 'email')
   await middleDb.initialize()
+  const frontendDb = new DatabaseTable(configurationDir, 'frontend', ['email', 'bridgeToken'], 'email')
+  await frontendDb.initialize()
+
   const backend = new Backend(backendDb)
   backend.on('error', (error: Error, id: string): void => {
     Common.Debug.debug(id)
@@ -64,7 +67,7 @@ export async function startBridge (): Promise<void> {
   })
   await backend.initialize()
   const middle = new Middle(authorizedEmails, middleDb, backend)
-  const frontend = new Frontend(hostname, authorizedEmails, middle)
+  const frontend = new Frontend(hostname, authorizedEmails, frontendDb, middle)
   await frontend.initialize()
   await frontend.start()
   await backend.start()

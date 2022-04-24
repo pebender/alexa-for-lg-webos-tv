@@ -43,6 +43,6 @@
     "pack": "npx npm-pack-zip",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
-    "copy_files": "(cd ../../src && npx copyfiles \"skill/lib/smart-home-skill/jwt/*.key\" \"../pkg/skill/lib/\")"
+    "copy_files": "(cd ../../src && npx copyfiles \"skill/lib/custom-skill/login/*.key\" \"../pkg/skill/lib/\")"
   }
 }

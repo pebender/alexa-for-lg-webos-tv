@@ -3,6 +3,7 @@ import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/re
 import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
 import * as ASKModel from 'ask-sdk-model'
 import * as Database from '../database'
+import * as Login from './login'
 import tls from 'tls'
 const certnames = require('certnames')
 
@@ -233,6 +234,7 @@ const SetHostnameIntentHandler = {
             .withShouldEndSession(true)
             .getResponse()
         }
+        Common.Debug.debug(`apiEndpoint: ${apiEndpoint}`)
         Common.Debug.debug(`apiAccessToken: ${apiAccessToken}`)
         let email
         try {
@@ -251,6 +253,37 @@ const SetHostnameIntentHandler = {
           Common.Debug.debug('LGTV_SetHostnameIntent: setHostname: success')
         } catch (error) {
           Common.Debug.debug('LGTV_SetHostnameIntent setHostname: error:')
+          Common.Debug.debugError(error)
+          return handlerInput.responseBuilder
+            .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
+            .withShouldEndSession(true)
+            .getResponse()
+        }
+
+        let bridgeToken
+        try {
+          bridgeToken = await Login.getBridgeToken(email, hostname)
+          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: success')
+        } catch (error) {
+          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: error:')
+          Common.Debug.debugError(error)
+          return handlerInput.responseBuilder
+            .speak('Error encountered getting your bridge\'s token. Your bridge\'s hostname has not been set.')
+            .withShouldEndSession(true)
+            .getResponse()
+        }
+        if (typeof bridgeToken !== 'string') {
+          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: error')
+          return handlerInput.responseBuilder
+            .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
+            .withShouldEndSession(true)
+            .getResponse()
+        }
+        try {
+          await Database.setBridgeToken(email, bridgeToken)
+          Common.Debug.debug('LGTV_SetHostnameIntent: setBridgeToken: success')
+        } catch (error) {
+          Common.Debug.debug('LGTV_SetHostnameIntent setBridgeToken: error:')
           Common.Debug.debugError(error)
           return handlerInput.responseBuilder
             .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')

@@ -14,7 +14,7 @@ export async function setHostname (email: string, hostname: string): Promise<voi
     ExpressionAttributeValues: { ':newHostname': hostname }
 
   }
-  Debug.debug(hostnameUpdateParams)
+  Debug.debug('hostnameUpdateParams')
   Debug.debugJSON(hostnameUpdateParams)
   try {
     await dynamoDBDocumentClient.update(hostnameUpdateParams).promise()
@@ -51,6 +51,53 @@ export async function getHostname (bearerToken: string): Promise<string | null> 
 
   return null
 }
+
+export async function setBridgeToken (email: string, bridgeToken: string): Promise<void> {
+  const bridgeTokenUpdateParams = {
+    TableName: Common.constants.aws.dynamoDB.tableName,
+    Key: { email },
+    UpdateExpression: 'set bridgeToken = :newBridgeToken',
+    ExpressionAttributeValues: { ':newBridgeToken': bridgeToken }
+
+  }
+  Debug.debug('bridgeTokenUpdateParams')
+  Debug.debugJSON(bridgeTokenUpdateParams)
+  try {
+    await dynamoDBDocumentClient.update(bridgeTokenUpdateParams).promise()
+  } catch (error) {
+    Debug.debugErrorWithStack(error)
+    throw error
+  }
+}
+
+export async function getBridgeToken (bearerToken: string): Promise<string | null> {
+  const bearerTokenQueryParams = {
+    TableName: Common.constants.aws.dynamoDB.tableName,
+    IndexName: Common.constants.aws.dynamoDB.indexName,
+    KeyConditionExpression: '#bearerToken = :bearerToken_value',
+    ExpressionAttributeNames: { '#bearerToken': 'bearerToken' },
+    ExpressionAttributeValues: { ':bearerToken_value': bearerToken }
+  }
+
+  let data
+  try {
+    data = await dynamoDBDocumentClient.query(bearerTokenQueryParams).promise()
+  } catch (error) {
+    Debug.debugErrorWithStack(error)
+    throw error
+  }
+
+  if ((typeof data !== 'undefined') &&
+      (typeof data.Count !== 'undefined') && (data.Count > 0) &&
+      (typeof data.Items !== 'undefined') && typeof data.Items[0].bridgeToken !== 'undefined') {
+    const bridgeToken = (data.Items[0].bridgeToken as string)
+    Debug.debug(`getHostname: bridgeToken: ${bridgeToken}`)
+    return bridgeToken
+  }
+
+  return null
+}
+
 export async function getEmail (bearerToken: string): Promise<string | null> {
   const bearerTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
