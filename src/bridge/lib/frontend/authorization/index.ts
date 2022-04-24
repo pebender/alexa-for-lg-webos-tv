@@ -12,7 +12,7 @@ export class Authorization {
   private readonly _authorizedEmails: string[]
   private readonly _db: DatabaseTable
   public constructor (hostname: string, authorizedEmails: string[], frontendDb: DatabaseTable) {
-    this._x509PublicCert = fs.readFileSync(path.join(__dirname, Common.constants.bridge.jwt.x509CertificateFile))
+    this._x509PublicCert = fs.readFileSync(path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile))
     this._hostname = hostname
     this._authorizedEmails = authorizedEmails
     this._db = frontendDb

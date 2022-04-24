@@ -36,8 +36,8 @@ export const constants = {
     },
     jwt: {
       iss: applicationNamePretty,
-      x509KeyFile: `${applicationNameSafe}.key`,
-      x509CertificateFile: `${applicationNameSafe}.crt`
+      x509PrivateKeyFile: `${applicationNameSafe}.key`,
+      x509PublicCertFile: `${applicationNameSafe}.crt`
     }
   }
 }

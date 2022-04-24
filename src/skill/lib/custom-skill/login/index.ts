@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import jwt from 'jsonwebtoken'
 
-const x509PrivateKey = fs.readFileSync(path.join(__dirname, Common.constants.bridge.jwt.x509KeyFile))
+const x509PrivateKey = fs.readFileSync(path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile))
 
 function create (x509PrivateKey: Buffer, email: string, hostname: string): Promise<string> {
   const payload: jwt.JwtPayload = {
