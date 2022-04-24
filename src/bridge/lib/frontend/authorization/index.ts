@@ -57,7 +57,7 @@ export class Authorization {
   }
 
   public generateBridgeToken (): string {
-    return crypto.randomBytes(1000).toString('base64').slice(0, 1000)
+    return crypto.randomBytes(512).toString('base64').slice(0, 256)
   }
 
   public async setBridgeToken (email: string, bridgeToken: string): Promise<void> {
