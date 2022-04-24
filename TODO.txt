@@ -1,3 +1,2 @@
 * Implement decent error handling.
-* Exchange JWT for a bearer token.
 * Comment code.
