@@ -24,7 +24,7 @@ function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
   })
 }
 
-const SetHostnameIntentHandler = {
+const ConfigureBridgeIntentHandler = {
   canHandle (handlerInput: ASKHandlerInput): boolean {
     return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
         ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'LGTV_ConfigureBridgeIntent'
@@ -307,7 +307,7 @@ const SetHostnameIntentHandler = {
 }
 
 const handlers = [
-  SetHostnameIntentHandler
+  ConfigureBridgeIntentHandler
 ]
 
 export { handlers }
