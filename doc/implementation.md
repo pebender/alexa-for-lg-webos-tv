@@ -93,18 +93,26 @@ While it is the SHS that receives the request directives, it is the bridge that 
 
 ### Authorization
 
-The bridge has a configuration file with the email addresses of authorized users.
+Following the procedure outlined in [Acquiring the Email Address Using the Smart Home Skill](#acquiring-the-email-address-using-the-smart-home-skill), the bridge can acquire the user's email address. After that, the bridge can compare the email address to the email addresses in the configuration file to determine whether the request directive should processed. However, following this naive approach has some problems.
 
-Following the procedure outlined in [Acquiring the Email Address Using the Smart Home Skill](#acquiring-the-email-address-using-the-smart-home-skill), the bridge can acquire the user's email address. After that, the bridge can compare the email address to the email addresses in the configuration file to determine whether the request directive should processed.
+The first problem is the problem mentioned in [The Database](#the-database): retrieving the profile every time the bridge receives a message would add needless delay in processing the message as well as add needless load on the LWA profile server. The bridge solves this problem the same way SMS solved the problem when looking up the bridge hostname. The bridge maintains a database containing the bearerToken and its associated email address. The bridge looks up the bearerToken in the database. If it finds the bearerToken in the database, then it authorizes the request. If it doesn't then it acquires the user's email address. If the email address is in the configuration file, then it adds the bearerToken to the database. After that, it looks then it looks up the bearerToken in the database again. If it still doesn't find it, then it does not authorize the request.
 
-There are three problems with this naive approach.
+The second problem is the problem of attackers misusing the bridge. The skill receives Directive messages from Amazon, so it can trust that the bearerToken in a Directive message is valid. However, without further protections, the bridge can't be sure it is just receiving Directive messages from the skill. This can a problem. Suppose an attacker decides to send Directive messages and changes the bearerToken each time. In this scenario, the bridge would attempt and fail to acquire an email address for every Directive message it receives. Without further protection, the attacker could launch an attack on the LWA profile server using the bridge.
 
-The first problem is that the bridge would need to parse the request directive before it could authorize the user. The alexa-for-lg-webos-tv solves this problem by using the bearerToken to authorize the HTTP request. Just as in [Retrieving the email Address](#retrieving-the-email-address), the SHS includes the HTTP authorization header
+To address this problem, the skill and bridge use a JSON Web Token (JWT) to protect the bridge from unauthorized access. The skill issues a JWT that asserting that user's email address has been authorized to use the service located at the bridge's URL. The JWT has the form
 
-> Authorization: Bearer BEARER_TOKEN
+``` JSON
+{
+    "iss": "For LG webOS TV",
+    "sub": "EMAIL",
+    "aud": "https://HOSTNAME/",
+    "exp": "NOW + 1m"
+}
 
-in the HTTP POST requests to the bridge. This allows the bridge to accept or reject the request without processing the contents of the POST.
+where EMAIL is the user's email address and HOSTNAME is the bridge's hostname. The expiration time is just 1m into the future to reduce the chance of replay attacks. 
 
-The second problem is the problem mentioned in [The Database](#the-database): retrieving the profile every time the bridge receives a message would add needless delay in processing the message as well as add needless load on the LWA profile server. The bridge solves this problem the same way SMS solved the problem when looking up the bridge hostname. The bridge maintains a database containing the bearerToken and its associated email address. The bridge looks up the bearerToken in the database. If it finds the bearerToken in the database, then it authorizes the request. If it doesn't then it acquires the user's email address. If the email address is in the configuration file, then it adds the bearerToken to the database. After that, it looks then it looks up the bearerToken in the database again. If it still doesn't find it, then it does not authorize the request.
+The skill signs JWT using and x509 private key. The bridge authenticates the JWT using the corresponding x509 public key.
 
-The third problem is an attacker deliberately making requests with invalid bearerTokens. Each new bearerToken results in the bridge contacting the LWA profile server. If something is not done to mitigate this, then an attacker could use the bridge to launch an attack on the LWA profile server. To mitigate this risk, the bridge blacklists an IP address after a small number of failed authorization attempts originating from the IP address.
+It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the JWT came from the skill and that the skill believes the authorization is genuine. So, as part of the JWT validation, the bridge compares the email address against its list of authorized emails and the service against its URL before accepting the JWT. (In order to decrease load and delay, it would be better to exchange the JWT for a bearer token.)
+
+As further protection, the bridge implements dynamic IP address blocking. After a small number of JWT authorization failures originating from a IP address, the IP address is temporarily blocked.
