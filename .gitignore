@@ -8,3 +8,4 @@ src/lib
 pkg/*/*.zip
 pkg/*/*.tgz
 src-bak
+*.key
