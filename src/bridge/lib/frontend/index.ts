@@ -216,7 +216,7 @@ export class Frontend extends BaseClass {
         })
         // Parse the JSON content.
         that._server.use(express.json())
-        that._server.post(`/${Common.constants.bridge.path}`, backendSHSHandler)
+        that._server.post(`/${Common.constants.bridge.path.skill}`, backendSHSHandler)
         that._server.post('/', (_req: express.Request, res: express.Response): void => {
           res.status(401).end()
         })

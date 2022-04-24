@@ -186,9 +186,9 @@ async function sendHandler (path: string, alexaRequest: Common.SHS.Request, mess
 
 export async function sendSkillDirective (request: Common.SHS.Request): Promise<Common.SHS.Response> {
   const outputStack = true
-  const ashPath: string = `/${Common.constants.bridge.path}`
+  const shsPath: string = `/${Common.constants.bridge.path.skill}`
   try {
-    const response = await sendHandler(ashPath, request, request)
+    const response = await sendHandler(shsPath, request, request)
     if (response instanceof Common.SHS.Error) {
       if ((outputStack) && ('stack' in (response as any))) {
         Common.Debug.debug((response as any).stack)
