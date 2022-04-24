@@ -3,7 +3,7 @@ import { HandlerInput as ASKHandlerInput } from 'ask-sdk-core/dist/dispatcher/re
 import { SkillBuilders as ASKSkillBuilders } from 'ask-sdk-core/dist/skill/SkillBuilders.js'
 import * as ASKRequestEnvelope from 'ask-sdk-core/dist/util/RequestEnvelopeUtils'
 import * as Common from '../../../common'
-import * as LGTVSetHostname from './lgtv-set-hostname'
+import * as LGTVSetHostname from './lgtv-configure-bridge'
 
 const LaunchRequestHandler = {
   canHandle (handlerInput: ASKHandlerInput): boolean {

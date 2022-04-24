@@ -2,29 +2,36 @@ import DynamoDB from 'aws-sdk/clients/dynamodb'
 import * as Common from '../../common'
 import * as Debug from '../../common/debug'
 
+export type BridgeInformation = {
+  hostname: string
+  bridgeToken: string
+}
+
 const dynamoDBDocumentClient = new DynamoDB.DocumentClient({
   region: Common.constants.aws.region
 })
 
-export async function setHostname (email: string, hostname: string): Promise<void> {
-  const hostnameUpdateParams = {
+export async function setBridgeInformation (email: string, bridgeInformation: BridgeInformation) {
+  const bridgeInformationUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { email },
-    UpdateExpression: 'set hostname = :newHostname',
-    ExpressionAttributeValues: { ':newHostname': hostname }
-
+    UpdateExpression: 'set hostname = :newHostname, bridgeToken = :newBridgeToken',
+    ExpressionAttributeValues: {
+      ':newHostname': bridgeInformation.hostname,
+      ':newBridgeToken': bridgeInformation.bridgeToken
+    }
   }
-  Debug.debug('hostnameUpdateParams')
-  Debug.debugJSON(hostnameUpdateParams)
+  Debug.debug('bridgeInformationUpdateParams')
+  Debug.debugJSON(bridgeInformationUpdateParams)
   try {
-    await dynamoDBDocumentClient.update(hostnameUpdateParams).promise()
+    await dynamoDBDocumentClient.update(bridgeInformationUpdateParams).promise()
   } catch (error) {
     Debug.debugErrorWithStack(error)
     throw error
   }
 }
 
-export async function getHostname (skillToken: string): Promise<string | null> {
+export async function getBridgeInformation (skillToken: string): Promise<BridgeInformation | null> {
   const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     IndexName: Common.constants.aws.dynamoDB.indexName,
@@ -43,56 +50,16 @@ export async function getHostname (skillToken: string): Promise<string | null> {
 
   if ((typeof data !== 'undefined') &&
       (typeof data.Count !== 'undefined') && (data.Count > 0) &&
-      (typeof data.Items !== 'undefined') && typeof data.Items[0].hostname !== 'undefined') {
+      (typeof data.Items !== 'undefined') &&
+      (typeof data.Items[0].hostname !== 'undefined') &&
+      (typeof data.Items[0].bridgeToken !== 'undefined')) {
     const hostname = (data.Items[0].hostname as string)
-    Debug.debug(`getHostname: hostname: ${hostname}`)
-    return hostname
-  }
-
-  return null
-}
-
-export async function setBridgeToken (email: string, bridgeToken: string): Promise<void> {
-  const bridgeTokenUpdateParams = {
-    TableName: Common.constants.aws.dynamoDB.tableName,
-    Key: { email },
-    UpdateExpression: 'set bridgeToken = :newBridgeToken',
-    ExpressionAttributeValues: { ':newBridgeToken': bridgeToken }
-
-  }
-  Debug.debug('bridgeTokenUpdateParams')
-  Debug.debugJSON(bridgeTokenUpdateParams)
-  try {
-    await dynamoDBDocumentClient.update(bridgeTokenUpdateParams).promise()
-  } catch (error) {
-    Debug.debugErrorWithStack(error)
-    throw error
-  }
-}
-
-export async function getBridgeToken (skillToken: string): Promise<string | null> {
-  const skillTokenQueryParams = {
-    TableName: Common.constants.aws.dynamoDB.tableName,
-    IndexName: Common.constants.aws.dynamoDB.indexName,
-    KeyConditionExpression: '#skillToken = :skillToken_value',
-    ExpressionAttributeNames: { '#skillToken': 'skillToken' },
-    ExpressionAttributeValues: { ':skillToken_value': skillToken }
-  }
-
-  let data
-  try {
-    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise()
-  } catch (error) {
-    Debug.debugErrorWithStack(error)
-    throw error
-  }
-
-  if ((typeof data !== 'undefined') &&
-      (typeof data.Count !== 'undefined') && (data.Count > 0) &&
-      (typeof data.Items !== 'undefined') && typeof data.Items[0].bridgeToken !== 'undefined') {
     const bridgeToken = (data.Items[0].bridgeToken as string)
-    Debug.debug(`getHostname: bridgeToken: ${bridgeToken}`)
-    return bridgeToken
+    Debug.debug(`getHostname: hostname: ${hostname}`)
+    return {
+      hostname,
+      bridgeToken
+    }
   }
 
   return null

@@ -27,7 +27,7 @@ function getHostnames (ipAddress: string, ipPort: number): Promise<string[]> {
 const SetHostnameIntentHandler = {
   canHandle (handlerInput: ASKHandlerInput): boolean {
     return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
-        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'LGTV_SetHostnameIntent'
+        ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) === 'LGTV_ConfigureBridgeIntent'
   },
   async handle (handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
     Common.Debug.debugJSON(handlerInput.requestEnvelope)
@@ -35,7 +35,7 @@ const SetHostnameIntentHandler = {
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
 
     if (typeof handlerInput.requestEnvelope.request === 'undefined') {
-      const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: request undefined'
+      const errorMessage = 'LGTV_ConfigureBridgeIntent: invalid code path: request undefined'
       const error = new Error(errorMessage)
       Common.Debug.debugErrorWithStack(error)
       throw error
@@ -44,7 +44,7 @@ const SetHostnameIntentHandler = {
     const intentRequest = (handlerInput.requestEnvelope.request as ASKModel.IntentRequest)
 
     if (typeof intentRequest.intent.slots === 'undefined') {
-      const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: intents has no slots'
+      const errorMessage = 'LGTV_ConfigureBridgeIntent: invalid code path: intents has no slots'
       const error = new Error(errorMessage)
       Common.Debug.debugErrorWithStack(error)
       throw error
@@ -56,7 +56,7 @@ const SetHostnameIntentHandler = {
         (typeof intentRequest.intent.slots.ipAddressC === 'undefined') ||
         (typeof intentRequest.intent.slots.ipAddressD === 'undefined') ||
         (typeof intentRequest.intent.slots.hostnameIndex === 'undefined')) {
-      const errorMessage = 'LGTV_SetHostnameIntent: invalid code path: missing slot(s)'
+      const errorMessage = 'LGTV_ConfigureBridgeIntent: invalid code path: missing slot(s)'
       const error = new Error(errorMessage)
       Common.Debug.debugErrorWithStack(error)
       throw error
@@ -142,17 +142,17 @@ const SetHostnameIntentHandler = {
         sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        Common.Debug.debug(`LGTV_SetHostnameIntent: IPv4 address is ${sessionAttributes.hostname}`)
+        Common.Debug.debug(`LGTV_ConfigureBridgeIntent: IPv4 address is ${sessionAttributes.hostname}`)
         try {
           sessionAttributes.hostnames = await getHostnames(sessionAttributes.ipAddress, 25392)
         } catch (error) {
-          Common.Debug.debug(`LGTV_SetHostnameIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
+          Common.Debug.debug(`LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'`)
           if (error instanceof Error) {
             const cardTitle = `${Common.constants.application.name.pretty} Error`
             const cardContent = 'I heard the I.P. Address: ' +
                                 `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
             const speechOutput = 'I had a problem connecting to the I.P. address. ' +
-                                 'A card in the ASK App shows more.'
+                                 'A card in the Alexa App shows more.'
             return handlerInput.responseBuilder
               .withSimpleCard(cardTitle, cardContent)
               .speak(speechOutput)
@@ -168,7 +168,7 @@ const SetHostnameIntentHandler = {
               .getResponse()
           }
         }
-        Common.Debug.debug(`LGTV_SetHostnameIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
+        Common.Debug.debug(`LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`)
         const cardTitle = 'Bridge  Hostname Configuration'
         let cardContent: string = ''
         let index = 0
@@ -180,7 +180,7 @@ const SetHostnameIntentHandler = {
         index += 1
         cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-        Common.Debug.debug(`LGTV_SetHostnameIntent: bridge FQDN prompt: ${cardContent}`)
+        Common.Debug.debug(`LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`)
         const speechOutput = 'Thank you. ' +
             'Now, could you look at the card in your Alexa App and ' +
             'tell me the number next to your bridge\'s hostname?'
@@ -207,13 +207,12 @@ const SetHostnameIntentHandler = {
       }
       if (hostnameIndex === (sessionAttributes.hostnames.length + 1)) {
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I misheard your bridge\'s I.P. address.' +
-                          'Maybe we could try again.')
+          .speak('I\'m sorry. I misheard your bridge\'s I.P. address. Maybe we could try again.')
           .getResponse()
       }
       if (hostnameIndex === sessionAttributes.hostnames.length) {
         return handlerInput.responseBuilder
-          .speak('I\'m sorry I could not discover your bridge\'s hostname.')
+          .speak('I could not discover your bridge\'s hostname.')
           .getResponse()
       }
       if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
@@ -230,7 +229,7 @@ const SetHostnameIntentHandler = {
         const apiAccessToken = handlerInput.requestEnvelope.context.System.apiAccessToken
         if (typeof apiAccessToken === 'undefined') {
           return handlerInput.responseBuilder
-            .speak('An error occurred with account linking. Please re-link the skill and try again.')
+            .speak('There was a problem with account linking. Please re-link the skill and try again.')
             .withShouldEndSession(true)
             .getResponse()
         }
@@ -239,54 +238,44 @@ const SetHostnameIntentHandler = {
         let email
         try {
           email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken)
-          Common.Debug.debug(`LGTV_SetHostnameIntent: getUserEmail: success: email: ${email}`)
+          Common.Debug.debug(`LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`)
         } catch (error: any) {
-          Common.Debug.debug(`LGTV_SetHostnameIntent: ${error.message}`)
+          Common.Debug.debug(`LGTV_ConfigureBridgeIntent: ${error.message}`)
           return handlerInput.responseBuilder
-            .speak('Error encountered retrieving your user profile. Your bridge\'s hostname has not been set.')
+            .speak('I encountered a problem retrieving your user profile. So, I cannot configure your bridge.')
             .withShouldEndSession(true)
             .getResponse()
         }
         const hostname = sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
-        try {
-          await Database.setHostname(email, hostname)
-          Common.Debug.debug('LGTV_SetHostnameIntent: setHostname: success')
-        } catch (error) {
-          Common.Debug.debug('LGTV_SetHostnameIntent setHostname: error:')
-          Common.Debug.debugError(error)
-          return handlerInput.responseBuilder
-            .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
-            .withShouldEndSession(true)
-            .getResponse()
-        }
 
         let bridgeToken
         try {
           bridgeToken = await Login.getBridgeToken(email, hostname)
-          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: success')
+          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: success')
         } catch (error) {
-          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: error:')
+          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error:')
           Common.Debug.debugError(error)
           return handlerInput.responseBuilder
-            .speak('Error encountered getting your bridge\'s token. Your bridge\'s hostname has not been set.')
+            .speak('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
             .withShouldEndSession(true)
             .getResponse()
         }
         if (typeof bridgeToken !== 'string') {
-          Common.Debug.debug('LGTV_SetHostnameIntent: getBridgeToken: error')
+          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error')
           return handlerInput.responseBuilder
-            .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
+            .speak('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
             .withShouldEndSession(true)
             .getResponse()
         }
+
         try {
-          await Database.setBridgeToken(email, bridgeToken)
-          Common.Debug.debug('LGTV_SetHostnameIntent: setBridgeToken: success')
+          await Database.setBridgeInformation(email, { hostname, bridgeToken })
+          Common.Debug.debug('LGTV_ConfigureBridgeIntent: setBridgeInformation: success')
         } catch (error) {
-          Common.Debug.debug('LGTV_SetHostnameIntent setBridgeToken: error:')
+          Common.Debug.debug('LGTV_ConfigureBridgeIntent setBridgeInformation: error:')
           Common.Debug.debugError(error)
           return handlerInput.responseBuilder
-            .speak('Error encountered setting your bridge\'s hostname. Your bridge\'s hostname has not been set.')
+            .speak('I encountered a problem saving your bridge\'s configuration. So, I cannot configure your bridge.')
             .withShouldEndSession(true)
             .getResponse()
         }
@@ -295,7 +284,7 @@ const SetHostnameIntentHandler = {
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
-          .speak('Your bridge\'s hostname has been set.')
+          .speak('Congratulations. Bridge configuration is complete. You can now use the skill to control your TV.')
           .withShouldEndSession(true)
           .getResponse()
       } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'DENIED') {
@@ -303,7 +292,7 @@ const SetHostnameIntentHandler = {
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
         return handlerInput.responseBuilder
-          .speak('Your bridge\'s hostname has not been set.')
+          .speak('I have not configured you bridge.')
           .withShouldEndSession(true)
           .getResponse()
       }

@@ -24,7 +24,7 @@
                     "samples": []
                 },
                 {
-                    "name": "LGTV_SetHostnameIntent",
+                    "name": "LGTV_ConfigureBridgeIntent",
                     "slots": [
                         {
                             "name": "ipAddressValid",
@@ -55,10 +55,16 @@
                         }
                     ],
                     "samples": [
-                        "set my bridge hostname",
-                        "set my bridge's hostname",
-                        "set the bridge hostname",
-                        "set the bridge's hostname",
+                        "configure my bridge",
+                        "configure the bridge",
+                        "configure my bridge address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure my bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure the bridge  address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure the bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure my bridge I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure my bridge's I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure the bridge I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
+                        "configure the  bridge's I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
                         "set my bridge address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
                         "set my bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
                         "set the bridge  address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
@@ -86,7 +92,7 @@
         "dialog": {
             "intents": [
                 {
-                    "name": "LGTV_SetHostnameIntent",
+                    "name": "LGTV_ConfigureBridgeIntent",
                     "delegationStrategy": "SKILL_RESPONSE",
                     "confirmationRequired": false,
                     "prompts": {},
@@ -135,6 +141,13 @@
                             "prompts": {
                                 "elicitation": "Elicit.Slot.1141473767652.1141618983256"
                             }
+                        },
+                        {
+                            "name": "hostnameIndex",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
                         }
                     ]
                 }

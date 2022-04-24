@@ -13,15 +13,16 @@ export interface Response {
   [x: string]: number | string | object | undefined;
 }
 
-async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<string> {
-  Common.Debug.debug(`getBridgeHostname: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
+async function getBridgeInformation (alexaRequest: Common.SHS.Request): Promise<Database.BridgeInformation> {
+  Common.Debug.debug('getBridgeInformation: alexaRequest:')
+  Common.Debug.debugJSON(alexaRequest)
 
-  async function queryBridgeHostname (bearerToken: string): Promise<string | null> {
-    let hostname
+  async function queryBridgeInformation (skillToken: string): Promise<Database.BridgeInformation | null> {
+    let bridgeInformation
     try {
-      hostname = await Database.getHostname(bearerToken)
-      if (hostname !== null) {
-        return hostname
+      bridgeInformation = await Database.getBridgeInformation(skillToken)
+      if (bridgeInformation !== null) {
+        return bridgeInformation
       } else {
         return null
       }
@@ -39,75 +40,28 @@ async function getBridgeHostname (alexaRequest: Common.SHS.Request): Promise<str
   }
 
   const bearerToken = alexaRequest.getBearerToken()
-  let hostname: string | null = null
-  hostname = await queryBridgeHostname(bearerToken)
-  if (hostname !== null) {
-    return hostname
+  let bridgeInformation: Database.BridgeInformation | null = null
+  bridgeInformation = await queryBridgeInformation(bearerToken)
+  if (bridgeInformation !== null) {
+    return bridgeInformation
   }
   const email = await alexaRequest.getUserEmail()
   await setSkillToken(email, bearerToken)
-  hostname = await await queryBridgeHostname(bearerToken)
-  if (hostname !== null) {
-    return hostname
+  bridgeInformation = await await queryBridgeInformation(bearerToken)
+  if (bridgeInformation !== null) {
+    return bridgeInformation
   }
 
   throw Common.SHS.Error.errorResponse(
     alexaRequest,
     null,
     'BRIDGE_UNREACHABLE',
-    'Bridge hostname has not been configured'
-  )
-}
-
-async function getBridgeToken (alexaRequest: Common.SHS.Request): Promise<string> {
-  Common.Debug.debug(`getBridgeToken: alexaRequest: ${JSON.stringify(alexaRequest, null, 2)}`)
-
-  async function queryBridgeToken (bearerToken: string): Promise<string | null> {
-    let bridgeToken
-    try {
-      bridgeToken = await Database.getBridgeToken(bearerToken)
-      if (bridgeToken !== null) {
-        return bridgeToken
-      } else {
-        return null
-      }
-    } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
-    }
-  }
-
-  async function setSkillToken (email: string, bearerToken: string): Promise<void> {
-    try {
-      await Database.setSkillToken(email, bearerToken)
-    } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
-    }
-  }
-
-  const bearerToken = alexaRequest.getBearerToken()
-  let bridgeToken: string | null = null
-  bridgeToken = await queryBridgeToken(bearerToken)
-  if (bridgeToken !== null) {
-    return bridgeToken
-  }
-  const email = await alexaRequest.getUserEmail()
-  await setSkillToken(email, bearerToken)
-  bridgeToken = await await queryBridgeToken(bearerToken)
-  if (bridgeToken !== null) {
-    return bridgeToken
-  }
-
-  throw Common.SHS.Error.errorResponse(
-    alexaRequest,
-    null,
-    'BRIDGE_UNREACHABLE',
-    'Bridge token has not been configured'
+    'Bridge has not been configured'
   )
 }
 
 async function sendHandler (path: string, alexaRequest: Common.SHS.Request, message: Request) : Promise<Common.SHS.Response> {
-  const hostname = await getBridgeHostname(alexaRequest)
-  const token = await getBridgeToken(alexaRequest)
+  const { hostname, bridgeToken } = await getBridgeInformation(alexaRequest)
 
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
@@ -119,7 +73,7 @@ async function sendHandler (path: string, alexaRequest: Common.SHS.Request, mess
 
   let response
   try {
-    response = await Common.HTTPSRequest.request(requestOptions, token, alexaRequest)
+    response = await Common.HTTPSRequest.request(requestOptions, bridgeToken, message)
   } catch (error) {
     const requestError = (error as Common.HTTPSRequest.ResponseError)
     switch (requestError.name) {
