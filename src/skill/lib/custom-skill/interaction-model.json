@@ -215,7 +215,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "I heard {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD} . Did I hear your I.P. address correctly."
+                        "value": "I heard {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD} . Did I hear your bridge's I.P. address correctly."
                     }
                 ]
             },

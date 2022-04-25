@@ -277,15 +277,19 @@ const ConfigureBridgeIntentHandler = {
           .speak('I\'m sorry. I could not discover your bridge\'s hostname.')
           .getResponse()
       }
-      if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'NONE') {
+      if (intentRequest.intent.confirmationStatus !== 'CONFIRMED') {
+        const hostnameIndex = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
         return handlerInput.responseBuilder
-          .speak(`Is your hostname ${sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')]}?`)
+          .speak(`Is your bridge's hostname ${sessionAttributes.hostnames[hostnameIndex]}?`)
           .addConfirmIntentDirective()
           .getResponse()
       }
+      return handlerInput.responseBuilder
+        .addDelegateDirective(intentRequest.intent)
+        .getResponse()
     }
 
-    if (ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
+    if (dialogState === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
         try {
           saveBridgeHostnameAndToken(handlerInput)
@@ -305,7 +309,8 @@ const ConfigureBridgeIntentHandler = {
           .speak('Congratulations. Bridge configuration is complete. You can now use the skill to control your TV.')
           .withShouldEndSession(true)
           .getResponse()
-      } else if ((handlerInput.requestEnvelope.request as ASKModel.IntentRequest).intent.confirmationStatus === 'DENIED') {
+      }
+      if (intentRequest.intent.confirmationStatus === 'DENIED') {
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
@@ -315,11 +320,13 @@ const ConfigureBridgeIntentHandler = {
           .getResponse()
       }
       return handlerInput.responseBuilder
-        .addDelegateDirective(intentRequest.intent)
+        .speak('Not CONFIRMED or DENIED. How did I get here? I will start over.')
+        .withShouldEndSession(true)
         .getResponse()
     }
     return handlerInput.responseBuilder
-      .addDelegateDirective(intentRequest.intent)
+      .speak('Not STARTED, IN_PROGRESS or COMPLETED. How did I get here? I will start over.')
+      .withShouldEndSession(true)
       .getResponse()
   }
 }
