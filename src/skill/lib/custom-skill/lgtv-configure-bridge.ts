@@ -55,6 +55,50 @@ async function creatHostnamesSimpleCardContent (handlerInput: ASKHandlerInput): 
   return cardContent
 }
 
+async function saveBridgeHostnameAndToken (handlerInput: ASKHandlerInput): Promise<void> {
+  const apiEndpoint = handlerInput.requestEnvelope.context.System.apiEndpoint
+  const apiAccessToken = handlerInput.requestEnvelope.context.System.apiAccessToken
+  if (typeof apiAccessToken === 'undefined') {
+    throw new Error('There was a problem with account linking. Please re-link the skill and try again.')
+  }
+  Common.Debug.debug(`apiEndpoint: ${apiEndpoint}`)
+  Common.Debug.debug(`apiAccessToken: ${apiAccessToken}`)
+  let email
+  try {
+    email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken)
+    Common.Debug.debug(`LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`)
+  } catch (error: any) {
+    Common.Debug.debug(`LGTV_ConfigureBridgeIntent: ${error.message}`)
+    throw new Error('I encountered a problem retrieving your user profile. So, I cannot configure your bridge.')
+  }
+
+  const sessionAttributes = handlerInput.attributesManager.getSessionAttributes()
+  const hostnameIndex = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string
+  const hostname = sessionAttributes.hostnames[hostnameIndex]
+
+  let bridgeToken
+  try {
+    bridgeToken = await Login.getBridgeToken(email, hostname)
+    Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: success')
+  } catch (error) {
+    Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error:')
+    Common.Debug.debugError(error)
+    throw new Error('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
+  }
+  if (typeof bridgeToken !== 'string') {
+    Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error')
+    throw new Error('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
+  }
+
+  try {
+    await Database.setBridgeInformation(email, { hostname, bridgeToken })
+    Common.Debug.debug('LGTV_ConfigureBridgeIntent: setBridgeInformation: success')
+  } catch (error) {
+    Common.Debug.debug('LGTV_ConfigureBridgeIntent setBridgeInformation: error:')
+    throw new Error('I encountered a problem saving your bridge\'s configuration. So, I cannot configure your bridge.')
+  }
+}
+
 const ConfigureBridgeIntentHandler = {
   canHandle (handlerInput: ASKHandlerInput): boolean {
     return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
@@ -243,61 +287,17 @@ const ConfigureBridgeIntentHandler = {
 
     if (ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope) === 'COMPLETED') {
       if (intentRequest.intent.confirmationStatus === 'CONFIRMED') {
-        const apiEndpoint = handlerInput.requestEnvelope.context.System.apiEndpoint
-        const apiAccessToken = handlerInput.requestEnvelope.context.System.apiAccessToken
-        if (typeof apiAccessToken === 'undefined') {
-          return handlerInput.responseBuilder
-            .speak('There was a problem with account linking. Please re-link the skill and try again.')
-            .withShouldEndSession(true)
-            .getResponse()
-        }
-        Common.Debug.debug(`apiEndpoint: ${apiEndpoint}`)
-        Common.Debug.debug(`apiAccessToken: ${apiAccessToken}`)
-        let email
         try {
-          email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken)
-          Common.Debug.debug(`LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`)
-        } catch (error: any) {
-          Common.Debug.debug(`LGTV_ConfigureBridgeIntent: ${error.message}`)
-          return handlerInput.responseBuilder
-            .speak('I encountered a problem retrieving your user profile. So, I cannot configure your bridge.')
-            .withShouldEndSession(true)
-            .getResponse()
-        }
-        const hostname = sessionAttributes.hostnames[ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex') as string]
-
-        let bridgeToken
-        try {
-          bridgeToken = await Login.getBridgeToken(email, hostname)
-          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: success')
+          saveBridgeHostnameAndToken(handlerInput)
         } catch (error) {
-          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error:')
-          Common.Debug.debugError(error)
+          Reflect.deleteProperty(sessionAttributes, 'ipAddress')
+          Reflect.deleteProperty(sessionAttributes, 'hostnames')
+          handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
           return handlerInput.responseBuilder
-            .speak('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
+            .speak((error as Error).message)
             .withShouldEndSession(true)
             .getResponse()
         }
-        if (typeof bridgeToken !== 'string') {
-          Common.Debug.debug('LGTV_ConfigureBridgeIntent: getBridgeToken: error')
-          return handlerInput.responseBuilder
-            .speak('I encountered a problem creating your bridge\'s token. So, I cannot configure your bridge.')
-            .withShouldEndSession(true)
-            .getResponse()
-        }
-
-        try {
-          await Database.setBridgeInformation(email, { hostname, bridgeToken })
-          Common.Debug.debug('LGTV_ConfigureBridgeIntent: setBridgeInformation: success')
-        } catch (error) {
-          Common.Debug.debug('LGTV_ConfigureBridgeIntent setBridgeInformation: error:')
-          Common.Debug.debugError(error)
-          return handlerInput.responseBuilder
-            .speak('I encountered a problem saving your bridge\'s configuration. So, I cannot configure your bridge.')
-            .withShouldEndSession(true)
-            .getResponse()
-        }
-
         Reflect.deleteProperty(sessionAttributes, 'ipAddress')
         Reflect.deleteProperty(sessionAttributes, 'hostnames')
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
