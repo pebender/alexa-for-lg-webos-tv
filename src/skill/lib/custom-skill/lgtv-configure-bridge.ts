@@ -50,8 +50,7 @@ const ConfigureBridgeIntentHandler = {
       throw error
     }
 
-    if ((typeof intentRequest.intent.slots.ipAddressValid === 'undefined') ||
-        (typeof intentRequest.intent.slots.ipAddressA === 'undefined') ||
+    if ((typeof intentRequest.intent.slots.ipAddressA === 'undefined') ||
         (typeof intentRequest.intent.slots.ipAddressB === 'undefined') ||
         (typeof intentRequest.intent.slots.ipAddressC === 'undefined') ||
         (typeof intentRequest.intent.slots.ipAddressD === 'undefined') ||
@@ -65,33 +64,28 @@ const ConfigureBridgeIntentHandler = {
     const dialogState: ASKModel.DialogState = ASKRequestEnvelope.getDialogState(handlerInput.requestEnvelope)
     Common.Debug.debug(`dialogState: ${dialogState}`)
 
-    const ipAddressValidString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressValid')
     const ipAddressAString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressA')
     const ipAddressBString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressB')
     const ipAddressCString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressC')
     const ipAddressDString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'ipAddressD')
     const hostnameIndexString: String | undefined = ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, 'hostnameIndex')
-    Common.Debug.debug(`(dirty) set: ${ipAddressValidString}, address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
+    Common.Debug.debug(`(dirty) address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`)
 
     const ipAddressA: Number = Number(ipAddressAString)
     const ipAddressB: Number = Number(ipAddressBString)
     const ipAddressC: Number = Number(ipAddressCString)
     const ipAddressD: Number = Number(ipAddressDString)
     const hostnameIndex: Number = Number(hostnameIndexString)
-    const ipAddressValid: Boolean = (typeof ipAddressValidString !== 'undefined') && (ipAddressValidString.toLowerCase() === 'yes')
-
-    Common.Debug.debug(`(clean) set: ${ipAddressValid}, address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`)
+    Common.Debug.debug(`(clean) address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`)
 
     if (dialogState === 'STARTED') {
       Reflect.deleteProperty(sessionAttributes, 'ipAddress')
       Reflect.deleteProperty(sessionAttributes, 'hostnames')
       Reflect.deleteProperty(sessionAttributes, 'hostnameIndex')
-      handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
-    }
 
-    if ((dialogState === 'STARTED') || (dialogState === 'IN_PROGRESS')) {
-      if ((dialogState === 'STARTED') &&
-          (typeof ipAddressAString === 'undefined') &&
+      handlerInput.attributesManager.setSessionAttributes(sessionAttributes)
+
+      if ((typeof ipAddressAString === 'undefined') &&
           (typeof ipAddressBString === 'undefined') &&
           (typeof ipAddressCString === 'undefined') &&
           (typeof ipAddressDString === 'undefined')) {
@@ -100,43 +94,118 @@ const ConfigureBridgeIntentHandler = {
           .getResponse()
       }
 
-      if ((typeof ipAddressAString === 'undefined') ||
-          (typeof ipAddressBString === 'undefined') ||
-          (typeof ipAddressCString === 'undefined') ||
-          (typeof ipAddressDString === 'undefined')) {
-        const cardTitle = `${Common.constants.application.name.pretty} Error`
-        const cardContent = 'I heard the I.P. Address: ' +
-                            `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
-        const speechOutput = 'I missed some of the numbers in the I.P. address. ' +
-                             'An I.P. address is four numbers separated from each other by the word \'dot\'. '
-        const reprompt = 'Please tell me your bridge\'s I.P. address again.'
+      // Some but not all I.P. address octets have been filled.
+      if (((typeof ipAddressAString !== 'undefined') ||
+           (typeof ipAddressBString !== 'undefined') ||
+           (typeof ipAddressCString !== 'undefined') ||
+           (typeof ipAddressDString !== 'undefined')) &&
+          ((typeof ipAddressAString === 'undefined') ||
+           (typeof ipAddressBString === 'undefined') ||
+           (typeof ipAddressCString === 'undefined') ||
+           (typeof ipAddressDString === 'undefined'))) {
+        const cardTitle = 'Missing IPv4 Address Octet(s)'
+        const cardContent = 'I heard the I.P. Address:\n' +
+                            `Octet 1: ${ipAddressAString}\n` +
+                            `Octet 2: ${ipAddressBString}\n` +
+                            `Octet 3: ${ipAddressCString}\n` +
+                            `Octet 4: ${ipAddressDString}`
+        const speechOutput = 'I missed some of the numbers in your bridge\'s I.P. address. Please start over.'
         return handlerInput.responseBuilder
-          .addElicitSlotDirective('ipAddressValid')
-          .speak(speechOutput)
-          .reprompt(reprompt)
           .withSimpleCard(cardTitle, cardContent)
+          .speak(speechOutput)
+          .withShouldEndSession(true)
           .getResponse()
       }
-
-      if (((!Number.isInteger(ipAddressA)) || (ipAddressA < 0) || (ipAddressA > 255)) ||
-          ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) ||
-          ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) ||
-          ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255))) {
-        const cardTitle = `${Common.constants.application.name.pretty} Error`
-        const cardContent = 'I heard the I.P. Address: ' +
-                            `${ipAddressAString}.${ipAddressBString}.${ipAddressBString}.${ipAddressBString}`
-        const speechOutput = 'There is a problem with some numbers in the I.P. addresses. ' +
-                             'The numbers must be integers between 0 and 255. '
-        const reprompt = 'Please tell me your bridge\'s I.P. address again.'
+      if ((!Number.isInteger(ipAddressA)) || (ipAddressA < 0) || (ipAddressA > 255)) {
+        const speechOutput = 'The first octet was out of range. It must be between 0 and 255. Please start over.'
         return handlerInput.responseBuilder
-          .addElicitSlotDirective('ipAddressValid')
           .speak(speechOutput)
-          .reprompt(reprompt)
-          .withSimpleCard(cardTitle, cardContent)
+          .withShouldEndSession(true)
           .getResponse()
       }
+      if ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) {
+        const speechOutput = 'The second octet was out of range. It must be between 0 and 255. Please start over.'
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .withShouldEndSession(true)
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) {
+        const speechOutput = 'The third octet was out of range. It must be between 0 and 255. Please start over.'
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .withShouldEndSession(true)
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255)) {
+        const speechOutput = 'The fourth octet was out of range. It must be between 0 and 255. Please start over.'
+        return handlerInput.responseBuilder
+          .speak(speechOutput)
+          .withShouldEndSession(true)
+          .getResponse()
+      }
+      return handlerInput.responseBuilder
+        .addDelegateDirective()
+        .getResponse()
+    }
 
-      intentRequest.intent.slots.ipAddressValid.value = 'yes'
+    if (dialogState === 'IN_PROGRESS') {
+      if (typeof ipAddressAString === 'undefined') {
+        return handlerInput.responseBuilder
+          .addDelegateDirective()
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressA)) || (ipAddressA < 0) || (ipAddressA > 255)) {
+        const speechOutput = 'The first octet was out of range. It must be between 0 and 255.'
+        const reprompt = 'Please tell me the first octet again.'
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective('ipAddressA')
+          .speak(speechOutput)
+          .reprompt(reprompt)
+          .getResponse()
+      }
+      if (typeof ipAddressBString === 'undefined') {
+        return handlerInput.responseBuilder
+          .addDelegateDirective()
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressB)) || (ipAddressB < 0) || (ipAddressB > 255)) {
+        const speechOutput = 'The second octet was out of range. It must be between 0 and 255.'
+        const reprompt = 'Please tell me the second octet again.'
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective('ipAddressB')
+          .speak(speechOutput)
+          .reprompt(reprompt)
+          .getResponse()
+      }
+      if (typeof ipAddressCString === 'undefined') {
+        return handlerInput.responseBuilder
+          .addDelegateDirective()
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressC)) || (ipAddressC < 0) || (ipAddressC > 255)) {
+        const speechOutput = 'The third octet was out of range. It must be between 0 and 255.'
+        const reprompt = 'Please tell me the third octet again.'
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective('ipAddressC')
+          .speak(speechOutput)
+          .reprompt(reprompt)
+          .getResponse()
+      }
+      if (typeof ipAddressDString === 'undefined') {
+        return handlerInput.responseBuilder
+          .addDelegateDirective()
+          .getResponse()
+      }
+      if ((!Number.isInteger(ipAddressD)) || (ipAddressD < 0) || (ipAddressD > 255)) {
+        const speechOutput = 'The fourth octet was out of range. It must be between 0 and 255.'
+        const reprompt = 'Please tell me the fourth octet again.'
+        return handlerInput.responseBuilder
+          .addElicitSlotDirective('ipAddressD')
+          .speak(speechOutput)
+          .reprompt(reprompt)
+          .getResponse()
+      }
 
       if (typeof hostnameIndexString === 'undefined') {
         sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`

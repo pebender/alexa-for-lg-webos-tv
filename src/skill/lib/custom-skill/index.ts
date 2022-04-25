@@ -43,7 +43,7 @@ const CancelIntentHandler = {
     const speechOutput = 'There is a big red button around here somewhere.'
     return handlerInput.responseBuilder
       .speak(speechOutput)
-      .reprompt(speechOutput)
+      .withShouldEndSession(true)
       .getResponse()
   }
 }
@@ -55,7 +55,10 @@ const StopIntentHandler = {
   },
   handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'But I don\'t want to stop.'
-    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
+    return handlerInput.responseBuilder
+      .speak(speechOutput)
+      .withShouldEndSession(true)
+      .getResponse()
   }
 }
 
@@ -66,7 +69,10 @@ const FallbackIntentHandler = {
   },
   handle (handlerInput: ASKHandlerInput): ASKModel.Response {
     const speechOutput = 'It\'s time to fall back.'
-    return handlerInput.responseBuilder.speak(speechOutput).getResponse()
+    return handlerInput.responseBuilder
+      .speak(speechOutput)
+      .withShouldEndSession(true)
+      .getResponse()
   }
 }
 
@@ -75,8 +81,8 @@ const SessionEndedRequestHandler = {
     return ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest'
   },
   async handle (handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
-    await handlerInput.attributesManager.savePersistentAttributes()
-    return handlerInput.responseBuilder.getResponse()
+    return handlerInput.responseBuilder
+      .getResponse()
   }
 }
 
