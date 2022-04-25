@@ -27,13 +27,6 @@
                     "name": "LGTV_ConfigureBridgeIntent",
                     "slots": [
                         {
-                            "name": "ipAddressValid",
-                            "type": "IPADDRESS_VALID",
-                            "samples": [
-                                "{ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}"
-                            ]
-                        },
-                        {
                             "name": "ipAddressA",
                             "type": "AMAZON.NUMBER"
                         },
@@ -50,8 +43,15 @@
                             "type": "AMAZON.NUMBER"
                         },
                         {
+                            "name": "ipAddressValid",
+                            "type": "IPADDRESS_VALID"
+                        },
+                        {
                             "name": "hostnameIndex",
-                            "type": "AMAZON.NUMBER"
+                            "type": "AMAZON.NUMBER",
+                            "multipleValues": {
+                                "enabled": true
+                            }
                         }
                     ],
                     "samples": [
@@ -82,6 +82,11 @@
                     "values": [
                         {
                             "name": {
+                                "value": "no"
+                            }
+                        },
+                        {
+                            "name": {
                                 "value": "yes"
                             }
                         }
@@ -98,6 +103,90 @@
                     "prompts": {},
                     "slots": [
                         {
+                            "name": "ipAddressA",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.551605045184"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isGreaterThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.1494960238567.983324113612",
+                                    "value": "0"
+                                },
+                                {
+                                    "type": "isLessThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.1494960238567.270524929873",
+                                    "value": "255"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "ipAddressB",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.1236111864417"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isGreaterThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.1209172414706.599769499946",
+                                    "value": "0"
+                                },
+                                {
+                                    "type": "isLessThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.1209172414706.1225497260763",
+                                    "value": "255"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "ipAddressC",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.789004997147"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isGreaterThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.26421504644.630109460626",
+                                    "value": "0"
+                                },
+                                {
+                                    "type": "isLessThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.26421504644.602059950044",
+                                    "value": "255"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "ipAddressD",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1141473767652.1141618983256"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isGreaterThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.989457791355.527343915964",
+                                    "value": "0"
+                                },
+                                {
+                                    "type": "isLessThanOrEqualTo",
+                                    "prompt": "Slot.Validation.944207261731.989457791355.245889963173",
+                                    "value": "255"
+                                }
+                            ]
+                        },
+                        {
                             "name": "ipAddressValid",
                             "type": "IPADDRESS_VALID",
                             "confirmationRequired": false,
@@ -107,47 +196,13 @@
                             }
                         },
                         {
-                            "name": "ipAddressA",
-                            "type": "AMAZON.NUMBER",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.1141473767652.551605045184"
-                            }
-                        },
-                        {
-                            "name": "ipAddressB",
-                            "type": "AMAZON.NUMBER",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.1141473767652.1236111864417"
-                            }
-                        },
-                        {
-                            "name": "ipAddressC",
-                            "type": "AMAZON.NUMBER",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.1141473767652.789004997147"
-                            }
-                        },
-                        {
-                            "name": "ipAddressD",
-                            "type": "AMAZON.NUMBER",
-                            "confirmationRequired": false,
-                            "elicitationRequired": true,
-                            "prompts": {
-                                "elicitation": "Elicit.Slot.1141473767652.1141618983256"
-                            }
-                        },
-                        {
                             "name": "hostnameIndex",
                             "type": "AMAZON.NUMBER",
                             "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.944207261731.1283396883580"
+                            }
                         }
                     ]
                 }
@@ -160,7 +215,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "What is your bridge's I.P. address?"
+                        "value": "I heard {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD} . Did I hear your I.P. address correctly."
                     }
                 ]
             },
@@ -197,6 +252,87 @@
                     {
                         "type": "PlainText",
                         "value": "What is the first number in your bridge's I.P. address?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.944207261731.1283396883580",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Thank you. 'Now could you look at the card in your Alexa App and tell me the number next to your bridges hostname."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.1494960238567.983324113612",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be less than zero but I heard {ipAddressA} . Please repeat the first number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.1209172414706.599769499946",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be less than zero but I heard {ipAddressB} . Please repeat the second number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.1494960238567.270524929873",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be greater than two hundred fifty five but I heard {ipAddressA} . Please repeat the first number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.1209172414706.1225497260763",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be greater than two hundred fifty five but I heard {ipAddressB} . Please repeat the second number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.26421504644.630109460626",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be less than zero but I heard {ipAddressC} . Please repeat the third number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.26421504644.602059950044",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P address cannot be greater than two hundred fifty five but I heard {ipAddressC} . Please repeat the third number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.989457791355.527343915964",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be less than zero but I heard {ipAddressD} . Please repeat the fourth number."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.944207261731.989457791355.245889963173",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Numbers in an I.P. address cannot be greater than two hundred fifty five but I heard {ipAddressD} . Please repeat the forth number."
                     }
                 ]
             }
