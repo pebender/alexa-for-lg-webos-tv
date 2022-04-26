@@ -1,6 +1,5 @@
-const bridge = require('./lib/bridge')
+const bridge = require("./lib/bridge");
 
-bridge.startBridge()
-  .catch((error) => {
-    console.log(error)
-  })
+bridge.startBridge().catch((error) => {
+  console.log(error);
+});

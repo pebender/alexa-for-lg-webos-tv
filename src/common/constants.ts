@@ -1,10 +1,10 @@
-const applicationNamePretty = 'For LG webOS TV'
-const applicationNameSafe = 'ForLGwebOSTV'
+const applicationNamePretty = "For LG webOS TV";
+const applicationNameSafe = "ForLGwebOSTV";
 
 export const constants = {
   application: {
     // The individual / company responsible for the skill and bridge software..
-    vendor: 'Back in Thirty',
+    vendor: "Back in Thirty",
     // The name of the skill and bridge. 'LG webOS TV' is a reasonably descriptive name.
     // It is prefaced with 'For' to comply with Amazon's requirement that skills containing
     // company/product names not misrepresent themselves as being official skills.
@@ -14,30 +14,30 @@ export const constants = {
       //
       safe: applicationNameSafe,
       // A version of the name that is displayed to the user.
-      pretty: applicationNamePretty
-    }
+      pretty: applicationNamePretty,
+    },
   },
   aws: {
     // The skill, the skill's lamba function and skill's dynamoDB must be in the same region.
-    region: 'us-east-1',
+    region: "us-east-1",
     dynamoDB: {
       tableName: applicationNameSafe,
-      indexName: 'skillToken_index'
-    }
+      indexName: "skillToken_index",
+    },
   },
   bridge: {
     port: {
       http: 25391,
-      https: 25392
+      https: 25392,
     },
     path: {
-      login: '/login',
-      skill: `/api/${applicationNameSafe}/v1`
+      login: "/login",
+      skill: `/api/${applicationNameSafe}/v1`,
     },
     jwt: {
       iss: applicationNamePretty,
       x509PrivateKeyFile: `${applicationNameSafe}.key`,
-      x509PublicCertFile: `${applicationNameSafe}.crt`
-    }
-  }
-}
+      x509PublicCertFile: `${applicationNameSafe}.crt`,
+    },
+  },
+};

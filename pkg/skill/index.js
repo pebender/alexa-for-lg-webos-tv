@@ -1,3 +1,3 @@
-const skill = require('./lib/skill')
+const skill = require("./lib/skill");
 
-exports.handler = skill.handler
+exports.handler = skill.handler;

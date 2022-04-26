@@ -1,35 +1,28 @@
 {
-    "include": [
-        "../../src/skill/**/*",
-        "../../src/common/**/*"
-    ],
-    "exclude": [
-
-    ],
-    "compilerOptions": {
-        "lib": [
-            "es2017"
-        ],
-        "strict": true,
-        "module": "commonjs",
-        "esModuleInterop": true,
-        "target": "es6",
-        "noImplicitAny": false,
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "outDir": "./lib",
-        "rootDir": "../../src",
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                "../../src/skill/types/*",
-                "../../src/common/types/*",
-                "node_modules/*",
-                "node_modules/@types/*",
-                "../../node_modules/*",
-                "../../node_modules/@types/*"
-            ]
-        }
+  "include": ["../../src/skill/**/*", "../../src/common/**/*"],
+  "exclude": [],
+  "compilerOptions": {
+    "lib": ["es2017"],
+    "strict": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "rootDir": "../../src",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "../../src/skill/types/*",
+        "../../src/common/types/*",
+        "node_modules/*",
+        "node_modules/@types/*",
+        "../../node_modules/*",
+        "../../node_modules/@types/*"
+      ]
     }
+  }
 }

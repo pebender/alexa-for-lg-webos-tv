@@ -3,7 +3,7 @@
 // Type definitions for lgtv2 1.4.1
 // Definitions by: Paul Bender
 
-import EventEmitter from 'events'
+import EventEmitter from "events";
 
 /* ~ This is the module template file for class modules.
  *~ You should rename it to index.d.ts and place it in a folder with the same name as the module.
@@ -36,52 +36,72 @@ import EventEmitter from 'events'
 
 /* ~ Write your module's methods and properties in this class */
 declare class LGTV extends EventEmitter {
-  public constructor (opts?: {
-    'url'?: string;
-    'timeout'?: number;
-    'reconnect'?: number;
-    'clientKey'?: string;
-    'keyFile'?: string;
-    'saveKey'?: (key: string, callback: (error: Error) => void) => void;
+  public constructor(opts?: {
+    url?: string;
+    timeout?: number;
+    reconnect?: number;
+    clientKey?: string;
+    keyFile?: string;
+    saveKey?: (key: string, callback: (error: Error) => void) => void;
   });
 
   public clientKey: string;
 
   public register(): void;
   public request(uri: string): void;
-  public request(uri: string, callback: (error: Error, response: LGTV.Response) => void): void;
-  public request(uri: string, payload: LGTV.RequestPayload, callback: (error: Error, response: LGTV.Response) => void): void;
-  public subscribe(uri: string, callback: (error: Error, response: LGTV.Response) => void): void;
-  public subscribe(uri: string, payload: LGTV.RequestPayload, callback: (error: Error, response: LGTV.Response) => void): void;
-  public getSocket(url: string, callback?: (error: Error, response: LGTV.Response) => void): void;
+  public request(
+    uri: string,
+    callback: (error: Error, response: LGTV.Response) => void
+  ): void;
+  public request(
+    uri: string,
+    payload: LGTV.RequestPayload,
+    callback: (error: Error, response: LGTV.Response) => void
+  ): void;
+  public subscribe(
+    uri: string,
+    callback: (error: Error, response: LGTV.Response) => void
+  ): void;
+  public subscribe(
+    uri: string,
+    payload: LGTV.RequestPayload,
+    callback: (error: Error, response: LGTV.Response) => void
+  ): void;
+  public getSocket(
+    url: string,
+    callback?: (error: Error, response: LGTV.Response) => void
+  ): void;
   public connect(host: string): void;
   public disconnect(): void;
 
-  public on(event: 'close', listener: (error: Error) => void): this;
-  public on(event: 'connect', listener: () => void): this;
-  public on(event: 'connecting', listener: (host: string) => void): this;
-  public on(event: 'error', listener: (error: Error) => void): this;
-  public on(event: 'prompt', listener: () => void): this;
+  public on(event: "close", listener: (error: Error) => void): this;
+  public on(event: "connect", listener: () => void): this;
+  public on(event: "connecting", listener: (host: string) => void): this;
+  public on(event: "error", listener: (error: Error) => void): this;
+  public on(event: "prompt", listener: () => void): this;
 
-//    once(event: "close", listener: (error: Error) => void): this;
-//    once(event: "connect", listener: () => void): this;
-//    once(event: "connecting", listener: (host: string) => void): this;
-//    once(event: "error", listener: (error: Error) => void): this;
-//    once(event: "prompt", listener: () => void): this;
-//
-//    emit(event: "close", error: Error): boolean;
-//    emit(event: "connect"): boolean;
-//    emit(event: "connecting", host: string): boolean;
-//    emit(event: "error", error: Error): boolean;
-//    emit(event: "prompt"): boolean;
+  //    once(event: "close", listener: (error: Error) => void): this;
+  //    once(event: "connect", listener: () => void): this;
+  //    once(event: "connecting", listener: (host: string) => void): this;
+  //    once(event: "error", listener: (error: Error) => void): this;
+  //    once(event: "prompt", listener: () => void): this;
+  //
+  //    emit(event: "close", error: Error): boolean;
+  //    emit(event: "connect"): boolean;
+  //    emit(event: "connecting", host: string): boolean;
+  //    emit(event: "error", error: Error): boolean;
+  //    emit(event: "prompt"): boolean;
 }
 
 declare namespace LGTV {
   interface RequestPayload {
-    [x: string]: boolean | number | string |
-    {
-      [x: string]: boolean | number | string;
-    };
+    [x: string]:
+      | boolean
+      | number
+      | string
+      | {
+          [x: string]: boolean | number | string;
+        };
   }
 
   interface Request {
@@ -90,60 +110,60 @@ declare namespace LGTV {
   }
 
   /*
-     * Response to:
-     * "ssap://audio/setMute" {"muted": boolean}
-     */
+   * Response to:
+   * "ssap://audio/setMute" {"muted": boolean}
+   */
   export interface Response {
-    'returnValue': boolean;
+    returnValue: boolean;
     [x: string]: boolean | number | string | object | undefined;
   }
 
   /*
-     * Response to:
-     * "ssap://audio/getVolume"
-     */
+   * Response to:
+   * "ssap://audio/getVolume"
+   */
   export interface ResponseVolume extends Response {
-    'scenario': string;
-    'volume': number;
-    'muted': boolean;
-    'volumeMax': number;
+    scenario: string;
+    volume: number;
+    muted: boolean;
+    volumeMax: number;
   }
 
   /*
-     * Response to:
-     * "ssap://com.webos.applicationManager/getForegroundAppInfo"
-     */
+   * Response to:
+   * "ssap://com.webos.applicationManager/getForegroundAppInfo"
+   */
   export interface ResponseForgroundAppInfo extends Response {
-    'appId': string;
-    'windowId': string;
-    'processId': string;
+    appId: string;
+    windowId: string;
+    processId: string;
   }
 
   /*
-     * Response to:
-     * "ssap://tv/getExternalInputList"
-     */
+   * Response to:
+   * "ssap://tv/getExternalInputList"
+   */
   export interface ResponseExternalInputListDevice extends Response {
-    'id': string;
-    'label': string;
-    'port': number;
-    'appId': string;
-    'icon': string;
-    'modified': boolean;
-    'spdProductDescription'?: string;
-    'spdVendorName'?: string;
-    'spdSourceDeviceInfo'?: string;
-    'lastUniqueId': number;
-    'subList': {
+    id: string;
+    label: string;
+    port: number;
+    appId: string;
+    icon: string;
+    modified: boolean;
+    spdProductDescription?: string;
+    spdVendorName?: string;
+    spdSourceDeviceInfo?: string;
+    lastUniqueId: number;
+    subList: {
       [x: string]: boolean | number | string;
     }[];
-    'oneDepth'?: boolean;
-    'subCount': number;
-    'connected': boolean;
-    'favorite': boolean;
+    oneDepth?: boolean;
+    subCount: number;
+    connected: boolean;
+    favorite: boolean;
   }
   export interface ResponseExternalInputList extends Response {
-    'devices': ResponseExternalInputListDevice[];
+    devices: ResponseExternalInputListDevice[];
   }
 }
 

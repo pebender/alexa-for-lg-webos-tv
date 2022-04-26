@@ -9,11 +9,11 @@
     "applicationId": "amzn1.ask.skill.0d98c4b6-d485-42d7-b269-c8bcdecff910"
   },
   "bugs": {
-	  "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
   },
   "repository": {
     "type": "git",
-     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "files": [
     "lib",
@@ -25,8 +25,7 @@
     "certnames": "1.0.4",
     "jsonwebtoken": "8.5.1"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "bundledDependencies": [
     "ask-sdk-core",
     "ask-sdk-model",

@@ -1,9 +1,12 @@
-import * as Common from '../../../../common'
-import { Backend, BackendControl } from '../../backend'
-import { capabilities as alexaSmartHomeCapabilities } from './index'
-import { constants } from '../../../../common/constants'
+import * as Common from "../../../../common";
+import { Backend, BackendControl } from "../../backend";
+import { capabilities as alexaSmartHomeCapabilities } from "./index";
+import { constants } from "../../../../common/constants";
 
-async function handler (alexaRequest: Common.SHS.Request, backend: Backend): Promise<Common.SHS.Response> {
+async function handler(
+  alexaRequest: Common.SHS.Request,
+  backend: Backend
+): Promise<Common.SHS.Response> {
   //
   // This looks strange at first. However, once it is explained, this
   // convolution of promises and async/awaits should make sense. The goal is
@@ -34,56 +37,67 @@ async function handler (alexaRequest: Common.SHS.Request, backend: Backend): Pro
   // 'Promise.all' to ensure the array of promises is resolve. After that, we
   // use 'await' to ensure we have the values from the resolved promises.
   //
-  async function buildEndpoint (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint> {
-    let capabilities: Common.SHS.Event.Payload.Endpoint.Capability[] = []
+  async function buildEndpoint(
+    backendControl: BackendControl
+  ): Promise<Common.SHS.Event.Payload.Endpoint> {
+    let capabilities: Common.SHS.Event.Payload.Endpoint.Capability[] = [];
     try {
       // Determine capabilities in parallel.
-      capabilities = await Promise.all(alexaSmartHomeCapabilities(backendControl))
+      capabilities = await Promise.all(
+        alexaSmartHomeCapabilities(backendControl)
+      );
     } catch (error) {
-      capabilities = []
+      capabilities = [];
     }
     const endpoint: Common.SHS.Event.Payload.Endpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
       description: constants.application.name.pretty,
       manufacturerName: constants.application.vendor,
-      displayCategories: ['TV'],
-      capabilities: []
-    }
+      displayCategories: ["TV"],
+      capabilities: [],
+    };
     capabilities.forEach((capability): void => {
-      if (typeof capability === 'undefined' || capability === null) {
-        return
+      if (typeof capability === "undefined" || capability === null) {
+        return;
       }
-      endpoint.capabilities.push(capability)
-    })
-    return endpoint
+      endpoint.capabilities.push(capability);
+    });
+    return endpoint;
   }
 
-  function buildEndpoints (backendControls: BackendControl[]): Promise<Common.SHS.Event.Payload.Endpoint[]> {
-    return Promise.all(backendControls.map(buildEndpoint))
+  function buildEndpoints(
+    backendControls: BackendControl[]
+  ): Promise<Common.SHS.Event.Payload.Endpoint[]> {
+    return Promise.all(backendControls.map(buildEndpoint));
   }
 
-  function buildResponse (endpoints: Common.SHS.Event.Payload.Endpoint[]): Common.SHS.Response {
+  function buildResponse(
+    endpoints: Common.SHS.Event.Payload.Endpoint[]
+  ): Common.SHS.Response {
     const alexaResponse = new Common.SHS.Response({
-      namespace: 'Alexa.Discovery',
-      name: 'Discover.Response'
-    })
+      namespace: "Alexa.Discovery",
+      name: "Discover.Response",
+    });
     endpoints.forEach((endpoint: Common.SHS.Event.Payload.Endpoint): void => {
       if (endpoint !== null) {
-        alexaResponse.addPayloadEndpoint(endpoint)
+        alexaResponse.addPayloadEndpoint(endpoint);
       }
-    })
-    return alexaResponse
+    });
+    return alexaResponse;
   }
 
-  if (alexaRequest.directive.header.namespace !== 'Alexa.Discovery') {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Discovery')
+  if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
+    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
+      alexaRequest,
+      "Alexa.Discovery"
+    );
   }
 
-  const backendControls = await backend.controls()
-  const endpoints = await buildEndpoints(backendControls)
-  const response = await buildResponse(endpoints)
-  return response
+  const backendControls = await backend.controls();
+  const endpoints = await buildEndpoints(backendControls);
+  const response = await buildResponse(endpoints);
+  return response;
 }
 
-export { handler }
+export { handler };

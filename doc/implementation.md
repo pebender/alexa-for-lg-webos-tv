@@ -62,7 +62,7 @@ where BEARER_TOKEN is the value of the bearerToken. The full request would look 
 
 > Host: api.amazon.com
 > Accept: application/json
-> Authorization: Bearer *apiAccessToken*
+> Authorization: Bearer _apiAccessToken_
 > GET <https://api.amazon.com/user/profile>
 
 The response contains the items the user agreed to share, including the email address.
@@ -111,7 +111,7 @@ Where HOSTNAME is the bridge's hostname. The JWT asserts that user's email addre
 
 The JWT has the form
 
-``` JSON
+```JSON
 {
     "iss": "For LG webOS TV",
     "sub": "EMAIL",
@@ -126,3 +126,4 @@ It is important to note that the authorization to use the service is the result 
 If the bridge accepts the JWT, then it responses with a bearer token. The skill uses this bearer token when communicating with the bridge's skill interface.
 
 As further protection, the bridge implements dynamic IP address blocking. After a small number of JWT authorization failures originating from a IP address, the IP address is temporarily blocked.
+```

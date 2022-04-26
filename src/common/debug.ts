@@ -1,42 +1,64 @@
-import * as SHS from './smart-home-skill'
+import * as SHS from "./smart-home-skill";
 
-export function debug (message?: any, optionalParams?: any[]) {
-  if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
-    console.debug(message, optionalParams)
+export function debug(message?: any, optionalParams?: any[]) {
+  if (
+    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.debug(message, optionalParams);
   }
 }
 
-export function debugError (error: any) {
-  if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
+export function debugError(error: any) {
+  if (
+    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV === "development"
+  ) {
     // Already output by the SHS.Error constructor.
     if (error instanceof SHS.Error) {
-      return
+      return;
     }
 
-    const message = (error as any).message ? (error as any).message : 'unknown'
-    const name = (error as any).name ? (error as any).name : (error as any).code ? (error as any).code : 'unknown'
-    console.debug(`error: ${message} (${name})`)
+    const message = (error as any).message ? (error as any).message : "unknown";
+    const name = (error as any).name
+      ? (error as any).name
+      : (error as any).code
+      ? (error as any).code
+      : "unknown";
+    console.debug(`error: ${message} (${name})`);
   }
 }
 
-export function debugErrorWithStack (error: any) {
-  if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
+export function debugErrorWithStack(error: any) {
+  if (
+    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV === "development"
+  ) {
     // Already output by the SHS.Error constructor.
     if (error instanceof SHS.Error) {
-      return
+      return;
     }
 
-    const message = (error as any).message ? (error as any).message : 'unknown'
-    const name = (error as any).name ? (error as any).name : (error as any).code ? (error as any).code : 'unknown'
-    console.debug(`error: ${message} (${name})`)
+    const message = (error as any).message ? (error as any).message : "unknown";
+    const name = (error as any).name
+      ? (error as any).name
+      : (error as any).code
+      ? (error as any).code
+      : "unknown";
+    console.debug(`error: ${message} (${name})`);
 
-    const stack = (error as any).stack ? (error as any).stack : Error.captureStackTrace(error)
-    console.debug(stack)
+    const stack = (error as any).stack
+      ? (error as any).stack
+      : Error.captureStackTrace(error);
+    console.debug(stack);
   }
 }
 
-export function debugJSON (message: any) {
-  if ((typeof process.env.NODE_ENV !== 'undefined') && (process.env.NODE_ENV === 'development')) {
-    console.debug(JSON.stringify(message, null, 2))
+export function debugJSON(message: any) {
+  if (
+    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    console.debug(JSON.stringify(message, null, 2));
   }
 }

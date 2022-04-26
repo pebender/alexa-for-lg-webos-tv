@@ -1,10 +1,10 @@
-import { randomUUID } from 'crypto'
-import { copyElement } from './copy'
-import { SHSDirective } from './request'
+import { randomUUID } from "crypto";
+import { copyElement } from "./copy";
+import { SHSDirective } from "./request";
 
 export namespace SHSEvent {
   export namespace Header {
-    export type Namespace = SHSDirective.Header.Namespace
+    export type Namespace = SHSDirective.Header.Namespace;
   }
   export interface Header {
     namespace: Header.Namespace;
@@ -12,24 +12,22 @@ export namespace SHSEvent {
     instance?: string;
     messageId: string;
     correlationToken?: string;
-    payloadVersion: '3';
+    payloadVersion: "3";
     [x: string]: string | undefined;
   }
   export interface Endpoint {
     endpointId: string;
     scope?: {
-      type: 'BearerToken';
+      type: "BearerToken";
       token: string;
       [x: string]: string;
     };
-    cookie?: {[x: string]: string};
+    cookie?: { [x: string]: string };
     [x: string]: string | object | undefined;
   }
   export namespace Payload {
     export namespace Endpoint {
-      export namespace Capability {
-
-      }
+      export namespace Capability {}
       export interface Capability {
         type: string;
         interface: string;
@@ -48,16 +46,15 @@ export namespace SHSEvent {
         configuration?: object;
         capabilityResources?: {
           friendlyNames: {
-            '@type': 'text';
+            "@type": "text";
             value: {
               text: string;
-              locale: 'en-US';
+              locale: "en-US";
             };
           }[];
         };
         [x: string]: string | object | undefined;
       }
-
     }
     export interface Endpoint {
       description: string;
@@ -87,7 +84,7 @@ export interface SHSEvent {
 }
 export namespace SHSContext {
   export namespace Property {
-    export type Namespace = SHSEvent.Header.Namespace
+    export type Namespace = SHSEvent.Header.Namespace;
   }
   export interface Property {
     namespace: Property.Namespace;
@@ -105,26 +102,30 @@ export interface SHSContext {
 }
 
 export class SHSResponse {
-  public event: SHSEvent
+  public event: SHSEvent;
   public context?: SHSContext;
   [x: string]: object | undefined;
-  public constructor (opts: {
-    event: SHSEvent;
-    context?: SHSContext;
-  } | {
-    namespace: SHSEvent.Header.Namespace;
-    name: string;
-    instance?: string;
-    correlationToken?: string;
-    endpointId?: string;
-    token?: string;
-    payload?: SHSEvent.Payload;
-  }) {
-    const optsA = (opts as {
+  public constructor(
+    opts:
+      | {
+          event: SHSEvent;
+          context?: SHSContext;
+        }
+      | {
+          namespace: SHSEvent.Header.Namespace;
+          name: string;
+          instance?: string;
+          correlationToken?: string;
+          endpointId?: string;
+          token?: string;
+          payload?: SHSEvent.Payload;
+        }
+  ) {
+    const optsA = opts as {
       event: SHSEvent;
       context?: SHSContext;
-    })
-    const optsB = (opts as {
+    };
+    const optsB = opts as {
       namespace: SHSEvent.Header.Namespace;
       name: string;
       instance?: string;
@@ -132,7 +133,7 @@ export class SHSResponse {
       endpointId?: string;
       token?: string;
       payload?: SHSEvent.Payload;
-    })
+    };
 
     const response = {
       event: (copyElement(optsA.event) as SHSEvent) || {
@@ -142,99 +143,105 @@ export class SHSResponse {
           instance: optsB.instance,
           messageId: randomUUID(),
           correlationToken: optsB.correlationToken,
-          payloadVersion: '3'
+          payloadVersion: "3",
         },
         endpoint: {
           endpointId: optsB.endpointId,
           scope: {
-            type: optsB.token && 'BearerToken',
-            token: optsB.token
-          }
+            type: optsB.token && "BearerToken",
+            token: optsB.token,
+          },
         },
-        payload: (copyElement(optsB.payload) as SHSEvent.Payload) || {}
+        payload: (copyElement(optsB.payload) as SHSEvent.Payload) || {},
       },
-      context: optsA.context
+      context: optsA.context,
+    };
+
+    if (
+      typeof response.event.endpoint !== "undefined" &&
+      typeof response.event.endpoint.scope !== "undefined" &&
+      typeof response.event.endpoint.scope.type === "undefined" &&
+      typeof response.event.endpoint.scope.token === "undefined"
+    ) {
+      Reflect.deleteProperty(response.event.endpoint, "scope");
+    }
+    if (
+      typeof response.event.endpoint !== "undefined" &&
+      typeof response.event.endpoint.endpointId === "undefined" &&
+      typeof response.event.endpoint.scope === "undefined"
+    ) {
+      Reflect.deleteProperty(response.event, "endpoint");
     }
 
-    if (typeof response.event.endpoint !== 'undefined' &&
-        typeof response.event.endpoint.scope !== 'undefined' &&
-        typeof response.event.endpoint.scope.type === 'undefined' &&
-        typeof response.event.endpoint.scope.token === 'undefined') {
-      Reflect.deleteProperty(response.event.endpoint, 'scope')
-    }
-    if (typeof response.event.endpoint !== 'undefined' &&
-        typeof response.event.endpoint.endpointId === 'undefined' &&
-        typeof response.event.endpoint.scope === 'undefined') {
-      Reflect.deleteProperty(response.event, 'endpoint')
-    }
-
-    this.event = (copyElement(response.event) as SHSEvent)
-    if (typeof response.context !== 'undefined') {
-      this.response = (copyElement(response.context) as SHSContext)
+    this.event = copyElement(response.event) as SHSEvent;
+    if (typeof response.context !== "undefined") {
+      this.response = copyElement(response.context) as SHSContext;
     }
   }
 
-  public setEndpointId (endpointId: string) {
-    if (typeof this.endpoint === 'undefined') {
-      this.endpoint = {}
+  public setEndpointId(endpointId: string) {
+    if (typeof this.endpoint === "undefined") {
+      this.endpoint = {};
     }
 
-    (this.endpoint as SHSEvent.Endpoint).endpointId = endpointId
+    (this.endpoint as SHSEvent.Endpoint).endpointId = endpointId;
   }
 
-  public addContextProperty (contextProperty: SHSContext.Property): void {
-    if (typeof this.context === 'undefined') {
-      this.context = {}
+  public addContextProperty(contextProperty: SHSContext.Property): void {
+    if (typeof this.context === "undefined") {
+      this.context = {};
     }
-    if (typeof this.context.properties === 'undefined') {
-      this.context.properties = []
+    if (typeof this.context.properties === "undefined") {
+      this.context.properties = [];
     }
 
-    this.context.properties.push(contextProperty)
+    this.context.properties.push(contextProperty);
   }
 
-  public addPayloadEndpoint (payloadEndpoint: SHSEvent.Payload.Endpoint): void {
-    if (typeof this.event.payload.endpoints === 'undefined') {
-      this.event.payload.endpoints = []
+  public addPayloadEndpoint(payloadEndpoint: SHSEvent.Payload.Endpoint): void {
+    if (typeof this.event.payload.endpoints === "undefined") {
+      this.event.payload.endpoints = [];
     }
 
-    this.event.payload.endpoints.push(payloadEndpoint)
+    this.event.payload.endpoints.push(payloadEndpoint);
   }
 
-  public static async buildContextProperty (opts: {
-    'namespace': SHSContext.Property.Namespace;
-    'name': string;
-    'instance'?: string;
-    'value': () => boolean | number | string | [] | object;
+  public static async buildContextProperty(opts: {
+    namespace: SHSContext.Property.Namespace;
+    name: string;
+    instance?: string;
+    value: () => boolean | number | string | [] | object;
   }): Promise<SHSContext.Property> {
-    const startTime = new Date()
-    const value = await opts.value()
-    const endTime = new Date()
+    const startTime = new Date();
+    const value = await opts.value();
+    const endTime = new Date();
     return {
       namespace: opts.namespace,
       name: opts.name,
       value,
       timeOfSample: endTime.toISOString(),
-      uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime()
-    }
+      uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
+    };
   }
 
-  public static buildPayloadEndpointCapability (opts: {
-    'namespace': SHSEvent.Header.Namespace;
-    'propertyNames'?: string[];
+  public static buildPayloadEndpointCapability(opts: {
+    namespace: SHSEvent.Header.Namespace;
+    propertyNames?: string[];
   }): Promise<SHSEvent.Payload.Endpoint.Capability> {
     const capability: SHSEvent.Payload.Endpoint.Capability = {
-      type: 'AlexaInterface',
+      type: "AlexaInterface",
       interface: opts.namespace,
-      version: '3'
-    }
-    if (typeof opts.propertyNames !== 'undefined') {
+      version: "3",
+    };
+    if (typeof opts.propertyNames !== "undefined") {
       capability.properties = {
-        supported: opts.propertyNames.map((name: string): {'name': string} => ({ name })),
+        supported: opts.propertyNames.map((name: string): { name: string } => ({
+          name,
+        })),
         proactivelyReported: false,
-        retrievable: true
-      }
+        retrievable: true,
+      };
     }
-    return Promise.resolve(capability)
+    return Promise.resolve(capability);
   }
 }

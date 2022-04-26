@@ -1,189 +1,214 @@
-import * as Common from '../../../../common'
-import { BackendControl } from '../../backend'
-import LGTV from 'lgtv2'
+import * as Common from "../../../../common";
+import { BackendControl } from "../../backend";
+import LGTV from "lgtv2";
 
-function capabilities (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
-  return [Common.SHS.Response.buildPayloadEndpointCapability({
-    namespace: 'Alexa.Speaker',
-    propertyNames: ['volume', 'muted']
-  })]
+function capabilities(
+  backendControl: BackendControl
+): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+  return [
+    Common.SHS.Response.buildPayloadEndpointCapability({
+      namespace: "Alexa.Speaker",
+      propertyNames: ["volume", "muted"],
+    }),
+  ];
 }
 
-function states (backendControl: BackendControl): Promise<Common.SHS.Context.Property>[] {
-  function getVolumeState (): Promise<Common.SHS.Context.Property> {
-    async function value (): Promise<number> {
+function states(
+  backendControl: BackendControl
+): Promise<Common.SHS.Context.Property>[] {
+  function getVolumeState(): Promise<Common.SHS.Context.Property> {
+    async function value(): Promise<number> {
       const lgtvRequest: LGTV.Request = {
-        uri: 'ssap://audio/getVolume'
+        uri: "ssap://audio/getVolume",
+      };
+      const lgtvResponse: LGTV.ResponseVolume =
+        (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
+      if (typeof lgtvResponse.volume !== "number") {
+        throw new Error("invalid lgtvCommand response");
       }
-      const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume)
-      if (typeof lgtvResponse.volume !== 'number') {
-        throw new Error('invalid lgtvCommand response')
-      }
-      return lgtvResponse.volume
+      return lgtvResponse.volume;
     }
 
     const volumeState = Common.SHS.Response.buildContextProperty({
-      namespace: 'Alexa.Speaker',
-      name: 'volume',
-      value
-    })
-    return volumeState
+      namespace: "Alexa.Speaker",
+      name: "volume",
+      value,
+    });
+    return volumeState;
   }
 
-  function getMutedState (): Promise<Common.SHS.Context.Property> {
-    async function value (): Promise<boolean> {
+  function getMutedState(): Promise<Common.SHS.Context.Property> {
+    async function value(): Promise<boolean> {
       const lgtvRequest: LGTV.Request = {
-        uri: 'ssap://audio/getVolume'
+        uri: "ssap://audio/getVolume",
+      };
+      const lgtvResponse: LGTV.ResponseVolume =
+        (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
+      if (typeof lgtvResponse.muted !== "boolean") {
+        throw new Error("invalid lgtvCommand response");
       }
-      const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume)
-      if (typeof lgtvResponse.muted !== 'boolean') {
-        throw new Error('invalid lgtvCommand response')
-      }
-      return lgtvResponse.muted
+      return lgtvResponse.muted;
     }
 
     const mutedState = Common.SHS.Response.buildContextProperty({
-      namespace: 'Alexa.Speaker',
-      name: 'muted',
-      value
-    })
-    return mutedState
+      namespace: "Alexa.Speaker",
+      name: "muted",
+      value,
+    });
+    return mutedState;
   }
 
-  if (backendControl.getPowerState() === 'OFF') {
-    return []
+  if (backendControl.getPowerState() === "OFF") {
+    return [];
   }
 
-  return [
-    getVolumeState(),
-    getMutedState()
-  ]
+  return [getVolumeState(), getMutedState()];
 }
 
-async function setVolumeHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  function getVolume (): number {
-    const { volume } = alexaRequest.directive.payload
-    if (typeof volume !== 'number' || volume < 0 || volume > 100) {
-      throw Common.SHS.Error.errorResponseForInvalidValue(alexaRequest, 'volume')
+async function setVolumeHandler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  function getVolume(): number {
+    const { volume } = alexaRequest.directive.payload;
+    if (typeof volume !== "number" || volume < 0 || volume > 100) {
+      throw Common.SHS.Error.errorResponseForInvalidValue(
+        alexaRequest,
+        "volume"
+      );
     }
-    return volume
+    return volume;
   }
 
-  async function setVolume (volume: number): Promise<Common.SHS.Response> {
+  async function setVolume(volume: number): Promise<Common.SHS.Response> {
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://audio/setVolume',
-      payload: { volume }
-    }
-    await backendControl.lgtvCommand(lgtvRequest)
+      uri: "ssap://audio/setVolume",
+      payload: { volume },
+    };
+    await backendControl.lgtvCommand(lgtvRequest);
     return new Common.SHS.Response({
-      namespace: 'Alexa',
-      name: 'Response',
+      namespace: "Alexa",
+      name: "Response",
       correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId()
-    })
+      endpointId: alexaRequest.getEndpointId(),
+    });
   }
 
-  let lgtvVolume: number = -1
+  let lgtvVolume: number = -1;
   try {
-    lgtvVolume = await getVolume()
+    lgtvVolume = await getVolume();
   } catch (error) {
     if (error instanceof Common.SHS.Error) {
-      throw error
+      throw error;
     } else {
-      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
+      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error);
     }
   }
-  return setVolume(lgtvVolume)
+  return setVolume(lgtvVolume);
 }
 
-async function adjustVolumeHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  async function getVolume (): Promise<number> {
+async function adjustVolumeHandler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  async function getVolume(): Promise<number> {
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://audio/getVolume'
+      uri: "ssap://audio/getVolume",
+    };
+    const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(
+      lgtvRequest
+    )) as LGTV.ResponseVolume;
+    if (typeof lgtvResponse.volume === "undefined") {
+      throw new Error("the T.V. did not return it's volume");
     }
-    const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseVolume)
-    if (typeof lgtvResponse.volume === 'undefined') {
-      throw new Error("the T.V. did not return it's volume")
-    }
-    let volume = (lgtvResponse.volume as number)
-    if (typeof alexaRequest.directive.payload.volume !== 'undefined') {
+    let volume = lgtvResponse.volume as number;
+    if (typeof alexaRequest.directive.payload.volume !== "undefined") {
       if (alexaRequest.directive.payload.volumeDefault === true) {
         if (alexaRequest.directive.payload.volume < 0) {
-          volume -= 3
+          volume -= 3;
         } else if (alexaRequest.directive.payload.volume > 0) {
-          volume += 3
+          volume += 3;
         }
       } else {
-        volume += (alexaRequest.directive.payload.volume as number)
+        volume += alexaRequest.directive.payload.volume as number;
       }
     }
     if (volume < 0) {
-      volume = 0
+      volume = 0;
     }
     if (volume > 100) {
-      volume = 100
+      volume = 100;
     }
-    return volume
+    return volume;
   }
 
-  async function setVolume (volume: number): Promise<Common.SHS.Response> {
+  async function setVolume(volume: number): Promise<Common.SHS.Response> {
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://audio/setVolume',
-      payload: { volume }
-    }
-    await backendControl.lgtvCommand(lgtvRequest)
+      uri: "ssap://audio/setVolume",
+      payload: { volume },
+    };
+    await backendControl.lgtvCommand(lgtvRequest);
     return new Common.SHS.Response({
-      namespace: 'Alexa',
-      name: 'Response',
+      namespace: "Alexa",
+      name: "Response",
       correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId()
-    })
+      endpointId: alexaRequest.getEndpointId(),
+    });
   }
 
-  let lgtvVolume: number = -1
+  let lgtvVolume: number = -1;
   try {
-    lgtvVolume = await getVolume()
+    lgtvVolume = await getVolume();
   } catch (error) {
-    throw Common.SHS.Error.errorResponseFromError(alexaRequest, error)
+    throw Common.SHS.Error.errorResponseFromError(alexaRequest, error);
   }
 
-  return setVolume(lgtvVolume)
+  return setVolume(lgtvVolume);
 }
 
-function setMuteHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  async function setMute (): Promise<Common.SHS.Response> {
+function setMuteHandler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  async function setMute(): Promise<Common.SHS.Response> {
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://audio/setMute',
-      payload: { mute: (alexaRequest.directive.payload.mute as boolean) }
-    }
-    await backendControl.lgtvCommand(lgtvRequest)
+      uri: "ssap://audio/setMute",
+      payload: { mute: alexaRequest.directive.payload.mute as boolean },
+    };
+    await backendControl.lgtvCommand(lgtvRequest);
     const alexaResponse = new Common.SHS.Response({
-      namespace: 'Alexa',
-      name: 'Response',
+      namespace: "Alexa",
+      name: "Response",
       correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId()
-    })
+      endpointId: alexaRequest.getEndpointId(),
+    });
 
-    return alexaResponse
+    return alexaResponse;
   }
 
-  return setMute()
+  return setMute();
 }
 
-function handler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== 'Alexa.Speaker') {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.Speaker')
+function handler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  if (alexaRequest.directive.header.namespace !== "Alexa.Speaker") {
+    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
+      alexaRequest,
+      "Alexa.Speaker"
+    );
   }
   switch (alexaRequest.directive.header.name) {
-    case 'SetVolume':
-      return setVolumeHandler(alexaRequest, backendControl)
-    case 'AdjustVolume':
-      return adjustVolumeHandler(alexaRequest, backendControl)
-    case 'SetMute':
-      return setMuteHandler(alexaRequest, backendControl)
+    case "SetVolume":
+      return setVolumeHandler(alexaRequest, backendControl);
+    case "AdjustVolume":
+      return adjustVolumeHandler(alexaRequest, backendControl);
+    case "SetMute":
+      return setMuteHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest)
+      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
   }
 }
 
-export { capabilities, states, handler }
+export { capabilities, states, handler };

@@ -26,6 +26,7 @@ Both the skill and the bridge are written in [TypeScript](https://www.typescript
 
 When developing the software, I use [Visual Studio Code](https://code.visualstudio.com) with the extensions:
 
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Node.js Modules Intellisense](https://marketplace.visualstudio.com/items?itemName=leizongmin.node-module-intellisense)
 - [npm](https://marketplace.visualstudio.com/items?itemName=eg2.vscode-npm-script)

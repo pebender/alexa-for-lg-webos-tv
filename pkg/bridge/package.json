@@ -6,11 +6,11 @@
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "MIT",
   "bugs": {
-	  "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
   },
   "repository": {
     "type": "git",
-     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "files": [
     "lib",
@@ -37,8 +37,7 @@
     "wake_on_lan": "1.0.0",
     "xml2js": "0.4.23"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "bundledDependencies": [
     "ajv",
     "ajv-formats",

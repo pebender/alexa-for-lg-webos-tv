@@ -1,2 +1,2 @@
-export * as CS from './custom-skill'
-export * as SHS from './smart-home-skill'
+export * as CS from "./custom-skill";
+export * as SHS from "./smart-home-skill";

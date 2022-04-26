@@ -1,8 +1,10 @@
-import * as Common from '../../../common'
-import * as Bridge from './bridge-api'
+import * as Common from "../../../common";
+import * as Bridge from "./bridge-api";
 
-async function handler (alexaRequest: Common.SHS.Request): Promise<Common.SHS.Response> {
-  return await Bridge.sendSkillDirective(alexaRequest)
+async function handler(
+  alexaRequest: Common.SHS.Request
+): Promise<Common.SHS.Response> {
+  return await Bridge.sendSkillDirective(alexaRequest);
 }
 
-export { handler }
+export { handler };

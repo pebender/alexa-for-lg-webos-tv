@@ -1,216 +1,246 @@
-import * as Common from '../../../../common'
-import { BackendControl } from '../../backend'
-import LGTV from 'lgtv2'
+import * as Common from "../../../../common";
+import { BackendControl } from "../../backend";
+import LGTV from "lgtv2";
 
-const alexaToLGTV: {[key: string]: string} = {
-  'HDMI 1': 'HDMI_1',
-  'HDMI 2': 'HDMI_2',
-  'HDMI 3': 'HDMI_3',
-  'HDMI 4': 'HDMI_4',
-  'HDMI 5': 'HDMI_5',
-  'HDMI 6': 'HDMI_6',
-  'HDMI 7': 'HDMI_7',
-  'HDMI 8': 'HDMI_8',
-  'HDMI 9': 'HDMI_9',
-  'HDMI 10': 'HDMI_10',
-  'INPUT 1': 'HDMI_1',
-  'INPUT 2': 'HDMI_2',
-  'INPUT 3': 'HDMI_3',
-  'INPUT 4': 'HDMI_4',
-  'INPUT 5': 'HDMI_5',
-  'INPUT 6': 'HDMI_6',
-  'INPUT 7': 'HDMI_7',
-  'INPUT 8': 'HDMI_8',
-  'INPUT 9': 'HDMI_9',
-  'INPUT 10': 'HDMI_10',
-  'VIDEO 1': 'AV_1',
-  'VIDEO 2': 'AV_2',
-  'VIDEO 3': 'AV_3'
-}
-const lgtvToAlexa: {[key: string]: string} = {
-  HDMI_1: 'HDMI 1',
-  HDMI_2: 'HDMI 2',
-  HDMI_3: 'HDMI 3',
-  HDMI_4: 'HDMI 4',
-  HDMI_5: 'HDMI 5',
-  HDMI_6: 'HDMI 6',
-  HDMI_7: 'HDMI 7',
-  HDMI_8: 'HDMI 8',
-  HDMI_9: 'HDMI 9',
-  HDMI_10: 'HDMI 10',
-  AV_1: 'VIDEO 1',
-  AV_2: 'VIDEO 2',
-  AV_3: 'VIDEO 3'
+const alexaToLGTV: { [key: string]: string } = {
+  "HDMI 1": "HDMI_1",
+  "HDMI 2": "HDMI_2",
+  "HDMI 3": "HDMI_3",
+  "HDMI 4": "HDMI_4",
+  "HDMI 5": "HDMI_5",
+  "HDMI 6": "HDMI_6",
+  "HDMI 7": "HDMI_7",
+  "HDMI 8": "HDMI_8",
+  "HDMI 9": "HDMI_9",
+  "HDMI 10": "HDMI_10",
+  "INPUT 1": "HDMI_1",
+  "INPUT 2": "HDMI_2",
+  "INPUT 3": "HDMI_3",
+  "INPUT 4": "HDMI_4",
+  "INPUT 5": "HDMI_5",
+  "INPUT 6": "HDMI_6",
+  "INPUT 7": "HDMI_7",
+  "INPUT 8": "HDMI_8",
+  "INPUT 9": "HDMI_9",
+  "INPUT 10": "HDMI_10",
+  "VIDEO 1": "AV_1",
+  "VIDEO 2": "AV_2",
+  "VIDEO 3": "AV_3",
+};
+const lgtvToAlexa: { [key: string]: string } = {
+  HDMI_1: "HDMI 1",
+  HDMI_2: "HDMI 2",
+  HDMI_3: "HDMI 3",
+  HDMI_4: "HDMI 4",
+  HDMI_5: "HDMI 5",
+  HDMI_6: "HDMI 6",
+  HDMI_7: "HDMI 7",
+  HDMI_8: "HDMI 8",
+  HDMI_9: "HDMI 9",
+  HDMI_10: "HDMI 10",
+  AV_1: "VIDEO 1",
+  AV_2: "VIDEO 2",
+  AV_3: "VIDEO 3",
+};
+
+function capabilities(
+  backendControl: BackendControl
+): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+  return [
+    Common.SHS.Response.buildPayloadEndpointCapability({
+      namespace: "Alexa.InputController",
+      propertyNames: ["input"],
+    }),
+  ];
 }
 
-function capabilities (backendControl: BackendControl): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
-  return [Common.SHS.Response.buildPayloadEndpointCapability({
-    namespace: 'Alexa.InputController',
-    propertyNames: ['input']
-  })]
-}
-
-function states (backendControl: BackendControl): Promise<Common.SHS.Context.Property>[] {
-  async function value (): Promise<string | null> {
-    async function getExternalInputList (): Promise<LGTV.ResponseExternalInputListDevice[]> {
-      if (backendControl.getPowerState() === 'OFF') {
-        return []
+function states(
+  backendControl: BackendControl
+): Promise<Common.SHS.Context.Property>[] {
+  async function value(): Promise<string | null> {
+    async function getExternalInputList(): Promise<
+      LGTV.ResponseExternalInputListDevice[]
+    > {
+      if (backendControl.getPowerState() === "OFF") {
+        return [];
       }
 
       const lgtvRequest: LGTV.Request = {
-        uri: 'ssap://tv/getExternalInputList'
+        uri: "ssap://tv/getExternalInputList",
+      };
+      const lgtvResponse: LGTV.ResponseExternalInputList =
+        (await backendControl.lgtvCommand(
+          lgtvRequest
+        )) as LGTV.ResponseExternalInputList;
+      if (typeof lgtvResponse.devices === "undefined") {
+        return [];
       }
-      const lgtvResponse: LGTV.ResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseExternalInputList)
-      if (typeof lgtvResponse.devices === 'undefined') {
-        return []
+      if (typeof lgtvResponse.devices === "undefined") {
+        throw new Error("invalid LGTVResponse message");
       }
-      if (typeof lgtvResponse.devices === 'undefined') {
-        throw new Error('invalid LGTVResponse message')
-      }
-      return lgtvResponse.devices
+      return lgtvResponse.devices;
     }
 
-    async function getInput (): Promise<string | null> {
-      if (backendControl.getPowerState() === 'OFF') {
-        return null
+    async function getInput(): Promise<string | null> {
+      if (backendControl.getPowerState() === "OFF") {
+        return null;
       }
       const lgtvRequest: LGTV.Request = {
-        uri: 'ssap://com.webos.applicationManager/getForegroundAppInfo'
+        uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      };
+      const lgtvResponse: LGTV.ResponseForgroundAppInfo =
+        (await backendControl.lgtvCommand(
+          lgtvRequest
+        )) as LGTV.ResponseForgroundAppInfo;
+      if (typeof lgtvResponse.appId === "undefined") {
+        throw new Error("invalid LGTVResponse message");
       }
-      const lgtvResponse: LGTV.ResponseForgroundAppInfo = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseForgroundAppInfo)
-      if (typeof lgtvResponse.appId === 'undefined') {
-        throw new Error('invalid LGTVResponse message')
-      }
-      return lgtvResponse.appId
+      return lgtvResponse.appId;
     }
-    const [
-      inputList,
-      appId
-    ] = await Promise.all([
+    const [inputList, appId] = await Promise.all([
       getExternalInputList(),
-      getInput()
-    ])
+      getInput(),
+    ]);
 
-    let input: string | null = null
+    let input: string | null = null;
     if (appId !== null) {
       inputList.forEach((item): void => {
         if (item.appId === appId) {
-          input = item.id
-          if (typeof lgtvToAlexa.input !== 'undefined') {
-            input = lgtvToAlexa[input]
+          input = item.id;
+          if (typeof lgtvToAlexa.input !== "undefined") {
+            input = lgtvToAlexa[input];
           } else {
-            input = input.replace('_', ' ')
+            input = input.replace("_", " ");
           }
         }
-      })
+      });
     }
-    return input
+    return input;
   }
 
   const inputState = Common.SHS.Response.buildContextProperty({
-    namespace: 'Alexa.InputController',
-    name: 'input',
-    value
-  })
-  return [inputState]
+    namespace: "Alexa.InputController",
+    name: "input",
+    value,
+  });
+  return [inputState];
 }
 
-async function selectInputHandler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  async function getExternalInputList (): Promise<LGTV.ResponseExternalInputListDevice[]> {
-    if (backendControl.getPowerState() === 'OFF') {
-      return []
+async function selectInputHandler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  async function getExternalInputList(): Promise<
+    LGTV.ResponseExternalInputListDevice[]
+  > {
+    if (backendControl.getPowerState() === "OFF") {
+      return [];
     }
 
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://tv/getExternalInputList'
+      uri: "ssap://tv/getExternalInputList",
+    };
+    const lgtvResponse: LGTV.ResponseExternalInputList =
+      (await backendControl.lgtvCommand(
+        lgtvRequest
+      )) as LGTV.ResponseExternalInputList;
+    if (typeof lgtvResponse.devices === "undefined") {
+      return [];
     }
-    const lgtvResponse: LGTV.ResponseExternalInputList = (await backendControl.lgtvCommand(lgtvRequest) as LGTV.ResponseExternalInputList)
-    if (typeof lgtvResponse.devices === 'undefined') {
-      return []
-    }
-    return lgtvResponse.devices
+    return lgtvResponse.devices;
   }
 
-  function getInput (): string {
-    if (typeof alexaRequest.directive.payload.input !== 'string') {
-      return ''
+  function getInput(): string {
+    if (typeof alexaRequest.directive.payload.input !== "string") {
+      return "";
     }
-    return alexaRequest.directive.payload.input.toUpperCase()
+    return alexaRequest.directive.payload.input.toUpperCase();
   }
 
-  function mapInput (inputList: LGTV.ResponseExternalInputListDevice[], inputItem: string): string | null {
-    let input = inputItem
-    if (typeof alexaToLGTV[inputItem] !== 'undefined') {
-      input = alexaToLGTV[inputItem]
+  function mapInput(
+    inputList: LGTV.ResponseExternalInputListDevice[],
+    inputItem: string
+  ): string | null {
+    let input = inputItem;
+    if (typeof alexaToLGTV[inputItem] !== "undefined") {
+      input = alexaToLGTV[inputItem];
     }
-    let device: string | null = null
+    let device: string | null = null;
     inputList.forEach((value): void => {
-      const id = value.id.toUpperCase()
-      const label = value.label.toUpperCase()
+      const id = value.id.toUpperCase();
+      const label = value.label.toUpperCase();
       if (id === input) {
-        device = id
+        device = id;
       }
-      if (id === input.replace(/ /g, '_')) {
-        device = id
+      if (id === input.replace(/ /g, "_")) {
+        device = id;
       }
       if (label === input) {
-        device = id
+        device = id;
       }
-      if (label === input.replace(/ /g, '_')) {
-        device = id
+      if (label === input.replace(/ /g, "_")) {
+        device = id;
       }
-    })
-    return device
+    });
+    return device;
   }
 
-  async function setExternalInput (input: string | null): Promise<Common.SHS.Response> {
+  async function setExternalInput(
+    input: string | null
+  ): Promise<Common.SHS.Response> {
     if (input === null) {
       throw Common.SHS.Error.errorResponse(
         alexaRequest,
         500,
-        'INVALID_VALUE',
-        'I do not recognize the input.'
-      )
+        "INVALID_VALUE",
+        "I do not recognize the input."
+      );
     }
 
-    if (backendControl.getPowerState() === 'OFF') {
+    if (backendControl.getPowerState() === "OFF") {
       return new Common.SHS.Response({
-        namespace: 'Alexa',
-        name: 'Response',
+        namespace: "Alexa",
+        name: "Response",
         correlationToken: alexaRequest.getCorrelationToken(),
-        endpointId: alexaRequest.getEndpointId()
-      })
+        endpointId: alexaRequest.getEndpointId(),
+      });
     }
 
     const lgtvRequest: LGTV.Request = {
-      uri: 'ssap://tv/switchInput',
-      payload: { inputId: input }
-    }
-    await backendControl.lgtvCommand(lgtvRequest)
+      uri: "ssap://tv/switchInput",
+      payload: { inputId: input },
+    };
+    await backendControl.lgtvCommand(lgtvRequest);
     return new Common.SHS.Response({
-      namespace: 'Alexa',
-      name: 'Response',
+      namespace: "Alexa",
+      name: "Response",
       correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId()
-    })
+      endpointId: alexaRequest.getEndpointId(),
+    });
   }
 
-  const lgtvInputList = await getExternalInputList()
-  const lgtvAppId = await getInput()
-  const lgtvInput = mapInput(lgtvInputList, lgtvAppId)
-  return setExternalInput(lgtvInput)
+  const lgtvInputList = await getExternalInputList();
+  const lgtvAppId = await getInput();
+  const lgtvInput = mapInput(lgtvInputList, lgtvAppId);
+  return setExternalInput(lgtvInput);
 }
 
-function handler (alexaRequest: Common.SHS.Request, backendControl: BackendControl): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== 'Alexa.InputController') {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(alexaRequest, 'Alexa.InputController')
+function handler(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<Common.SHS.Response> {
+  if (alexaRequest.directive.header.namespace !== "Alexa.InputController") {
+    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
+      alexaRequest,
+      "Alexa.InputController"
+    );
   }
   switch (alexaRequest.directive.header.name) {
-    case 'SelectInput':
-      return selectInputHandler(alexaRequest, backendControl)
+    case "SelectInput":
+      return selectInputHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest)
+      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
   }
 }
 
-export { capabilities, states, handler }
+export { capabilities, states, handler };
