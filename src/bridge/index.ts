@@ -1,10 +1,24 @@
-//
-// I found the 'ssap://*' LG webOS TV commands in
-// <https://github.com/ConnectSDK/Connect-SDK-Android-Core/blob/master/src/com/connectsdk/service/WebOSTVService.java>.
-// These commands may be incomplete/inaccurate as the LG Connect SDK team
-// <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
-// since the 1.6.0 release on 09 September 2015.
-//
+/**
+ * # Code Structure
+ *
+ * The bridge implements the mapping from Alexa Smart Home Skill messages to LG
+ * webOS TV messages in three parts:
+ *
+ * - frontend,
+ * - middle, and
+ * - backend.
+ *
+ * The frontend handles the communication link between the skill and the bridge.
+ * It implements the web server that receives and transmits skill directives,
+ * events and contexts. In addition, it handles the establishment of secure
+ * communication between the skill and the bridge.
+ *
+ * The middle handles the translation between the skill communication protocol
+ * and the LG webOS TV protocol.
+ *
+ * The backend handles the communication link between the bridge and the LG
+ * webOS TV.
+ */
 
 import * as Common from "../common";
 import { Backend } from "./lib/backend";
