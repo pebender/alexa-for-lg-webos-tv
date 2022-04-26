@@ -12,6 +12,7 @@ import ajvFormats from "ajv-formats";
 import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
 import * as httpErrors from "http-errors";
+import { URL } from "url";
 import * as Common from "../../../common";
 import { BaseClass } from "../base-class";
 import { Configuration } from "../configuration";
@@ -123,12 +124,19 @@ export class Frontend extends BaseClass {
       }
 
       const bridgeToken = that._authorization.generateBridgeToken();
-      if (typeof jwtPayload.sub === "undefined") {
+      if (typeof jwtPayload.sub !== "string") {
         res.status(500).json({}).end();
         return;
       }
+      const email = jwtPayload.sub;
+      if (typeof jwtPayload.aud !== "string") {
+        res.status(500).json({}).end();
+        return;
+      }
+      const url = new URL(jwtPayload.aud);
+      const hostname = url.hostname;
       try {
-        await that._authorization.setBridgeToken(jwtPayload.sub, bridgeToken);
+        await that._authorization.setBridgeToken(email, hostname, bridgeToken);
       } catch (error) {
         res.status(500).json({}).end();
         return;

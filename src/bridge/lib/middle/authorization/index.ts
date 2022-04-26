@@ -52,6 +52,22 @@ export class Authorization extends BaseClass {
       } catch (error) {
         throw Common.SHS.Error.errorResponseFromError(null, error);
       }
+    } else {
+      // CHeck if the email is still authorized and delete the record if it is
+      // not.
+      try {
+        const authorizedEmails = await this._configuration.authorizedEmails();
+        const found = authorizedEmails.find(
+          (authorizedEmail) =>
+            authorizedEmail === (record as DatabaseRecord).email
+        );
+        if (typeof found === "undefined") {
+          await this._db.deleteRecord({ skillToken });
+          return false;
+        }
+      } catch (error) {
+        throw Common.SHS.Error.errorResponseFromError(null, error);
+      }
     }
 
     return true;

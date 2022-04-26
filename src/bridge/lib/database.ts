@@ -60,7 +60,12 @@ export class DatabaseTable extends BaseClass {
     await this._db.compactDatafileAsync();
   }
 
-  public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord> {
+  public async deleteRecord(query: DatabaseQuery): Promise<void> {
+    await this._db.removeAsync(query, { multi: true });
+    await this._db.compactDatafileAsync();
+  }
+
+  public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord | null> {
     this.throwIfUninitialized("getRecord");
     return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
   }

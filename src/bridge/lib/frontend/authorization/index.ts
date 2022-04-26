@@ -18,7 +18,11 @@ export class Authorization extends BaseClass {
     this._x509PublicCert = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile)
     );
-    this._db = new DatabaseTable("frontend", ["email", "bridgeToken"], "email");
+    this._db = new DatabaseTable(
+      "frontend",
+      ["email", "hostname", "bridgeToken"],
+      "email"
+    );
   }
 
   public initialize(): Promise<void> {
@@ -96,10 +100,14 @@ export class Authorization extends BaseClass {
 
   public async setBridgeToken(
     email: string,
+    hostname: string,
     bridgeToken: string
   ): Promise<void> {
     try {
-      await this._db.updateOrInsertRecord({ email }, { email, bridgeToken });
+      await this._db.updateOrInsertRecord(
+        { email },
+        { email, hostname, bridgeToken }
+      );
     } catch (error) {
       throw Common.SHS.Error.errorResponseFromError(null, error);
     }
@@ -110,11 +118,66 @@ export class Authorization extends BaseClass {
     try {
       record = await this._db.getRecord({ bridgeToken });
     } catch (error) {
+      Common.Debug.debugError(error);
       throw Common.SHS.Error.errorResponseFromError(null, error);
     }
     if (record === null) {
       return false;
     }
+    if (
+      typeof record.email !== "string" ||
+      typeof record.hostname !== "string"
+    ) {
+      try {
+        await this._db.deleteRecord({ bridgeToken });
+      } catch (error) {
+        Common.Debug.debugError(error);
+        throw Common.SHS.Error.errorResponseFromError(null, error);
+      }
+      return false;
+    }
+
+    const email = record.email;
+    const hostname = record.hostname;
+
+    // CHeck if the email is still authorized and delete the record if it is not.
+    try {
+      const authorizedEmails = await this._configuration.authorizedEmails();
+      const found = authorizedEmails.find(
+        (authorizedEmail) => email === authorizedEmail
+      );
+      if (typeof found === "undefined") {
+        try {
+          await this._db.deleteRecord({ bridgeToken });
+        } catch (error) {
+          Common.Debug.debugError(error);
+          throw Common.SHS.Error.errorResponseFromError(null, error);
+        }
+        return false;
+      }
+    } catch (error) {
+      Common.Debug.debugError(error);
+      throw error;
+    }
+
+    // Make sure the hostname is still authorized and delete the record if it is
+    // not.
+    try {
+      const authorizedHostname = await this._configuration.hostname();
+      if (hostname !== authorizedHostname) {
+        try {
+          await this._db.deleteRecord({ bridgeToken });
+        } catch (error) {
+          Common.Debug.debugError(error);
+          throw Common.SHS.Error.errorResponseFromError(null, error);
+        }
+        return false;
+      }
+    } catch (error) {
+      Common.Debug.debugError(error);
+      throw error;
+    }
+
     return true;
   }
 }
