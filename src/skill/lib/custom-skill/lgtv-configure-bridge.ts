@@ -397,7 +397,7 @@ const ConfigureBridgeIntentHandler = {
     if (dialogState === "COMPLETED") {
       if (intentRequest.intent.confirmationStatus === "CONFIRMED") {
         try {
-          saveBridgeHostnameAndToken(handlerInput);
+          await saveBridgeHostnameAndToken(handlerInput);
         } catch (error) {
           Reflect.deleteProperty(sessionAttributes, "ipAddress");
           Reflect.deleteProperty(sessionAttributes, "hostnames");

@@ -72,7 +72,7 @@ export class Authorization extends BaseClass {
       return false;
     }
     try {
-      const hostname = that._configuration.authorizedEmails();
+      const hostname = that._configuration.hostname();
       if (
         jwtPayload.aud !==
         `https://${hostname}${Common.constants.bridge.path.skill}`
