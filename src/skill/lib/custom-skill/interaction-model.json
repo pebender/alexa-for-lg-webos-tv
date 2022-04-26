@@ -44,7 +44,7 @@
                         },
                         {
                             "name": "ipAddressValid",
-                            "type": "IPADDRESS_VALID"
+                            "type": "YES_NO_SLOT"
                         },
                         {
                             "name": "hostnameIndex",
@@ -55,8 +55,16 @@
                         }
                     ],
                     "samples": [
+                        "pair with my bridge",
+                        "pair with the bridge",
+                        "connect with my bridge",
+                        "connect with the bridge",
+                        "connect to my bridge",
+                        "connect to the bridge",
                         "configure my bridge",
                         "configure the bridge",
+                        "set up my bridge",
+                        "set up the bridge",
                         "configure my bridge address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
                         "configure my bridge's address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
                         "configure the bridge  address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
@@ -78,16 +86,26 @@
             ],
             "types": [
                 {
-                    "name": "IPADDRESS_VALID",
+                    "name": "YES_NO_SLOT",
                     "values": [
                         {
+                            "id": "FALSE",
                             "name": {
-                                "value": "no"
+                                "value": "no",
+                                "synonyms": [
+                                    "nah",
+                                    "nope"
+                                ]
                             }
                         },
                         {
+                            "id": "TRUE",
                             "name": {
-                                "value": "yes"
+                                "value": "yes",
+                                "synonyms": [
+                                    "yeah",
+                                    "sure"
+                                ]
                             }
                         }
                     ]
@@ -188,7 +206,7 @@
                         },
                         {
                             "name": "ipAddressValid",
-                            "type": "IPADDRESS_VALID",
+                            "type": "YES_NO_SLOT",
                             "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {
