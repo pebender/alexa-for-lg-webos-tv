@@ -22,7 +22,7 @@
 
 import * as Common from "../common";
 import { Backend } from "./lib/backend";
-import { DatabaseTable } from "./lib/database";
+import { Configuration } from "./lib/configuration";
 import { Frontend } from "./lib/frontend";
 import { Middle } from "./lib/middle";
 import * as fs from "fs/promises";
@@ -38,24 +38,9 @@ export async function startBridge(): Promise<void> {
     throw Error;
   }
 
-  let hostname: string = "";
-  let authorizedEmails: string[] = [];
+  const configuration = new Configuration();
   try {
-    const raw = await fs.readFile(`${configurationDir}/config.json`);
-    const config = JSON.parse(raw as any);
-
-    if (typeof config.hostname === "undefined") {
-      const error = new Error('config.json is missing "hostname".');
-      Common.Debug.debugErrorWithStack(error);
-      process.exit(1);
-    }
-    hostname = config.hostname;
-    if (typeof config.authorizedEmails === "undefined") {
-      const error = new Error('config.json is missing "authorizedEmails".');
-      Common.Debug.debugErrorWithStack(error);
-      process.exit(1);
-    }
-    authorizedEmails = config.authorizedEmails;
+    configuration.initialize();
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     process.exit(1);
@@ -67,36 +52,16 @@ export async function startBridge(): Promise<void> {
   // (name), Internet Protocol address (ip), media access control address (mac)
   // and client key (key).
   //
-  const backendDb = new DatabaseTable(
-    configurationDir,
-    "backend",
-    ["udn"],
-    "udn"
-  );
-  await backendDb.initialize();
-  const middleDb = new DatabaseTable(
-    configurationDir,
-    "middle",
-    ["email", "skillToken"],
-    "email"
-  );
-  await middleDb.initialize();
-  const frontendDb = new DatabaseTable(
-    configurationDir,
-    "frontend",
-    ["email", "bridgeToken"],
-    "email"
-  );
-  await frontendDb.initialize();
 
-  const backend = new Backend(backendDb);
+  const backend = new Backend(configuration);
   backend.on("error", (error: Error, id: string): void => {
     Common.Debug.debug(id);
     Common.Debug.debugErrorWithStack(error);
   });
   await backend.initialize();
-  const middle = new Middle(authorizedEmails, middleDb, backend);
-  const frontend = new Frontend(hostname, authorizedEmails, frontendDb, middle);
+  const middle = new Middle(configuration, backend);
+  await middle.initialize();
+  const frontend = new Frontend(configuration, middle);
   await frontend.initialize();
   await frontend.start();
   await backend.start();

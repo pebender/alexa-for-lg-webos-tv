@@ -1,5 +1,7 @@
 import { BaseClass } from "./base-class";
 import Datastore from "@seald-io/nedb";
+import * as Common from "../../common";
+const persistPath = require("persist-path");
 
 export interface DatabaseUpdate {
   [x: string]: boolean | number | string | object | null;
@@ -15,23 +17,22 @@ export class DatabaseTable extends BaseClass {
   private _indexes: string[];
   private _key: string;
   private _db: Datastore;
-  public constructor(
-    path: string,
-    name: string,
-    indexes: string[],
-    key: string
-  ) {
+  public constructor(name: string, indexes: string[], key: string) {
     super();
 
     this._indexes = indexes;
     this._key = key;
+
+    const configurationDir = persistPath(
+      Common.constants.application.name.safe
+    );
 
     //
     // This operation is synchronous. It is both expected and desired because it
     // occurs once at startup and because the database is needed before the LG
     // webOS TV bridge can run.
     //
-    this._db = new Datastore({ filename: `${path}/${name}.nedb` });
+    this._db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
     this._db.loadDatabaseAsync();
   }
 

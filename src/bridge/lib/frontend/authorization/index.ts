@@ -3,31 +3,38 @@ import * as fs from "fs";
 import * as path from "path";
 import { JwtPayload } from "jsonwebtoken";
 import * as Common from "../../../../common";
+import { BaseClass } from "../../base-class";
 import { DatabaseRecord, DatabaseTable } from "../../database";
+import { Configuration } from "../../configuration";
 
-export class Authorization {
+export class Authorization extends BaseClass {
+  private readonly _configuration: Configuration;
   private readonly _x509PublicCert: Buffer;
-  private readonly _hostname: string;
-  private readonly _authorizedEmails: string[];
   private readonly _db: DatabaseTable;
-  public constructor(
-    hostname: string,
-    authorizedEmails: string[],
-    frontendDb: DatabaseTable
-  ) {
+  public constructor(configuration: Configuration) {
+    super();
+
+    this._configuration = configuration;
     this._x509PublicCert = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile)
     );
-    this._hostname = hostname;
-    this._authorizedEmails = authorizedEmails;
-    this._db = frontendDb;
+    this._db = new DatabaseTable("frontend", ["email", "bridgeToken"], "email");
+  }
+
+  public initialize(): Promise<void> {
+    const that = this;
+
+    async function initializeFunction(): Promise<void> {
+      await that._db.initialize();
+    }
+    return this.initializeHandler(initializeFunction);
   }
 
   public x509PublicCert(): Buffer {
     return this._x509PublicCert;
   }
 
-  public authorizeJwTPayload(jwtPayload: JwtPayload): boolean {
+  public async authorizeJwTPayload(jwtPayload: JwtPayload): Promise<boolean> {
     const that = this;
 
     Common.Debug.debug("authorizeJwTPayload:");
@@ -46,9 +53,16 @@ export class Authorization {
       Common.Debug.debug("jwtPayload.sub failed: missing");
       return false;
     }
-    const found = that._authorizedEmails.find(
-      (authorizedEmail) => jwtPayload.sub === authorizedEmail
-    );
+    let found;
+    try {
+      const authorizedEmails = await that._configuration.authorizedEmails();
+      found = authorizedEmails.find(
+        (authorizedEmail) => jwtPayload.sub === authorizedEmail
+      );
+    } catch (error) {
+      Common.Debug.debugError(error);
+      throw error;
+    }
     if (typeof found === "undefined") {
       Common.Debug.debug("jwtPayload.sub failed");
       return false;
@@ -57,14 +71,20 @@ export class Authorization {
       Common.Debug.debug("jwtPayload.aud failed: missing");
       return false;
     }
-    if (
-      jwtPayload.aud !==
-      `https://${that._hostname}${Common.constants.bridge.path.skill}`
-    ) {
-      Common.Debug.debug(
-        `jwtPayload.sub failed ${jwtPayload.aud} https://${that._hostname}${Common.constants.bridge.path.skill}`
-      );
-      return false;
+    try {
+      const hostname = that._configuration.authorizedEmails();
+      if (
+        jwtPayload.aud !==
+        `https://${hostname}${Common.constants.bridge.path.skill}`
+      ) {
+        Common.Debug.debug(
+          `jwtPayload.sub failed ${jwtPayload.aud} https://${hostname}${Common.constants.bridge.path.skill}`
+        );
+        return false;
+      }
+    } catch (error) {
+      Common.Debug.debugError(error);
+      throw error;
     }
 
     return true;

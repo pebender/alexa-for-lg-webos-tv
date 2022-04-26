@@ -6,10 +6,10 @@ import { DatabaseRecord, DatabaseTable } from "../database";
 export class BackendController extends BaseClass {
   private readonly _db: DatabaseTable;
   private readonly _controls: { [x: string]: BackendControl };
-  public constructor(db: DatabaseTable) {
+  public constructor() {
     super();
 
-    this._db = db;
+    this._db = new DatabaseTable("backend", ["udn"], "udn");
     this._controls = {};
   }
 
@@ -50,8 +50,9 @@ export class BackendController extends BaseClass {
       return Promise.all(tvInitializers).then();
     }
 
-    function initializeFunction(): Promise<void> {
-      return that._db.getRecords({}).then(tvsInitialize);
+    async function initializeFunction(): Promise<void> {
+      await that._db.initialize();
+      await that._db.getRecords({}).then(tvsInitialize);
     }
 
     return this.initializeHandler(initializeFunction);

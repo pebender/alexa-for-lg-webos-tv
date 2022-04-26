@@ -14,7 +14,7 @@ import { expressjwt, ExpressJwtRequest } from "express-jwt";
 import * as httpErrors from "http-errors";
 import * as Common from "../../../common";
 import { BaseClass } from "../base-class";
-import { DatabaseTable } from "../database";
+import { Configuration } from "../configuration";
 import { Middle } from "../middle";
 import { Authorization } from "./authorization";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
@@ -27,19 +27,10 @@ export class Frontend extends BaseClass {
   private readonly _ajv: Ajv;
   private readonly _schemaValidator: AjvTypes.ValidateFunction;
   private readonly _server: express.Express;
-  public constructor(
-    hostname: string,
-    authorizedEmails: string[],
-    frontendDb: DatabaseTable,
-    middle: Middle
-  ) {
+  public constructor(configuration: Configuration, middle: Middle) {
     super();
 
-    this._authorization = new Authorization(
-      hostname,
-      authorizedEmails,
-      frontendDb
-    );
+    this._authorization = new Authorization(configuration);
     this._middle = middle;
 
     // The blacklist is due to auth failures so blacklist quickly.
@@ -234,7 +225,9 @@ export class Frontend extends BaseClass {
       }
     }
 
-    function initializeFunction(): Promise<void> {
+    async function initializeFunction(): Promise<void> {
+      await that._authorization.initialize();
+
       return new Promise<void>((resolve): void => {
         that._server.use((req, res, next) => {
           Common.Debug.debug("express request:");

@@ -1,19 +1,24 @@
 import { BaseClass } from "../../base-class";
 import { DatabaseRecord, DatabaseTable } from "../../database";
 import * as Common from "../../../../common";
+import { Configuration } from "../../configuration";
 export class Authorization extends BaseClass {
-  private readonly _authorizedEmails: string[];
-
+  private readonly _configuration: Configuration;
   private readonly _db: DatabaseTable;
-  public constructor(authorizedEmails: string[], middleDb: DatabaseTable) {
+  public constructor(configuration: Configuration) {
     super();
 
-    this._authorizedEmails = authorizedEmails;
-    this._db = middleDb;
+    this._configuration = configuration;
+    this._db = new DatabaseTable("middle", ["email", "skillToken"], "email");
   }
 
   public initialize(): Promise<void> {
-    return this.initializeHandler(() => Promise.resolve());
+    const that = this;
+
+    async function initializeFunction(): Promise<void> {
+      await that._db.initialize();
+    }
+    return this.initializeHandler(initializeFunction);
   }
 
   public async authorize(skillToken: string): Promise<boolean> {
@@ -28,9 +33,16 @@ export class Authorization extends BaseClass {
       const userId = profile.user_id;
       const email = profile.email;
 
-      const found = this._authorizedEmails.find((element) => element === email);
-      if (typeof found === "undefined") {
-        return false;
+      try {
+        const authorizedEmails = await this._configuration.authorizedEmails();
+        const found = authorizedEmails.find(
+          (authorizedEmail) => authorizedEmail === email
+        );
+        if (typeof found === "undefined") {
+          return false;
+        }
+      } catch (error) {
+        throw Common.SHS.Error.errorResponseFromError(null, error);
       }
       try {
         await this._db.updateOrInsertRecord(

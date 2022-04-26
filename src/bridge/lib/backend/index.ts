@@ -11,17 +11,19 @@ import { BaseClass } from "../base-class";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
-import { DatabaseTable } from "./../database";
+import { Configuration } from "../configuration";
 
 export { BackendControl } from "./backend-control";
 
 export class Backend extends BaseClass {
+  private readonly _configuration: Configuration;
   private readonly _controller: BackendController;
   private readonly _searcher: BackendSearcher;
-  public constructor(db: DatabaseTable) {
+  public constructor(configuration: Configuration) {
     super();
 
-    this._controller = new BackendController(db);
+    this._configuration = configuration;
+    this._controller = new BackendController();
     this._searcher = new BackendSearcher();
   }
 
