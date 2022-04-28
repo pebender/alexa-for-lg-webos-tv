@@ -42,7 +42,7 @@ export class BackendControl extends EventEmitter {
       mac: tv.mac,
     };
 
-    const clientKey = typeof _tv.key === "string" ? _tv.key : "";
+    const clientKey = typeof tv.key === "string" ? tv.key : "";
 
     function saveKey(key: string, callback: (error: Error) => void): void {
       db.updateRecord({ udn: _tv.udn }, { $set: { key } })
