@@ -3,35 +3,42 @@ import * as fs from "fs";
 import * as path from "path";
 import { JwtPayload } from "jsonwebtoken";
 import * as Common from "../../../../common";
-import { BaseClass } from "../../base-class";
 import { DatabaseRecord, DatabaseTable } from "../../database";
 import { Configuration } from "../../configuration";
 
-export class Authorization extends BaseClass {
+export class Authorization {
   private readonly _configuration: Configuration;
   private readonly _x509PublicCert: Buffer;
   private readonly _db: DatabaseTable;
-  public constructor(configuration: Configuration) {
-    super();
+  private constructor(
+    _configuration: Configuration,
+    _x509PublicCert: Buffer,
+    _db: DatabaseTable
+  ) {
+    this._configuration = _configuration;
+    this._x509PublicCert = _x509PublicCert;
+    this._db = _db;
+  }
 
-    this._configuration = configuration;
-    this._x509PublicCert = fs.readFileSync(
+  public static async build(
+    configuration: Configuration
+  ): Promise<Authorization> {
+    const _x509PublicCert = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile)
     );
-    this._db = new DatabaseTable(
+    const _db = await DatabaseTable.build(
       "frontend",
       ["email", "hostname", "bridgeToken"],
       "email"
     );
-  }
 
-  public initialize(): Promise<void> {
-    const that = this;
+    const authorization = new Authorization(
+      configuration,
+      _x509PublicCert,
+      _db
+    );
 
-    async function initializeFunction(): Promise<void> {
-      await that._db.initialize();
-    }
-    return this.initializeHandler(initializeFunction);
+    return authorization;
   }
 
   public x509PublicCert(): Buffer {

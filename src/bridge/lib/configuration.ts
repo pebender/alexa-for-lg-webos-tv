@@ -1,25 +1,34 @@
 import * as fs from "fs/promises";
-import { BaseClass } from "./base-class";
 import * as Common from "../../common";
 
 const persistPath = require("persist-path");
 
-export class Configuration extends BaseClass {
+export class Configuration {
   private _configuration: {
     hostname: string;
     authorizedEmails: string[];
   };
 
-  public constructor() {
-    super();
+  private constructor(_configuration: {
+    hostname: string;
+    authorizedEmails: string[];
+  }) {
+    this._configuration = _configuration;
+  }
 
-    this._configuration = {
+  public static async build() {
+    const _configuration = {
       hostname: "",
       authorizedEmails: [],
     };
+
+    const configuration = new Configuration(_configuration);
+    await configuration.initialize();
+
+    return configuration;
   }
 
-  public initialize(): Promise<void> {
+  private async initialize(): Promise<void> {
     const that = this;
 
     async function initializeFunction(): Promise<void> {
@@ -49,7 +58,7 @@ export class Configuration extends BaseClass {
       that._configuration = configuration;
     }
 
-    return this.initializeHandler(initializeFunction);
+    return await initializeFunction();
   }
 
   public async hostname(): Promise<string> {

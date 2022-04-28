@@ -14,7 +14,7 @@
 import * as dgram from "dgram";
 import { IP, MAC, TV, UDN } from "../tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
-import { BaseClass } from "../base-class";
+import EventEmitter from "events";
 import http from "axios";
 import { parseString as xml2js } from "xml2js";
 const arp = require("node-arp");
@@ -29,17 +29,27 @@ export interface UPnPDevice {
   };
 }
 
-export class BackendSearcher extends BaseClass {
+export class BackendSearcher extends EventEmitter {
   private _ssdpNotify: SsdpClient;
   private _ssdpResponse: SsdpClient;
-  public constructor() {
+  public constructor(_ssdpNotify: SsdpClient, _ssdpResponse: SsdpClient) {
     super();
 
-    this._ssdpNotify = new SsdpClient({ sourcePort: 1900 });
-    this._ssdpResponse = new SsdpClient();
+    this._ssdpNotify = _ssdpNotify;
+    this._ssdpResponse = _ssdpResponse;
   }
 
-  public initialize(): Promise<void> {
+  public static async build(): Promise<BackendSearcher> {
+    const _ssdpNotify = new SsdpClient({ sourcePort: 1900 });
+    const _ssdpResponse = new SsdpClient();
+
+    const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);
+    await backendSearcher.initialize();
+
+    return backendSearcher;
+  }
+
+  private async initialize(): Promise<void> {
     const that: BackendSearcher = this;
 
     // Periodically scan for TVs.
@@ -229,11 +239,10 @@ export class BackendSearcher extends BaseClass {
       });
     }
 
-    return this.initializeHandler(initializeFunction);
+    return await initializeFunction();
   }
 
   public now(): void {
-    this.throwIfUninitialized("now");
     this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
   }
 }

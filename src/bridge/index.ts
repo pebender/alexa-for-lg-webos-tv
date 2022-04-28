@@ -38,13 +38,7 @@ export async function startBridge(): Promise<void> {
     throw Error;
   }
 
-  const configuration = new Configuration();
-  try {
-    configuration.initialize();
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    process.exit(1);
-  }
+  const configuration = await Configuration.build();
 
   //
   // I keep long term information needed to connect to each TV in a database.
@@ -53,16 +47,13 @@ export async function startBridge(): Promise<void> {
   // and client key (key).
   //
 
-  const backend = new Backend(configuration);
+  const backend = await Backend.build(configuration);
   backend.on("error", (error: Error, id: string): void => {
     Common.Debug.debug(id);
     Common.Debug.debugErrorWithStack(error);
   });
-  await backend.initialize();
-  const middle = new Middle(configuration, backend);
-  await middle.initialize();
-  const frontend = new Frontend(configuration, middle);
-  await frontend.initialize();
+  const middle = await Middle.build(configuration, backend);
+  const frontend = await Frontend.build(configuration, middle);
   await frontend.start();
   await backend.start();
 }

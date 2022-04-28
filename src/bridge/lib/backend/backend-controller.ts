@@ -1,16 +1,29 @@
 import { TV, UDN } from "../tv";
-import { BaseClass } from "../base-class";
+import EventEmitter from "events";
 import { BackendControl } from "./backend-control";
 import { DatabaseRecord, DatabaseTable } from "../database";
 
-export class BackendController extends BaseClass {
+export class BackendController extends EventEmitter {
   private readonly _db: DatabaseTable;
   private readonly _controls: { [x: string]: BackendControl };
-  public constructor() {
+  public constructor(
+    _db: DatabaseTable,
+    _controls: { [x: string]: BackendControl }
+  ) {
     super();
 
-    this._db = new DatabaseTable("backend", ["udn"], "udn");
-    this._controls = {};
+    this._db = _db;
+    this._controls = _controls;
+  }
+
+  public static async build(): Promise<BackendController> {
+    const _db = await DatabaseTable.build("backend", ["udn"], "udn");
+    const _controls = {};
+
+    const backendController = new BackendController(_db, _controls);
+    await backendController.initialize();
+
+    return backendController;
   }
 
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
@@ -21,7 +34,7 @@ export class BackendController extends BaseClass {
     }
   }
 
-  public initialize(): Promise<void> {
+  private async initialize(): Promise<void> {
     const that: BackendController = this;
 
     function eventsAdd(udn: UDN): void {
@@ -30,14 +43,10 @@ export class BackendController extends BaseClass {
       });
     }
 
-    function tvInitialize(tv: TV): Promise<void> {
+    async function tvInitialize(tv: TV): Promise<void> {
       if (typeof that._controls[tv.udn] === "undefined") {
-        that._controls[tv.udn] = new BackendControl(that._db, tv);
-        return that._controls[tv.udn]
-          .initialize()
-          .then(() => eventsAdd(tv.udn));
-      } else {
-        return Promise.resolve();
+        that._controls[tv.udn] = await BackendControl.build(that._db, tv);
+        eventsAdd(tv.udn);
       }
     }
 
@@ -51,11 +60,10 @@ export class BackendController extends BaseClass {
     }
 
     async function initializeFunction(): Promise<void> {
-      await that._db.initialize();
       await that._db.getRecords({}).then(tvsInitialize);
     }
 
-    return this.initializeHandler(initializeFunction);
+    return await initializeFunction();
   }
 
   public async tvUpsert(tv: TV): Promise<void> {
@@ -67,7 +75,6 @@ export class BackendController extends BaseClass {
       });
     }
 
-    this.throwIfUninitialized("tvUpsert");
     try {
       const record = await this._db.getRecord({
         $and: [
@@ -95,8 +102,7 @@ export class BackendController extends BaseClass {
         );
       }
       if (typeof this._controls[tv.udn] === "undefined") {
-        this._controls[tv.udn] = new BackendControl(this._db, tv);
-        await this._controls[tv.udn].initialize();
+        this._controls[tv.udn] = await BackendControl.build(this._db, tv);
         eventsAdd(tv.udn);
       }
     } catch (error) {
@@ -105,13 +111,11 @@ export class BackendController extends BaseClass {
   }
 
   public control(udn: UDN): BackendControl {
-    this.throwIfUninitialized("control");
     this.throwIfNotKnownTV("control", udn);
     return this._controls[udn];
   }
 
   public controls(): BackendControl[] {
-    this.throwIfUninitialized("controls");
     return Object.values(this._controls);
   }
 }

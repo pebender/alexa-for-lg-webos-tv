@@ -1,24 +1,24 @@
-import { BaseClass } from "../../base-class";
 import { DatabaseRecord, DatabaseTable } from "../../database";
 import * as Common from "../../../../common";
 import { Configuration } from "../../configuration";
-export class Authorization extends BaseClass {
+export class Authorization {
   private readonly _configuration: Configuration;
   private readonly _db: DatabaseTable;
-  public constructor(configuration: Configuration) {
-    super();
-
-    this._configuration = configuration;
-    this._db = new DatabaseTable("middle", ["email", "skillToken"], "email");
+  private constructor(_configuration: Configuration, _db: DatabaseTable) {
+    this._configuration = _configuration;
+    this._db = _db;
   }
 
-  public initialize(): Promise<void> {
-    const that = this;
+  public static async build(configuration: Configuration) {
+    const _db = await DatabaseTable.build(
+      "middle",
+      ["email", "skillToken"],
+      "email"
+    );
 
-    async function initializeFunction(): Promise<void> {
-      await that._db.initialize();
-    }
-    return this.initializeHandler(initializeFunction);
+    const authorization = new Authorization(configuration, _db);
+
+    return authorization;
   }
 
   public async authorize(skillToken: string): Promise<boolean> {

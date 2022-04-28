@@ -6,8 +6,9 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
+import EventEmitter from "events";
+
 import { TV, UDN } from "../tv";
-import { BaseClass } from "../base-class";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
@@ -15,56 +16,64 @@ import { Configuration } from "../configuration";
 
 export { BackendControl } from "./backend-control";
 
-export class Backend extends BaseClass {
+export class Backend extends EventEmitter {
   private readonly _configuration: Configuration;
   private readonly _controller: BackendController;
   private readonly _searcher: BackendSearcher;
-  public constructor(configuration: Configuration) {
+  private constructor(
+    _configuration: Configuration,
+    _controller: BackendController,
+    _searcher: BackendSearcher
+  ) {
     super();
 
-    this._configuration = configuration;
-    this._controller = new BackendController();
-    this._searcher = new BackendSearcher();
+    this._configuration = _configuration;
+    this._controller = _controller;
+    this._searcher = _searcher;
   }
 
-  public initialize(): Promise<void> {
+  public static async build(configuration: Configuration) {
+    const _controller = await BackendController.build();
+    const _searcher = await BackendSearcher.build();
+
+    const _backend = new Backend(configuration, _controller, _searcher);
+    await _backend.initialize();
+
+    return _backend;
+  }
+
+  public initialize(): void {
     const that = this;
 
-    function initializeFunction(): Promise<void> {
-      function controllerInitialize(): Promise<void> {
+    function initializeFunction(): void {
+      function controllerInitialize(): void {
         that._controller.on("error", (error: Error, id: string): void => {
           that.emit("error", error, `BackendController.${id}`);
         });
-        return that._controller.initialize();
       }
-
-      function searcherInitialize(): Promise<void> {
+      function searcherInitialize(): void {
         that._searcher.on("error", (error): void => {
           that.emit("error", error, "BackendSearcher");
         });
         that._searcher.on("found", (tv: TV): void => {
           that._controller.tvUpsert(tv);
         });
-        return that._searcher.initialize();
       }
-
-      return controllerInitialize().then(searcherInitialize);
+      controllerInitialize();
+      searcherInitialize();
     }
-    return this.initializeHandler(initializeFunction);
+    initializeFunction();
   }
 
   public start(): void {
-    this.throwIfUninitialized("start");
     return this._searcher.now();
   }
 
   public control(udn: UDN): BackendControl {
-    this.throwIfUninitialized("control");
     return this._controller.control(udn);
   }
 
   public controls(): BackendControl[] {
-    this.throwIfUninitialized("controls");
     return this._controller.controls();
   }
 }

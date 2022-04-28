@@ -1,27 +1,23 @@
 import * as Common from "../../../common";
 import { Authorization } from "./authorization";
 import { Backend } from "../backend";
-import { BaseClass } from "../base-class";
 import * as SHS from "./smart-home-skill";
 import { Configuration } from "../configuration";
 
-export class Middle extends BaseClass {
+export class Middle {
   private readonly _authorization: Authorization;
   private readonly _backend: Backend;
-  public constructor(configuration: Configuration, backend: Backend) {
-    super();
-
-    this._authorization = new Authorization(configuration);
-    this._backend = backend;
+  private constructor(_authorization: Authorization, _backend: Backend) {
+    this._authorization = _authorization;
+    this._backend = _backend;
   }
 
-  public initialize(): Promise<void> {
-    const that = this;
+  public static async build(configuration: Configuration, backend: Backend) {
+    const _authorization = await Authorization.build(configuration);
 
-    async function initializeFunction(): Promise<void> {
-      await that._authorization.initialize();
-    }
-    return this.initializeHandler(initializeFunction);
+    const middle = new Middle(_authorization, backend);
+
+    return middle;
   }
 
   public async handler(

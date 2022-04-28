@@ -1,13 +1,13 @@
 import { randomUUID } from "crypto";
 import { Mutex } from "async-mutex";
 import * as wol from "wake_on_lan";
-import { BaseClass } from "../base-class";
+import EventEmitter from "events";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { DatabaseTable } from "../database";
 import LGTV from "lgtv2";
 import { TV } from "../tv";
 
-export class BackendControl extends BaseClass {
+export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;
   private _connecting: boolean;
   private readonly _db: DatabaseTable;
@@ -15,7 +15,7 @@ export class BackendControl extends BaseClass {
   private readonly _connection: LGTV;
   private readonly _ssdpNotify: SsdpClient;
   private readonly _ssdpResponse: SsdpClient;
-  public constructor(db: DatabaseTable, tv: TV) {
+  private constructor(_db: DatabaseTable, _tv: TV) {
     super();
 
     const that: BackendControl = this;
@@ -23,16 +23,16 @@ export class BackendControl extends BaseClass {
     this._poweredOn = false;
     this._connecting = false;
 
-    this._db = db;
+    this._db = _db;
     this._tv = {
-      udn: tv.udn,
-      name: tv.name,
-      ip: tv.ip,
-      url: tv.url,
-      mac: tv.mac,
+      udn: _tv.udn,
+      name: _tv.name,
+      ip: _tv.ip,
+      url: _tv.url,
+      mac: _tv.mac,
     };
 
-    const clientKey = typeof tv.key === "string" ? tv.key : "";
+    const clientKey = typeof _tv.key === "string" ? _tv.key : "";
 
     function saveKey(key: string, callback: (error: Error) => void): void {
       that._db
@@ -97,22 +97,30 @@ export class BackendControl extends BaseClass {
     that._ssdpResponse.on("response", ssdpConnectHandler);
   }
 
-  public initialize(): Promise<void> {
+  public static async build(
+    db: DatabaseTable,
+    tv: TV
+  ): Promise<BackendControl> {
+    const backendControl = new BackendControl(db, tv);
+    backendControl.initialize();
+
+    return backendControl;
+  }
+
+  private async initialize(): Promise<void> {
     const that: BackendControl = this;
 
     function initializeFunction(): Promise<void> {
       return that._ssdpNotify.start();
     }
-    return this.initializeHandler(initializeFunction);
+    return initializeFunction();
   }
 
   public get tv(): TV {
-    this.throwIfUninitialized("get+tv");
     return Object.assign({}, this._tv);
   }
 
   public turnOff(): boolean {
-    this.throwIfUninitialized("turnOff");
     const lgtvCommand: LGTV.Request = {
       uri: "ssap://system/turnOff",
     };
@@ -140,8 +148,6 @@ export class BackendControl extends BaseClass {
       handler();
       return setInterval(handler, milliseconds);
     }
-
-    this.throwIfUninitialized("turnOn");
 
     return new Promise<boolean>((resolve): void => {
       that._poweredOn = false;
@@ -221,12 +227,10 @@ export class BackendControl extends BaseClass {
   }
 
   public getPowerState(): "OFF" | "ON" {
-    this.throwIfUninitialized("getPowerState");
     return this._poweredOn ? "ON" : "OFF";
   }
 
   public async lgtvCommand(lgtvRequest: LGTV.Request): Promise<LGTV.Response> {
-    this.throwIfUninitialized("lgtvCommand");
     let lgtvResponse: LGTV.Response = {
       returnValue: false,
     };

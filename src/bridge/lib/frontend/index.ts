@@ -13,39 +13,51 @@ import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
 import { URL } from "url";
 import * as Common from "../../../common";
-import { BaseClass } from "../base-class";
 import { Configuration } from "../configuration";
 import { Middle } from "../middle";
 import { Authorization } from "./authorization";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
-export class Frontend extends BaseClass {
+export class Frontend {
   private readonly _authorization: Authorization;
   private readonly _middle: Middle;
   private readonly _ipBlacklist;
   private readonly _ajv: Ajv;
   private readonly _schemaValidator: AjvTypes.ValidateFunction;
   private readonly _server: express.Express;
-  public constructor(configuration: Configuration, middle: Middle) {
-    super();
+  private constructor(
+    _authorization: Authorization,
+    _middle: Middle,
+    _ipBlacklist: any,
+    _ajv: Ajv,
+    _schemaValidator: AjvTypes.ValidateFunction,
+    _server: express.Express
+  ) {
+    this._authorization = _authorization;
+    this._middle = _middle;
+    this._ipBlacklist = _ipBlacklist;
+    this._ajv = _ajv;
+    this._schemaValidator = this._ajv.compile(Common.SHS.schema);
+    this._server = express();
+  }
 
-    this._authorization = new Authorization(configuration);
-    this._middle = middle;
+  public static async build(configuration: Configuration, middle: Middle) {
+    const _authorization = await Authorization.build(configuration);
 
     // The blacklist is due to auth failures so blacklist quickly.
     // There should be no auth failures and each auth failure results
     // in sending a profile request to Amazon.
-    this._ipBlacklist = new IPBlacklist("blacklist", { count: 5 });
+    const _ipBlacklist = new IPBlacklist("blacklist", { count: 5 });
 
     // 'strictTypes: false' suppresses the warning:
     //   strict mode: missing type "object" for keyword "additionalProperties"
-    this._ajv = new Ajv({
+    const _ajv = new Ajv({
       strictTypes: false,
       discriminator: true,
     });
     // ajv-formats does not support the following formats defined in draft-2019-09
     //   'idn-email', 'idn-hostname', 'iri', 'iri-reference'
-    ajvFormats(this._ajv, [
+    ajvFormats(_ajv, [
       "date-time",
       "date",
       "time",
@@ -62,11 +74,23 @@ export class Frontend extends BaseClass {
       "relative-json-pointer",
       "regex",
     ]);
-    this._schemaValidator = this._ajv.compile(Common.SHS.schema);
-    this._server = express();
+    const _schemaValidator = _ajv.compile(Common.SHS.schema);
+    const _server = express();
+
+    const frontend = new Frontend(
+      _authorization,
+      middle,
+      _ipBlacklist,
+      _ajv,
+      _schemaValidator,
+      _server
+    );
+    await frontend.initialize();
+
+    return frontend;
   }
 
-  public initialize(): Promise<void> {
+  public initialize(): void {
     const that = this;
     function buildServer() {
       function requestHeaderLoggingHandler(
@@ -362,15 +386,12 @@ export class Frontend extends BaseClass {
     }
 
     async function initializeFunction(): Promise<void> {
-      await that._authorization.initialize();
-
       buildServer();
     }
-    return that.initializeHandler(initializeFunction);
+    initializeFunction();
   }
 
   public start(): void {
-    this.throwIfUninitialized("start");
     this._server.listen(Common.constants.bridge.port.http, "localhost");
   }
 }

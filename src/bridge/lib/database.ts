@@ -1,4 +1,3 @@
-import { BaseClass } from "./base-class";
 import Datastore from "@seald-io/nedb";
 import * as Common from "../../common";
 const persistPath = require("persist-path");
@@ -13,16 +12,21 @@ export interface DatabaseRecord {
   [x: string]: boolean | number | string | object | null;
 }
 
-export class DatabaseTable extends BaseClass {
+export class DatabaseTable {
   private _indexes: string[];
   private _key: string;
   private _db: Datastore;
-  public constructor(name: string, indexes: string[], key: string) {
-    super();
-
+  private constructor(indexes: string[], key: string, db: Datastore) {
     this._indexes = indexes;
     this._key = key;
+    this._db = db;
+  }
 
+  public static async build(
+    name: string,
+    indexes: string[],
+    key: string
+  ): Promise<DatabaseTable> {
     const configurationDir = persistPath(
       Common.constants.application.name.safe
     );
@@ -32,25 +36,19 @@ export class DatabaseTable extends BaseClass {
     // occurs once at startup and because the database is needed before the LG
     // webOS TV bridge can run.
     //
-    this._db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
-    this._db.loadDatabaseAsync();
-  }
+    const db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
 
-  public initialize(): Promise<void> {
-    const that = this;
+    db.loadDatabaseAsync();
 
-    function initializeFunction(): Promise<void> {
-      function index(fieldName: string): Promise<void> {
-        return that._db.ensureIndexAsync({ fieldName, unique: true });
-      }
-      return Promise.all(that._indexes.map(index)).then();
+    function index(fieldName: string): Promise<void> {
+      return db.ensureIndexAsync({ fieldName, unique: true });
     }
+    await Promise.all(indexes.map(index));
 
-    return this.initializeHandler(initializeFunction);
+    return new DatabaseTable(indexes, key, db);
   }
 
   public async clean(): Promise<void> {
-    this.throwIfUninitialized("clean");
     const query1: DatabaseQuery = {};
     query1[this._key] = { $exists: false };
     const query2: DatabaseQuery = {};
@@ -66,17 +64,14 @@ export class DatabaseTable extends BaseClass {
   }
 
   public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord | null> {
-    this.throwIfUninitialized("getRecord");
     return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
   }
 
   public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
-    this.throwIfUninitialized("getRecords");
     return await this._db.findAsync<DatabaseRecord>(query).execAsync();
   }
 
   public async insertRecord(record: DatabaseRecord): Promise<void> {
-    this.throwIfUninitialized("insertRecord");
     await this._db.insertAsync(record);
     await this._db.compactDatafileAsync();
   }
@@ -85,7 +80,6 @@ export class DatabaseTable extends BaseClass {
     query: DatabaseQuery,
     update: DatabaseUpdate
   ): Promise<void> {
-    this.throwIfUninitialized("updateRecord");
     await this._db.updateAsync(query, update, {});
     await this._db.compactDatafileAsync();
   }
@@ -94,7 +88,6 @@ export class DatabaseTable extends BaseClass {
     query: DatabaseQuery,
     update: DatabaseUpdate
   ): Promise<void> {
-    this.throwIfUninitialized("updateOrInsertRecord");
     await this._db.updateAsync(query, update, { upsert: true });
     await this._db.compactDatafileAsync();
   }
