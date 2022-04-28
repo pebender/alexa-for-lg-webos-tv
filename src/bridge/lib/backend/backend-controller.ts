@@ -47,6 +47,7 @@ export class BackendController extends EventEmitter {
       if (typeof that._controls[tv.udn] === "undefined") {
         that._controls[tv.udn] = await BackendControl.build(that._db, tv);
         eventsAdd(tv.udn);
+        that._controls[tv.udn].start();
       }
     }
 
@@ -104,6 +105,7 @@ export class BackendController extends EventEmitter {
       if (typeof this._controls[tv.udn] === "undefined") {
         this._controls[tv.udn] = await BackendControl.build(this._db, tv);
         eventsAdd(tv.udn);
+        this._controls[tv.udn].start();
       }
     } catch (error) {
       this.emit("error", error, tv.udn);

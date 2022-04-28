@@ -15,69 +15,91 @@ export class BackendControl extends EventEmitter {
   private readonly _connection: LGTV;
   private readonly _ssdpNotify: SsdpClient;
   private readonly _ssdpResponse: SsdpClient;
-  private constructor(_db: DatabaseTable, _tv: TV) {
+  private constructor(
+    _db: DatabaseTable,
+    _tv: TV,
+    _connection: LGTV,
+    _ssdpNotify: SsdpClient,
+    _ssdpResponse: SsdpClient
+  ) {
     super();
-
-    const that: BackendControl = this;
 
     this._poweredOn = false;
     this._connecting = false;
-
     this._db = _db;
-    this._tv = {
-      udn: _tv.udn,
-      name: _tv.name,
-      ip: _tv.ip,
-      url: _tv.url,
-      mac: _tv.mac,
+    this._tv = _tv;
+    this._connection = _connection;
+    this._ssdpNotify = _ssdpNotify;
+    this._ssdpResponse = _ssdpResponse;
+  }
+
+  public static build(db: DatabaseTable, tv: TV) {
+    const _tv: TV = {
+      udn: tv.udn,
+      name: tv.name,
+      ip: tv.ip,
+      url: tv.url,
+      mac: tv.mac,
     };
 
     const clientKey = typeof _tv.key === "string" ? _tv.key : "";
 
     function saveKey(key: string, callback: (error: Error) => void): void {
-      that._db
-        .updateRecord({ udn: that._tv.udn }, { $set: { key } })
+      db.updateRecord({ udn: _tv.udn }, { $set: { key } })
         .then(() => {
-          that._tv.key = key;
-          that._connection.clientKey = key;
+          _tv.key = key;
+          _connection.clientKey = key;
         })
         .catch((error): void => callback(error));
     }
 
-    this._connection = new LGTV({
-      url: this._tv.url,
+    const _connection = new LGTV({
+      url: _tv.url,
       timeout: 10000,
       reconnect: 0,
       clientKey,
       saveKey,
     });
 
-    this._connection.on("error", (error: NodeJS.ErrnoException): void => {
-      that._connecting = false;
-      if (error && error.code !== "EHOSTUNREACH") {
-        that.emit("error", error, that._tv.udn);
+    const _ssdpNotify = new SsdpClient({ sourcePort: 1900 });
+    const _ssdpResponse = new SsdpClient();
+
+    const backendControl = new BackendControl(
+      db,
+      _tv,
+      _connection,
+      _ssdpNotify,
+      _ssdpResponse
+    );
+
+    // Added event handlers.
+    backendControl._connection.on(
+      "error",
+      (error: NodeJS.ErrnoException): void => {
+        backendControl._connecting = false;
+        if (error && error.code !== "EHOSTUNREACH") {
+          backendControl.emit("error", error, backendControl._tv.udn);
+        }
       }
+    );
+    backendControl._connection.on("connecting", (): void => {
+      backendControl._connecting = true;
     });
-    this._connection.on("connecting", (): void => {
-      that._connecting = true;
+    backendControl._connection.on("connect", (): void => {
+      backendControl._connecting = false;
+      backendControl._poweredOn = true;
     });
-    this._connection.on("connect", (): void => {
-      that._connecting = false;
-      that._poweredOn = true;
-    });
-    this._connection.on("close", (): void => {
-      that._connecting = false;
+    backendControl._connection.on("close", (): void => {
+      backendControl._connecting = false;
     });
 
-    this._ssdpNotify = new SsdpClient({ sourcePort: 1900 });
-    this._ssdpResponse = new SsdpClient();
     function ssdpConnectHandler(headers: SsdpHeaders): void {
       if (
         headers.USN ===
-        `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`
+        `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
-        if (that._connecting === false) {
-          that._connection.connect(that._tv.url);
+        if (backendControl._connecting === false) {
+          backendControl._connection.connect(backendControl._tv.url);
         }
       }
     }
@@ -85,35 +107,22 @@ export class BackendControl extends EventEmitter {
     function ssdpDisconnectHandler(headers: SsdpHeaders): void {
       if (
         headers.USN ===
-        `${that._tv.udn}::urn:lge-com:service:webos-second-screen:1`
+        `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
-        that._poweredOn = false;
-        that._connection.disconnect();
+        backendControl._poweredOn = false;
+        backendControl._connection.disconnect();
       }
     }
 
-    that._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
-    that._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
-    that._ssdpResponse.on("response", ssdpConnectHandler);
-  }
-
-  public static async build(
-    db: DatabaseTable,
-    tv: TV
-  ): Promise<BackendControl> {
-    const backendControl = new BackendControl(db, tv);
-    backendControl.initialize();
+    backendControl._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
+    backendControl._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
+    backendControl._ssdpResponse.on("response", ssdpConnectHandler);
 
     return backendControl;
   }
 
-  private async initialize(): Promise<void> {
-    const that: BackendControl = this;
-
-    function initializeFunction(): Promise<void> {
-      return that._ssdpNotify.start();
-    }
-    return initializeFunction();
+  public start() {
+    this._ssdpNotify.start();
   }
 
   public get tv(): TV {
