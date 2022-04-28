@@ -65,8 +65,9 @@ export class Backend extends EventEmitter {
     initializeFunction();
   }
 
-  public start(): void {
-    return this._searcher.now();
+  public async start(): Promise<void> {
+    this._controller.start();
+    await this._searcher.start();
   }
 
   public control(udn: UDN): BackendControl {

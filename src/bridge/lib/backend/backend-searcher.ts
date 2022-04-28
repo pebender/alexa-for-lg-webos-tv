@@ -44,30 +44,16 @@ export class BackendSearcher extends EventEmitter {
     const _ssdpResponse = new SsdpClient();
 
     const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);
-    await backendSearcher.initialize();
-
-    return backendSearcher;
-  }
-
-  private async initialize(): Promise<void> {
-    const that: BackendSearcher = this;
-
-    // Periodically scan for TVs.
-    function periodicSearch(): void {
-      // Search every 1800s as that is the UPnP recommended time.
-      that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
-      setTimeout(periodicSearch, 1800000);
-    }
 
     function ssdpProcessCallback(error: Error | null, tv: TV | null): void {
       if (error) {
-        that.emit("error", error);
+        backendSearcher.emit("error", error);
         return;
       }
       if (!tv) {
         return;
       }
-      that.emit("found", tv);
+      backendSearcher.emit("found", tv);
     }
 
     function ssdpProcess(
@@ -218,28 +204,41 @@ export class BackendSearcher extends EventEmitter {
       });
     }
 
-    function initializeFunction(): Promise<void> {
-      that._ssdpNotify.on(
-        "advertise-alive",
-        (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
-          ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+    backendSearcher._ssdpNotify.on(
+      "advertise-alive",
+      (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
+        ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+      }
+    );
+    backendSearcher._ssdpResponse.on(
+      "response",
+      (headers: SsdpHeaders, statusCode: number, rinfo): void => {
+        if (statusCode !== 200) {
+          return;
         }
-      );
-      that._ssdpResponse.on(
-        "response",
-        (headers: SsdpHeaders, statusCode: number, rinfo): void => {
-          if (statusCode !== 200) {
-            return;
-          }
-          ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
-        }
-      );
-      return that._ssdpNotify.start().then(() => {
-        setImmediate(periodicSearch);
-      });
-    }
+        ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+      }
+    );
 
-    return await initializeFunction();
+    return backendSearcher;
+  }
+
+  public async start(): Promise<void> {
+    const that = this;
+
+    // Start listening from multicast notifications from the TVs.
+    await that._ssdpNotify.start();
+
+    // Periodically search for TVs.
+    function periodicSearch(): void {
+      // Search every 1800s as that is the UPnP recommended time.
+      that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+      setTimeout(periodicSearch, 1800000);
+    }
+    periodicSearch();
+
+    // Do one immediate search.
+    this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
   }
 
   public now(): void {
