@@ -5,22 +5,141 @@
         "name": "Live TV",
         "identifier": "amzn1.alexa-ask-target.app.38061"
       },
-      "lgtv": { "title": "Live TV", "id": "com.webos.app.livetv" }
+      "lgtv": {
+        "title": "Live TV",
+        "id": "com.webos.app.livetv"
+      }
     },
 
+    {
+      "alexa": {
+        "name": "Amazon Music",
+        "identifier": "amzn1.alexa-ask-target.app.32470"
+      },
+      "lgtv": {
+        "title": "Amazon Music",
+        "id": "com.theadelab.amclient-lg"
+      }
+    },
+    {
+      "alexa": {
+        "name": "ANTV",
+        "identifier": "amzn1.alexa-ask-target.app.43925"
+      },
+      "lgtv": {
+        "title": "ANTV",
+        "id": "com.antv"
+      }
+    },
     {
       "alexa": {
         "name": "Apple TV",
         "identifier": "amzn1.alexa-ask-target.app.67098"
       },
-      "lgtv": { "title": "Apple TV+", "id": "com.apple.appletv.web" }
+      "lgtv": {
+        "title": "Apple TV+",
+        "id": "com.apple.appletv.web"
+      }
+    },
+    {
+      "alexa": {
+        "name": "ARTE",
+        "identifier": "amzn1.alexa-ask-target.app.53044"
+      },
+      "lgtv": {
+        "title": "ARTE",
+        "id": "com.3827031.168353"
+      }
+    },
+    {
+      "alexa": {
+        "name": "AsianCrush",
+        "identifier": "amzn1.alexa-ask-target.app.63594"
+      },
+      "lgtv": {
+        "title": "AsianCrush",
+        "id": "com.dmr.asiancrush"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Atresplayer",
+        "identifier": "amzn1.alexa-ask-target.app.10314"
+      },
+      "lgtv": {
+        "title": "Atresplayer",
+        "id": "atresplayer"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Baby Einstein",
+        "identifier": "amzn1.alexa-ask-target.app.84548"
+      },
+      "lgtv": {
+        "title": "Baby Einstein",
+        "id": "com.giant.babyeinstein"
+      }
     },
     {
       "alexa": {
         "name": "BritBox",
         "identifier": "amzn1.alexa-ask-target.app.30560"
       },
-      "lgtv": { "title": "BritBox by BBC & ITV", "id": "com.britbox.webos" }
+      "lgtv": {
+        "title": "BritBox by BBC & ITV",
+        "id": "com.britbox.webos"
+      }
+    },
+    {
+      "alexa": {
+        "name": "CBS News",
+        "identifier": "amzn1.alexa-ask-target.app.57172"
+      },
+      "lgtv": {
+        "title": "",
+        "id": ""
+      }
+    },
+    {
+      "alexa": {
+        "name": "Crackle",
+        "identifier": "amzn1.alexa-ask-target.app.92916"
+      },
+      "lgtv": {
+        "title": "Crackle",
+        "id": "crackle"
+      }
+    },
+    {
+      "alexa": {
+        "name": "CuriosityStream",
+        "identifier": "amzn1.alexa-ask-target.app.18587"
+      },
+      "lgtv": {
+        "title": "CuriosityStream",
+        "id": "com.curiositystream.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Dark Matter TV",
+        "identifier": "amzn1.alexa-ask-target.app.10008"
+      },
+      "lgtv": {
+        "title": "Dark Matter TV",
+        "id": "com.tricoast.darkmatter"
+      }
+    },
+    {
+      "alexa": {
+        "name": "DAZN",
+        "identifier": "amzn1.alexa-ask-target.app.00770"
+      },
+      "lgtv": {
+        "title": "DAZN",
+        "id": "dazn"
+      }
     },
     {
       "alexa": {
@@ -31,6 +150,156 @@
     },
     {
       "alexa": {
+        "name": "Electric Now",
+        "identifier": "amzn1.alexa-ask-target.app.10012"
+      },
+      "lgtv": {
+        "title": "ElectricNow",
+        "id": "com.electric.now"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Emby",
+        "identifier": "amzn1.alexa-ask-target.app.40723"
+      },
+      "lgtv": {
+        "title": "Emby",
+        "id": "com.emby.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Eros Now",
+        "identifier": "amzn1.alexa-ask-target.app.53166"
+      },
+      "lgtv": {
+        "title": "Eros Now",
+        "id": "com.d27n.app.erosnow"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Facebook Watch",
+        "identifier": "amzn1.alexa-ask-target.app.70724"
+      },
+      "lgtv": {
+        "title": "Facebook Watch",
+        "id": "com.facebook.app.fbwatch"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Fawesome",
+        "identifier": "amzn1.alexa-ask-target.app.10014"
+      },
+      "lgtv": {
+        "title": "Fawesome",
+        "id": "com.futuretoday.app.moviesbyfawesome"
+      }
+    },
+    {
+      "alexa": {
+        "name": "FilmRise",
+        "identifier": "amzn1.alexa-ask-target.app.37688"
+      },
+      "lgtv": {
+        "title": "FilmRise",
+        "id": "com.futuretoday.app.filmrise"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Fishing tv",
+        "identifier": "amzn1.alexa-ask-target.app.55875"
+      },
+      "lgtv": {
+        "title": "Fishing TV",
+        "id": "fishingtvlg"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Flix Premiere",
+        "identifier": "amzn1.alexa-ask-target.app.18338"
+      },
+      "lgtv": {
+        "title": "Flix Premiere",
+        "id": "com.tvappagency.app.flixpremiere"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Flixfling",
+        "identifier": "amzn1.alexa-ask-target.app.45619"
+      },
+      "lgtv": {
+        "title": "FlixFling",
+        "id": "com.flixfling.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "France 24 Arabic",
+        "identifier": "amzn1.alexa-ask-target.app.79822"
+      },
+      "lgtv": {
+        "title": "France 24",
+        "id": "com.372857.3285"
+      }
+    },
+    {
+      "alexa": {
+        "name": "France 24 English",
+        "identifier": "amzn1.alexa-ask-target.app.22951"
+      },
+      "lgtv": {
+        "title": "France 24",
+        "id": "com.372857.3285"
+      }
+    },
+    {
+      "alexa": {
+        "name": "France 24 Francais",
+        "identifier": "amzn1.alexa-ask-target.app.74944"
+      },
+      "lgtv": {
+        "title": "France 24",
+        "id": "com.372857.3285"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Free Games by PlayWorks",
+        "identifier": "amzn1.alexa-ask-target.app.79143"
+      },
+      "lgtv": {
+        "title": "Free Games by PlayWorks",
+        "id": "portal"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Futuristic Hub",
+        "identifier": "amzn1.alexa-ask-target.app.10019"
+      },
+      "lgtv": {
+        "title": "Futuristic Hub",
+        "id": "com.playworks.app.futuristichub"
+      }
+    },
+    {
+      "alexa": {
+        "name": "HappyKids.tv",
+        "identifier": "amzn1.alexa-ask-target.app.96504"
+      },
+      "lgtv": {
+        "title": "HappyKids",
+        "id": "cdp"
+      }
+    },
+    {
+      "alexa": {
         "name": "Hulu",
         "identifier": "amzn1.alexa-ask-target.app.77683"
       },
@@ -38,45 +307,283 @@
     },
     {
       "alexa": {
+        "name": "Hungama Play",
+        "identifier": "amzn1.alexa-ask-target.app.27953"
+      },
+      "lgtv": {
+        "title": "Hungama Play",
+        "id": "com.hungama.lgtvapp"
+      }
+    },
+    {
+      "alexa": {
+        "name": "iTV",
+        "identifier": "amzn1.alexa-ask-target.app.15755"
+      },
+      "lgtv": {
+        "title": "iTV",
+        "id": "uz.itv.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "IVI",
+        "identifier": "amzn1.alexa-ask-target.app.43987"
+      },
+      "lgtv": {
+        "title": "ivi",
+        "id": "ivi.world"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Jungo+",
+        "identifier": "amzn1.alexa-ask-target.app.10009"
+      },
+      "lgtv": {
+        "title": "Jungo+",
+        "id": "com.itn.wash"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Kidoodle",
+        "identifier": "amzn1.alexa-ask-target.app.27790"
+      },
+      "lgtv": {
+        "title": "Kidoodle.TV",
+        "id": "tv.kidoodle.app.1080"
+      }
+    },
+    {
+      "alexa": {
+        "name": "KOR TV",
+        "identifier": "amzn1.alexa-ask-target.app.42257"
+      },
+      "lgtv": {
+        "title": "KORTV",
+        "id": "com.dmr.kortv"
+      }
+    },
+    {
+      "alexa": {
+        "name": "LAVA",
+        "identifier": "amzn1.alexa-ask-target.app.90455"
+      },
+      "lgtv": {
+        "title": "LAVA",
+        "id": "com.starmedia.lava"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Magellan TV",
+        "identifier": "amzn1.alexa-ask-target.app.42778"
+      },
+      "lgtv": {
+        "title": "MagellanTV",
+        "id": "com.lg.magellan"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Megogo",
+        "identifier": "amzn1.alexa-ask-target.app.72840"
+      },
+      "lgtv": {
+        "title": "MEGOGO TV & Movies",
+        "id": "megogo.hd"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Ministra Player",
+        "identifier": "amzn1.alexa-ask-target.app.38867"
+      },
+      "lgtv": {
+        "title": "Ministra Player",
+        "id": "com.ministra.app.player"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Movies Anywhere",
+        "identifier": "amzn1.alexa-ask-target.app.57352"
+      },
+      "lgtv": {
+        "title": "Movies Anywhere",
+        "id": "com.moviesanywhere.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Mubi",
+        "identifier": "amzn1.alexa-ask-target.app.15549"
+      },
+      "lgtv": {
+        "title": "MUBI",
+        "id": "com.mubi"
+      }
+    },
+    {
+      "alexa": {
+        "name": "MyToonz",
+        "identifier": "amzn1.alexa-ask-target.app.23798"
+      },
+      "lgtv": {
+        "title": "MyToonz",
+        "id": "com.tmn.mytoonz"
+      }
+    },
+    {
+      "alexa": {
         "name": "NBCU Peacock",
         "identifier": "amzn1.alexa-ask-target.app.94721"
       },
-      "lgtv": { "title": "Peacock", "id": "com.peacock.tv" }
+      "lgtv": {
+        "title": "Peacock",
+        "id": "com.peacock.tv"
+      }
     },
     {
       "alexa": {
         "name": "Netflix",
         "identifier": "amzn1.alexa-ask-target.app.36377"
       },
-      "lgtv": { "title": "Netflix", "id": "netflix" }
+      "lgtv": {
+        "title": "Netflix",
+        "id": "netflix"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Ninja Kidz TV",
+        "identifier": "amzn1.alexa-ask-target.app.94482"
+      },
+      "lgtv": {
+        "title": "Ninja KidzTV",
+        "id": "ninjakidztv"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Novocomedy",
+        "identifier": "amzn1.alexa-ask-target.app.23784"
+      },
+      "lgtv": {
+        "title": "Novocomedy",
+        "id": "com.novocomedy.ott"
+      }
+    },
+    {
+      "alexa": {
+        "name": "NOW TV",
+        "identifier": "amzn1.alexa-ask-target.app.36744"
+      },
+      "lgtv": {
+        "title": "NOW PlayTV",
+        "id": "com.eitvcloud.gruponow"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Pandora",
+        "identifier": "amzn1.alexa-ask-target.app.93941"
+      },
+      "lgtv": {
+        "title": "Pandora",
+        "id": "pandora.lgerp.app"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Passionflix",
+        "identifier": "amzn1.alexa-ask-target.app.86591"
+      },
+      "lgtv": {
+        "title": "Passionflix",
+        "id": "com.magine.passionflix"
+      }
     },
     {
       "alexa": {
         "name": "Plex",
         "identifier": "amzn1.alexa-ask-target.app.78079"
       },
-      "lgtv": { "title": "Plex", "id": "cdp-30" }
+      "lgtv": {
+        "title": "Plex",
+        "id": "cdp-30"
+      }
     },
     {
       "alexa": {
         "name": "Pluto TV",
         "identifier": "amzn1.alexa-ask-target.app.93822"
       },
-      "lgtv": { "title": "Pluto TV", "id": "com.plutotv.app" }
+      "lgtv": {
+        "title": "Pluto TV",
+        "id": "com.plutotv.app"
+      }
     },
     {
       "alexa": {
         "name": "Prime Video",
         "identifier": "amzn1.alexa-ask-target.app.72095"
       },
-      "lgtv": { "title": "Amazon Prime Video", "id": "amazon" }
+      "lgtv": {
+        "title": "Amazon Prime Video",
+        "id": "amazon"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Redbox",
+        "identifier": "amzn1.alexa-ask-target.app.73118"
+      },
+      "lgtv": {
+        "title": "Redbox",
+        "id": "com.twc.csg.redbox"
+      }
+    },
+    {
+      "alexa": {
+        "name": "RTL",
+        "identifier": "amzn1.alexa-ask-target.app.15937"
+      },
+      "lgtv": {
+        "title": "RTLPlay",
+        "id": "com.alteox.rtlplay"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Setiptv",
+        "identifier": "amzn1.alexa-ask-target.app.93533"
+      },
+      "lgtv": {
+        "title": "Set iptv",
+        "id": "setiptv"
+      }
+    },
+    {
+      "alexa": {
+        "name": "SHOWMAX",
+        "identifier": "amzn1.alexa-ask-target.app.24025"
+      },
+      "lgtv": {
+        "title": "Showmax",
+        "id": "showmax"
+      }
     },
     {
       "alexa": {
         "name": "Showtime",
         "identifier": "amzn1.alexa-ask-target.app.27166"
       },
-      "lgtv": { "title": "Showtime", "id": "com.showtime.app.showtime" }
+      "lgtv": {
+        "title": "Showtime",
+        "id": "com.showtime.app.showtime"
+      }
     },
     {
       "alexa": {
@@ -86,6 +593,16 @@
       "lgtv": {
         "title": "Showtime Anytime",
         "id": "com.showtime.app.showtimeanytime"
+      }
+    },
+    {
+      "alexa": {
+        "name": "SiriusXM Radio",
+        "identifier": "amzn1.alexa-ask-target.app.19584"
+      },
+      "lgtv": {
+        "title": "SiriusXM",
+        "id": "sir.12465.3738"
       }
     },
     {
@@ -113,42 +630,150 @@
         "name": "Starz",
         "identifier": "amzn1.alexa-ask-target.app.10530"
       },
-      "lgtv": { "title": "STARZ", "id": "com.starz.app.starz-lgtv" }
+      "lgtv": {
+        "title": "STARZ",
+        "id": "com.starz.app.starz-lgtv"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Sun NXT",
+        "identifier": "amzn1.alexa-ask-target.app.36214"
+      },
+      "lgtv": {
+        "title": "Sun NXT",
+        "id": "com.sun.sunnxt"
+      }
     },
     {
       "alexa": {
         "name": "Tablo TV",
         "identifier": "amzn1.alexa-ask-target.app.68252"
       },
-      "lgtv": { "title": "Tablo", "id": "com.nuvyyo.tablo" }
+      "lgtv": {
+        "title": "Tablo",
+        "id": "com.nuvyyo.tablo"
+      }
+    },
+    {
+      "alexa": {
+        "name": "TBN",
+        "identifier": "amzn1.alexa-ask-target.app.77816"
+      },
+      "lgtv": {
+        "title": "TBNplay",
+        "id": "com.eitvcloud.tbnplay"
+      }
+    },
+    {
+      "alexa": {
+        "name": "The Weather Network",
+        "identifier": "amzn1.alexa-ask-target.app.96247"
+      },
+      "lgtv": {
+        "title": "The Weather Network",
+        "id": "twnwebos"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Tubi TV",
+        "identifier": "amzn1.alexa-ask-target.app.00132"
+      },
+      "lgtv": {
+        "title": "Tubi",
+        "id": "com.tubitv.ott.tubi"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Twitch",
+        "identifier": "amzn1.alexa-ask-target.app.30017"
+      },
+      "lgtv": {
+        "title": "Twitch",
+        "id": "tv.twitch.tv.starshot.lg"
+      }
+    },
+    {
+      "alexa": {
+        "name": "UFC",
+        "identifier": "amzn1.alexa-ask-target.app.75550"
+      },
+      "lgtv": {
+        "title": "UFC",
+        "id": "com.5403008.196062"
+      }
     },
     {
       "alexa": {
         "name": "Vudu",
         "identifier": "amzn1.alexa-ask-target.app.64811"
       },
-      "lgtv": { "title": "VUDU", "id": "vudu" }
+      "lgtv": {
+        "title": "VUDU",
+        "id": "vudu"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Xfinity Stream Beta",
+        "identifier": "amzn1.alexa-ask-target.app.02229"
+      },
+      "lgtv": {
+        "title": "Xfinity Stream Beta",
+        "id": "com.comcast.app"
+      }
     },
     {
       "alexa": {
         "name": "YouTube",
         "identifier": "amzn1.alexa-ask-target.app.70045"
       },
-      "lgtv": { "title": "YouTube", "id": "youtube.leanback.v4" }
+      "lgtv": {
+        "title": "YouTube",
+        "id": "youtube.leanback.v4"
+      }
     },
     {
       "alexa": {
         "name": "YouTube Kids",
         "identifier": "amzn1.alexa-ask-target.app.09817"
       },
-      "lgtv": { "title": "YouTube Kids", "id": "youtube.leanback.kids.v4" }
+      "lgtv": {
+        "title": "YouTube Kids",
+        "id": "youtube.leanback.kids.v4"
+      }
     },
     {
       "alexa": {
         "name": "YouTube TV",
         "identifier": "amzn1.alexa-ask-target.app.50623"
       },
-      "lgtv": { "title": "YouTube TV", "id": "youtube.leanback.ytv.v1" }
+      "lgtv": {
+        "title": "YouTube TV",
+        "id": "youtube.leanback.ytv.v1"
+      }
+    },
+    {
+      "alexa": {
+        "name": "Yupp TV",
+        "identifier": "amzn1.alexa-ask-target.app.67523"
+      },
+      "lgtv": {
+        "title": "YuppTV",
+        "id": "yupptv"
+      }
+    },
+    {
+      "alexa": {
+        "name": "yuyuTV",
+        "identifier": "amzn1.alexa-ask-target.app.98078"
+      },
+      "lgtv": {
+        "title": "Yuyu",
+        "id": "com.dmr.yuyu"
+      }
     },
 
     {
