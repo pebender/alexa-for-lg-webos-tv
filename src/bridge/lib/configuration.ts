@@ -17,48 +17,30 @@ export class Configuration {
   }
 
   public static async build() {
-    const _configuration = {
-      hostname: "",
-      authorizedEmails: [],
-    };
+    const cfgDir = persistPath(Common.constants.application.name.safe);
+    // Should check whether or not file exists and is readable.
+    const cfgFile = `${cfgDir}/config.json`;
+    const raw = await fs.readFile(cfgFile);
+    const cfg = JSON.parse(raw as any);
 
-    const configuration = new Configuration(_configuration);
-    await configuration.initialize();
-
-    return configuration;
-  }
-
-  private async initialize(): Promise<void> {
-    const that = this;
-
-    async function initializeFunction(): Promise<void> {
-      const configurationDir = persistPath(
-        Common.constants.application.name.safe
+    if (typeof cfg.hostname === "undefined") {
+      const error = new Error(
+        `configuration file '${cfgFile}' is missing 'hostname'.`
       );
-      // Should check whether or not file exists and is readable.
-      const configurationFile = `${configurationDir}/config.json`;
-      const raw = await fs.readFile(configurationFile);
-      const configuration = JSON.parse(raw as any);
-
-      if (typeof configuration.hostname === "undefined") {
-        const error = new Error(
-          `configuration file '${configurationFile}' is missing 'hostname'.`
-        );
-        Common.Debug.debugErrorWithStack(error);
-        throw error;
-      }
-      if (typeof configuration.authorizedEmails === "undefined") {
-        const error = new Error(
-          `configuration file '${configurationFile}' is missing 'authorizedEmails'.`
-        );
-        Common.Debug.debugErrorWithStack(error);
-        throw error;
-      }
-
-      that._configuration = configuration;
+      Common.Debug.debugErrorWithStack(error);
+      throw error;
+    }
+    if (typeof cfg.authorizedEmails === "undefined") {
+      const error = new Error(
+        `configuration file '${cfgFile}' is missing 'authorizedEmails'.`
+      );
+      Common.Debug.debugErrorWithStack(error);
+      throw error;
     }
 
-    return await initializeFunction();
+    const configuration = new Configuration(cfg);
+
+    return configuration;
   }
 
   public async hostname(): Promise<string> {
