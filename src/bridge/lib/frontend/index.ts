@@ -85,14 +85,8 @@ export class Frontend {
       _schemaValidator,
       _server
     );
-    await frontend.initialize();
 
-    return frontend;
-  }
-
-  public initialize(): void {
-    const that = this;
-    function buildServer() {
+    function buildServer(): void {
       function requestHeaderLoggingHandler(
         req: express.Request,
         res: express.Response,
@@ -111,14 +105,14 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction
       ): void {
-        that._ipBlacklist.checkBlacklist(req, res, next);
+        frontend._ipBlacklist.checkBlacklist(req, res, next);
       }
 
       function ipBlacklistIncrement(
         req: express.Request,
         res: express.Response
       ): void {
-        that._ipBlacklist.increment(req, res);
+        frontend._ipBlacklist.increment(req, res);
       }
 
       function jwtErrorHandler(
@@ -158,14 +152,14 @@ export class Frontend {
 
         Common.Debug.debugJSON(jwtPayload);
 
-        if (!that._authorization.authorizeJwTPayload(jwtPayload)) {
+        if (!frontend._authorization.authorizeJwTPayload(jwtPayload)) {
           ipBlacklistIncrement(req, res);
           Common.Debug.debug("jwtPayloadHandler: failed authorization");
           res.status(401).json({});
           return;
         }
 
-        const bridgeToken = that._authorization.generateBridgeToken();
+        const bridgeToken = frontend._authorization.generateBridgeToken();
         if (typeof jwtPayload.sub !== "string") {
           res.status(500).json({});
           return;
@@ -178,7 +172,7 @@ export class Frontend {
         const url = new URL(jwtPayload.aud);
         const hostname = url.hostname;
         try {
-          await that._authorization.setBridgeToken(
+          await frontend._authorization.setBridgeToken(
             email,
             hostname,
             bridgeToken
@@ -260,7 +254,7 @@ export class Frontend {
         const bridgeToken = authorization[1];
 
         try {
-          const authorized = await that._authorization.authorizeBridgeToken(
+          const authorized = await frontend._authorization.authorizeBridgeToken(
             bridgeToken
           );
           if (!authorized) {
@@ -321,7 +315,7 @@ export class Frontend {
         let shsResponse: Common.SHS.Response;
         let statusCode: number;
         try {
-          shsResponse = await that._middle.handler(shsRequest);
+          shsResponse = await frontend._middle.handler(shsRequest);
           statusCode = 200;
         } catch (error) {
           const shsError = error as Common.SHS.Error;
@@ -337,12 +331,12 @@ export class Frontend {
 
         // Check SHS Response against the SHS schema.
         try {
-          const valid = await that._schemaValidator(shsResponse);
+          const valid = await frontend._schemaValidator(shsResponse);
           if (!valid) {
             Common.Debug.debug(
               "Smart Home Skill Response schema validation validation"
             );
-            Common.Debug.debugJSON(that._schemaValidator.errors);
+            Common.Debug.debugJSON(frontend._schemaValidator.errors);
           } else {
             Common.Debug.debug(
               "Smart Home Skill Response schema validation passed"
@@ -359,36 +353,37 @@ export class Frontend {
       }
 
       // Log request message
-      that._server.use(requestHeaderLoggingHandler);
+      frontend._server.use(requestHeaderLoggingHandler);
       // Check the IP address blacklist.
-      that._server.use(ipBlacklistHandler);
+      frontend._server.use(ipBlacklistHandler);
       // Handle exchange of JWT for bridgeToken.
-      that._server.use(
+      frontend._server.use(
         Common.constants.bridge.path.login,
         expressjwt({
-          secret: that._authorization.x509PublicCert(),
+          secret: frontend._authorization.x509PublicCert(),
           algorithms: ["RS256"],
         }),
         jwtErrorHandler,
         jwtPayloadHandler
       );
       // Handle Smart Home Skill directives.
-      that._server.use(
+      frontend._server.use(
         Common.constants.bridge.path.skill,
         bridgeTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
         shsHandler
       );
-      that._server.use((req: express.Request, res: express.Response): void => {
-        res.status(404).json({});
-      });
+      frontend._server.use(
+        (req: express.Request, res: express.Response): void => {
+          res.status(404).json({});
+        }
+      );
     }
 
-    async function initializeFunction(): Promise<void> {
-      buildServer();
-    }
-    initializeFunction();
+    buildServer();
+
+    return frontend;
   }
 
   public start(): void {
