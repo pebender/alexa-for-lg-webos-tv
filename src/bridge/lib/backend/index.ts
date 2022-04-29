@@ -36,33 +36,20 @@ export class Backend extends EventEmitter {
     const _controller = await BackendController.build();
     const _searcher = await BackendSearcher.build();
 
-    const _backend = new Backend(configuration, _controller, _searcher);
-    await _backend.initialize();
+    const backend = new Backend(configuration, _controller, _searcher);
 
-    return _backend;
-  }
+    backend._controller.on("error", (error: Error, id: string): void => {
+      backend.emit("error", error, `BackendController.${id}`);
+    });
 
-  public initialize(): void {
-    const that = this;
+    backend._searcher.on("error", (error): void => {
+      backend.emit("error", error, "BackendSearcher");
+    });
+    backend._searcher.on("found", (tv: TV): void => {
+      backend._controller.tvUpsert(tv);
+    });
 
-    function initializeFunction(): void {
-      function controllerInitialize(): void {
-        that._controller.on("error", (error: Error, id: string): void => {
-          that.emit("error", error, `BackendController.${id}`);
-        });
-      }
-      function searcherInitialize(): void {
-        that._searcher.on("error", (error): void => {
-          that.emit("error", error, "BackendSearcher");
-        });
-        that._searcher.on("found", (tv: TV): void => {
-          that._controller.tvUpsert(tv);
-        });
-      }
-      controllerInitialize();
-      searcherInitialize();
-    }
-    initializeFunction();
+    return backend;
   }
 
   public async start(): Promise<void> {
