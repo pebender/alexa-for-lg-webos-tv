@@ -1,6 +1,16 @@
 import LGTV from "lgtv2";
 import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
+//
+// "launcher.json" contains a mapping between Smart Home Skill Alexa.Launcher
+// launch target identifiers and LG webOS TV application ids. The list of Alexa
+// target names and identifiers can be found at
+// <https://developer.amazon.com/docs/video/launch-target-reference.html>. The
+// list of LG webOS TV application titles and ids can be found by installing the
+// applications and issuing the command
+// "ssap://com.webos.applicationManager/listApps" or
+// "ssap://com.webos.applicationManager/listLaunchPoints".
+//
 import launchMap from "./launcher.json";
 
 type LaunchMapItem = {
@@ -11,6 +21,8 @@ type LaunchMap = { map: LaunchMapItem[] };
 type AlexaToLGTV = { [alexaIdentifier: string]: { id: string; title: string } };
 type LGTVToAlexa = { [lgtvId: string]: { identifier: string; name: string } };
 
+// Convert "launcher.json" into a collection of LG webOS TV application ids and
+// titles indexed by Alexa.Launcher launch target identifiers.
 function createAlexaToLGTV(): AlexaToLGTV {
   const _alexaToLGTV: AlexaToLGTV = {};
 
@@ -25,6 +37,8 @@ function createAlexaToLGTV(): AlexaToLGTV {
   return _alexaToLGTV;
 }
 
+// Convert "launcher.json" into a collection of Alexa.Launcher launch targets
+// indexed by LG webOS TV application ids.
 function createLGTVToAlexa(): LGTVToAlexa {
   const _lgtvToAlexa: LGTVToAlexa = {};
 
@@ -48,7 +62,7 @@ function capabilities(
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.Launcher",
-      propertyNames: ["name", "identifier"],
+      propertyNames: ["identifier"],
     }),
   ];
 }
@@ -82,12 +96,6 @@ function states(
   return [targetState];
 }
 
-//
-// A list of Alexa target identifiers can be found at
-// <https://developer.amazon.com/docs/video/launch-target-reference.html>.
-// A list of LG webOS TV target ids can be found by issuing the command
-// "ssap://com.webos.applicationManager/listLaunchPoints".
-//
 async function launchTargetHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
@@ -103,26 +111,40 @@ async function launchTargetHandler(
       )
     );
   }
+  const requestedApp = alexaToLGTV[alexaRequest.directive.payload.identifier];
   const lgtvRequest: LGTV.Request = {
     uri: "ssap://system.launcher/launch",
-    payload: alexaToLGTV[alexaRequest.directive.payload.identifier],
+    payload: requestedApp,
   };
-  await backendControl.lgtvCommand(lgtvRequest);
-  /*
-  const lgtvRequest: LGTV.Request = {
-    uri: 'ssap://com.webos.applicationManager/listApps'
-  }
-  type appType = { [x: string]: undefined | null | string | number | object; };
-  const response = await backendControl.lgtvCommand(lgtvRequest)
-  const apps: appType[] = (response as any).apps
-  apps.forEach((app) => {
-    const output = {
-      title: app.title,
-      id: app.id
+  try {
+    await backendControl.lgtvCommand(lgtvRequest);
+  } catch {
+    // Check whether or not the application failed to launch because the
+    // application does not exist (is not installed).
+    const lgtvRequest: LGTV.Request = {
+      uri: "ssap://com.webos.applicationManager/listApps",
+    };
+    try {
+      const response = await backendControl.lgtvCommand(lgtvRequest);
+      const apps: any[] = (response as any).apps;
+      const index = apps.findIndex((app) => app.id === requestedApp.id);
+      if (index < 0) {
+        return Promise.resolve(
+          Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+            alexaRequest
+          )
+        );
+      }
+    } catch (error) {
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+          alexaRequest,
+          200,
+          error
+        )
+      );
     }
-    Debug.debugJSON(output)
-  })
-  */
+  }
   return Promise.resolve(
     Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest)
   );
