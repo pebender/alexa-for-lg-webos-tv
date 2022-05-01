@@ -222,10 +222,10 @@ export class BackendControl extends EventEmitter {
           finish(true);
         }
       });
-      wolTimeoutObject = startInterval(250, (): void => {
+      wolTimeoutObject = startInterval(201, (): void => {
         wol.wake(that._tv.mac);
       });
-      searchTimeoutObject = startInterval(1000, (): void => {
+      searchTimeoutObject = startInterval(251, (): void => {
         if (that._ssdpResponse !== null) {
           that._ssdpResponse.search(
             "urn:lge-com:service:webos-second-screen:1"
