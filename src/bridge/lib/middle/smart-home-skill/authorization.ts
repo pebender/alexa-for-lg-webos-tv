@@ -14,12 +14,9 @@ function states(backend: Backend): Promise<Common.SHS.Context.Property>[] {
 function handler(
   alexaRequest: Common.SHS.Request,
   backend: Backend
-): Common.SHS.Response {
-  throw Common.SHS.Error.errorResponse(
-    alexaRequest,
-    null,
-    "INVALID_DIRECTIVE",
-    ""
+): Common.SHS.ResponseWrapper {
+  return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+    alexaRequest
   );
 }
 

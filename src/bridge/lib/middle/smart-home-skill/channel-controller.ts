@@ -22,33 +22,27 @@ function states(
 function skipChannelsHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   return Promise.resolve(
-    Common.SHS.Error.errorResponse(
-      alexaRequest,
-      null,
-      "UNKNOWN_ERROR",
-      "'Alexa.ChannelController.SkipChannels' is not supported."
-    ).response
+    Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+      alexaRequest
+    )
   );
 }
 
 function unknownChannelError(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Common.SHS.Response {
-  return Common.SHS.Error.errorResponse(
-    alexaRequest,
-    null,
-    "INVALID_VALUE",
-    "The bridge  doesn't recognize channel."
-  ).response;
+): Common.SHS.ResponseWrapper {
+  return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+    alexaRequest
+  );
 }
 
 async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   function getCommand(): LGTV.Request | null {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://tv/openChannel",
@@ -125,15 +119,18 @@ async function changeChannelHandler(
 
   async function setChannel(
     lgtvRequest: LGTV.Request | null
-  ): Promise<Common.SHS.Response> {
+  ): Promise<Common.SHS.ResponseWrapper> {
     if (lgtvRequest === null) {
       return unknownChannelError(alexaRequest, backendControl);
     }
     try {
       await backendControl.lgtvCommand(lgtvRequest);
     } catch (error) {
-      return Common.SHS.Error.errorResponseFromError(alexaRequest, error)
-        .response;
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        alexaRequest,
+        200,
+        error
+      );
     }
 
     //
@@ -151,13 +148,9 @@ async function changeChannelHandler(
       timeOfSample: new Date().toISOString(),
       uncertaintyInMilliseconds: 0,
     };
-    const alexaResponse = new Common.SHS.Response({
-      namespace: "Alexa",
-      name: "Response",
-      correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId(),
-    });
-    alexaResponse.addContextProperty(
+    const alexaResponseWrapper =
+      Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+    alexaResponseWrapper.addContextProperty(
       await Common.SHS.Response.buildContextProperty({
         namespace: "Alexa.ChannelController",
         name: "channel",
@@ -179,7 +172,7 @@ async function changeChannelHandler(
         },
       })
     );
-    return alexaResponse;
+    return alexaResponseWrapper;
   }
 
   const channelCommand = await getCommand();
@@ -189,11 +182,12 @@ async function changeChannelHandler(
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa.ChannelController") {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.ChannelController"
+): Promise<Common.SHS.ResponseWrapper> {
+  if (backendControl.getPowerState() === "OFF") {
+    return Promise.resolve(
+      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
+        alexaRequest
+      )
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -202,7 +196,11 @@ function handler(
     case "SkipChannels":
       return skipChannelsHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
+      );
   }
 }
 

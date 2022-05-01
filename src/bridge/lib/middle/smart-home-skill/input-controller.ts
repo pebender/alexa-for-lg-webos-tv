@@ -129,14 +129,10 @@ function states(
 async function selectInputHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   async function getExternalInputList(): Promise<
     LGTV.ResponseExternalInputListDevice[]
   > {
-    if (backendControl.getPowerState() === "OFF") {
-      return [];
-    }
-
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://tv/getExternalInputList",
     };
@@ -187,23 +183,11 @@ async function selectInputHandler(
 
   async function setExternalInput(
     input: string | null
-  ): Promise<Common.SHS.Response> {
+  ): Promise<Common.SHS.ResponseWrapper> {
     if (input === null) {
-      throw Common.SHS.Error.errorResponse(
-        alexaRequest,
-        500,
-        "INVALID_VALUE",
-        "I do not recognize the input."
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+        alexaRequest
       );
-    }
-
-    if (backendControl.getPowerState() === "OFF") {
-      return new Common.SHS.Response({
-        namespace: "Alexa",
-        name: "Response",
-        correlationToken: alexaRequest.getCorrelationToken(),
-        endpointId: alexaRequest.getEndpointId(),
-      });
     }
 
     const lgtvRequest: LGTV.Request = {
@@ -211,12 +195,7 @@ async function selectInputHandler(
       payload: { inputId: input },
     };
     await backendControl.lgtvCommand(lgtvRequest);
-    return new Common.SHS.Response({
-      namespace: "Alexa",
-      name: "Response",
-      correlationToken: alexaRequest.getCorrelationToken(),
-      endpointId: alexaRequest.getEndpointId(),
-    });
+    return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
   }
 
   const lgtvInputList = await getExternalInputList();
@@ -228,18 +207,23 @@ async function selectInputHandler(
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa.InputController") {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.InputController"
+): Promise<Common.SHS.ResponseWrapper> {
+  if (backendControl.getPowerState() === "OFF") {
+    return Promise.resolve(
+      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
+        alexaRequest
+      )
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "SelectInput":
       return selectInputHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
+      );
   }
 }
 

@@ -105,13 +105,16 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction
       ): void {
+        Common.Debug.debug("ipBlacklistHandler: start");
         frontend._ipBlacklist.checkBlacklist(req, res, next);
+        Common.Debug.debug("ipBlacklistHandler: end");
       }
 
       function ipBlacklistIncrement(
         req: express.Request,
         res: express.Response
       ): void {
+        Common.Debug.debug("ipBlacklistIncrement: start");
         frontend._ipBlacklist.increment(req, res);
       }
 
@@ -121,6 +124,7 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction
       ): void {
+        Common.Debug.debug("jwtErrorHandler: start");
         if (res.headersSent) {
           return next(err);
         }
@@ -141,6 +145,7 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction
       ) {
+        Common.Debug.debug("jwtPayloadHandler: start");
         const jwtPayload = (req as unknown as ExpressJwtRequest).auth;
 
         if (typeof jwtPayload === "undefined") {
@@ -152,14 +157,19 @@ export class Frontend {
 
         Common.Debug.debugJSON(jwtPayload);
 
-        if (!frontend._authorization.authorizeJwTPayload(jwtPayload)) {
-          ipBlacklistIncrement(req, res);
-          Common.Debug.debug("jwtPayloadHandler: failed authorization");
-          res.status(401).json({});
-          return;
+        try {
+          const authorized =
+            frontend._authorization.authorizeJwTPayload(jwtPayload);
+          if (!authorized) {
+            ipBlacklistIncrement(req, res);
+            Common.Debug.debug("jwtPayloadHandler: failed authorization");
+            res.status(401).json({});
+            return;
+          }
+        } catch (error) {
+          res.status(500).json({});
         }
 
-        const bridgeToken = frontend._authorization.generateBridgeToken();
         if (typeof jwtPayload.sub !== "string") {
           res.status(500).json({});
           return;
@@ -171,6 +181,7 @@ export class Frontend {
         }
         const url = new URL(jwtPayload.aud);
         const hostname = url.hostname;
+        const bridgeToken = frontend._authorization.generateBridgeToken();
         try {
           await frontend._authorization.setBridgeToken(
             email,
@@ -312,22 +323,16 @@ export class Frontend {
         Common.Debug.debug("Smart Home Skill Request:");
         Common.Debug.debugJSON(shsRequest);
 
-        let shsResponse: Common.SHS.Response;
-        let statusCode: number;
-        try {
-          shsResponse = await frontend._middle.handler(shsRequest);
-          statusCode = 200;
-        } catch (error) {
-          const shsError = error as Common.SHS.Error;
-          shsResponse = shsError.response;
-          statusCode =
-            typeof shsError.httpStatusCode !== "undefined"
-              ? shsError.httpStatusCode
-              : 500;
-        }
+        const shsResponseWrapper = await frontend._middle.handler(shsRequest);
+        const shsResponse = shsResponseWrapper.response;
+        const statusCode = shsResponseWrapper.statusCode;
         Common.Debug.debug("Smart Home Skill Response:");
         Common.Debug.debug(`statusCode: ${statusCode}`);
         Common.Debug.debugJSON(shsResponse);
+        if (typeof shsResponseWrapper.error !== "undefined") {
+          Common.Debug.debug("smart home skill error response");
+          Common.Debug.debugErrorWithStack(shsResponseWrapper.error);
+        }
 
         // Check SHS Response against the SHS schema.
         try {

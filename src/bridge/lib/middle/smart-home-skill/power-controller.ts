@@ -30,62 +30,44 @@ function states(
 async function turnOffHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   const poweredOff = await backendControl.turnOff();
   if (poweredOff === false) {
-    throw Common.SHS.Error.errorResponse(
-      alexaRequest,
-      500,
-      "INTERNAL_ERROR",
-      `Alexa.PowerController.turnOff for LGTV ${backendControl.tv.udn} failed.`
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
     );
   }
-  return new Common.SHS.Response({
-    namespace: "Alexa",
-    name: "Response",
-    correlationToken: alexaRequest.getCorrelationToken(),
-    endpointId: alexaRequest.getEndpointId(),
-  });
+  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
 }
 
 async function turnOnHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   const poweredOn = await backendControl.turnOn();
   if (poweredOn === false) {
-    throw Common.SHS.Error.errorResponse(
-      alexaRequest,
-      500,
-      "INTERNAL_ERROR",
-      `Alexa.PowerController.turnOn for LGTV ${backendControl.tv.udn} failed.`
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
     );
   }
-  return new Common.SHS.Response({
-    namespace: "Alexa",
-    name: "Response",
-    correlationToken: alexaRequest.getCorrelationToken(),
-    endpointId: alexaRequest.getEndpointId(),
-  });
+  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa.PowerController") {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.PowerController"
-    );
-  }
+): Promise<Common.SHS.ResponseWrapper> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff":
       return turnOffHandler(alexaRequest, backendControl);
     case "TurnOn":
       return turnOnHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
+      );
   }
 }
 

@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { JwtPayload } from "jsonwebtoken";
 import * as Common from "../../../../common";
-import { DatabaseRecord, DatabaseTable } from "../../database";
+import { DatabaseTable } from "../../database";
 import { Configuration } from "../../configuration";
 
 export class Authorization {
@@ -48,54 +48,32 @@ export class Authorization {
   public async authorizeJwTPayload(jwtPayload: JwtPayload): Promise<boolean> {
     const that = this;
 
-    Common.Debug.debug("authorizeJwTPayload:");
-    Common.Debug.debugJSON(jwtPayload);
     if (typeof jwtPayload.iss === "undefined") {
-      Common.Debug.debug("jwtPayload.iss failed: missing");
       return false;
     }
     if (jwtPayload.iss !== Common.constants.bridge.jwt.iss) {
-      Common.Debug.debug(
-        `jwtPayload.iss failed: ${jwtPayload.iss} ${Common.constants.bridge.jwt.iss}`
-      );
       return false;
     }
     if (typeof jwtPayload.sub === "undefined") {
-      Common.Debug.debug("jwtPayload.sub failed: missing");
       return false;
     }
-    let found;
-    try {
-      const authorizedEmails = await that._configuration.authorizedEmails();
-      found = authorizedEmails.find(
-        (authorizedEmail) => jwtPayload.sub === authorizedEmail
-      );
-    } catch (error) {
-      Common.Debug.debugError(error);
-      throw error;
-    }
+    const authorizedEmails = await that._configuration.authorizedEmails();
+    const found = authorizedEmails.find(
+      (authorizedEmail) => jwtPayload.sub === authorizedEmail
+    );
+
     if (typeof found === "undefined") {
-      Common.Debug.debug("jwtPayload.sub failed");
       return false;
     }
     if (typeof jwtPayload.aud === "undefined") {
-      Common.Debug.debug("jwtPayload.aud failed: missing");
       return false;
     }
-    try {
-      const hostname = that._configuration.hostname();
-      if (
-        jwtPayload.aud !==
-        `https://${hostname}${Common.constants.bridge.path.skill}`
-      ) {
-        Common.Debug.debug(
-          `jwtPayload.sub failed ${jwtPayload.aud} https://${hostname}${Common.constants.bridge.path.skill}`
-        );
-        return false;
-      }
-    } catch (error) {
-      Common.Debug.debugError(error);
-      throw error;
+    const hostname = that._configuration.hostname();
+    if (
+      jwtPayload.aud !==
+      `https://${hostname}${Common.constants.bridge.path.skill}`
+    ) {
+      return false;
     }
 
     return true;
@@ -110,24 +88,14 @@ export class Authorization {
     hostname: string,
     bridgeToken: string
   ): Promise<void> {
-    try {
-      await this._db.updateOrInsertRecord(
-        { email },
-        { email, hostname, bridgeToken }
-      );
-    } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(null, error);
-    }
+    await this._db.updateOrInsertRecord(
+      { email },
+      { email, hostname, bridgeToken }
+    );
   }
 
   public async authorizeBridgeToken(bridgeToken: string): Promise<boolean> {
-    let record: DatabaseRecord | null;
-    try {
-      record = await this._db.getRecord({ bridgeToken });
-    } catch (error) {
-      Common.Debug.debugError(error);
-      throw Common.SHS.Error.errorResponseFromError(null, error);
-    }
+    const record = await this._db.getRecord({ bridgeToken });
     if (record === null) {
       return false;
     }
@@ -135,12 +103,7 @@ export class Authorization {
       typeof record.email !== "string" ||
       typeof record.hostname !== "string"
     ) {
-      try {
-        await this._db.deleteRecord({ bridgeToken });
-      } catch (error) {
-        Common.Debug.debugError(error);
-        throw Common.SHS.Error.errorResponseFromError(null, error);
-      }
+      await this._db.deleteRecord({ bridgeToken });
       return false;
     }
 
@@ -148,41 +111,21 @@ export class Authorization {
     const hostname = record.hostname;
 
     // CHeck if the email is still authorized and delete the record if it is not.
-    try {
-      const authorizedEmails = await this._configuration.authorizedEmails();
-      const found = authorizedEmails.find(
-        (authorizedEmail) => email === authorizedEmail
-      );
-      if (typeof found === "undefined") {
-        try {
-          await this._db.deleteRecord({ bridgeToken });
-        } catch (error) {
-          Common.Debug.debugError(error);
-          throw Common.SHS.Error.errorResponseFromError(null, error);
-        }
-        return false;
-      }
-    } catch (error) {
-      Common.Debug.debugError(error);
-      throw error;
+    const authorizedEmails = await this._configuration.authorizedEmails();
+    const found = authorizedEmails.find(
+      (authorizedEmail) => email === authorizedEmail
+    );
+    if (typeof found === "undefined") {
+      await this._db.deleteRecord({ bridgeToken });
+      return false;
     }
 
     // Make sure the hostname is still authorized and delete the record if it is
     // not.
-    try {
-      const authorizedHostname = await this._configuration.hostname();
-      if (hostname !== authorizedHostname) {
-        try {
-          await this._db.deleteRecord({ bridgeToken });
-        } catch (error) {
-          Common.Debug.debugError(error);
-          throw Common.SHS.Error.errorResponseFromError(null, error);
-        }
-        return false;
-      }
-    } catch (error) {
-      Common.Debug.debugError(error);
-      throw error;
+    const authorizedHostname = await this._configuration.hostname();
+    if (hostname !== authorizedHostname) {
+      await this._db.deleteRecord({ bridgeToken });
+      return false;
     }
 
     return true;

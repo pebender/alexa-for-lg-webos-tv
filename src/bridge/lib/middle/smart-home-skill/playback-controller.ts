@@ -1,10 +1,10 @@
-import * as ASH from "../../../../common/smart-home-skill";
+import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 import LGTV from "lgtv2";
 
 function capabilities(
   backendControl: BackendControl
-): Promise<ASH.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
     Promise.resolve({
       type: "AlexaInterface",
@@ -17,35 +17,31 @@ function capabilities(
 
 function states(
   backendControl: BackendControl
-): Promise<ASH.Context.Property>[] {
+): Promise<Common.SHS.Context.Property>[] {
   return [];
 }
 
 async function genericHandler(
-  alexaRequest: ASH.Request,
+  alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
   lgtvRequestURI: string
-): Promise<ASH.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI,
   };
   await backendControl.lgtvCommand(lgtvRequest);
-  return new ASH.Response({
-    namespace: "Alexa",
-    name: "Response",
-    correlationToken: alexaRequest.getCorrelationToken(),
-    endpointId: alexaRequest.getEndpointId(),
-  });
+  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
 }
 
 function handler(
-  alexaRequest: ASH.Request,
+  alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<ASH.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa.PlaybackController") {
-    throw ASH.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.PlaybackController"
+): Promise<Common.SHS.ResponseWrapper> {
+  if (backendControl.getPowerState() === "OFF") {
+    return Promise.resolve(
+      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
+        alexaRequest
+      )
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -80,7 +76,11 @@ function handler(
         "ssap://media.controls/fastForward"
       );
     default:
-      throw ASH.Error.errorResponseForInvalidDirectiveName(alexaRequest);
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
+      );
   }
 }
 

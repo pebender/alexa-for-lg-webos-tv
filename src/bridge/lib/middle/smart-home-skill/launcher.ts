@@ -91,17 +91,16 @@ function states(
 async function launchTargetHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
     typeof alexaToLGTV[alexaRequest.directive.payload.identifier as string] ===
       "undefined"
   ) {
-    throw Common.SHS.Error.errorResponse(
-      alexaRequest,
-      400,
-      "INVALID_VALUE",
-      `I do not know the Launcher target ${alexaRequest.directive.payload.identifier}`
+    return Promise.resolve(
+      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+        alexaRequest
+      )
     );
   }
   const lgtvRequest: LGTV.Request = {
@@ -124,29 +123,31 @@ async function launchTargetHandler(
     Debug.debugJSON(output)
   })
   */
-  return new Common.SHS.Response({
-    namespace: "Alexa",
-    name: "Response",
-    correlationToken: alexaRequest.getCorrelationToken(),
-    endpointId: alexaRequest.getEndpointId(),
-  });
+  return Promise.resolve(
+    Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest)
+  );
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa.Launcher") {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.Launcher"
+): Promise<Common.SHS.ResponseWrapper> {
+  if (backendControl.getPowerState() === "OFF") {
+    return Promise.resolve(
+      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
+        alexaRequest
+      )
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "LaunchTarget":
       return launchTargetHandler(alexaRequest, backendControl);
     default:
-      throw Common.SHS.Error.errorResponseForInvalidDirectiveName(alexaRequest);
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
+      );
   }
 }
 

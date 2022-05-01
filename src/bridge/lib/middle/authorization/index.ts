@@ -22,51 +22,36 @@ export class Authorization {
   }
 
   public async authorize(skillToken: string): Promise<boolean> {
-    let record: DatabaseRecord | null;
-    try {
-      record = await this._db.getRecord({ skillToken });
-    } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(null, error);
-    }
+    const record = await this._db.getRecord({ skillToken });
+
     if (record === null) {
       const profile = await Common.Profile.SHS.getUserProfile(skillToken);
       const userId = profile.user_id;
       const email = profile.email;
 
-      try {
-        const authorizedEmails = await this._configuration.authorizedEmails();
-        const found = authorizedEmails.find(
-          (authorizedEmail) => authorizedEmail === email
-        );
-        if (typeof found === "undefined") {
-          return false;
-        }
-      } catch (error) {
-        throw Common.SHS.Error.errorResponseFromError(null, error);
+      const authorizedEmails = await this._configuration.authorizedEmails();
+      const found = authorizedEmails.find(
+        (authorizedEmail) => authorizedEmail === email
+      );
+      if (typeof found === "undefined") {
+        return false;
       }
-      try {
-        await this._db.updateOrInsertRecord(
-          { email },
-          { email, userId, skillToken }
-        );
-      } catch (error) {
-        throw Common.SHS.Error.errorResponseFromError(null, error);
-      }
+
+      await this._db.updateOrInsertRecord(
+        { email },
+        { email, userId, skillToken }
+      );
     } else {
       // CHeck if the email is still authorized and delete the record if it is
       // not.
-      try {
-        const authorizedEmails = await this._configuration.authorizedEmails();
-        const found = authorizedEmails.find(
-          (authorizedEmail) =>
-            authorizedEmail === (record as DatabaseRecord).email
-        );
-        if (typeof found === "undefined") {
-          await this._db.deleteRecord({ skillToken });
-          return false;
-        }
-      } catch (error) {
-        throw Common.SHS.Error.errorResponseFromError(null, error);
+      const authorizedEmails = await this._configuration.authorizedEmails();
+      const found = authorizedEmails.find(
+        (authorizedEmail) =>
+          authorizedEmail === (record as DatabaseRecord).email
+      );
+      if (typeof found === "undefined") {
+        await this._db.deleteRecord({ skillToken });
+        return false;
       }
     }
 

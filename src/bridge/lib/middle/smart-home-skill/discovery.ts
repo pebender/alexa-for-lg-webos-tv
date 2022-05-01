@@ -6,7 +6,7 @@ import { constants } from "../../../../common/constants";
 async function handler(
   alexaRequest: Common.SHS.Request,
   backend: Backend
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   //
   // This looks strange at first. However, once it is explained, this
   // convolution of promises and async/awaits should make sense. The goal is
@@ -87,17 +87,10 @@ async function handler(
     return alexaResponse;
   }
 
-  if (alexaRequest.directive.header.namespace !== "Alexa.Discovery") {
-    throw Common.SHS.Error.errorResponseForWrongDirectiveNamespace(
-      alexaRequest,
-      "Alexa.Discovery"
-    );
-  }
-
   const backendControls = await backend.controls();
   const endpoints = await buildEndpoints(backendControls);
   const response = await buildResponse(endpoints);
-  return response;
+  return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }
 
 export { handler };

@@ -7,7 +7,7 @@ import * as Bridge from "./bridge-api";
 async function handlerWithErrors(
   alexaRequest: Common.SHS.Request,
   context: AWSLambda.Context
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   if (
     typeof alexaRequest.directive.endpoint === "undefined" ||
     typeof alexaRequest.directive.endpoint.endpointId === "undefined"
@@ -18,7 +18,7 @@ async function handlerWithErrors(
       case "Alexa.Discovery":
         return alexaDiscovery.handler(alexaRequest);
       default:
-        throw Common.SHS.Error.errorResponseForInvalidDirectiveNamespace(
+        throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest
         );
     }
@@ -36,29 +36,31 @@ async function handler(
   Common.Debug.debug("smart home skill request message");
   Common.Debug.debug(JSON.stringify(alexaRequest, null, 2));
 
-  let alexaResponse: Common.SHS.Response;
-
+  let alexaResponseWrapper: Common.SHS.ResponseWrapper;
   try {
-    alexaResponse = await handlerWithErrors(alexaRequest, context);
-    Common.Debug.debug("smart home skill response message");
-    Common.Debug.debug(JSON.stringify(alexaResponse, null, 2));
+    alexaResponseWrapper = await handlerWithErrors(alexaRequest, context);
   } catch (error) {
-    let alexaError: Common.SHS.Error;
-    if (error instanceof Common.SHS.Error) {
-      alexaError = error;
+    if (error instanceof Common.SHS.ResponseWrapper) {
+      alexaResponseWrapper = error;
     } else {
-      alexaError = Common.SHS.Error.errorResponseFromError(alexaRequest, error);
+      alexaResponseWrapper =
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+          alexaRequest,
+          200,
+          error
+        );
     }
-    alexaResponse = alexaError.response;
-    Common.Debug.debug("smart home skill error response message");
-    Common.Debug.debug(JSON.stringify(alexaResponse, null, 2));
-    Common.Debug.debug("smart home skill stack trace");
-    if (typeof alexaError.stack !== "undefined") {
-      Common.Debug.debug(alexaError.stack);
+    Common.Debug.debug("smart home skill response message");
+    Common.Debug.debug(JSON.stringify(alexaResponseWrapper.response, null, 2));
+
+    if (typeof alexaResponseWrapper.error !== "undefined") {
+      Common.Debug.debug("smart home skill error response");
+      Common.Debug.debugErrorWithStack(alexaResponseWrapper.error);
     }
+    Common.Debug.debug("smart home skill request message");
   }
 
-  return alexaResponse;
+  return alexaResponseWrapper.response;
 }
 
 export { handler };

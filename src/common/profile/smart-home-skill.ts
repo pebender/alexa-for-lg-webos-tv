@@ -1,5 +1,4 @@
 import * as HTTPSRequest from "../https-request";
-import * as SHS from "../smart-home-skill";
 
 const responseErrorMessages = {
   CONNECTION_INTERRUPTED:
@@ -33,40 +32,34 @@ export async function getUserProfile(
   let response;
   try {
     response = await HTTPSRequest.request(requestOptions, bearerToken);
-  } catch (error) {
-    const requestError = error as HTTPSRequest.ResponseError;
+  } catch (err) {
+    const requestError = err as HTTPSRequest.ResponseError;
+    const error = new Error("Sorry. I could not retrieve your profile.");
+    error.name = requestError.name;
     if (typeof responseErrorMessages[requestError.name] === "string") {
-      throw SHS.Error.errorResponse(
-        null,
-        requestError.http?.statusCode ? requestError.http?.statusCode : null,
-        "INTERNAL_ERROR",
-        responseErrorMessages[requestError.name]
-      );
-    } else {
-      throw SHS.Error.errorResponse(
-        null,
-        requestError.http?.statusCode ? requestError.http?.statusCode : null,
-        "INTERNAL_ERROR",
-        "Sorry. I could not retrieve your profile."
-      );
+      error.message = responseErrorMessages[requestError.name];
     }
+    if (typeof requestError.error?.stack !== "undefined") {
+      error.stack = requestError.error.stack;
+    } else if (typeof requestError.stack !== "undefined") {
+      error.stack = requestError.stack;
+    } else {
+      Error.captureStackTrace(error);
+    }
+    throw error;
   }
 
   if (typeof response.user_id === "undefined") {
-    throw SHS.Error.errorResponse(
-      null,
-      null,
-      "INTERNAL_ERROR",
-      "Sorry. I could not retrieve your profile."
-    );
+    const error = new Error("Sorry. I could not retrieve your profile.");
+    error.name = "INTERNAL_ERROR";
+    Error.captureStackTrace(error);
+    throw error;
   }
   if (typeof response.email === "undefined") {
-    throw SHS.Error.errorResponse(
-      null,
-      null,
-      "INTERNAL_ERROR",
-      "Sorry. I could not retrieve your profile."
-    );
+    const error = new Error("Sorry. I could not retrieve your profile.");
+    error.name = "INTERNAL_ERROR";
+    Error.captureStackTrace(error);
+    throw error;
   }
 
   return response as { user_id: string; email: string; [x: string]: string };

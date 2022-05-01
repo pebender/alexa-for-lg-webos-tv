@@ -1,6 +1,5 @@
 import DynamoDB from "aws-sdk/clients/dynamodb";
 import * as Common from "../../common";
-import * as Debug from "../../common/debug";
 
 export type BridgeInformation = {
   hostname: string;
@@ -25,14 +24,14 @@ export async function setBridgeInformation(
       ":newBridgeToken": bridgeInformation.bridgeToken,
     },
   };
-  Debug.debug("bridgeInformationUpdateParams");
-  Debug.debugJSON(bridgeInformationUpdateParams);
+  Common.Debug.debug("bridgeInformationUpdateParams");
+  Common.Debug.debugJSON(bridgeInformationUpdateParams);
   try {
     await dynamoDBDocumentClient
       .update(bridgeInformationUpdateParams)
       .promise();
   } catch (error) {
-    Debug.debugErrorWithStack(error);
+    Common.Debug.debugErrorWithStack(error);
     throw error;
   }
 }
@@ -52,7 +51,7 @@ export async function getBridgeInformation(
   try {
     data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
   } catch (error) {
-    Debug.debugErrorWithStack(error);
+    Common.Debug.debugErrorWithStack(error);
     throw error;
   }
 
@@ -66,7 +65,7 @@ export async function getBridgeInformation(
   ) {
     const hostname = data.Items[0].hostname as string;
     const bridgeToken = data.Items[0].bridgeToken as string;
-    Debug.debug(`getHostname: hostname: ${hostname}`);
+    Common.Debug.debug(`getHostname: hostname: ${hostname}`);
     return {
       hostname,
       bridgeToken,
@@ -89,7 +88,7 @@ export async function getEmail(skillToken: string): Promise<string | null> {
   try {
     data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
   } catch (error) {
-    Debug.debugErrorWithStack(error);
+    Common.Debug.debugErrorWithStack(error);
     throw error;
   }
 
@@ -101,7 +100,7 @@ export async function getEmail(skillToken: string): Promise<string | null> {
     typeof data.Items[0].hostname !== "undefined"
   ) {
     const email = data.Items[0].email as string;
-    Debug.debug(`getEmail: email: ${email}`);
+    Common.Debug.debug(`getEmail: email: ${email}`);
     return email;
   }
 
@@ -122,7 +121,7 @@ export async function setSkillToken(
   try {
     await dynamoDBDocumentClient.update(skillTokenUpdateParams).promise();
   } catch (error) {
-    Debug.debugErrorWithStack(error);
+    Common.Debug.debugErrorWithStack(error);
     throw error;
   }
 }

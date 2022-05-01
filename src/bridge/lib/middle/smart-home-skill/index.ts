@@ -15,7 +15,7 @@ interface HandlerFunction {
   (
     alexaRequest: Common.SHS.Request,
     backendControl: BackendControl
-  ): Promise<Common.SHS.Response>;
+  ): Promise<Common.SHS.ResponseWrapper>;
 }
 
 const handlers: {
@@ -59,9 +59,9 @@ function states(
 }
 
 async function addStates(
-  alexaResponse: Common.SHS.Response,
+  alexaResponseWrapper: Common.SHS.ResponseWrapper,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
       if (
@@ -72,11 +72,11 @@ async function addStates(
       ) {
         return;
       }
-      alexaResponse.addContextProperty(state);
+      alexaResponseWrapper.addContextProperty(state);
     });
-    return alexaResponse;
+    return alexaResponseWrapper;
   } catch (error) {
-    return alexaResponse;
+    return alexaResponseWrapper;
   }
 }
 
@@ -84,29 +84,27 @@ async function handler(
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
   backend: Backend
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   const alexaRequest = new Common.SHS.Request(event);
 
   const bearerToken: string = alexaRequest.getBearerToken();
   try {
     const authorized = await authorization.authorize(bearerToken);
     if (!authorized) {
-      throw Common.SHS.Error.errorResponse(
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
         alexaRequest,
-        401,
         "INVALID_AUTHORIZATION_CREDENTIAL",
         ""
       );
     }
   } catch (error) {
-    if (error instanceof Common.SHS.Error) {
-      throw error;
+    if (error instanceof Common.SHS.ResponseWrapper) {
+      return error;
     } else {
-      throw Common.SHS.Error.errorResponse(
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         alexaRequest,
-        500,
-        "INTERNAL_ERROR",
-        `Authorization Error: namespace='${alexaRequest.directive.header.namespace}'`
+        200,
+        error
       );
     }
   }
@@ -119,55 +117,70 @@ async function handler(
     default: {
       const udn = alexaRequest.getEndpointId();
       if (typeof udn === "undefined") {
-        throw Common.SHS.Error.errorResponse(
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
           alexaRequest,
-          400,
           "NO_SUCH_ENDPOINT",
-          `namespace='${alexaRequest.directive.header.namespace}' has no endpointId'`
+          ""
         );
       }
 
       const backendControl = backend.control(udn);
       if (typeof backendControl === "undefined") {
-        throw Common.SHS.Error.errorResponse(
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
           alexaRequest,
-          400,
           "NO_SUCH_ENDPOINT",
-          `namespace='${alexaRequest.directive.header.namespace}' has no endpointId='${udn}'`
+          ""
         );
       }
 
       if (!(alexaRequest.directive.header.namespace in handlers)) {
-        throw Common.SHS.Error.errorResponseForInvalidDirectiveNamespace(
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest
         );
       }
 
       const controllerHandler =
         handlers[alexaRequest.directive.header.namespace];
-      let handlerResponse: Common.SHS.Response;
+      let handlerResponseWrapper: Common.SHS.ResponseWrapper;
       try {
-        handlerResponse = await controllerHandler(alexaRequest, backendControl);
+        handlerResponseWrapper = await controllerHandler(
+          alexaRequest,
+          backendControl
+        );
       } catch (error) {
-        if (error instanceof Common.SHS.Error) {
-          handlerResponse = error.response;
+        if (error instanceof Common.SHS.ResponseWrapper) {
+          handlerResponseWrapper = error;
         } else {
-          handlerResponse = Common.SHS.Error.errorResponseFromError(
-            alexaRequest,
-            error
-          ).response;
+          handlerResponseWrapper =
+            Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+              alexaRequest,
+              200,
+              error
+            );
         }
       }
-      try {
-        return await addStates(handlerResponse, backendControl);
-      } catch (error) {
-        throw Common.SHS.Error.errorResponse(
-          alexaRequest,
-          500,
-          "INTERNAL_ERROR",
-          `addStates failed: namespace='${alexaRequest.directive.header.namespace}'`
-        );
+      if (
+        !(
+          handlerResponseWrapper.response.event.header.namespace === "Alexa" &&
+          handlerResponseWrapper.response.event.header.name === "ErrorResponse"
+        )
+      ) {
+        try {
+          return await addStates(handlerResponseWrapper, backendControl);
+        } catch (error) {
+          if (error instanceof Common.SHS.ResponseWrapper) {
+            handlerResponseWrapper = error;
+          } else {
+            handlerResponseWrapper =
+              Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+                alexaRequest,
+                200,
+                error
+              );
+          }
+        }
       }
+      return handlerResponseWrapper;
     }
   }
 }

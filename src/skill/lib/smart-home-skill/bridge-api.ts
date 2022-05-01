@@ -31,7 +31,11 @@ async function getBridgeInformation(
         return null;
       }
     } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error);
+      throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        alexaRequest,
+        200,
+        error
+      );
     }
   }
 
@@ -42,7 +46,11 @@ async function getBridgeInformation(
     try {
       await Database.setSkillToken(email, bearerToken);
     } catch (error) {
-      throw Common.SHS.Error.errorResponseFromError(alexaRequest, error);
+      throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        alexaRequest,
+        200,
+        error
+      );
     }
   }
 
@@ -59,11 +67,10 @@ async function getBridgeInformation(
     return bridgeInformation;
   }
 
-  throw Common.SHS.Error.errorResponse(
+  throw Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
     alexaRequest,
-    null,
     "BRIDGE_UNREACHABLE",
-    "Bridge has not been configured"
+    "Bridge has not been configured."
   );
 }
 
@@ -71,7 +78,7 @@ async function sendHandler(
   path: string,
   alexaRequest: Common.SHS.Request,
   message: Request
-): Promise<Common.SHS.Response> {
+): Promise<Common.SHS.ResponseWrapper> {
   const { hostname, bridgeToken } = await getBridgeInformation(alexaRequest);
 
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
@@ -93,95 +100,82 @@ async function sendHandler(
     const requestError = error as Common.HTTPSRequest.ResponseError;
     switch (requestError.name) {
       case "CONNECTION_INTERRUPTED":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Bridge connect interrupted."
         );
       case "STATUS_CODE_MISSING":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Bridge response included no HTTP status code."
         );
       case "INVALID_AUTHORIZATION_CREDENTIAL":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INVALID_AUTHORIZATION_CREDENTIAL",
           "Failed to retrieve user profile."
         );
       case "INTERNAL_ERROR":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Failed to retrieve user profile."
         );
       case "CONTENT_TYPE_MISSING":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Bridge response did not return HTTP header 'content-type'."
         );
       case "CONTENT_TYPE_INCORRECT":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           `Bridge response included an incorrect HTTP header 'content-type' of '${requestError.http?.contentType?.toLocaleLowerCase()}'.`
         );
       case "BODY_MISSING":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Bridge did not return a body."
         );
       case "BODY_INVALID_FORMAT":
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "Bridge returned a malformed body."
         );
       case "UNKNOWN_ERROR":
-        throw Common.SHS.Error.errorResponseFromError(null, requestError.error);
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+          alexaRequest,
+          200,
+          requestError.error
+        );
       default:
-        throw Common.SHS.Error.errorResponse(
-          null,
-          null,
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+          alexaRequest,
           "INTERNAL_ERROR",
           "error: unknown."
         );
     }
   }
 
-  return response as Common.SHS.Response;
+  return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }
 
 export async function sendSkillDirective(
   request: Common.SHS.Request
-): Promise<Common.SHS.Response> {
-  const outputStack = true;
+): Promise<Common.SHS.ResponseWrapper> {
   const shsPath: string = `${Common.constants.bridge.path.skill}`;
   try {
-    const response = await sendHandler(shsPath, request, request);
-    if (response instanceof Common.SHS.Error) {
-      if (outputStack && "stack" in (response as any)) {
-        Common.Debug.debug((response as any).stack);
-      }
-      return response.response;
-    }
-    return response;
+    return await sendHandler(shsPath, request, request);
   } catch (error) {
-    const response = Common.SHS.Error.errorResponseFromError(request, error);
-    if (outputStack && "stack" in (response as any)) {
-      Common.Debug.debug((response as any).stack);
-    }
-    return response.response;
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      request,
+      200,
+      error
+    );
   }
 }

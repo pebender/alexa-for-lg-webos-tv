@@ -1,5 +1,3 @@
-import * as SHS from "./smart-home-skill";
-
 export function debug(message?: any, optionalParams?: any[]) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
@@ -14,11 +12,6 @@ export function debugError(error: any) {
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    // Already output by the SHS.Error constructor.
-    if (error instanceof SHS.Error) {
-      return;
-    }
-
     const message = (error as any).message ? (error as any).message : "unknown";
     const name = (error as any).name
       ? (error as any).name
@@ -34,11 +27,6 @@ export function debugErrorWithStack(error: any) {
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    // Already output by the SHS.Error constructor.
-    if (error instanceof SHS.Error) {
-      return;
-    }
-
     const message = (error as any).message ? (error as any).message : "unknown";
     const name = (error as any).name
       ? (error as any).name

@@ -1,6 +1,6 @@
-import { SHSError } from "./error";
 import * as Profile from "../profile/smart-home-skill";
 import { copyElement } from "./copy";
+import { SHSResponseWrapper } from "./response";
 
 export namespace SHSDirective {
   export namespace Header {
@@ -95,11 +95,17 @@ export class SHSRequest {
     if (typeof this.directive.payload?.grantee?.token !== "undefined") {
       return this.directive.payload.grantee.token;
     }
-    throw SHSError.errorResponse(
+    const name = "INVALID_DIRECTIVE";
+    const message = "Bearer Token not found";
+    const error = new Error(message);
+    error.name = name;
+    Error.captureStackTrace(error);
+    throw SHSResponseWrapper.buildAlexaErrorResponse(
       this,
-      400,
-      "INVALID_DIRECTIVE",
-      "Bearer Token not found."
+      name,
+      message,
+      200,
+      error
     );
   }
 
@@ -112,15 +118,11 @@ export class SHSRequest {
     try {
       return await Profile.getUserProfile(bearerToken);
     } catch (error) {
-      if (error instanceof SHSError) {
-        const endpointId = this.getEndpointId();
-        if (typeof endpointId !== "undefined") {
-          error.response.setEndpointId(endpointId);
-        }
-        throw error;
-      } else {
-        throw SHSError.errorResponseFromError(this, error);
-      }
+      throw SHSResponseWrapper.buildAlexaErrorResponseForInternalError(
+        this,
+        200,
+        error
+      );
     }
   }
 

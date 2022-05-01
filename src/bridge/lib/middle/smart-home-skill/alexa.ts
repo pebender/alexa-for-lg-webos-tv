@@ -20,36 +20,28 @@ function states(
 function reportStateHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Common.SHS.Response {
-  return new Common.SHS.Response({
+): Common.SHS.ResponseWrapper {
+  const response = new Common.SHS.Response({
     namespace: "Alexa",
     name: "StateReport",
     correlationToken: alexaRequest.getCorrelationToken(),
     endpointId: alexaRequest.getEndpointId(),
   });
+  return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
-): Promise<Common.SHS.Response> {
-  if (alexaRequest.directive.header.namespace !== "Alexa") {
-    throw Common.SHS.Error.errorResponse(
-      alexaRequest,
-      null,
-      "INVALID_DIRECTIVE",
-      `received namespace='${alexaRequest.directive.header.namespace}' expected namespace='Alexa'.`
-    );
-  }
+): Promise<Common.SHS.ResponseWrapper> {
   switch (alexaRequest.directive.header.name) {
     case "ReportState":
       return Promise.resolve(reportStateHandler(alexaRequest, backendControl));
     default:
-      throw Common.SHS.Error.errorResponse(
-        alexaRequest,
-        null,
-        "INVALID_DIRECTIVE",
-        `namespace='${alexaRequest.directive.header.namespace}' does not support name='${alexaRequest.directive.header.name}`
+      return Promise.resolve(
+        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+          alexaRequest
+        )
       );
   }
 }
