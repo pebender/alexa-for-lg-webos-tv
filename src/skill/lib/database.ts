@@ -1,4 +1,5 @@
 import DynamoDB from "aws-sdk/clients/dynamodb";
+import https from "https";
 import * as Common from "../../common";
 
 export type BridgeInformation = {
@@ -6,8 +7,15 @@ export type BridgeInformation = {
   bridgeToken: string;
 };
 
+// Use HTTP keepalive to improve performance.
+// <https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html>
+const agent = new https.Agent({
+  keepAlive: true,
+});
+
 const dynamoDBDocumentClient = new DynamoDB.DocumentClient({
   region: Common.constants.aws.region,
+  httpOptions: { agent },
 });
 
 export async function setBridgeInformation(
