@@ -71,9 +71,15 @@ async function setVolumeHandler(
 ): Promise<Common.SHS.ResponseWrapper> {
   function getVolume(): number {
     const { volume } = alexaRequest.directive.payload;
-    if (typeof volume !== "number" || volume < 0 || volume > 100) {
+    if (typeof volume !== "number") {
       throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
         alexaRequest
+      );
+    }
+    if (volume < 0 || volume > 100) {
+      throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForValueOutOfRange(
+        alexaRequest,
+        { minimumValue: 0, maximumValue: 100 }
       );
     }
     return volume;

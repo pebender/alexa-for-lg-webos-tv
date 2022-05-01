@@ -341,6 +341,23 @@ export class SHSResponseWrapper {
     return SHSResponseWrapper.buildAlexaErrorResponse(request, type, message);
   }
 
+  public static buildAlexaErrorResponseForValueOutOfRange(
+    request: SHSRequest,
+    validRange?: { minimumValue: any; maximumValue: any }
+  ) {
+    const type = "VALUE_OUT_OF_RANGE";
+    const message = "";
+    const responseWrapper = SHSResponseWrapper.buildAlexaErrorResponse(
+      request,
+      type,
+      message
+    );
+    if (typeof validRange !== "undefined") {
+      responseWrapper.response.event.payload.validRange = validRange;
+    }
+    return responseWrapper;
+  }
+
   public static buildAlexaErrorResponseForPowerOff(request: SHSRequest) {
     const type = "ENDPOINT_UNREACHABLE";
     const message = "The TV's power is off.";
