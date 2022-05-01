@@ -1,9 +1,9 @@
-export function debug(message?: any, optionalParams?: any[]) {
+export function debug(message?: any) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    console.debug(message, optionalParams);
+    console.debug(message);
   }
 }
 
@@ -12,12 +12,12 @@ export function debugError(error: any) {
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    const message = (error as any).message ? (error as any).message : "unknown";
-    const name = (error as any).name
-      ? (error as any).name
-      : (error as any).code
-      ? (error as any).code
-      : "unknown";
+    const message = (error as any).message || "unknown";
+    const name =
+      (error as any).name ||
+      (error as any).code ||
+      (error as any).type ||
+      "unknown";
     console.debug(`error: ${message} (${name})`);
   }
 }
