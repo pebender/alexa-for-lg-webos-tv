@@ -3,7 +3,8 @@ import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/re
 import { SkillBuilders as ASKSkillBuilders } from "ask-sdk-core/dist/skill/SkillBuilders.js";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as Common from "../../../common";
-import * as LGTVSetHostname from "./lgtv-configure-bridge";
+import * as LGTVConfigureBridge from "./lgtv-configure-bridge";
+import * as LGTVTestBridge from "./lgtv-test-bridge";
 
 const LaunchRequestHandler = {
   canHandle(handlerInput: ASKHandlerInput): boolean {
@@ -109,7 +110,8 @@ const SessionEndedRequestHandler = {
 
 const handlers = [
   LaunchRequestHandler,
-  ...LGTVSetHostname.handlers,
+  ...LGTVConfigureBridge.handlers,
+  ...LGTVTestBridge.handlers,
   HelpIntentHandler,
   CancelIntentHandler,
   StopIntentHandler,

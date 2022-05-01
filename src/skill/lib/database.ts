@@ -36,6 +36,44 @@ export async function setBridgeInformation(
   }
 }
 
+export async function getBridgeInformationUsingEmail(
+  email: string
+): Promise<BridgeInformation | null> {
+  const skillTokenQueryParams = {
+    TableName: Common.constants.aws.dynamoDB.tableName,
+    KeyConditionExpression: "#email = :email_value",
+    ExpressionAttributeNames: { "#email": "email" },
+    ExpressionAttributeValues: { ":email_value": email },
+  };
+
+  let data;
+  try {
+    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
+  } catch (error) {
+    Common.Debug.debugErrorWithStack(error);
+    throw error;
+  }
+
+  if (
+    typeof data !== "undefined" &&
+    typeof data.Count !== "undefined" &&
+    data.Count > 0 &&
+    typeof data.Items !== "undefined" &&
+    typeof data.Items[0].hostname !== "undefined" &&
+    typeof data.Items[0].bridgeToken !== "undefined"
+  ) {
+    const hostname = data.Items[0].hostname as string;
+    const bridgeToken = data.Items[0].bridgeToken as string;
+    Common.Debug.debug(`getHostname: hostname: ${hostname}`);
+    return {
+      hostname,
+      bridgeToken,
+    };
+  }
+
+  return null;
+}
+
 export async function getBridgeInformation(
   skillToken: string
 ): Promise<BridgeInformation | null> {

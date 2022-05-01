@@ -295,11 +295,6 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction
       ): void {
-        if (req.method !== "POST") {
-          ipBlacklistIncrement(req, res);
-          res.status(405).json({});
-          return;
-        }
         const contentType = req.headers["content-type"];
         if (typeof contentType === "undefined") {
           ipBlacklistIncrement(req, res);
@@ -312,6 +307,16 @@ export class Frontend {
           return;
         }
         next();
+      }
+
+      async function testHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ): Promise<void> {
+        Common.Debug.debug("Test:");
+
+        res.status(200).json({});
       }
 
       async function shsHandler(
@@ -362,7 +367,7 @@ export class Frontend {
       // Check the IP address blacklist.
       frontend._server.use(ipBlacklistHandler);
       // Handle exchange of JWT for bridgeToken.
-      frontend._server.use(
+      frontend._server.get(
         Common.constants.bridge.path.login,
         expressjwt({
           secret: frontend._authorization.x509PublicCert(),
@@ -372,12 +377,18 @@ export class Frontend {
         jwtPayloadHandler
       );
       // Handle Smart Home Skill directives.
-      frontend._server.use(
+      frontend._server.post(
         Common.constants.bridge.path.skill,
         bridgeTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
         shsHandler
+      );
+      // Handle test
+      frontend._server.get(
+        Common.constants.bridge.path.test,
+        bridgeTokenAuthorizationHandler,
+        testHandler
       );
       frontend._server.use(
         (req: express.Request, res: express.Response): void => {

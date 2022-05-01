@@ -18,7 +18,8 @@ export type ResponseErrorNames =
   | "CONTENT_TYPE_INCORRECT"
   | "BODY_MISSING"
   | "BODY_INVALID_FORMAT"
-  | "UNKNOWN_ERROR";
+  | "UNKNOWN_ERROR"
+  | "BAD_GATEWAY";
 
 export type ResponseError = {
   name: ResponseErrorNames;
@@ -115,6 +116,17 @@ export async function request(
           case 500: {
             const responseError: ResponseError = {
               name: "INTERNAL_ERROR",
+              http: {
+                statusCode,
+              },
+            };
+            Error.captureStackTrace(responseError);
+            reject(responseError);
+            break;
+          }
+          case 502: {
+            const responseError: ResponseError = {
+              name: "BAD_GATEWAY",
               http: {
                 statusCode,
               },
