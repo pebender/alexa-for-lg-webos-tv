@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "ask-sdk": "2.12.1",
-    "aws-sdk": "2.1123.0",
+    "aws-sdk": "2.1125.0",
     "certnames": "1.0.4",
     "jsonwebtoken": "8.5.1"
   },
