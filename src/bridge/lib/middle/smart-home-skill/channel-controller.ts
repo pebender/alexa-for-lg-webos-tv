@@ -1,7 +1,6 @@
 import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 import LGTV from "lgtv2";
-const isNumeric = require("isnumeric");
 
 function capabilities(
   backendControl: BackendControl
@@ -9,6 +8,7 @@ function capabilities(
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.ChannelController",
+      propertyNames: ["channel"],
     }),
   ];
 }
@@ -16,7 +16,49 @@ function capabilities(
 function states(
   backendControl: BackendControl
 ): Promise<Common.SHS.Context.Property>[] {
-  return [];
+  if (backendControl.getPowerState() === "OFF") {
+    return [];
+  }
+
+  async function value(): Promise<{
+    number?: string;
+    callSign?: string;
+    affiliateCallSign?: string;
+  } | null> {
+    const lgtvRequest: LGTV.Request = {
+      uri: "ssap://tv/getCurrentChannel",
+    };
+    Common.Debug.debug("hello");
+    let lgtvResponse;
+    try {
+      lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+    } catch (error) {
+      return null;
+    }
+    Common.Debug.debugJSON(lgtvResponse);
+    const channel: {
+      number?: string;
+      callSign?: string;
+      affiliateCallSign?: string;
+    } = {};
+    if (typeof lgtvResponse.channelNumber !== "undefined") {
+      channel.number = lgtvResponse.channelNumber as string;
+    }
+    if (typeof lgtvResponse.channelName !== "undefined") {
+      channel.affiliateCallSign = (
+        lgtvResponse.channelName as string
+      ).toUpperCase();
+    }
+    return channel;
+  }
+
+  const channelState = Common.SHS.Response.buildContextProperty({
+    namespace: "Alexa.ChannelController",
+    name: "channel",
+    value,
+  });
+
+  return [channelState];
 }
 
 function skipChannelsHandler(
@@ -30,85 +72,119 @@ function skipChannelsHandler(
   );
 }
 
-function unknownChannelError(
-  alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
-): Common.SHS.ResponseWrapper {
-  return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
-    alexaRequest
-  );
-}
-
 async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
 ): Promise<Common.SHS.ResponseWrapper> {
-  function getCommand(): LGTV.Request | null {
+  async function getChannelList(): Promise<any[]> {
+    const lgtvResponse = await backendControl.lgtvCommand({
+      uri: "ssap://tv/getChannelList",
+    });
+    return lgtvResponse.channelList as any[];
+  }
+
+  function getChannelNumberToNumberMap(channelList: any[]): {
+    [x: string]: string;
+  } {
+    const channelNumberToNumber: { [x: string]: string } = {};
+    channelList.forEach((channelItem) => {
+      const channelNumber: string = channelItem.channelNumber;
+      channelNumberToNumber[channelNumber] = channelNumber;
+      if (channelNumber.match(/-1$/)) {
+        const altChannelName = channelNumber.replace(/-1$/, "");
+        if (typeof channelNumberToNumber[altChannelName] === "undefined") {
+          channelNumberToNumber[altChannelName] = channelNumber;
+        }
+      }
+    });
+    return channelNumberToNumber;
+  }
+
+  function getChannelNameToNumberMap(channelList: any[]): {
+    [x: string]: string;
+  } {
+    const channelNameToNumber: { [x: string]: string } = {};
+    channelList.forEach((channelItem) => {
+      const channelNumber: string = channelItem.channelNumber;
+      const channelName: string = channelItem.channelName.toUpperCase();
+      channelNameToNumber[channelName] = channelNumber;
+      if (channelName.match(/-DT$/)) {
+        Common.Debug.debug(channelName);
+        const altChannelName = channelName.replace(/-DT$/, "");
+        if (typeof channelNameToNumber[altChannelName] === "undefined") {
+          channelNameToNumber[altChannelName] = channelNumber;
+        }
+      }
+      if (channelName.match(/-HD$/)) {
+        Common.Debug.debug(channelName);
+        const altChannelName = channelName.replace(/-HD$/, "");
+        if (typeof channelNameToNumber[altChannelName] === "undefined") {
+          channelNameToNumber[altChannelName] = channelNumber;
+        }
+      }
+      if (channelName.match(/HD$/)) {
+        Common.Debug.debug(channelName);
+        const altChannelName = channelName.replace(/HD$/, "");
+        if (typeof channelNameToNumber[altChannelName] === "undefined") {
+          channelNameToNumber[altChannelName] = channelNumber;
+        }
+      }
+    });
+    return channelNameToNumber;
+  }
+
+  const channelList = await getChannelList();
+  const channelNumberToNumber = getChannelNumberToNumberMap(channelList);
+  const channelNameToNumber = getChannelNameToNumberMap(channelList);
+
+  Common.Debug.debugJSON(channelNumberToNumber);
+  Common.Debug.debugJSON(channelNameToNumber);
+
+  async function getCommand(): Promise<LGTV.Request | null> {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://tv/openChannel",
     };
     if (typeof alexaRequest.directive.payload !== "undefined") {
       const payload: {
         channel?: {
-          number?: number | string;
-          callSign?: number | string;
-          affiliateCallSign?: number | string;
+          number?: string;
+          callSign?: string;
+          affiliateCallSign?: string;
+          [x: string]: boolean | number | string | object | undefined;
         };
         channelMetadata?: {
-          name?: number | string;
+          name?: string;
+          [x: string]: boolean | number | string | object | undefined;
         };
         [x: string]: boolean | number | string | object | undefined;
       } = alexaRequest.directive.payload;
       if (
-        typeof payload.channel !== "undefined" &&
-        typeof payload.channel.number !== "undefined"
+        typeof lgtvRequest.payload === "undefined" &&
+        typeof payload.channel?.number !== "undefined" &&
+        typeof channelNumberToNumber[payload.channel.number] !== "undefined"
       ) {
-        if (isNumeric(payload.channel.number)) {
-          lgtvRequest.payload = {
-            channelNumber: payload.channel.number as number,
-          };
-        } else {
-          lgtvRequest.payload = { channelId: payload.channel.number as string };
-        }
-      } else if (
-        typeof payload.channel !== "undefined" &&
-        typeof payload.channel.callSign !== "undefined"
+        lgtvRequest.payload = {
+          channelNumber: channelNumberToNumber[payload.channel.number],
+        };
+      }
+      if (
+        typeof lgtvRequest.payload === "undefined" &&
+        typeof payload.channel?.affiliateCallSign !== "undefined" &&
+        typeof channelNameToNumber[payload.channel.affiliateCallSign] !==
+          "undefined"
       ) {
-        if (isNumeric(payload.channel.callSign)) {
-          lgtvRequest.payload = {
-            channelNumber: payload.channel.callSign as number,
-          };
-        } else {
-          lgtvRequest.payload = {
-            channelId: payload.channel.callSign as string,
-          };
-        }
-      } else if (
-        typeof payload.channel !== "undefined" &&
-        typeof payload.channel.affiliateCallSign !== "undefined"
+        lgtvRequest.payload = {
+          channelNumber: channelNameToNumber[payload.channel.affiliateCallSign],
+        };
+      }
+      if (
+        typeof lgtvRequest.payload === "undefined" &&
+        typeof payload.channel?.callSign !== "undefined" &&
+        typeof channelNameToNumber[payload.channel.callSign] !== "undefined"
       ) {
-        if (isNumeric(payload.channel.affiliateCallSign)) {
-          lgtvRequest.payload = {
-            channelNumber: payload.channel.affiliateCallSign as number,
-          };
-        } else {
-          lgtvRequest.payload = {
-            channelId: payload.channel.affiliateCallSign as string,
-          };
-        }
-      } else if (
-        typeof payload.channelMetadata !== "undefined" &&
-        typeof payload.channelMetadata.name !== "undefined"
-      ) {
-        if (isNumeric(payload.channelMetadata.name)) {
-          lgtvRequest.payload = {
-            channelNumber: payload.channelMetadata.name as number,
-          };
-        } else {
-          lgtvRequest.payload = {
-            channelId: payload.channelMetadata.name as string,
-          };
-        }
+        lgtvRequest.payload = {
+          channelNumber: channelNameToNumber[payload.channel.callSign],
+        };
       }
     }
     if (typeof lgtvRequest.payload === "undefined") {
@@ -120,8 +196,12 @@ async function changeChannelHandler(
   async function setChannel(
     lgtvRequest: LGTV.Request | null
   ): Promise<Common.SHS.ResponseWrapper> {
+    Common.Debug.debug("setChannel lgtvRequest:");
+    Common.Debug.debugJSON(lgtvRequest);
     if (lgtvRequest === null) {
-      return unknownChannelError(alexaRequest, backendControl);
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+        alexaRequest
+      );
     }
     try {
       await backendControl.lgtvCommand(lgtvRequest);
@@ -133,46 +213,7 @@ async function changeChannelHandler(
       );
     }
 
-    //
-    // X const [state] = await states(lgtv, null);
-    // Dummy 'value' values.
-    //
-    const state: Common.SHS.Context.Property = {
-      namespace: "Alexa.ChannelController",
-      name: "channel",
-      value: {
-        number: "1234",
-        callSign: "callsign1",
-        affiliateCallSign: "callsign2",
-      },
-      timeOfSample: new Date().toISOString(),
-      uncertaintyInMilliseconds: 0,
-    };
-    const alexaResponseWrapper =
-      Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
-    alexaResponseWrapper.addContextProperty(
-      await Common.SHS.Response.buildContextProperty({
-        namespace: "Alexa.ChannelController",
-        name: "channel",
-        value: (): {
-          number: string;
-          callSign: string;
-          affiliateCallSign: string;
-        } => {
-          const value: {
-            number: string;
-            callSign: string;
-            affiliateCallSign: string;
-          } = {
-            number: "1234",
-            callSign: "callsign1",
-            affiliateCallSign: "callsign2",
-          };
-          return value;
-        },
-      })
-    );
-    return alexaResponseWrapper;
+    return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
   }
 
   const channelCommand = await getCommand();
