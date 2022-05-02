@@ -62,7 +62,7 @@ function capabilities(
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.Launcher",
-      propertyNames: ["identifier"],
+      propertyNames: ["target"],
     }),
   ];
 }
