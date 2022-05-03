@@ -82,6 +82,42 @@
             "set the bridge I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}",
             "set the  bridge's I.P. address to {ipAddressA} dot {ipAddressB} dot {ipAddressC} dot {ipAddressD}"
           ]
+        },
+        {
+          "name": "LGTV_TestBridgeIntent",
+          "slots": [],
+          "samples": [
+            "test my bridge",
+            "test the bridge",
+            "test my bridge configuration",
+            "test my bridge's configuration",
+            "test the bridge configuration",
+            "test the bridge's configuration",
+            "test my bridge connection",
+            "test my bridge's connection",
+            "test the bridge connection",
+            "test the bridge's connection",
+            "check my bridge",
+            "check the bridge",
+            "check my bridge configuration",
+            "check my bridge's configuration",
+            "check the bridge configuration",
+            "check the bridge's configuration",
+            "check my bridge connection",
+            "check my bridge's connection",
+            "check the bridge connection",
+            "check the bridge's connection",
+            "verify my bridge",
+            "verify the bridge",
+            "verify my bridge configuration",
+            "verify my bridge's configuration",
+            "verify the bridge configuration",
+            "verify the bridge's configuration",
+            "verify my bridge connection",
+            "verify my bridge's connection",
+            "verify the bridge connection",
+            "verify the bridge's connection"
+          ]
         }
       ],
       "types": [
