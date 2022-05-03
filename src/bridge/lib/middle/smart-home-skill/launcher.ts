@@ -78,7 +78,12 @@ function states(
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
     };
-    const input: LGTV.Response = await backendControl.lgtvCommand(lgtvRequest);
+    let input: LGTV.Response;
+    try {
+      input = await backendControl.lgtvCommand(lgtvRequest);
+    } catch {
+      return null;
+    }
     if (
       typeof input.appId !== "string" ||
       typeof lgtvToAlexa[input.appId] === "undefined"

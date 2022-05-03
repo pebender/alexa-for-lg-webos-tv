@@ -62,6 +62,7 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
   }
 }
 
+// Creates a sorted channel list used channel skipping.
 function getChannelNumbers(channels: Channel[]): string[] {
   const channelNumbers: string[] = channels.map(
     (channel) => channel.channelNumber
@@ -102,6 +103,10 @@ function getChannelNumbers(channels: Channel[]): string[] {
   return channelNumbers;
 }
 
+// Creates a map of channel number to channel number used for channel changing.
+// Sometimes people ask for a channel's major number when they want the primary
+// minor channel of the major channel. So, an additional mapping of major number
+// (e.g. 10) to major number dash primary minor number (e.g. 10-1).
 function getChannelNumberToNumberMap(channels: Channel[]): {
   [x: string]: string;
 } {
@@ -119,6 +124,11 @@ function getChannelNumberToNumberMap(channels: Channel[]): {
   return channelNumberToNumber;
 }
 
+// Creates a map of channel name to channel number used for channel changing.
+// Sometimes an affiliate will name its primary channel <call-sign>-HD,
+// <call-sign>-DT or <call-sign>HD. So, when a channel name ending in -HD, -DT
+// or HD is encountered, an additional mapping with the ending removed is
+// created.
 function getChannelNameToNumberMap(channels: any[]): {
   [x: string]: string;
 } {
@@ -251,7 +261,14 @@ async function skipChannelsHandler(
       `${backendControl.tv.name} (${backendControl.tv.udn}) is not currently watching a TV channel.`
     );
   }
-  const channels = await getChannels(backendControl);
+  let channels: Channel[];
+  try {
+    channels = await getChannels(backendControl);
+  } catch {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
+    );
+  }
   const channelNumbers = getChannelNumbers(channels);
   const channelCount = parseInt(
     alexaRequest.directive.payload.channelCount as string,
@@ -266,29 +283,29 @@ async function skipChannelsHandler(
       channelNumbers.length) %
     channelNumbers.length;
   const newChannel = channelNumbers[newChannelIndex];
-  return await setChannel(alexaRequest, backendControl, newChannel);
+  try {
+    return await setChannel(alexaRequest, backendControl, newChannel);
+  } catch {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
+    );
+  }
 }
 
 async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
 ): Promise<Common.SHS.ResponseWrapper> {
-  const channel = await getChannel(backendControl);
-  const channels = await getChannels(backendControl);
-  const channelNumbers = getChannelNumbers(channels);
+  let channels: Channel[];
+  try {
+    channels = await getChannels(backendControl);
+  } catch {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
+    );
+  }
   const channelNumberToNumber = getChannelNumberToNumberMap(channels);
   const channelNameToNumber = getChannelNameToNumberMap(channels);
-
-  Common.Debug.debug("channel");
-  Common.Debug.debugJSON(channel);
-  Common.Debug.debug("channels");
-  Common.Debug.debugJSON(channels);
-  Common.Debug.debug("channelNumbers");
-  Common.Debug.debugJSON(channelNumbers);
-  Common.Debug.debug("channelNumberToNumber");
-  Common.Debug.debugJSON(channelNumberToNumber);
-  Common.Debug.debug("channelNameToNumber");
-  Common.Debug.debugJSON(channelNameToNumber);
 
   function getChannelNumber(): string | null {
     if (typeof alexaRequest.directive.payload !== "undefined") {
@@ -329,7 +346,18 @@ async function changeChannelHandler(
   }
 
   const channelNumber = getChannelNumber();
-  return setChannel(alexaRequest, backendControl, channelNumber);
+  if (channelNumber === null) {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+      alexaRequest
+    );
+  }
+  try {
+    return await setChannel(alexaRequest, backendControl, channelNumber);
+  } catch {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
+    );
+  }
 }
 
 function handler(

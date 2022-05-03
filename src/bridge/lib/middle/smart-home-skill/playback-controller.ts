@@ -29,7 +29,13 @@ async function genericHandler(
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI,
   };
-  await backendControl.lgtvCommand(lgtvRequest);
+  try {
+    await backendControl.lgtvCommand(lgtvRequest);
+  } catch {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaRequest
+    );
+  }
   return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
 }
 

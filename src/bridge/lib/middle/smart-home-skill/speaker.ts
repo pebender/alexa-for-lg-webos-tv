@@ -92,7 +92,15 @@ async function setVolumeHandler(
       uri: "ssap://audio/setVolume",
       payload: { volume },
     };
-    await backendControl.lgtvCommand(lgtvRequest);
+    try {
+      await backendControl.lgtvCommand(lgtvRequest);
+    } catch (error) {
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        alexaRequest,
+        200,
+        error
+      );
+    }
     return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
   }
 
