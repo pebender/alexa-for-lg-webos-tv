@@ -67,46 +67,6 @@ function capabilities(
   ];
 }
 
-const commands = [
-  "api/getServiceList",
-  "audio/setMute",
-  "audio/getStatus",
-  "audio/getVolume",
-  "audio/setVolume",
-  "audio/volumeUp",
-  "audio/volumeDown",
-  "com.webos.applicationManager/getForegroundAppInfo",
-  "com.webos.applicationManager/listApps",
-  "com.webos.applicationManager/launch",
-  "com.webos.applicationManager/listLaunchPoints",
-  "com.webos.service.appStatus/getAppStatus",
-  "com.webos.service.ime/sendEnterKey",
-  "com.webos.service.ime/deleteCharacters",
-  "com.webos.service.tv.display/set3DOn",
-  "com.webos.service.tv.display/set3DOff",
-  "com.webos.service.update/getCurrentSWInformation",
-  "media.controls/play",
-  "media.controls/stop",
-  "media.controls/pause",
-  "media.controls/rewind",
-  "media.controls/fastForward",
-  "media.viewer/close",
-  "system.notifications/createToast",
-  "system.launcher/close",
-  "system.launcher/getAppState",
-  "system.launcher/launch",
-  "system.launcher/open",
-  "tv/channelDown",
-  "tv/channelUp",
-  "tv/getChannelList",
-  "tv/getChannelProgramInfo",
-  "tv/getCurrentChannel",
-  "tv/getExternalInputList",
-  "tv/openChannel",
-  "tv/switchInput",
-  "webapp/closeWebApp",
-];
-
 function states(
   backendControl: BackendControl
 ): Promise<Common.SHS.Context.Property>[] {
@@ -115,19 +75,6 @@ function states(
   }
 
   async function value(): Promise<{ identifier: string; name: string } | null> {
-    for (let i = 0; i < commands.length; i++) {
-      Common.Debug.debug(commands[i]);
-      try {
-        const response = await backendControl.lgtvCommand({
-          uri: `ssap://${commands[i]}`,
-        });
-        Common.Debug.debugJSON(response);
-      } catch (error) {
-        Common.Debug.debug("error:");
-        Common.Debug.debugJSON(error);
-        Common.Debug.debug(error);
-      }
-    }
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
     };
