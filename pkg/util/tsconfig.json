@@ -1,0 +1,29 @@
+{
+  "include": ["../../src/util", "../../src/bridge/**/*", "../../src/common/**/*"],
+  "exclude": [],
+  "compilerOptions": {
+    "lib": ["es2017"],
+    "strict": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "./bin",
+    "rootDir": "../../src",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "../../src/util/types/*",
+        "../../src/bridge/types/*",
+        "../../src/common/types/*",
+        "node_modules/*",
+        "node_modules/@types/*",
+        "../../node_modules/*",
+        "../../node_modules/@types/*"
+      ]
+    }
+  }
+}

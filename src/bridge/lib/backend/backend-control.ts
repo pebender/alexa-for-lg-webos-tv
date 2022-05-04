@@ -86,6 +86,7 @@ export class BackendControl extends EventEmitter {
       backendControl._connecting = true;
     });
     backendControl._connection.on("connect", (): void => {
+      backendControl.emit("connect");
       backendControl._connecting = false;
       backendControl._poweredOn = true;
     });
