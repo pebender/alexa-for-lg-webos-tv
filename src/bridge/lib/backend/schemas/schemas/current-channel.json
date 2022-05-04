@@ -1,0 +1,192 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://tv/getCurrentChannel' Response",
+  "type": "object",
+  "required": [
+    "returnValue",
+    "channelId",
+    "physicalNumber",
+    "isScrambled",
+    "channelTypeName",
+    "isLocked",
+    "dualChannel",
+    "isChannelChanged",
+    "channelModeName",
+    "channelNumber",
+    "isFineTuned",
+    "channelTypeId",
+    "isDescrambled",
+    "isSkipped",
+    "isHEVCChannel",
+    "hybridtvType",
+    "isInvisible",
+    "favoriteGroup",
+    "channelName",
+    "channelModeId",
+    "signalChannelId"
+  ],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "channelId": {
+      "$id": "#root/channelId",
+      "title": "Channelid",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "physicalNumber": {
+      "$id": "#root/physicalNumber",
+      "title": "Physicalnumber",
+      "type": "integer",
+      "default": 0
+    },
+    "isScrambled": {
+      "$id": "#root/isScrambled",
+      "title": "Isscrambled",
+      "type": "boolean",
+      "default": true
+    },
+    "channelTypeName": {
+      "$id": "#root/channelTypeName",
+      "title": "Channeltypename",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "isLocked": {
+      "$id": "#root/isLocked",
+      "title": "Islocked",
+      "type": "boolean",
+      "default": true
+    },
+    "dualChannel": {
+      "$id": "#root/dualChannel",
+      "title": "Dualchannel",
+      "type": "object",
+      "required": [
+        "dualChannelId",
+        "dualChannelTypeName",
+        "dualChannelTypeId",
+        "dualChannelNumber"
+      ],
+      "properties": {
+        "dualChannelId": {
+          "$id": "#root/dualChannel/dualChannelId",
+          "title": "Dualchannelid",
+          "type": "null",
+          "default": null
+        },
+        "dualChannelTypeName": {
+          "$id": "#root/dualChannel/dualChannelTypeName",
+          "title": "Dualchanneltypename",
+          "type": "null",
+          "default": null
+        },
+        "dualChannelTypeId": {
+          "$id": "#root/dualChannel/dualChannelTypeId",
+          "title": "Dualchanneltypeid",
+          "type": "null",
+          "default": null
+        },
+        "dualChannelNumber": {
+          "$id": "#root/dualChannel/dualChannelNumber",
+          "title": "Dualchannelnumber",
+          "type": "null",
+          "default": null
+        }
+      }
+    },
+    "isChannelChanged": {
+      "$id": "#root/isChannelChanged",
+      "title": "Ischannelchanged",
+      "type": "boolean",
+      "default": true
+    },
+    "channelModeName": {
+      "$id": "#root/channelModeName",
+      "title": "Channelmodename",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "channelNumber": {
+      "$id": "#root/channelNumber",
+      "title": "Channelnumber",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "isFineTuned": {
+      "$id": "#root/isFineTuned",
+      "title": "Isfinetuned",
+      "type": "boolean",
+      "default": true
+    },
+    "channelTypeId": {
+      "$id": "#root/channelTypeId",
+      "title": "Channeltypeid",
+      "type": "integer",
+      "default": 0
+    },
+    "isDescrambled": {
+      "$id": "#root/isDescrambled",
+      "title": "Isdescrambled",
+      "type": "boolean",
+      "default": true
+    },
+    "isSkipped": {
+      "$id": "#root/isSkipped",
+      "title": "Isskipped",
+      "type": "boolean",
+      "default": true
+    },
+    "isHEVCChannel": {
+      "$id": "#root/isHEVCChannel",
+      "title": "Ishevcchannel",
+      "type": "boolean",
+      "default": true
+    },
+    "hybridtvType": {
+      "$id": "#root/hybridtvType",
+      "title": "Hybridtvtype",
+      "type": "null",
+      "default": null
+    },
+    "isInvisible": {
+      "$id": "#root/isInvisible",
+      "title": "Isinvisible",
+      "type": "boolean",
+      "default": true
+    },
+    "favoriteGroup": {
+      "$id": "#root/favoriteGroup",
+      "title": "Favoritegroup",
+      "type": "null",
+      "default": null
+    },
+    "channelName": {
+      "$id": "#root/channelName",
+      "title": "Channelname",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "channelModeId": {
+      "$id": "#root/channelModeId",
+      "title": "Channelmodeid",
+      "type": "integer",
+      "default": 0
+    },
+    "signalChannelId": {
+      "$id": "#root/signalChannelId",
+      "title": "Signalchannelid",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    }
+  }
+}

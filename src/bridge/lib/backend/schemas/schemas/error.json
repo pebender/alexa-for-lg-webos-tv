@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV Error Response",
+  "type": "object",
+  "required": ["returnValue", "errorCode", "errorText"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": false
+    },
+    "errorCode": {
+      "$id": "#root/errorCode",
+      "title": "Errorcode",
+      "type": ["integer", "string"],
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "errorText": {
+      "$id": "#root/errorText",
+      "title": "Errortext",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    }
+  }
+}

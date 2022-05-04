@@ -1,0 +1,61 @@
+{
+  "returnValue": true,
+  "services": [
+    {
+      "name": "api",
+      "version": 1
+    },
+    {
+      "name": "audio",
+      "version": 1
+    },
+    {
+      "name": "config",
+      "version": 1
+    },
+    {
+      "name": "media.controls",
+      "version": 1
+    },
+    {
+      "name": "media.viewer",
+      "version": 1
+    },
+    {
+      "name": "pairing",
+      "version": 1
+    },
+    {
+      "name": "settings",
+      "version": 1
+    },
+    {
+      "name": "system",
+      "version": 1
+    },
+    {
+      "name": "system.launcher",
+      "version": 1
+    },
+    {
+      "name": "system.notifications",
+      "version": 1
+    },
+    {
+      "name": "timer",
+      "version": 1
+    },
+    {
+      "name": "tv",
+      "version": 1
+    },
+    {
+      "name": "user",
+      "version": 1
+    },
+    {
+      "name": "webapp",
+      "version": 2
+    }
+  ]
+}

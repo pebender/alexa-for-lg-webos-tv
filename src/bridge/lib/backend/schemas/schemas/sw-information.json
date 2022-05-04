@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://com.webos.service.update/getCurrentSWInformation' Response",
+  "type": "object",
+  "required": [
+    "returnValue",
+    "product_name",
+    "model_name",
+    "sw_type",
+    "major_ver",
+    "minor_ver",
+    "country",
+    "country_group",
+    "device_id",
+    "auth_flag",
+    "ignore_disable",
+    "eco_info",
+    "config_key",
+    "language_code"
+  ],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "product_name": {
+      "$id": "#root/product_name",
+      "title": "Product_name",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "model_name": {
+      "$id": "#root/model_name",
+      "title": "Model_name",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "sw_type": {
+      "$id": "#root/sw_type",
+      "title": "Sw_type",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "major_ver": {
+      "$id": "#root/major_ver",
+      "title": "Major_ver",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "minor_ver": {
+      "$id": "#root/minor_ver",
+      "title": "Minor_ver",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "country": {
+      "$id": "#root/country",
+      "title": "Country",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "country_group": {
+      "$id": "#root/country_group",
+      "title": "Country_group",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "device_id": {
+      "$id": "#root/device_id",
+      "title": "Device_id",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "auth_flag": {
+      "$id": "#root/auth_flag",
+      "title": "Auth_flag",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "ignore_disable": {
+      "$id": "#root/ignore_disable",
+      "title": "Ignore_disable",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "eco_info": {
+      "$id": "#root/eco_info",
+      "title": "Eco_info",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "config_key": {
+      "$id": "#root/config_key",
+      "title": "Config_key",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "language_code": {
+      "$id": "#root/language_code",
+      "title": "Language_code",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    }
+  }
+}

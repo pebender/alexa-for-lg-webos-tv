@@ -26,3 +26,4 @@ However, there are many things left to do
   - [Bridge Installation](./doc/installation.md#bridge-installation)
 - [Operation](./doc/operation.md#operation)
 - [Implementation](./doc/implementation#implementation)
+- [LG WebOS TV Commands](./doc/lg-webos-tv-commands"lg-webos-tv-commands)

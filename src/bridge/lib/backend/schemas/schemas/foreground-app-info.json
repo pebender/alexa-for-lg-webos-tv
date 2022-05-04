@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://com.webos.applicationManager/getForegroundAppInfo' Response",
+  "type": "object",
+  "required": ["returnValue", "appId", "windowId", "processId"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "appId": {
+      "$id": "#root/appId",
+      "title": "Appid",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "windowId": {
+      "$id": "#root/windowId",
+      "title": "Windowid",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "processId": {
+      "$id": "#root/processId",
+      "title": "Processid",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    }
+  }
+}

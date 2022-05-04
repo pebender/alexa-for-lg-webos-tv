@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://com.webos.applicationManager/listLaunchPoints' Response",
+  "type": "object",
+  "required": ["returnValue", "subscribed", "caseDetail", "launchPoints"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "subscribed": {
+      "$id": "#root/subscribed",
+      "title": "Subscribed",
+      "type": "boolean",
+      "default": true
+    },
+    "caseDetail": {
+      "$id": "#root/caseDetail",
+      "title": "Casedetail",
+      "type": "object",
+      "required": ["change"],
+      "properties": {
+        "change": {
+          "$id": "#root/caseDetail/change",
+          "title": "Change",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$id": "#root/caseDetail/change/items",
+            "title": "Items",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          }
+        }
+      }
+    },
+    "launchPoints": {
+      "$id": "#root/launchPoints",
+      "title": "Launchpoints",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/launchPoints/items",
+        "title": "Items",
+        "type": "object",
+        "required": [
+          "systemApp",
+          "removable",
+          "relaunch",
+          "largeIcon",
+          "bgImages",
+          "userData",
+          "id",
+          "title",
+          "bgColor",
+          "iconColor",
+          "appDescription",
+          "lptype",
+          "params",
+          "bgImage",
+          "unmovable",
+          "icon",
+          "launchPointId",
+          "favicon",
+          "imageForRecents",
+          "tileSize"
+        ],
+        "properties": {
+          "systemApp": {
+            "$id": "#root/launchPoints/items/systemApp",
+            "title": "Systemapp",
+            "type": "boolean",
+            "default": true
+          },
+          "removable": {
+            "$id": "#root/launchPoints/items/removable",
+            "title": "Removable",
+            "type": "boolean",
+            "default": true
+          },
+          "relaunch": {
+            "$id": "#root/launchPoints/items/relaunch",
+            "title": "Relaunch",
+            "type": "boolean",
+            "default": true
+          },
+          "largeIcon": {
+            "$id": "#root/launchPoints/items/largeIcon",
+            "title": "Largeicon",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "bgImages": {
+            "$id": "#root/launchPoints/items/bgImages",
+            "title": "Bgimages",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "default": []
+          },
+          "userData": {
+            "$id": "#root/launchPoints/items/userData",
+            "title": "Userdata",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "id": {
+            "$id": "#root/launchPoints/items/id",
+            "title": "Id",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "title": {
+            "$id": "#root/launchPoints/items/title",
+            "title": "Title",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "bgColor": {
+            "$id": "#root/launchPoints/items/bgColor",
+            "title": "Bgcolor",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "iconColor": {
+            "$id": "#root/launchPoints/items/iconColor",
+            "title": "Iconcolor",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "appDescription": {
+            "$id": "#root/launchPoints/items/appDescription",
+            "title": "Appdescription",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "lptype": {
+            "$id": "#root/launchPoints/items/lptype",
+            "title": "Lptype",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "params": {
+            "$id": "#root/launchPoints/items/params",
+            "title": "Params",
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "bgImage": {
+            "$id": "#root/launchPoints/items/bgImage",
+            "title": "Bgimage",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "unmovable": {
+            "$id": "#root/launchPoints/items/unmovable",
+            "title": "Unmovable",
+            "type": "boolean",
+            "default": true
+          },
+          "icon": {
+            "$id": "#root/launchPoints/items/icon",
+            "title": "Icon",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "launchPointId": {
+            "$id": "#root/launchPoints/items/launchPointId",
+            "title": "Launchpointid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "favicon": {
+            "$id": "#root/launchPoints/items/favicon",
+            "title": "Favicon",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "imageForRecents": {
+            "$id": "#root/launchPoints/items/imageForRecents",
+            "title": "Imageforrecents",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "tileSize": {
+            "$id": "#root/launchPoints/items/tileSize",
+            "title": "Tilesize",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          }
+        }
+      }
+    }
+  }
+}

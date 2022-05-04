@@ -1,0 +1,96 @@
+{
+    "returnValue": true,
+    "devices": [
+      {
+        "id": "AV_1",
+        "label": "AV",
+        "port": 1,
+        "appId": "com.webos.app.externalinput.av1",
+        "icon": "http://192.168.1.12:3000/resources/e62f35580320f2d74e14b07cac9f17839815f88e/av.png",
+        "modified": false,
+        "subList": [],
+        "subCount": 0,
+        "connected": false,
+        "favorite": false
+      },
+      {
+        "id": "HDMI_1",
+        "label": "Roku",
+        "port": 1,
+        "appId": "com.webos.app.hdmi1",
+        "icon": "http://192.168.1.12:3000/resources/104b66281f57b1425f97a64c374a5d433ac38ba2/settopbox.png",
+        "modified": true,
+        "spdProductDescription": "H",
+        "spdVendorName": "M",
+        "spdSourceDeviceInfo": "Digital STB",
+        "lastUniqueId": 4,
+        "subList": [
+          {
+            "id": "SIMPLINK",
+            "uniqueId": 4,
+            "cecpDevType": 4,
+            "cecpDevId": 15,
+            "cecpNewType": 9,
+            "version": 0,
+            "osdName": "Family room"
+          },
+          {
+            "id": "URCU",
+            "serviceType": "settop",
+            "connectedInput": "HDMI_1",
+            "serviceName": "Spectrum[Time Warner Cable](San Diego)",
+            "serviceId": "17",
+            "serviceArea": "",
+            "manufacturerName": "Motorola",
+            "manufacturerId": "10210000",
+            "settopCode": "C-CA04542",
+            "settopOption": "",
+            "irType": "A"
+          }
+        ],
+        "oneDepth": true,
+        "subCount": 2,
+        "connected": true,
+        "favorite": true
+      },
+      {
+        "id": "HDMI_2",
+        "label": "HDMI2",
+        "port": 2,
+        "appId": "com.webos.app.hdmi2",
+        "icon": "http://192.168.1.12:3000/resources/4f1045c67bfd3b04d42ae332e57dc1af0317aaee/HDMI_2.png",
+        "modified": false,
+        "lastUniqueId": 255,
+        "subList": [],
+        "subCount": 0,
+        "connected": true,
+        "favorite": true
+      },
+      {
+        "id": "HDMI_3",
+        "label": "HDMI3",
+        "port": 3,
+        "appId": "com.webos.app.hdmi3",
+        "icon": "http://192.168.1.12:3000/resources/81fb6aeb080dd9e5e0a0331bc4a727cc9cc3af25/HDMI_3.png",
+        "modified": false,
+        "lastUniqueId": 255,
+        "subList": [],
+        "subCount": 0,
+        "connected": false,
+        "favorite": true
+      },
+      {
+        "id": "HDMI_4",
+        "label": "HDMI4",
+        "port": 4,
+        "appId": "com.webos.app.hdmi4",
+        "icon": "http://192.168.1.12:3000/resources/0c5e41f7d2cb4189a9f26431b867f250163807b0/HDMI_4.png",
+        "modified": false,
+        "lastUniqueId": 255,
+        "subList": [],
+        "subCount": 0,
+        "connected": false,
+        "favorite": false
+      }
+    ]
+  }

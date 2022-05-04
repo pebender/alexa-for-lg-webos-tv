@@ -1,0 +1,445 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://com.webos.applicationManager/listApps' Response",
+  "type": "object",
+  "required": ["returnValue", "apps"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "apps": {
+      "$id": "#root/apps",
+      "title": "Apps",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/apps/items",
+        "title": "Items",
+        "type": "object",
+        "required": [
+          "defaultWindowType",
+          "installedTime",
+          "CPApp",
+          "version",
+          "systemApp",
+          "appsize",
+          "miniicon",
+          "hasPromotion",
+          "requestedWindowOrientation",
+          "tileSize",
+          "lockable",
+          "transparent",
+          "icon",
+          "checkUpdateOnLaunch",
+          "category",
+          "launchinnewgroup",
+          "spinnerOnLaunch",
+          "handlesRelaunch",
+          "unmovable",
+          "id",
+          "inspectable",
+          "inAppSetting",
+          "privilegedJail",
+          "title",
+          "trustLevel",
+          "hardwareFeaturesNeeded",
+          "visible",
+          "noWindow",
+          "age",
+          "accessibility",
+          "folderPath",
+          "deeplinkingParams",
+          "main",
+          "removable",
+          "type",
+          "disableBackHistoryAPI",
+          "noSplashOnLaunch"
+        ],
+        "properties": {
+          "defaultWindowType": {
+            "$id": "#root/apps/items/defaultWindowType",
+            "title": "Defaultwindowtype",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "installedTime": {
+            "$id": "#root/apps/items/installedTime",
+            "title": "Installedtime",
+            "type": "integer",
+            "default": 0
+          },
+          "bgImages": {
+            "$id": "#root/apps/items/bgImages",
+            "title": "Bgimages",
+            "type": "array",
+            "default": []
+          },
+          "uiRevision": {
+            "$id": "#root/apps/items/uiRevision",
+            "title": "Uirevision",
+            "type": ["integer", "string"],
+            "default": "",
+            "pattern": "^\\d*$"
+          },
+          "CPApp": {
+            "$id": "#root/apps/items/CPApp",
+            "title": "Cpapp",
+            "type": "boolean",
+            "default": true
+          },
+          "version": {
+            "$id": "#root/apps/items/version",
+            "title": "Version",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "systemApp": {
+            "$id": "#root/apps/items/systemApp",
+            "title": "Systemapp",
+            "type": "boolean",
+            "default": true
+          },
+          "appsize": {
+            "$id": "#root/apps/items/appsize",
+            "title": "Appsize",
+            "type": "integer",
+            "default": 0
+          },
+          "vendor": {
+            "$id": "#root/apps/items/vendor",
+            "title": "Vendor",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "miniicon": {
+            "$id": "#root/apps/items/miniicon",
+            "title": "Miniicon",
+            "type": "string",
+            "format": "uri",
+            "default": ""
+          },
+          "hasPromotion": {
+            "$id": "#root/apps/items/hasPromotion",
+            "title": "Haspromotion",
+            "type": "boolean",
+            "default": true
+          },
+          "requestedWindowOrientation": {
+            "$id": "#root/apps/items/requestedWindowOrientation",
+            "title": "Requestedwindoworientation",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "tileSize": {
+            "$id": "#root/apps/items/tileSize",
+            "title": "Tilesize",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "largeIcon": {
+            "$id": "#root/apps/items/largeIcon",
+            "title": "Largeicon",
+            "type": "string",
+            "format": "uri-reference",
+            "default": ""
+          },
+          "lockable": {
+            "$id": "#root/apps/items/lockable",
+            "title": "Lockable",
+            "type": "boolean",
+            "default": true
+          },
+          "transparent": {
+            "$id": "#root/apps/items/transparent",
+            "title": "Transparent",
+            "type": "boolean",
+            "default": true
+          },
+          "icon": {
+            "$id": "#root/apps/items/icon",
+            "title": "Icon",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "const": ""
+              }
+            ]
+          },
+          "checkUpdateOnLaunch": {
+            "$id": "#root/apps/items/checkUpdateOnLaunch",
+            "title": "Checkupdateonlaunch",
+            "type": "boolean",
+            "default": true
+          },
+          "category": {
+            "$id": "#root/apps/items/category",
+            "title": "Category",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "launchinnewgroup": {
+            "$id": "#root/apps/items/launchinnewgroup",
+            "title": "Launchinnewgroup",
+            "type": "boolean",
+            "default": true
+          },
+          "spinnerOnLaunch": {
+            "$id": "#root/apps/items/spinnerOnLaunch",
+            "title": "Spinneronlaunch",
+            "type": "boolean",
+            "default": true
+          },
+          "handlesRelaunch": {
+            "$id": "#root/apps/items/handlesRelaunch",
+            "title": "Handlesrelaunch",
+            "type": "boolean",
+            "default": true
+          },
+          "unmovable": {
+            "$id": "#root/apps/items/unmovable",
+            "title": "Unmovable",
+            "type": "boolean",
+            "default": true
+          },
+          "id": {
+            "$id": "#root/apps/items/id",
+            "title": "Id",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "inspectable": {
+            "$id": "#root/apps/items/inspectable",
+            "title": "Inspectable",
+            "type": "boolean",
+            "default": true
+          },
+          "inAppSetting": {
+            "$id": "#root/apps/items/inAppSetting",
+            "title": "Inappsetting",
+            "type": "boolean",
+            "default": true
+          },
+          "privilegedJail": {
+            "$id": "#root/apps/items/privilegedJail",
+            "title": "Privilegedjail",
+            "type": "boolean",
+            "default": true
+          },
+          "supportQuickStart": {
+            "$id": "#root/apps/items/supportQuickStart",
+            "title": "Supportquickstart",
+            "type": "boolean",
+            "default": true
+          },
+          "title": {
+            "$id": "#root/apps/items/title",
+            "title": "Title",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "splashBackground": {
+            "$id": "#root/apps/items/splashBackground",
+            "title": "Splashbackground",
+            "type": "string",
+            "format": "uri-reference",
+            "default": ""
+          },
+          "trustLevel": {
+            "$id": "#root/apps/items/trustLevel",
+            "title": "Trustlevel",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "bootLaunchParams": {
+            "$id": "#root/apps/items/bootLaunchParams",
+            "title": "Bootlaunchparams",
+            "type": "object",
+            "required": [],
+            "properties": {
+              "boot": {
+                "$id": "#root/apps/items/bootLaunchParams/boot",
+                "title": "Boot",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          },
+          "hardwareFeaturesNeeded": {
+            "$id": "#root/apps/items/hardwareFeaturesNeeded",
+            "title": "Hardwarefeaturesneeded",
+            "type": "array",
+            "default": []
+          },
+          "visible": {
+            "$id": "#root/apps/items/visible",
+            "title": "Visible",
+            "type": "boolean",
+            "default": true
+          },
+          "noWindow": {
+            "$id": "#root/apps/items/noWindow",
+            "title": "Nowindow",
+            "type": "boolean",
+            "default": true
+          },
+          "age": {
+            "$id": "#root/apps/items/age",
+            "title": "Age",
+            "type": "integer",
+            "default": 0
+          },
+          "windowGroup": {
+            "$id": "#root/apps/items/windowGroup",
+            "title": "Windowgroup",
+            "type": "object",
+            "required": ["owner", "name"],
+            "properties": {
+              "owner": {
+                "$id": "#root/apps/items/windowGroup/owner",
+                "title": "Owner",
+                "type": "boolean",
+                "default": true
+              },
+              "ownerInfo": {
+                "$id": "#root/apps/items/windowGroup/ownerInfo",
+                "title": "Ownerinfo",
+                "type": "object",
+                "required": ["allowAnonymous", "layers"],
+                "properties": {
+                  "allowAnonymous": {
+                    "$id": "#root/apps/items/windowGroup/ownerInfo/allowAnonymous",
+                    "title": "Allowanonymous",
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "layers": {
+                    "$id": "#root/apps/items/windowGroup/ownerInfo/layers",
+                    "title": "Layers",
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                      "$id": "#root/apps/items/windowGroup/ownerInfo/layers/items",
+                      "title": "Items",
+                      "type": "object",
+                      "required": ["z", "name"],
+                      "properties": {
+                        "z": {
+                          "$id": "#root/apps/items/windowGroup/ownerInfo/layers/items/z",
+                          "title": "Z",
+                          "type": "integer",
+                          "default": 0
+                        },
+                        "name": {
+                          "$id": "#root/apps/items/windowGroup/ownerInfo/layers/items/name",
+                          "title": "Name",
+                          "type": "string",
+                          "default": "",
+                          "pattern": "^.*$"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "name": {
+                "$id": "#root/apps/items/windowGroup/name",
+                "title": "Name",
+                "type": "string",
+                "default": "",
+                "pattern": "^.*$"
+              }
+            }
+          },
+          "accessibility": {
+            "$id": "#root/apps/items/accessibility",
+            "title": "Accessibility",
+            "type": "object",
+            "required": ["supportsAudioGuidance"],
+            "properties": {
+              "supportsAudioGuidance": {
+                "$id": "#root/apps/items/accessibility/supportsAudioGuidance",
+                "title": "Supportsaudioguidance",
+                "type": "boolean",
+                "default": true
+              }
+            }
+          },
+          "folderPath": {
+            "$id": "#root/apps/items/folderPath",
+            "title": "Folderpath",
+            "type": "string",
+            "format": "uri-reference",
+            "default": ""
+          },
+          "deeplinkingParams": {
+            "$id": "#root/apps/items/deeplinkingParams",
+            "title": "Deeplinkingparams",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "main": {
+            "$id": "#root/apps/items/main",
+            "title": "Main",
+            "type": "string",
+            "format": "uri-reference",
+            "default": ""
+          },
+          "removable": {
+            "$id": "#root/apps/items/removable",
+            "title": "Removable",
+            "type": "boolean",
+            "default": true
+          },
+          "type": {
+            "$id": "#root/apps/items/type",
+            "title": "Type",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "bgImage": {
+            "$id": "#root/apps/items/bgImage",
+            "title": "Bgimage",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "iconColor": {
+            "$id": "#root/apps/items/iconColor",
+            "title": "Iconcolor",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "disableBackHistoryAPI": {
+            "$id": "#root/apps/items/disableBackHistoryAPI",
+            "title": "Disablebackhistoryapi",
+            "type": "boolean",
+            "default": true
+          },
+          "noSplashOnLaunch": {
+            "$id": "#root/apps/items/noSplashOnLaunch",
+            "title": "Nosplashonlaunch",
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}

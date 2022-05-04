@@ -1,0 +1,662 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://tv/getChannelList' Response",
+  "type": "object",
+  "required": [
+    "returnValue",
+    "valueList",
+    "dataSource",
+    "dataType",
+    "cableAnalogSkipped",
+    "scannedChannelCount",
+    "deviceSourceIndex",
+    "channelListCount",
+    "channelLogoServerUrl",
+    "ipChanInteractiveUrl",
+    "channelList"
+  ],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "valueList": {
+      "$id": "#root/valueList",
+      "title": "Valuelist",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "dataSource": {
+      "$id": "#root/dataSource",
+      "title": "Datasource",
+      "type": "integer",
+      "default": 0
+    },
+    "dataType": {
+      "$id": "#root/dataType",
+      "title": "Datatype",
+      "type": "integer",
+      "default": 0
+    },
+    "cableAnalogSkipped": {
+      "$id": "#root/cableAnalogSkipped",
+      "title": "Cableanalogskipped",
+      "type": "boolean",
+      "default": true
+    },
+    "scannedChannelCount": {
+      "$id": "#root/scannedChannelCount",
+      "title": "Scannedchannelcount",
+      "type": "object",
+      "required": [
+        "terrestrialAnalogCount",
+        "terrestrialDigitalCount",
+        "cableAnalogCount",
+        "cableDigitalCount",
+        "satelliteDigitalCount"
+      ],
+      "properties": {
+        "terrestrialAnalogCount": {
+          "$id": "#root/scannedChannelCount/terrestrialAnalogCount",
+          "title": "Terrestrialanalogcount",
+          "type": "integer",
+          "default": 0
+        },
+        "terrestrialDigitalCount": {
+          "$id": "#root/scannedChannelCount/terrestrialDigitalCount",
+          "title": "Terrestrialdigitalcount",
+          "type": "integer",
+          "default": 0
+        },
+        "cableAnalogCount": {
+          "$id": "#root/scannedChannelCount/cableAnalogCount",
+          "title": "Cableanalogcount",
+          "type": "integer",
+          "default": 0
+        },
+        "cableDigitalCount": {
+          "$id": "#root/scannedChannelCount/cableDigitalCount",
+          "title": "Cabledigitalcount",
+          "type": "integer",
+          "default": 0
+        },
+        "satelliteDigitalCount": {
+          "$id": "#root/scannedChannelCount/satelliteDigitalCount",
+          "title": "Satellitedigitalcount",
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "deviceSourceIndex": {
+      "$id": "#root/deviceSourceIndex",
+      "title": "Devicesourceindex",
+      "type": "integer",
+      "default": 0
+    },
+    "channelListCount": {
+      "$id": "#root/channelListCount",
+      "title": "Channellistcount",
+      "type": "integer",
+      "default": 0
+    },
+    "channelLogoServerUrl": {
+      "$id": "#root/channelLogoServerUrl",
+      "title": "Channellogoserverurl",
+      "anyOf": [
+        { "type": "string", "format": "uri-reference" },
+        { "const": "" }
+      ]
+    },
+    "ipChanInteractiveUrl": {
+      "$id": "#root/ipChanInteractiveUrl",
+      "title": "Ipchaninteractiveurl",
+      "anyOf": [
+        { "type": "string", "format": "uri-reference" },
+        { "const": "" }
+      ]
+    },
+    "channelList": {
+      "$id": "#root/channelList",
+      "title": "Channellist",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/channelList/items",
+        "title": "Items",
+        "type": "object",
+        "required": [
+          "channelId",
+          "programId",
+          "signalChannelId",
+          "chanCode",
+          "channelMode",
+          "channelModeId",
+          "channelType",
+          "channelTypeId",
+          "channelNumber",
+          "majorNumber",
+          "minorNumber",
+          "channelName",
+          "skipped",
+          "locked",
+          "descrambled",
+          "scrambled",
+          "serviceType",
+          "favoriteGroup",
+          "imgUrl",
+          "display",
+          "satelliteName",
+          "fineTuned",
+          "Frequency",
+          "shortCut",
+          "Bandwidth",
+          "HDTV",
+          "Invisible",
+          "TV",
+          "DTV",
+          "ATV",
+          "Data",
+          "Radio",
+          "Numeric",
+          "PrimaryCh",
+          "specialService",
+          "CASystemIDList",
+          "CASystemIDListCount",
+          "groupIdList",
+          "channelGenreCode",
+          "favoriteIdxA",
+          "favoriteIdxB",
+          "favoriteIdxC",
+          "favoriteIdxD",
+          "imgUrl2",
+          "channelLogoSize",
+          "ipChanServerUrl",
+          "payChan",
+          "IPChannelCode",
+          "ipCallNumber",
+          "otuFlag",
+          "favoriteIdxE",
+          "favoriteIdxF",
+          "favoriteIdxG",
+          "favoriteIdxH",
+          "satelliteLcn",
+          "waterMarkUrl",
+          "channelNameSortKey",
+          "ipChanType",
+          "adultFlag",
+          "ipChanCategory",
+          "ipChanInteractive",
+          "callSign",
+          "adFlag",
+          "configured",
+          "lastUpdated",
+          "ipChanCpId",
+          "isFreeviewPlay",
+          "playerService",
+          "TSID",
+          "SVCID"
+        ],
+        "properties": {
+          "channelId": {
+            "$id": "#root/channelList/items/channelId",
+            "title": "Channelid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "programId": {
+            "$id": "#root/channelList/items/programId",
+            "title": "Programid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "signalChannelId": {
+            "$id": "#root/channelList/items/signalChannelId",
+            "title": "Signalchannelid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "chanCode": {
+            "$id": "#root/channelList/items/chanCode",
+            "title": "Chancode",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "channelMode": {
+            "$id": "#root/channelList/items/channelMode",
+            "title": "Channelmode",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "channelModeId": {
+            "$id": "#root/channelList/items/channelModeId",
+            "title": "Channelmodeid",
+            "type": "integer",
+            "default": 0
+          },
+          "channelType": {
+            "$id": "#root/channelList/items/channelType",
+            "title": "Channeltype",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "channelTypeId": {
+            "$id": "#root/channelList/items/channelTypeId",
+            "title": "Channeltypeid",
+            "type": "integer",
+            "default": 0
+          },
+          "channelNumber": {
+            "$id": "#root/channelList/items/channelNumber",
+            "title": "Channelnumber",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "majorNumber": {
+            "$id": "#root/channelList/items/majorNumber",
+            "title": "Majornumber",
+            "type": "integer",
+            "default": 0
+          },
+          "minorNumber": {
+            "$id": "#root/channelList/items/minorNumber",
+            "title": "Minornumber",
+            "type": "integer",
+            "default": 0
+          },
+          "channelName": {
+            "$id": "#root/channelList/items/channelName",
+            "title": "Channelname",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "skipped": {
+            "$id": "#root/channelList/items/skipped",
+            "title": "Skipped",
+            "type": "boolean",
+            "default": true
+          },
+          "locked": {
+            "$id": "#root/channelList/items/locked",
+            "title": "Locked",
+            "type": "boolean",
+            "default": true
+          },
+          "descrambled": {
+            "$id": "#root/channelList/items/descrambled",
+            "title": "Descrambled",
+            "type": "boolean",
+            "default": true
+          },
+          "scrambled": {
+            "$id": "#root/channelList/items/scrambled",
+            "title": "Scrambled",
+            "type": "boolean",
+            "default": true
+          },
+          "serviceType": {
+            "$id": "#root/channelList/items/serviceType",
+            "title": "Servicetype",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteGroup": {
+            "$id": "#root/channelList/items/favoriteGroup",
+            "title": "Favoritegroup",
+            "type": "array",
+            "default": []
+          },
+          "imgUrl": {
+            "$id": "#root/channelList/items/imgUrl",
+            "title": "Imgurl",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "display": {
+            "$id": "#root/channelList/items/display",
+            "title": "Display",
+            "type": "integer",
+            "default": 0
+          },
+          "satelliteName": {
+            "$id": "#root/channelList/items/satelliteName",
+            "title": "Satellitename",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "fineTuned": {
+            "$id": "#root/channelList/items/fineTuned",
+            "title": "Finetuned",
+            "type": "boolean",
+            "default": true
+          },
+          "Frequency": {
+            "$id": "#root/channelList/items/Frequency",
+            "title": "Frequency",
+            "type": "integer",
+            "default": 0
+          },
+          "shortCut": {
+            "$id": "#root/channelList/items/shortCut",
+            "title": "Shortcut",
+            "type": "integer",
+            "default": 0
+          },
+          "Bandwidth": {
+            "$id": "#root/channelList/items/Bandwidth",
+            "title": "Bandwidth",
+            "type": "integer",
+            "default": 0
+          },
+          "HDTV": {
+            "$id": "#root/channelList/items/HDTV",
+            "title": "Hdtv",
+            "type": "boolean",
+            "default": true
+          },
+          "Invisible": {
+            "$id": "#root/channelList/items/Invisible",
+            "title": "Invisible",
+            "type": "boolean",
+            "default": true
+          },
+          "TV": {
+            "$id": "#root/channelList/items/TV",
+            "title": "Tv",
+            "type": "boolean",
+            "default": true
+          },
+          "DTV": {
+            "$id": "#root/channelList/items/DTV",
+            "title": "Dtv",
+            "type": "boolean",
+            "default": true
+          },
+          "ATV": {
+            "$id": "#root/channelList/items/ATV",
+            "title": "Atv",
+            "type": "boolean",
+            "default": true
+          },
+          "Data": {
+            "$id": "#root/channelList/items/Data",
+            "title": "Data",
+            "type": "boolean",
+            "default": true
+          },
+          "Radio": {
+            "$id": "#root/channelList/items/Radio",
+            "title": "Radio",
+            "type": "boolean",
+            "default": true
+          },
+          "Numeric": {
+            "$id": "#root/channelList/items/Numeric",
+            "title": "Numeric",
+            "type": "boolean",
+            "default": true
+          },
+          "PrimaryCh": {
+            "$id": "#root/channelList/items/PrimaryCh",
+            "title": "Primarych",
+            "type": "boolean",
+            "default": true
+          },
+          "specialService": {
+            "$id": "#root/channelList/items/specialService",
+            "title": "Specialservice",
+            "type": "boolean",
+            "default": true
+          },
+          "CASystemIDList": {
+            "$id": "#root/channelList/items/CASystemIDList",
+            "title": "Casystemidlist",
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "CASystemIDListCount": {
+            "$id": "#root/channelList/items/CASystemIDListCount",
+            "title": "Casystemidlistcount",
+            "type": "integer",
+            "default": 0
+          },
+          "groupIdList": {
+            "$id": "#root/channelList/items/groupIdList",
+            "title": "Groupidlist",
+            "type": "array",
+            "default": [],
+            "items": {
+              "$id": "#root/channelList/items/groupIdList/items",
+              "title": "Items",
+              "type": "integer",
+              "default": 0
+            }
+          },
+          "channelGenreCode": {
+            "$id": "#root/channelList/items/channelGenreCode",
+            "title": "Channelgenrecode",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "favoriteIdxA": {
+            "$id": "#root/channelList/items/favoriteIdxA",
+            "title": "Favoriteidxa",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxB": {
+            "$id": "#root/channelList/items/favoriteIdxB",
+            "title": "Favoriteidxb",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxC": {
+            "$id": "#root/channelList/items/favoriteIdxC",
+            "title": "Favoriteidxc",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxD": {
+            "$id": "#root/channelList/items/favoriteIdxD",
+            "title": "Favoriteidxd",
+            "type": "integer",
+            "default": 0
+          },
+          "imgUrl2": {
+            "$id": "#root/channelList/items/imgUrl2",
+            "title": "Imgurl2",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "channelLogoSize": {
+            "$id": "#root/channelList/items/channelLogoSize",
+            "title": "Channellogosize",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "ipChanServerUrl": {
+            "$id": "#root/channelList/items/ipChanServerUrl",
+            "title": "Ipchanserverurl",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "payChan": {
+            "$id": "#root/channelList/items/payChan",
+            "title": "Paychan",
+            "type": "boolean",
+            "default": true
+          },
+          "IPChannelCode": {
+            "$id": "#root/channelList/items/IPChannelCode",
+            "title": "Ipchannelcode",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "ipCallNumber": {
+            "$id": "#root/channelList/items/ipCallNumber",
+            "title": "Ipcallnumber",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "otuFlag": {
+            "$id": "#root/channelList/items/otuFlag",
+            "title": "Otuflag",
+            "type": "boolean",
+            "default": true
+          },
+          "favoriteIdxE": {
+            "$id": "#root/channelList/items/favoriteIdxE",
+            "title": "Favoriteidxe",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxF": {
+            "$id": "#root/channelList/items/favoriteIdxF",
+            "title": "Favoriteidxf",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxG": {
+            "$id": "#root/channelList/items/favoriteIdxG",
+            "title": "Favoriteidxg",
+            "type": "integer",
+            "default": 0
+          },
+          "favoriteIdxH": {
+            "$id": "#root/channelList/items/favoriteIdxH",
+            "title": "Favoriteidxh",
+            "type": "integer",
+            "default": 0
+          },
+          "satelliteLcn": {
+            "$id": "#root/channelList/items/satelliteLcn",
+            "title": "Satellitelcn",
+            "type": "boolean",
+            "default": true
+          },
+          "waterMarkUrl": {
+            "$id": "#root/channelList/items/waterMarkUrl",
+            "title": "Watermarkurl",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "channelNameSortKey": {
+            "$id": "#root/channelList/items/channelNameSortKey",
+            "title": "Channelnamesortkey",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "ipChanType": {
+            "$id": "#root/channelList/items/ipChanType",
+            "title": "Ipchantype",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "adultFlag": {
+            "$id": "#root/channelList/items/adultFlag",
+            "title": "Adultflag",
+            "type": "integer",
+            "default": 0
+          },
+          "ipChanCategory": {
+            "$id": "#root/channelList/items/ipChanCategory",
+            "title": "Ipchancategory",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "ipChanInteractive": {
+            "$id": "#root/channelList/items/ipChanInteractive",
+            "title": "Ipchaninteractive",
+            "type": "boolean",
+            "default": true
+          },
+          "callSign": {
+            "$id": "#root/channelList/items/callSign",
+            "title": "Callsign",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "adFlag": {
+            "$id": "#root/channelList/items/adFlag",
+            "title": "Adflag",
+            "type": "integer",
+            "default": 0
+          },
+          "configured": {
+            "$id": "#root/channelList/items/configured",
+            "title": "Configured",
+            "type": "boolean",
+            "default": true
+          },
+          "lastUpdated": {
+            "$id": "#root/channelList/items/lastUpdated",
+            "title": "Lastupdated",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "ipChanCpId": {
+            "$id": "#root/channelList/items/ipChanCpId",
+            "title": "Ipchancpid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "isFreeviewPlay": {
+            "$id": "#root/channelList/items/isFreeviewPlay",
+            "title": "Isfreeviewplay",
+            "type": "integer",
+            "default": 0
+          },
+          "playerService": {
+            "$id": "#root/channelList/items/playerService",
+            "title": "Playerservice",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "TSID": {
+            "$id": "#root/channelList/items/TSID",
+            "title": "Tsid",
+            "type": "integer",
+            "default": 0
+          },
+          "SVCID": {
+            "$id": "#root/channelList/items/SVCID",
+            "title": "Svcid",
+            "type": "integer",
+            "default": 0
+          }
+        }
+      }
+    }
+  }
+}

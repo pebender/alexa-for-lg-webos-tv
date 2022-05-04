@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://api/getServiceList' Response",
+  "type": "object",
+  "required": ["returnValue", "services"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "services": {
+      "$id": "#root/services",
+      "title": "Services",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/services/items",
+        "title": "Items",
+        "type": "object",
+        "required": ["name", "version"],
+        "properties": {
+          "name": {
+            "$id": "#root/services/items/name",
+            "title": "Name",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "version": {
+            "$id": "#root/services/items/version",
+            "title": "Version",
+            "type": "integer",
+            "default": 0
+          }
+        }
+      }
+    }
+  }
+}

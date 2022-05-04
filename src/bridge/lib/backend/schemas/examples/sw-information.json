@@ -1,0 +1,16 @@
+{
+  "returnValue": true,
+  "product_name": "webOSTV 3.5",
+  "model_name": "HE_DTV_W17H_AFADATAA",
+  "sw_type": "FIRMWARE",
+  "major_ver": "06",
+  "minor_ver": "05.03",
+  "country": "US2",
+  "country_group": "US",
+  "device_id": "14:c9:13:db:1c:09",
+  "auth_flag": "N",
+  "ignore_disable": "N",
+  "eco_info": "01",
+  "config_key": "00",
+  "language_code": "en-US"
+}

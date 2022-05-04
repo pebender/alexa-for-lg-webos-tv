@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://tv/getExternalInputList' Response",
+  "type": "object",
+  "required": ["returnValue", "devices"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "devices": {
+      "$id": "#root/devices",
+      "title": "Devices",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#root/devices/items",
+        "title": "Items",
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "port",
+          "appId",
+          "icon",
+          "modified",
+          "subList",
+          "subCount",
+          "connected",
+          "favorite"
+        ],
+        "properties": {
+          "id": {
+            "$id": "#root/devices/items/id",
+            "title": "Id",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "label": {
+            "$id": "#root/devices/items/label",
+            "title": "Label",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "port": {
+            "$id": "#root/devices/items/port",
+            "title": "Port",
+            "type": "integer",
+            "default": 0
+          },
+          "appId": {
+            "$id": "#root/devices/items/appId",
+            "title": "Appid",
+            "type": "string",
+            "default": "",
+            "pattern": "^.*$"
+          },
+          "icon": {
+            "$id": "#root/devices/items/icon",
+            "title": "Icon",
+            "anyOf": [
+              { "type": "string", "format": "uri-reference" },
+              { "const": "" }
+            ]
+          },
+          "modified": {
+            "$id": "#root/devices/items/modified",
+            "title": "Modified",
+            "type": "boolean",
+            "default": true
+          },
+          "subList": {
+            "$id": "#root/devices/items/subList",
+            "title": "Sublist",
+            "type": "array",
+            "default": []
+          },
+          "subCount": {
+            "$id": "#root/devices/items/subCount",
+            "title": "Subcount",
+            "type": "integer",
+            "default": 0
+          },
+          "connected": {
+            "$id": "#root/devices/items/connected",
+            "title": "Connected",
+            "type": "boolean",
+            "default": true
+          },
+          "favorite": {
+            "$id": "#root/devices/items/favorite",
+            "title": "Favorite",
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}

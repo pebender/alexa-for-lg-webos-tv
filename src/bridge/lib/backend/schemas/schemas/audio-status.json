@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LG WebOS TV 'ssap://audio/getStatus' & 'ssap://audio/getVolume' Responses",
+  "type": "object",
+  "required": ["returnValue", "scenario", "volume", "volumeMax", "mute"],
+  "properties": {
+    "returnValue": {
+      "$id": "#root/returnValue",
+      "title": "Returnvalue",
+      "const": true
+    },
+    "scenario": {
+      "$id": "#root/scenario",
+      "title": "Scenario",
+      "type": "string",
+      "default": "",
+      "pattern": "^.*$"
+    },
+    "volume": {
+      "$id": "#root/volume",
+      "title": "Volume",
+      "type": "integer",
+      "default": 0
+    },
+    "volumeMax": {
+      "$id": "#root/volumeMax",
+      "title": "Volumemax",
+      "type": "integer",
+      "default": 0
+    },
+    "mute": {
+      "$id": "#root/mute",
+      "title": "Mute",
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

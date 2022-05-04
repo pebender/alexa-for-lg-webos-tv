@@ -1,0 +1,28 @@
+{
+  "returnValue": true,
+  "channelId": "1_16_36_1_0_0_0",
+  "physicalNumber": 16,
+  "isScrambled": false,
+  "channelTypeName": "Terrestrial Digital TV",
+  "isLocked": false,
+  "dualChannel": {
+    "dualChannelId": null,
+    "dualChannelTypeName": null,
+    "dualChannelTypeId": null,
+    "dualChannelNumber": null
+  },
+  "isChannelChanged": false,
+  "channelModeName": "Terrestrial",
+  "channelNumber": "36-1",
+  "isFineTuned": false,
+  "channelTypeId": 1,
+  "isDescrambled": false,
+  "isSkipped": false,
+  "isHEVCChannel": false,
+  "hybridtvType": null,
+  "isInvisible": false,
+  "favoriteGroup": null,
+  "channelName": "UniMas",
+  "channelModeId": 0,
+  "signalChannelId": "1_16_36_1_0_0_0"
+}
