@@ -24,11 +24,9 @@ async function getChannel(
         channelName: channel.channelName as string,
       };
     } else {
-      Common.Debug.debugJSON(channel);
       return null;
     }
   } catch (error) {
-    Common.Debug.debugError(error);
     return null;
   }
 }
@@ -52,8 +50,6 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
           channelNumber: channel.channelNumber as string,
           channelName: channel.channelName as string,
         });
-      } else {
-        Common.Debug.debugJSON(channel);
       }
     });
     return channels;
@@ -138,21 +134,18 @@ function getChannelNameToNumberMap(channels: any[]): {
     const channelName: string = channelItem.channelName.toUpperCase();
     channelNameToNumber[channelName] = channelNumber;
     if (channelName.match(/-DT$/)) {
-      Common.Debug.debug(channelName);
       const altChannelName = channelName.replace(/-DT$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
     if (channelName.match(/-HD$/)) {
-      Common.Debug.debug(channelName);
       const altChannelName = channelName.replace(/-HD$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
     if (channelName.match(/HD$/)) {
-      Common.Debug.debug(channelName);
       const altChannelName = channelName.replace(/HD$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
@@ -162,13 +155,36 @@ function getChannelNameToNumberMap(channels: any[]): {
   return channelNameToNumber;
 }
 
+async function activateLiveTv(
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl
+): Promise<void> {
+  let isLiveTv = false;
+  let lgtvRequest: LGTV.Request = {
+    uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
+  };
+  try {
+    const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+    isLiveTv = lgtvResponse.appId === "com.webos.app.livetv";
+  } catch (error) {
+    isLiveTv = false;
+  }
+  if (!isLiveTv) {
+    lgtvRequest = {
+      uri: "ssap://system.launcher/launch",
+      payload: { id: "com.webos.app.livetv" },
+    };
+    try {
+      await backendControl.lgtvCommand(lgtvRequest);
+    } catch {}
+  }
+}
+
 async function setChannel(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
   channelNumber: string | null
 ): Promise<Common.SHS.ResponseWrapper> {
-  Common.Debug.debug("setChannel channelNumber:");
-  Common.Debug.debugJSON(channelNumber);
   if (channelNumber === null) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
       alexaRequest
@@ -217,14 +233,12 @@ function states(
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://tv/getCurrentChannel",
     };
-    Common.Debug.debug("hello");
     let lgtvResponse;
     try {
       lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
     } catch (error) {
       return null;
     }
-    Common.Debug.debugJSON(lgtvResponse);
     const channel: {
       number?: string;
       callSign?: string;
@@ -254,6 +268,7 @@ async function skipChannelsHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl
 ): Promise<Common.SHS.ResponseWrapper> {
+  await activateLiveTv(alexaRequest, backendControl);
   const currentChannel = await getChannel(backendControl);
   if (currentChannel === null) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseNotSupportedInCurrentMode(
@@ -351,6 +366,7 @@ async function changeChannelHandler(
       alexaRequest
     );
   }
+  await activateLiveTv(alexaRequest, backendControl);
   try {
     return await setChannel(alexaRequest, backendControl, channelNumber);
   } catch {
