@@ -1,0 +1,28 @@
+{
+  "returnValue": true,
+  "channelId": "11_3_102_65535_0_0_0",
+  "dualChannel": {
+    "dualChannelId": null,
+    "dualChannelTypeName": null,
+    "dualChannelTypeId": null,
+    "dualChannelNumber": null
+  },
+  "isScrambled": false,
+  "channelName": "Monthly Picks: WildEarth",
+  "isLocked": false,
+  "isChannelChanged": false,
+  "signalChannelId": "11_3_102_65535_0_0_0",
+  "channelModeName": "IP",
+  "channelNumber": "102",
+  "isFineTuned": false,
+  "channelTypeId": 20,
+  "isDescrambled": true,
+  "isSkipped": false,
+  "isHEVCChannel": false,
+  "hybridtvType": null,
+  "favoriteGroup": "",
+  "isinvisible": false,
+  "channelTypeName": "IP Digital TV",
+  "physicalNumber": 102,
+  "channelModeId": 7
+}

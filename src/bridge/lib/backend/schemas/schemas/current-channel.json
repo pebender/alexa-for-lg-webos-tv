@@ -19,7 +19,6 @@
     "isSkipped",
     "isHEVCChannel",
     "hybridtvType",
-    "isInvisible",
     "favoriteGroup",
     "channelName",
     "channelModeId",
@@ -162,11 +161,22 @@
       "type": "boolean",
       "default": true
     },
+    "isinvisible": {
+      "$id": "#root/isinvisible",
+      "title": "Isinvisible",
+      "type": "boolean",
+      "default": true
+    },
     "favoriteGroup": {
       "$id": "#root/favoriteGroup",
       "title": "Favoritegroup",
-      "type": "null",
-      "default": null
+      "oneOf": [
+        {
+          "type": "null",
+          "default": null
+        },
+        { "type": "string", "default": "" }
+      ]
     },
     "channelName": {
       "$id": "#root/channelName",
@@ -188,5 +198,6 @@
       "default": "",
       "pattern": "^.*$"
     }
-  }
+  },
+  "oneOf": [{ "required": ["isInvisible"] }, { "required": ["isinvisible"] }]
 }
