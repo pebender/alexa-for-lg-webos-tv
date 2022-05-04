@@ -274,10 +274,20 @@ export class BackendControl extends EventEmitter {
       });
     }
     if (typeof lgtvResponse.returnValue === "undefined") {
-      throw new Error("'LGTVResponse' does not contain property 'returnValue'");
+      const error = new Error(
+        "'LGTVResponse' does not contain property 'returnValue'"
+      );
+      error.name = "NO_RETURN_VALUE";
+      Error.captureStackTrace(error);
+      throw error;
     }
-    if (lgtvResponse.returnValue !== true) {
-      throw new Error("'LGTVResponse' property 'returnValue' is not true");
+    if (lgtvResponse.returnValue === false) {
+      const error = new Error(lgtvResponse.errorText?.toString());
+      if (typeof lgtvResponse.errorCode !== "undefined") {
+        error.name = lgtvResponse.errorCode?.toString();
+      }
+      Error.captureStackTrace(error);
+      throw error;
     }
     return lgtvResponse;
   }
