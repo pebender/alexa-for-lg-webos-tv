@@ -25,5 +25,5 @@ However, there are many things left to do
   - [Skill Installation](./doc/installation.md#skill-installation)
   - [Bridge Installation](./doc/installation.md#bridge-installation)
 - [Operation](./doc/operation.md#operation)
-- [Implementation](./doc/implementation#implementation)
-- [LG WebOS TV Commands](./doc/lg-webos-tv-commands"lg-webos-tv-commands)
+- [Implementation](./doc/implementation.md#implementation)
+- [LG WebOS TV Commands](./doc/lg-webos-tv-commands.md#lg-webos-tv-commands)
