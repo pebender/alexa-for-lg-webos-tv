@@ -3,7 +3,6 @@
 ._*
 node_modules/
 docs
-pkg/*/bin
 pkg/*/lib
 src/lib
 pkg/*/*.zip

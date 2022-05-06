@@ -90,12 +90,13 @@ async function lgtvRunCommand(backend: Backend) {
       }
     });
   } else {
+    console.log("usage:");
     console.log(
-      "node lgtv.js run <udn-index> <ssap_command> [<ssap_command_payload>"
+      "  lgtv run <udn-index> <ssap_command> [<ssap_command_payload>"
     );
     console.log("example:");
     console.log(
-      "  node lgtv.js run 0 'com.webos.applicationManager/launch' '{ \"id\": \"amazon\" }'"
+      "  lgtv run 0 'com.webos.applicationManager/launch' '{ \"id\": \"amazon\" }'"
     );
   }
 }
@@ -105,7 +106,10 @@ async function lgtvCommand() {
 
   const backend = await getBackend();
   if (argv.length === 2) {
-    console.log("commands: 'udn', 'run'");
+    console.log("usage:");
+    console.log("  lgtv udn|run [..]");
+    console.log("example:");
+    console.log("  lgtv udn");
     return;
   }
 
@@ -116,6 +120,12 @@ async function lgtvCommand() {
     case "run":
       await lgtvRunCommand(backend);
       break;
+    default: {
+      console.log("usage:");
+      console.log("  lgtv udn|run [..]");
+      console.log("example:");
+      console.log("  lgtv udn");
+    }
   }
 }
 

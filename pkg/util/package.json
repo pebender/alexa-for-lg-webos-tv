@@ -14,6 +14,7 @@
   },
   "files": [
     "bin",
+    "lib",
     "src",
     "TODO.txt"
   ],
@@ -59,7 +60,7 @@
     "xml2js"
   ],
   "scripts": {
-    "clean": "rm -rf bin node_modules package-lock.json *.tgz",
+    "clean": "rm -rf lib node_modules package-lock.json *.tgz",
     "install_modules": "npm install",
     "build": "npx tsc",
     "postbuild": "npm run copy_files",
