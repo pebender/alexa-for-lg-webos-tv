@@ -3,9 +3,7 @@
   "title": "LG WebOS TV 'ssap://tv/getCurrentChannel' Response",
   "type": "object",
   "required": [
-    "returnValue",
     "channelId",
-    "physicalNumber",
     "isScrambled",
     "channelTypeName",
     "isLocked",

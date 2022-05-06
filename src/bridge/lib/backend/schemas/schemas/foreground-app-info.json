@@ -7,7 +7,14 @@
     "returnValue": {
       "$id": "#root/returnValue",
       "title": "Returnvalue",
-      "const": true
+      "type": "boolean",
+      "default": true
+    },
+    "subscribed": {
+      "$id": "#root/subscribed",
+      "title": "Subscribed",
+      "type": "boolean",
+      "default": true
     },
     "appId": {
       "$id": "#root/appId",

@@ -1,0 +1,10 @@
+{
+  "returnValue": true,
+  "active": false,
+  "action": "changed",
+  "changed": ["mute"],
+  "scenario": "mastervolume_ext_speaker_arc",
+  "volume": 8,
+  "volumeMax": 100,
+  "mute": false
+}
