@@ -45,7 +45,70 @@ function getSortedTVList(backend: Backend): TV[] {
   return tvList;
 }
 
-function lgtvUdnCommand(backend: Backend) {
+function lgtvCmdsCommand(backend: Backend) {
+  console.log("Known Commands");
+  const cmds: { [cmd: string]: object | null } = {
+    "api/getServiceList": null,
+    "audio/getStatus": null,
+    "audio/getVolume": null,
+    "audio/setMute": { mute: "boolean" },
+    "audio/setVolume:": { volume: "number" },
+    "audio/volumeDown": null,
+    "audio/volumeUp": null,
+    "com.webos.applicationManager/getForegroundAppInfo": null,
+    "com.webos.applicationManager/launch": { id: "string" },
+    "com.webos.applicationManager/listApps": null,
+    "com.webos.applicationManager/listLaunchPoints": null,
+    "com.webos.service.appstatus/getAppStatus": null,
+    "com.webos.service.ime/deleteCharacters": { count: "integer" },
+    "com.webos.service.ime/sendEnterKey": null,
+    "com.webos.service.tv.display/set3DOff": null,
+    "com.webos.service.tv.display/set3DOn": null,
+    "com.webos.service.update/getCurrentSWInformation": null,
+    "media.controls/fastForward": null,
+    "media.controls/pause": null,
+    "media.controls/play": null,
+    "media.controls/rewind": null,
+    "media.controls/stop": null,
+    "media.viewer/close": { "???": "???" },
+    "system/turnOff": null,
+    "system.launcher/close": { "???": "???" },
+    "system.launcher/getAppState": { "???": "???" },
+    "system.launcher/launch": { id: "string" },
+    "system.launcher/open": { id: "string" },
+    "system.notifications/createToast": { message: "string" },
+    "tv/channelDown": null,
+    "tv/channelUp": null,
+    "tv/getChannelList": null,
+    "tv/getChannelProgramInfo": { "???": "???" },
+    "tv/getCurrentChannel": null,
+    "tv/getExternalInputList": null,
+    "tv/openChannel": [{ channelNumber: "string" }, { channelId: "string" }],
+    "tv/switchInput": { inputId: "string" },
+    "webapp/closeWebApp": { "???": "???" },
+    // luna commands that work at with ssap as well.
+    "com.webos.audio/getVolume": null,
+    "com.webos.audio/volumeDown": null,
+    "com.webos.audio/volumeUp": null,
+  };
+
+  console.log("known commands:");
+  Object.keys(cmds)
+    .sort()
+    .forEach((cmd) => {
+      if (cmds[cmd]) {
+        console.log(`  command='${cmd}, payload='${JSON.stringify(cmds[cmd])}`);
+      } else {
+        console.log(`  command='${cmd}`);
+      }
+    });
+  console.log('"???" means the payload is unknown.');
+  console.log(
+    "Some commands return values on my TV, so I do whether they work."
+  );
+}
+
+function lgtvUdnsCommand(backend: Backend) {
   const tvList = getSortedTVList(backend);
   for (let i = 0; i < tvList.length; i++) {
     console.log(`${i}: ${tvList[i].udn}: ${tvList[i].name}`);
@@ -91,9 +154,7 @@ async function lgtvRunCommand(backend: Backend) {
     });
   } else {
     console.log("usage:");
-    console.log(
-      "  lgtv run <udn-index> <ssap_command> [<ssap_command_payload>"
-    );
+    console.log("  lgtv run <udn-index> <command> [<payload>]");
     console.log("example:");
     console.log(
       "  lgtv run 0 'com.webos.applicationManager/launch' '{ \"id\": \"amazon\" }'"
@@ -107,24 +168,27 @@ async function lgtvCommand() {
   const backend = await getBackend();
   if (argv.length === 2) {
     console.log("usage:");
-    console.log("  lgtv udn|run [..]");
+    console.log("  lgtv udns|cmds|run [..]");
     console.log("example:");
-    console.log("  lgtv udn");
+    console.log("  lgtv udns");
     return;
   }
 
   switch (argv[2]) {
-    case "udn":
-      await lgtvUdnCommand(backend);
+    case "cmds":
+      await lgtvCmdsCommand(backend);
+      break;
+    case "udns":
+      await lgtvUdnsCommand(backend);
       break;
     case "run":
       await lgtvRunCommand(backend);
       break;
     default: {
       console.log("usage:");
-      console.log("  lgtv udn|run [..]");
+      console.log("  lgtv cmds|udns|run [..]");
       console.log("example:");
-      console.log("  lgtv udn");
+      console.log("  lgtv udns");
     }
   }
 }

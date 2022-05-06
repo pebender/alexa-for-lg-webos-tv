@@ -20,6 +20,7 @@
 			"backinthirty",
 			"callsign",
 			"certnames",
+			"cmds",
 			"Datafile",
 			"expressjwt",
 			"ForLGwebOSTV",
@@ -36,6 +37,7 @@
 			"ssap",
 			"ssdp",
 			"tvmap",
+			"udns",
 			"Upsert",
 			"Vudu",
 			"webOS"
