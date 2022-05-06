@@ -7,12 +7,14 @@
 //
 
 import EventEmitter from "events";
+import LGTV from "lgtv2";
 
 import { TV, UDN } from "../tv";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
 import { Configuration } from "../configuration";
+import * as Common from "../../../common";
 
 export { BackendControl } from "./backend-control";
 
@@ -41,6 +43,36 @@ export class Backend extends EventEmitter {
     backend._controller.on("error", (error: Error, id: string): void => {
       backend.emit("error", error, `BackendController.${id}`);
     });
+
+    function updateHandler(
+      event: string,
+      error: Error,
+      lgtvResponse: LGTV.Response,
+      udn: string
+    ) {
+      Common.Debug.debug(`udn='${udn}', ${event}:`);
+      if (error) {
+        Common.Debug.debugError(error);
+      } else {
+        Common.Debug.debugJSON(lgtvResponse);
+      }
+    }
+
+    backend._controller.on(
+      "update.audio",
+      (error: Error, lgtvResponse: LGTV.Response, udn: string) =>
+        updateHandler("update.audio", error, lgtvResponse, udn)
+    );
+    backend._controller.on(
+      "update.application",
+      (error: Error, lgtvResponse: LGTV.Response, udn: string) =>
+        updateHandler("update.application", error, lgtvResponse, udn)
+    );
+    backend._controller.on(
+      "update.channel",
+      (error: Error, lgtvResponse: LGTV.Response, udn: string) =>
+        updateHandler("update.channel", error, lgtvResponse, udn)
+    );
 
     backend._searcher.on("error", (error): void => {
       backend.emit("error", error, "BackendSearcher");

@@ -24,18 +24,12 @@ export class BackendController extends EventEmitter {
 
     function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
-        function eventsAdd(udn: UDN): void {
-          backendController._controls[udn].on("error", (error: Error): void => {
-            backendController.emit("error", error, udn);
-          });
-        }
-
         if (typeof backendController._controls[tv.udn] === "undefined") {
           backendController._controls[tv.udn] = await BackendControl.build(
             backendController._db,
             tv
           );
-          eventsAdd(tv.udn);
+          backendController.eventsAdd(tv.udn);
           backendController._controls[tv.udn].start();
         }
       }
@@ -60,6 +54,22 @@ export class BackendController extends EventEmitter {
     });
   }
 
+  private eventsAdd(udn: UDN): void {
+    const that = this;
+    that._controls[udn].on("update.audio", (error, lgtvResponse) => {
+      that.emit("update.audio", error, lgtvResponse, udn);
+    });
+    that._controls[udn].on("update.application", (error, lgtvResponse) => {
+      that.emit("update.application", error, lgtvResponse, udn);
+    });
+    that._controls[udn].on("update.channel", (error, lgtvResponse) => {
+      that.emit("update.channel", error, lgtvResponse, udn);
+    });
+    that._controls[udn].on("error", (error: Error): void => {
+      that.emit("error", error, udn);
+    });
+  }
+
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
     if (typeof this._controls[udn] === "undefined") {
       throw new Error(
@@ -69,14 +79,6 @@ export class BackendController extends EventEmitter {
   }
 
   public async tvUpsert(tv: TV): Promise<void> {
-    const that: BackendController = this;
-
-    function eventsAdd(udn: UDN): void {
-      that._controls[udn].on("error", (error: Error): void => {
-        that.emit("error", error, udn);
-      });
-    }
-
     try {
       const record = await this._db.getRecord({
         $and: [
@@ -105,7 +107,7 @@ export class BackendController extends EventEmitter {
       }
       if (typeof this._controls[tv.udn] === "undefined") {
         this._controls[tv.udn] = await BackendControl.build(this._db, tv);
-        eventsAdd(tv.udn);
+        this.eventsAdd(tv.udn);
         this._controls[tv.udn].start();
       }
     } catch (error) {

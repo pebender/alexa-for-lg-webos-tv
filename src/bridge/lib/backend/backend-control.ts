@@ -89,6 +89,7 @@ export class BackendControl extends EventEmitter {
       backendControl.emit("connect");
       backendControl._connecting = false;
       backendControl._poweredOn = true;
+      backendControl.addSubscriptionEvents();
     });
     backendControl._connection.on("close", (): void => {
       backendControl._connecting = false;
@@ -291,5 +292,33 @@ export class BackendControl extends EventEmitter {
       throw error;
     }
     return lgtvResponse;
+  }
+
+  private addSubscriptionEvents() {
+    const that = this;
+    function updateAudio(error: Error, lgtvResponse: LGTV.Response): void {
+      that.emit("update.audio", error, lgtvResponse);
+    }
+
+    function updateApplication(
+      error: Error,
+      lgtvResponse: LGTV.Response
+    ): void {
+      that.emit("update.application", error, lgtvResponse);
+      if (lgtvResponse.appId === "com.webos.app.livetv") {
+        that._connection.subscribe(
+          "ssap://tv/getCurrentChannel",
+          updateChannel
+        );
+      }
+    }
+    function updateChannel(error: Error, lgtvResponse: LGTV.Response): void {
+      that.emit("update.channel", error, lgtvResponse);
+    }
+    that._connection.subscribe("ssap://audio/getStatus", updateAudio);
+    that._connection.subscribe(
+      "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      updateApplication
+    );
   }
 }
