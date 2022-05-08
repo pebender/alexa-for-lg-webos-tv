@@ -17,6 +17,28 @@ export class Middle {
 
     const middle = new Middle(_authorization, backend);
 
+    const uriList: string[] = [
+      "ssap://audio/getStatus",
+      "ssap://audio/getVolume",
+      "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      "ssap://com.webos.applicationManager/listApps",
+      "ssap://com.webos.applicationManager/listLaunchPoints",
+      "ssap://tv/getCurrentChannel",
+      "ssap://tv/getExternalInputList",
+    ];
+    uriList.forEach((uri) => {
+      middle._backend.on(uri, (error, response, udn) => {
+        SHS.callback(
+          uri,
+          error,
+          response,
+          udn,
+          middle._authorization,
+          middle._backend
+        );
+      });
+    });
+
     return middle;
   }
 

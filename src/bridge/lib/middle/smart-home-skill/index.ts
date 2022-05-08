@@ -10,6 +10,7 @@ import * as alexaPowerController from "./power-controller";
 import * as alexaSpeaker from "./speaker";
 import { Backend, BackendControl } from "../../backend";
 import { Authorization as DirectiveAuthorization } from "../authorization";
+import LGTV from "lgtv2";
 
 interface HandlerFunction {
   (
@@ -185,4 +186,20 @@ async function handler(
   }
 }
 
-export { capabilities, states, handler };
+function callback(
+  uri: string,
+  error: Error,
+  response: LGTV.Response,
+  udn: string,
+  authorization: DirectiveAuthorization,
+  backend: Backend
+) {
+  Common.Debug.debug(`udn='${udn}', ${uri}:`);
+  if (error) {
+    Common.Debug.debugError(error);
+  } else {
+    Common.Debug.debugJSON(response);
+  }
+}
+
+export { capabilities, states, handler, callback };

@@ -296,29 +296,50 @@ export class BackendControl extends EventEmitter {
 
   private addSubscriptionEvents() {
     const that = this;
-    function updateAudio(error: Error, lgtvResponse: LGTV.Response): void {
-      that.emit("update.audio", error, lgtvResponse);
+
+    {
+      const uri = "ssap://audio/getStatus";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
     }
 
-    function updateApplication(
-      error: Error,
-      lgtvResponse: LGTV.Response
-    ): void {
-      that.emit("update.application", error, lgtvResponse);
-      if (lgtvResponse.appId === "com.webos.app.livetv") {
-        that._connection.subscribe(
-          "ssap://tv/getCurrentChannel",
-          updateChannel
-        );
-      }
+    {
+      const uri = "ssap://audio/getVolume";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
     }
-    function updateChannel(error: Error, lgtvResponse: LGTV.Response): void {
-      that.emit("update.channel", error, lgtvResponse);
+    {
+      const uri = "ssap://com.webos.applicationManager/getForegroundAppInfo";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+        if (response.appId === "com.webos.app.livetv") {
+          const u: string = "ssap://tv/getCurrentChannel";
+          that._connection.subscribe(u, (e, r) => that.emit(u, e, r));
+        }
+      });
     }
-    that._connection.subscribe("ssap://audio/getStatus", updateAudio);
-    that._connection.subscribe(
-      "ssap://com.webos.applicationManager/getForegroundAppInfo",
-      updateApplication
-    );
+
+    {
+      const uri = "ssap://com.webos.applicationManager/listApps";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
+    }
+
+    {
+      const uri = "ssap://com.webos.applicationManager/listLaunchPoints";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
+    }
+
+    {
+      const uri = "ssap://tv/getExternalInputList";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
+    }
   }
 }

@@ -56,15 +56,22 @@ export class BackendController extends EventEmitter {
 
   private eventsAdd(udn: UDN): void {
     const that = this;
-    that._controls[udn].on("update.audio", (error, lgtvResponse) => {
-      that.emit("update.audio", error, lgtvResponse, udn);
+
+    const uriList: string[] = [
+      "ssap://audio/getStatus",
+      "ssap://audio/getVolume",
+      "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      "ssap://com.webos.applicationManager/listApps",
+      "ssap://com.webos.applicationManager/listLaunchPoints",
+      "ssap://tv/getCurrentChannel",
+      "ssap://tv/getExternalInputList",
+    ];
+    uriList.forEach((uri) => {
+      that._controls[udn].on(uri, (error, response) => {
+        that.emit(uri, error, response, udn);
+      });
     });
-    that._controls[udn].on("update.application", (error, lgtvResponse) => {
-      that.emit("update.application", error, lgtvResponse, udn);
-    });
-    that._controls[udn].on("update.channel", (error, lgtvResponse) => {
-      that.emit("update.channel", error, lgtvResponse, udn);
-    });
+
     that._controls[udn].on("error", (error: Error): void => {
       that.emit("error", error, udn);
     });
