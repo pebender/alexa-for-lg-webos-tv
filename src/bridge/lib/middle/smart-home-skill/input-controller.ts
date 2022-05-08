@@ -2,20 +2,21 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 import LGTV from "lgtv2";
 
-// The list if Alexa.InputController inputs from
+// The list of Alexa.InputController inputs are found at
 // <https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html>.
-// To determine mapping, the software compares these values with LG webOS TV
-// external input ids and labels. It uses uppercase values for the comparison.
-// It does the comparisons with and without spaces replaced with '_'. In
-// addition, it repeats the same comparisons after applying the renaming of
-// Alexa inputs using 'alexaInputRenameList'. If it fails to find any match,
-// then the software uses LGTV webOS TV external input id and label as Alexa
-// inputs.
+// To determine mapping of LG webOS TV external inputs to these Alexa inputs.
+// The software compares the Alexa input with LG webOS TV external input labels
+// and ids. Before comparison, it converts the labels and ids to uppercase and
+// replaces '_' with ' '. It does this because the Alexa inputs are uppercase
+// and use ' ' no '_' to separate words. Therefore, doing this improves the
+// chance of finding a match.
 //
-// The software does not check to be sure that
-//   - there are no duplicate LG webOS TV external input ids.
-//   - there are no duplicate LG webOS TV external input labels.
-//   - there are no duplicates between the LG webOS TV ids and inputs.
+// The software starts with an empty map of Alexa inputs to LG webOS TV inputs. If a
+// label of an LG webOS TV input matches an Alexa input, then the software adds it to the
+// map. After the software has finished matching against labels, it does matching against ids.
+// If an id of LG webOS TV input
+// not already in the map matches an Alexa input, then the software adds it to the map.
+// If there are duplicate labels or labels that match ids, the software will ignore some of these inputs in order to ensure the bi-directional mapping is unique.
 const alexaInputList: string[] = [
   "AUX 1",
   "AUX 2",
@@ -197,17 +198,29 @@ function capabilities(
     const inputs: { name: string; friendlyNames: string[] }[] = [];
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     Object.keys(alexaToLGTV).forEach((alexaInput) => {
-      if (alexaToLGTV[alexaInput].label === alexaInput) {
-        inputs.push({
-          name: alexaInput,
-          friendlyNames: [],
-        });
+      // Add friendly names as long as they are no too close to the actual names.
+      const friendlyNames: string[] = [];
+      if (alexaInput === alexaToLGTV[alexaInput].label) {
+        if (
+          alexaInput !== alexaToLGTV[alexaInput].id &&
+          alexaInput.replace(/ /g, "") !==
+            alexaToLGTV[alexaInput].id.replace(/ /g, "")
+        ) {
+          friendlyNames.push(alexaToLGTV[alexaInput].id);
+        }
       } else {
-        inputs.push({
-          name: alexaInput,
-          friendlyNames: [alexaToLGTV[alexaInput].label],
-        });
+        if (
+          alexaInput !== alexaToLGTV[alexaInput].label &&
+          alexaInput.replace(/ /g, "") !==
+            alexaToLGTV[alexaInput].label.replace(/ /g, "")
+        ) {
+          friendlyNames.push(alexaToLGTV[alexaInput].label);
+        }
       }
+      inputs.push({
+        name: alexaInput,
+        friendlyNames,
+      });
     });
     const capability = await Common.SHS.Response.buildPayloadEndpointCapability(
       {
