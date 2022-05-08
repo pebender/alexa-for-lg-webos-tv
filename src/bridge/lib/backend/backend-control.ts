@@ -336,6 +336,13 @@ export class BackendControl extends EventEmitter {
     }
 
     {
+      const uri = "ssap://tv/getChannelList";
+      that._connection.subscribe(uri, (error, response) => {
+        that.emit(uri, error, response);
+      });
+    }
+
+    {
       const uri = "ssap://tv/getExternalInputList";
       that._connection.subscribe(uri, (error, response) => {
         that.emit(uri, error, response);

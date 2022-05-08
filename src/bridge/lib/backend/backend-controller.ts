@@ -63,6 +63,7 @@ export class BackendController extends EventEmitter {
       "ssap://com.webos.applicationManager/getForegroundAppInfo",
       "ssap://com.webos.applicationManager/listApps",
       "ssap://com.webos.applicationManager/listLaunchPoints",
+      "ssap://tv/getChannelList",
       "ssap://tv/getCurrentChannel",
       "ssap://tv/getExternalInputList",
     ];
