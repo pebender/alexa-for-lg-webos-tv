@@ -1,6 +1,23 @@
-import DynamoDB from "aws-sdk/clients/dynamodb";
+import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  QueryCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
 import https from "https";
 import * as Common from "../../common";
+
+// Interface File from dom is needed by type NativeAttributeBinary defined in
+// @aws-sdk/util-dynamodb/dist-types/models.d.ts
+declare global {
+  /* eslint-disable no-unused-vars */
+  interface File extends Blob {
+    readonly lastModified: number;
+    readonly name: string;
+    readonly webkitRelativePath: string;
+  }
+}
 
 export type BridgeInformation = {
   hostname: string;
@@ -13,10 +30,13 @@ const agent = new https.Agent({
   keepAlive: true,
 });
 
-const dynamoDBDocumentClient = new DynamoDB.DocumentClient({
-  region: Common.constants.aws.region,
-  httpOptions: { agent },
+const dynamoDBClient = new DynamoDBClient({
+  requestHandler: new NodeHttpHandler({
+    httpsAgent: agent,
+  }),
 });
+
+const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 export async function setBridgeInformation(
   email: string,
@@ -35,9 +55,9 @@ export async function setBridgeInformation(
   Common.Debug.debug("bridgeInformationUpdateParams");
   Common.Debug.debugJSON(bridgeInformationUpdateParams);
   try {
-    await dynamoDBDocumentClient
-      .update(bridgeInformationUpdateParams)
-      .promise();
+    await dynamoDBDocumentClient.send(
+      new UpdateCommand(bridgeInformationUpdateParams)
+    );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     throw error;
@@ -56,7 +76,9 @@ export async function getBridgeInformationUsingEmail(
 
   let data;
   try {
-    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
+    data = await dynamoDBDocumentClient.send(
+      new QueryCommand(skillTokenQueryParams)
+    );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     throw error;
@@ -95,7 +117,9 @@ export async function getBridgeInformation(
 
   let data;
   try {
-    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
+    data = await dynamoDBDocumentClient.send(
+      new QueryCommand(skillTokenQueryParams)
+    );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     throw error;
@@ -132,7 +156,9 @@ export async function getEmail(skillToken: string): Promise<string | null> {
 
   let data;
   try {
-    data = await dynamoDBDocumentClient.query(skillTokenQueryParams).promise();
+    data = await dynamoDBDocumentClient.send(
+      new QueryCommand(skillTokenQueryParams)
+    );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     throw error;
@@ -165,7 +191,9 @@ export async function setSkillToken(
   };
 
   try {
-    await dynamoDBDocumentClient.update(skillTokenUpdateParams).promise();
+    await dynamoDBDocumentClient.send(
+      new UpdateCommand(skillTokenUpdateParams)
+    );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
     throw error;
