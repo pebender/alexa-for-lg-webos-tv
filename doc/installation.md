@@ -22,7 +22,7 @@ To get the bridge running, you need to
 
 ## Development Environment
 
-Both the skill and the bridge are written in [TypeScript](https://www.typescriptlang.org) and run in a [Node.js](https://nodejs.org) v14.x environment. It uses Node.js v14.x because v14.x is the Node.js version support by Amazon for skill development. So, for software development and compilation, you need Node.js v14.x installed. All other needed Node.js modules, including the TypeScript compiler, are downloaded as part of the build process.
+Both the skill and the bridge are written in [TypeScript](https://www.typescriptlang.org) and run in a [Node.js](https://nodejs.org) v16.x environment. It uses Node.js v16.x because v16.x is the Node.js version supported by Amazon for skill development. So, for software development and compilation, you need Node.js v16.x installed. All other needed Node.js modules, including the TypeScript compiler, are downloaded as part of the build process.
 
 When developing the software, I use [Visual Studio Code](https://code.visualstudio.com) with the extensions:
 
@@ -42,9 +42,9 @@ When developing the software, I use [Visual Studio Code](https://code.visualstud
 
 You need to do two things before you compile.
 
-First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common//x509/x509-generate.sh](../src/common//x509/x509-generate.sh) will generate the necessary key and certificate under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/custom-skill/login](../src/skill/lib/custom-skill/login) and put the public certificate in [src/bridge/lib/frontend/authorization](../src/bridge/lib/frontend/authorization).
+First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../src/common/x509/x509-generate.sh) will generate the necessary key (ForLGwebOSTV.key) and certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/custom-skill/login](../src/skill/lib/custom-skill/login) and put the public certificate in [src/bridge/lib/frontend/authorization](../src/bridge/lib/frontend/authorization).
 
-Second, you need to install Node.js version v14.x.
+Second, you need to install Node.js version v16.x.
 
 ## Compilation
 
@@ -86,4 +86,4 @@ The Alexa skill expects the HTTPS interface to be listening on port 25392. The b
 
 The Alexa skill must be able to validate the TLS certificate as well as be able to extract from the certificate the web server's Fully Qualified Domain Name (FQDN). Services such as [no-ip](https://www.noip.com) provide free FQDNs that will point to a dynamically assigned IP address. Services such as [Let's Encrypt](https://letsencrypt.org) provide free TLS certificates.
 
-Because LG webOS televisions advertise their capabilities using the Simple Service Discovery Protocol (SSDP), the bridge listens on port 1900 for SSDP messages. There is [SSDP DDoS attack](https://www.ncsc.gov.ie/emailsfrom/DDoS/SSDP/). Therefore, be sure that none of the SSDP ports, including 1900, are not accessible from the internet.
+Because LG webOS televisions advertise their capabilities using the Simple Service Discovery Protocol (SSDP), the bridge listens on port 1900 for SSDP messages. There is [SSDP DDoS attack](https://www.ncsc.gov.ie/emailsfrom/DDoS/SSDP/). Therefore, be sure that none of the SSDP ports, including 1900, are accessible from the internet.

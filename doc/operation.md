@@ -21,3 +21,9 @@ and Alexa will prompt you for AAA, BBB, CCC and DDD. The skill relies on the bri
 Once the skill has your bridge's hostname, it establishes the bearer token it will use to identify itself to the bridge. It starts by sending the bridge a digitally signed JSON Web Token (JWT) containing your email address. The bridge has the public key corresponding to the skill's private key, so the bridge can verify the JWT has come from the skill. If the JWT is authentic and contains an email address in the bridge's email address list, then the bridge sends the skill a bearer token to use for all future communications. If you don't know what a bearer token is, just think of it as a very long random password. If at any time you need to reestablish the bearer token, then you will need to go through the bridge setup process again.
 
 Once you have configured your bridge's hostname and bearer token, you can run discovery and Alexa will find your LG webOS TVs.
+
+If there is a problem with skill to bridge communication, you can test it using an utterance similar to
+
+`test my bridge`
+
+The skill will test he connection and provide you debug information.
