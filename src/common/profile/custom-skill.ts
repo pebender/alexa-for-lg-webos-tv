@@ -18,6 +18,7 @@ const responseErrorMessages = {
   BODY_INVALID_FORMAT:
     "Sorry, I could not retrieve your profile. The response from the server was invalid.",
   UNKNOWN_ERROR: "Sorry, I could not retrieve your profile.",
+  BAD_GATEWAY: "Sorry, I could not retrieve your profile.",
 };
 
 export async function getUserEmail(

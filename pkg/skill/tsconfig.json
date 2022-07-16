@@ -1,16 +1,10 @@
 {
-  "include": ["../../src/skill/**/*", "../../src/common/**/*"],
-  "exclude": [],
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "alexa-for-lg-webos-tv-skill",
+
+  "extends": "../../tsconfig-base.json",
+
   "compilerOptions": {
-    "lib": ["es2017"],
-    "strict": true,
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "target": "es6",
-    "noImplicitAny": false,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "sourceMap": true,
     "outDir": "./lib",
     "rootDir": "../../src",
     "baseUrl": ".",
@@ -24,5 +18,10 @@
         "../../node_modules/@types/*"
       ]
     }
-  }
+  },
+
+  "include": [
+    "../../src/skill/**/*",
+    "../../src/common/**/*"],
+  "exclude": []
 }

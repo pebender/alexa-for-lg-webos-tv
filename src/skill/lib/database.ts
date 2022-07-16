@@ -8,17 +8,6 @@ import {
 import https from "https";
 import * as Common from "../../common";
 
-// Interface File from dom is needed by type NativeAttributeBinary defined in
-// @aws-sdk/util-dynamodb/dist-types/models.d.ts
-declare global {
-  /* eslint-disable no-unused-vars */
-  interface File extends Blob {
-    readonly lastModified: number;
-    readonly name: string;
-    readonly webkitRelativePath: string;
-  }
-}
-
 export type BridgeInformation = {
   hostname: string;
   bridgeToken: string;

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "alexa-for-lg-webos-tv",
+
+  "extends": "@tsconfig/node16/tsconfig.json",
+
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "sourceMap": true
+  }
+}
