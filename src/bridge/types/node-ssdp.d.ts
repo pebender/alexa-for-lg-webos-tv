@@ -1,3 +1,5 @@
+/* eslint-disable no-dupe-class-members */
+
 // Type definitions for node-ssdp 3.3
 // Project: https://github.com/diversario/node-ssdp#readme
 // Definitions by: Olivia Trewin <https://github.com/OrionNebula>
@@ -142,6 +144,7 @@ export class Client extends Base {
       rinfo: dgram.RemoteInfo
     ) => void
   ): this;
+
   once(
     event: "response",
     listener: (
@@ -150,6 +153,7 @@ export class Client extends Base {
       rinfo: dgram.RemoteInfo
     ) => void
   ): this;
+
   emit(
     event: "response",
     headers: SsdpHeaders,
@@ -161,10 +165,12 @@ export class Client extends Base {
     event: "advertise-alive" | "advertise-bye",
     listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
   ): this;
+
   once(
     event: "advertise-alive" | "advertise-bye",
     listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
   ): this;
+
   emit(
     event: "advertise-alive" | "advertise-bye",
     headers: SsdpHeaders,
@@ -191,10 +197,12 @@ export class Server extends Base {
     event: "advertise-alive" | "advertise-bye",
     listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
   ): this;
+
   once(
     event: "advertise-alive" | "advertise-bye",
     listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
   ): this;
+
   emit(
     event: "advertise-alive" | "advertise-bye",
     headers: SsdpHeaders,

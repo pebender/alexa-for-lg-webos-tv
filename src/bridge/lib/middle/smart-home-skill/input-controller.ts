@@ -247,10 +247,10 @@ function states(
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
       };
-      const lgtvResponse: LGTV.ResponseForgroundAppInfo =
+      const lgtvResponse: LGTV.ResponseForegroundAppInfo =
         (await backendControl.lgtvCommand(
           lgtvRequest
-        )) as LGTV.ResponseForgroundAppInfo;
+        )) as LGTV.ResponseForegroundAppInfo;
       if (typeof lgtvResponse.appId === "undefined") {
         throw new Error("invalid LGTVResponse message");
       }

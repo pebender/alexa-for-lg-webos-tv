@@ -53,24 +53,29 @@ declare class LGTV extends EventEmitter {
     uri: string,
     callback: (error: Error, response: LGTV.Response) => void
   ): void;
+
   public request(
     uri: string,
     payload: LGTV.RequestPayload,
     callback: (error: Error, response: LGTV.Response) => void
   ): void;
+
   public subscribe(
     uri: string,
     callback: (error: Error, response: LGTV.Response) => void
   ): void;
+
   public subscribe(
     uri: string,
     payload: LGTV.RequestPayload,
     callback: (error: Error, response: LGTV.Response) => void
   ): void;
+
   public getSocket(
     url: string,
     callback?: (error: Error, response: LGTV.Response) => void
   ): void;
+
   public connect(host: string): void;
   public disconnect(): void;
 
@@ -94,7 +99,7 @@ declare class LGTV extends EventEmitter {
 }
 
 declare namespace LGTV {
-  interface RequestPayload {
+  export interface RequestPayload {
     [x: string]:
       | boolean
       | number
@@ -104,7 +109,7 @@ declare namespace LGTV {
         };
   }
 
-  interface Request {
+  export interface Request {
     uri: string;
     payload?: LGTV.RequestPayload;
   }
@@ -133,7 +138,7 @@ declare namespace LGTV {
    * Response to:
    * "ssap://com.webos.applicationManager/getForegroundAppInfo"
    */
-  export interface ResponseForgroundAppInfo extends Response {
+  export interface ResponseForegroundAppInfo extends Response {
     appId: string;
     windowId: string;
     processId: string;
