@@ -21,11 +21,11 @@
   ],
   "dependencies": {
     "ask-sdk": "2.12.1",
-    "@aws-sdk/client-dynamodb": "3.180.0",
-    "@aws-sdk/lib-dynamodb": "3.180.0",
-    "@aws-sdk/node-http-handler": "3.178.0",
+    "@aws-sdk/client-dynamodb": "3.236.0",
+    "@aws-sdk/lib-dynamodb": "3.236.0",
+    "@aws-sdk/node-http-handler": "3.226.0",
     "certnames": "1.0.4",
-    "jsonwebtoken": "8.5.1"
+    "jsonwebtoken": "9.0.0"
   },
   "devDependencies": {},
   "bundledDependencies": [
