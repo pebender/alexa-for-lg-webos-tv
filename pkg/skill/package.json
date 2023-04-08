@@ -20,10 +20,10 @@
     "TODO.txt"
   ],
   "dependencies": {
-    "ask-sdk": "2.12.1",
-    "@aws-sdk/client-dynamodb": "3.245.0",
-    "@aws-sdk/lib-dynamodb": "3.245.0",
-    "@aws-sdk/node-http-handler": "3.226.0",
+    "ask-sdk": "2.14.0",
+    "@aws-sdk/client-dynamodb": "3.309.0",
+    "@aws-sdk/lib-dynamodb": "3.309.0",
+    "@aws-sdk/node-http-handler": "3.306.0",
     "certnames": "1.0.4",
     "jsonwebtoken": "9.0.0"
   },
