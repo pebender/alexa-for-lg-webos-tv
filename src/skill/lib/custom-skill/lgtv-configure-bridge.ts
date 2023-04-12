@@ -199,11 +199,11 @@ const ConfigureBridgeIntentHandler = {
       `(dirty) address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`
     );
 
-    const ipAddressA: Number = Number(ipAddressAString);
-    const ipAddressB: Number = Number(ipAddressBString);
-    const ipAddressC: Number = Number(ipAddressCString);
-    const ipAddressD: Number = Number(ipAddressDString);
-    const hostnameIndex: Number = Number(hostnameIndexString);
+    const ipAddressA: number = Number(ipAddressAString);
+    const ipAddressB: number = Number(ipAddressBString);
+    const ipAddressC: number = Number(ipAddressCString);
+    const ipAddressD: number = Number(ipAddressDString);
+    const hostnameIndex: number = Number(hostnameIndexString);
     Common.Debug.debug(
       `(clean) address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`
     );
@@ -348,7 +348,7 @@ const ConfigureBridgeIntentHandler = {
           .getResponse();
       }
 
-      const hostnameIndex: Number = Number(hostnameIndexString);
+      const hostnameIndex: number = Number(hostnameIndexString);
       if (
         !Number.isInteger(hostnameIndex) ||
         hostnameIndex >= sessionAttributes.hostnames.length + 2 ||

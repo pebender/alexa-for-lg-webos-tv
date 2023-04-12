@@ -138,9 +138,9 @@ async function adjustVolumeHandler(
     let volume = lgtvResponse.volume as number;
     if (typeof alexaRequest.directive.payload.volume !== "undefined") {
       if (alexaRequest.directive.payload.volumeDefault === true) {
-        if (alexaRequest.directive.payload.volume < 0) {
+        if (alexaRequest.directive.payload.volume as number < 0) {
           volume -= 3;
-        } else if (alexaRequest.directive.payload.volume > 0) {
+        } else if (alexaRequest.directive.payload.volume as number > 0) {
           volume += 3;
         }
       } else {
