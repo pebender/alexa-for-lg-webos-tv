@@ -22,7 +22,7 @@
     "ajv": "8.12.0",
     "ajv-formats": "2.1.1",
     "async-mutex": "0.4.0",
-    "axios": "1.3.5",
+    "axios": "1.4.0",
     "express": "4.18.2",
     "express-jwt": "8.4.1",
     "http-errors": "2.0.0",
@@ -30,12 +30,12 @@
     "jsonwebtoken": "9.0.0",
     "lgtv2": "1.6.3",
     "@outofsync/express-ip-blacklist": "1.3.2",
-    "@seald-io/nedb": "4.0.1",
+    "@seald-io/nedb": "4.0.2",
     "node-arp": "1.0.6",
     "node-ssdp": "4.0.1",
     "persist-path": "1.0.2",
     "wake_on_lan": "1.0.0",
-    "xml2js": "0.5.0"
+    "xml2js": "0.6.0"
   },
   "devDependencies": {},
   "bundledDependencies": [
