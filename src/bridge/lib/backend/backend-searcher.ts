@@ -15,9 +15,9 @@ import * as dgram from "dgram";
 import { IP, MAC, TV, UDN } from "../tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import EventEmitter from "events";
-import http from "axios";
 import { parseString as xml2js } from "xml2js";
 const arp = require("node-arp");
+const http = require("axios");
 
 export interface UPnPDevice {
   root?: {
@@ -136,7 +136,8 @@ export class BackendSearcher extends EventEmitter {
         callback(null, null);
         return;
       }
-      http.get(headers.LOCATION).then((descriptionXml): void => {
+      // descriptionXML has interface 'AxiosResponse'
+      http.get(headers.LOCATION).then((descriptionXml: any): void => {
         xml2js(
           descriptionXml.data,
           (error: Error | null, description: UPnPDevice): void => {

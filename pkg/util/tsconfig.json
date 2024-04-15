@@ -13,10 +13,10 @@
         "../../src/util/types/*",
         "../../src/bridge/types/*",
         "../../src/common/types/*",
-        "node_modules/*",
         "node_modules/@types/*",
-        "../../node_modules/*",
-        "../../node_modules/@types/*"
+        "../../node_modules/@types/*",
+        "node_modules/*",
+        "../../node_modules/*"
       ]
     }
   },
