@@ -27,7 +27,11 @@
     "certnames": "1.0.4",
     "jsonwebtoken": "9.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.137",
+    "@types/jsonwebtoken": "9.0.6",
+    "@types/node": "20.12.7"
+  },
   "bundledDependencies": [
     "ask-sdk-core",
     "ask-sdk-model",
