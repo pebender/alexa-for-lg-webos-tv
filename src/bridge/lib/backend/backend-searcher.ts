@@ -14,7 +14,7 @@
 import * as dgram from "dgram";
 import { IP, MAC, TV, UDN } from "../tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
-import EventEmitter from "events";
+import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
 const arp = require("node-arp");
 const http = require("axios");

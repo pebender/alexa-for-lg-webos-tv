@@ -6,7 +6,7 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
-import EventEmitter from "events";
+import { EventEmitter } from "node:events";
 import { TV, UDN } from "../tv";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";

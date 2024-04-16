@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { Mutex } from "async-mutex";
 import * as wol from "wake_on_lan";
-import EventEmitter from "events";
+import { EventEmitter } from "node:events";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { DatabaseTable } from "../database";
 import LGTV from "lgtv2";

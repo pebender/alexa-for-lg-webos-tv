@@ -4,7 +4,7 @@ import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils
 import * as ASKModel from "ask-sdk-model";
 import * as Database from "../database";
 import * as Login from "./login";
-import tls from "tls";
+import * as tls from "node:tls";
 const certnames = require("certnames");
 
 function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {

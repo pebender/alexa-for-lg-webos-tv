@@ -1,4 +1,4 @@
-import https from "https";
+import * as https from "node:https";
 import * as Debug from "./debug";
 
 export type RequestOptions = {

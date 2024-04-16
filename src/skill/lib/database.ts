@@ -5,7 +5,7 @@ import {
   QueryCommand,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
-import https from "https";
+import * as https from "node:https";
 import * as Common from "../../common";
 
 export type BridgeInformation = {

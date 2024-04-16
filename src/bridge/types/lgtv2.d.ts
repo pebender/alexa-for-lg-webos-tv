@@ -3,7 +3,7 @@
 // Type definitions for lgtv2 1.4.1
 // Definitions by: Paul Bender
 
-import EventEmitter from "events";
+import { EventEmitter } from "node:events";
 
 /* ~ This is the module template file for class modules.
  *~ You should rename it to index.d.ts and place it in a folder with the same name as the module.

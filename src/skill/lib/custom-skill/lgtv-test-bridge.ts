@@ -3,8 +3,8 @@ import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/re
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as ASKModel from "ask-sdk-model";
 import * as Database from "../database";
-import net from "net";
-import tls from "tls";
+import * as net from "node:net";
+import * as tls from "node:tls";
 
 function getEndpointAndAccessToken(
   handlerInput: ASKHandlerInput
