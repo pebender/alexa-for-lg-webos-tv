@@ -403,6 +403,6 @@ export class Frontend {
   }
 
   public start(): void {
-    this._server.listen(Common.constants.bridge.port.http, "localhost");
+    this._server.listen(Common.constants.bridge.port.http, Common.constants.bridge.host);
   }
 }

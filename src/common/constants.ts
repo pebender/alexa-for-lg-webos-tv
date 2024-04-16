@@ -26,6 +26,9 @@ export const constants = {
     },
   },
   bridge: {
+    // The host should be set to "localhost" when running on the same host as the HTTP reverse
+    // proxy.
+    host: "0.0.0.0",
     port: {
       http: 25391,
       https: 25392,
