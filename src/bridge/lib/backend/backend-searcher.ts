@@ -60,7 +60,7 @@ export class BackendSearcher extends EventEmitter {
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-      callback: (error: Error | null, tv: TV | null) => void
+      callback: (error: Error | null, tv: TV | null) => void,
     ): void {
       const tv: {
         udn?: UDN;
@@ -76,7 +76,7 @@ export class BackendSearcher extends EventEmitter {
       }
       if (
         (headers.USN as string).endsWith(
-          "::urn:lge-com:service:webos-second-screen:1"
+          "::urn:lge-com:service:webos-second-screen:1",
         ) === false
       ) {
         callback(null, null);
@@ -175,7 +175,7 @@ export class BackendSearcher extends EventEmitter {
             //
             if (
               !description.root.device[0].manufacturer[0].match(
-                /^LG Electronics$/i
+                /^LG Electronics$/i,
               ) ||
               description.root.device[0].friendlyName[0] === "" ||
               description.root.device[0].UDN[0] === ""
@@ -200,7 +200,7 @@ export class BackendSearcher extends EventEmitter {
               // eslint-disable-next-line no-useless-return
               return;
             });
-          }
+          },
         );
       });
     }
@@ -209,7 +209,7 @@ export class BackendSearcher extends EventEmitter {
       "advertise-alive",
       (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
         ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
-      }
+      },
     );
     backendSearcher._ssdpResponse.on(
       "response",
@@ -218,7 +218,7 @@ export class BackendSearcher extends EventEmitter {
           return;
         }
         ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
-      }
+      },
     );
 
     return backendSearcher;

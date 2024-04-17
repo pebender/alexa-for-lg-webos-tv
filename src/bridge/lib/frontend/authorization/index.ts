@@ -13,7 +13,7 @@ export class Authorization {
   private constructor(
     _configuration: Configuration,
     _x509PublicCert: Buffer,
-    _db: DatabaseTable
+    _db: DatabaseTable,
   ) {
     this._configuration = _configuration;
     this._x509PublicCert = _x509PublicCert;
@@ -21,21 +21,21 @@ export class Authorization {
   }
 
   public static async build(
-    configuration: Configuration
+    configuration: Configuration,
   ): Promise<Authorization> {
     const _x509PublicCert = fs.readFileSync(
-      path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile)
+      path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile),
     );
     const _db = await DatabaseTable.build(
       "frontend",
       ["email", "hostname", "bridgeToken"],
-      "email"
+      "email",
     );
 
     const authorization = new Authorization(
       configuration,
       _x509PublicCert,
-      _db
+      _db,
     );
 
     return authorization;
@@ -59,7 +59,7 @@ export class Authorization {
     }
     const authorizedEmails = await that._configuration.authorizedEmails();
     const found = authorizedEmails.find(
-      (authorizedEmail) => jwtPayload.sub === authorizedEmail
+      (authorizedEmail) => jwtPayload.sub === authorizedEmail,
     );
 
     if (typeof found === "undefined") {
@@ -86,11 +86,11 @@ export class Authorization {
   public async setBridgeToken(
     email: string,
     hostname: string,
-    bridgeToken: string
+    bridgeToken: string,
   ): Promise<void> {
     await this._db.updateOrInsertRecord(
       { email },
-      { email, hostname, bridgeToken }
+      { email, hostname, bridgeToken },
     );
   }
 
@@ -113,7 +113,7 @@ export class Authorization {
     // CHeck if the email is still authorized and delete the record if it is not.
     const authorizedEmails = await this._configuration.authorizedEmails();
     const found = authorizedEmails.find(
-      (authorizedEmail) => email === authorizedEmail
+      (authorizedEmail) => email === authorizedEmail,
     );
     if (typeof found === "undefined") {
       await this._db.deleteRecord({ bridgeToken });

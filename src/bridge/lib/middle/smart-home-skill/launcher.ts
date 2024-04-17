@@ -57,7 +57,7 @@ const alexaToLGTV: AlexaToLGTV = createAlexaToLGTV();
 const lgtvToAlexa: LGTVToAlexa = createLGTVToAlexa();
 
 function capabilities(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -68,7 +68,7 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   if (backendControl.getPowerState() === "OFF") {
     return [];
@@ -103,7 +103,7 @@ function states(
 
 async function launchTargetHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
@@ -112,8 +112,8 @@ async function launchTargetHandler(
   ) {
     return Promise.resolve(
       Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
-        alexaRequest
-      )
+        alexaRequest,
+      ),
     );
   }
   const requestedApp = alexaToLGTV[alexaRequest.directive.payload.identifier];
@@ -136,8 +136,8 @@ async function launchTargetHandler(
       if (index < 0) {
         return Promise.resolve(
           Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
-            alexaRequest
-          )
+            alexaRequest,
+          ),
         );
       }
     } catch (error) {
@@ -145,25 +145,25 @@ async function launchTargetHandler(
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
           alexaRequest,
           200,
-          error
-        )
+          error,
+        ),
       );
     }
   }
   return Promise.resolve(
-    Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest)
+    Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest),
   );
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   if (backendControl.getPowerState() === "OFF") {
     return Promise.resolve(
       Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
-        alexaRequest
-      )
+        alexaRequest,
+      ),
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -172,8 +172,8 @@ function handler(
     default:
       return Promise.resolve(
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
-          alexaRequest
-        )
+          alexaRequest,
+        ),
       );
   }
 }

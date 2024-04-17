@@ -25,14 +25,14 @@ export class Configuration {
 
     if (typeof cfg.hostname === "undefined") {
       const error = new Error(
-        `configuration file '${cfgFile}' is missing 'hostname'.`
+        `configuration file '${cfgFile}' is missing 'hostname'.`,
       );
       Common.Debug.debugErrorWithStack(error);
       throw error;
     }
     if (typeof cfg.authorizedEmails === "undefined") {
       const error = new Error(
-        `configuration file '${cfgFile}' is missing 'authorizedEmails'.`
+        `configuration file '${cfgFile}' is missing 'authorizedEmails'.`,
       );
       Common.Debug.debugErrorWithStack(error);
       throw error;

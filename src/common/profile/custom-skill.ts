@@ -23,7 +23,7 @@ const responseErrorMessages = {
 
 export async function getUserEmail(
   apiEndpoint: string,
-  apiAccessToken: string
+  apiAccessToken: string,
 ): Promise<string> {
   const url = new URL(apiEndpoint);
   const hostname = url.hostname;

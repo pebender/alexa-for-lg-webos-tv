@@ -138,7 +138,7 @@ const ErrorHandler = {
 // Function has three arguments skillHandler(event, context, callback).
 const skillHandler = async function (
   request: ASKModel.RequestEnvelope,
-  context: ASKModel.Context
+  context: ASKModel.Context,
 ): Promise<ASKModel.ResponseEnvelope> {
   return ASKSkillBuilders.custom()
     .addRequestHandlers(...handlers)

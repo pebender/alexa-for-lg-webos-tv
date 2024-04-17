@@ -2,7 +2,7 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 
 function capabilities(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -13,7 +13,7 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   function value(): "ON" | "OFF" {
     return backendControl.getPowerState();
@@ -29,12 +29,12 @@ function states(
 
 async function turnOffHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   const poweredOff = await backendControl.turnOff();
   if (poweredOff === false) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
-      alexaRequest
+      alexaRequest,
     );
   }
   return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
@@ -42,12 +42,12 @@ async function turnOffHandler(
 
 async function turnOnHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   const poweredOn = await backendControl.turnOn();
   if (poweredOn === false) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
-      alexaRequest
+      alexaRequest,
     );
   }
   return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
@@ -55,7 +55,7 @@ async function turnOnHandler(
 
 function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff":
@@ -65,8 +65,8 @@ function handler(
     default:
       return Promise.resolve(
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
-          alexaRequest
-        )
+          alexaRequest,
+        ),
       );
   }
 }

@@ -141,8 +141,8 @@ export class Client extends Base {
     listener: (
       headers: SsdpHeaders,
       statusCode: number,
-      rinfo: dgram.RemoteInfo
-    ) => void
+      rinfo: dgram.RemoteInfo,
+    ) => void,
   ): this;
 
   once(
@@ -150,31 +150,31 @@ export class Client extends Base {
     listener: (
       headers: SsdpHeaders,
       statusCode: number,
-      rinfo: dgram.RemoteInfo
-    ) => void
+      rinfo: dgram.RemoteInfo,
+    ) => void,
   ): this;
 
   emit(
     event: "response",
     headers: SsdpHeaders,
     statusCode: number,
-    rinfo: dgram.RemoteInfo
+    rinfo: dgram.RemoteInfo,
   ): boolean;
 
   on(
     event: "advertise-alive" | "advertise-bye",
-    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
+    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void,
   ): this;
 
   once(
     event: "advertise-alive" | "advertise-bye",
-    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
+    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void,
   ): this;
 
   emit(
     event: "advertise-alive" | "advertise-bye",
     headers: SsdpHeaders,
-    rinfo: dgram.RemoteInfo
+    rinfo: dgram.RemoteInfo,
   ): boolean;
 }
 
@@ -195,17 +195,17 @@ export class Server extends Base {
 
   on(
     event: "advertise-alive" | "advertise-bye",
-    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
+    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void,
   ): this;
 
   once(
     event: "advertise-alive" | "advertise-bye",
-    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void
+    listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void,
   ): this;
 
   emit(
     event: "advertise-alive" | "advertise-bye",
     headers: SsdpHeaders,
-    rinfo: dgram.RemoteInfo
+    rinfo: dgram.RemoteInfo,
   ): boolean;
 }

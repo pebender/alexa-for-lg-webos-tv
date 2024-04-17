@@ -36,7 +36,7 @@ export type ResponseError = {
 export async function request(
   requestOptions: RequestOptions,
   bearerToken: string,
-  requestBody?: object
+  requestBody?: object,
 ): Promise<any> {
   const content = JSON.stringify(requestBody);
   const options: RequestOptions = {
@@ -166,8 +166,8 @@ export async function request(
           const name = error.name
             ? error.name
             : error.code
-            ? error.code
-            : "unknown";
+              ? error.code
+              : "unknown";
           const message = error.message ? error.message : "unknown";
           const responseErrorError = new Error(message);
           responseErrorError.name = name;

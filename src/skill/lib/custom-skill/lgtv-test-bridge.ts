@@ -7,7 +7,7 @@ import * as net from "node:net";
 import * as tls from "node:tls";
 
 function getEndpointAndAccessToken(
-  handlerInput: ASKHandlerInput
+  handlerInput: ASKHandlerInput,
 ): Promise<{ endpoint: string; accessToken: string }> {
   return new Promise((resolve, reject): void => {
     const endpoint = handlerInput.requestEnvelope.context.System.apiEndpoint;
@@ -32,7 +32,7 @@ function getEmail(endpoint: string, accessToken: string): Promise<string> {
 }
 
 async function getBridgeHostnameAndToken(
-  email: string
+  email: string,
 ): Promise<Database.BridgeInformation | null> {
   try {
     return await Database.getBridgeInformationUsingEmail(email);
@@ -108,7 +108,7 @@ function testTlsTestHostname(hostname: string, port: number): Promise<void> {
 async function testBridgeConnection(
   hostname: string,
   port: number,
-  bridgeToken: string
+  bridgeToken: string,
 ): Promise<void> {
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
@@ -125,9 +125,8 @@ async function testBridgeConnection(
 }
 
 async function test(handlerInput: ASKHandlerInput): Promise<string> {
-  const { endpoint, accessToken } = await getEndpointAndAccessToken(
-    handlerInput
-  );
+  const { endpoint, accessToken } =
+    await getEndpointAndAccessToken(handlerInput);
   let email;
   try {
     email = await getEmail(endpoint, accessToken);

@@ -21,7 +21,7 @@ const responseErrorMessages = {
 };
 
 export async function getUserProfile(
-  bearerToken: string
+  bearerToken: string,
 ): Promise<{ user_id: string; email: string; [x: string]: string }> {
   const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: "api.amazon.com",

@@ -4,13 +4,13 @@ import * as path from "path";
 import * as jwt from "jsonwebtoken";
 
 const x509PrivateKey = fs.readFileSync(
-  path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile)
+  path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),
 );
 
 function create(
   x509PrivateKey: Buffer,
   email: string,
-  hostname: string
+  hostname: string,
 ): Promise<string> {
   const payload: jwt.JwtPayload = {
     iss: Common.constants.bridge.jwt.iss,
@@ -39,7 +39,7 @@ function create(
 
 export async function getBridgeToken(
   email: string,
-  hostname: string
+  hostname: string,
 ): Promise<Common.SHS.Response> {
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,

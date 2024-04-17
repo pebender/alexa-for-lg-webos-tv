@@ -119,7 +119,7 @@ export class SHSResponse {
           endpointId?: string;
           token?: string;
           payload?: SHSEvent.Payload;
-        }
+        },
   ) {
     const optsA = opts as {
       event: SHSEvent;
@@ -256,7 +256,7 @@ export class SHSResponseWrapper {
     request: SHSRequest,
     response: SHSResponse,
     statusCode?: number,
-    error?: Error
+    error?: Error,
   ) {
     this.request = request;
     this.response = response;
@@ -304,7 +304,7 @@ export class SHSResponseWrapper {
     type: string,
     message: string,
     statusCode?: number,
-    error?: any
+    error?: any,
   ) {
     const response = new SHSResponse({
       namespace: "Alexa",
@@ -322,7 +322,7 @@ export class SHSResponseWrapper {
   public static buildAlexaErrorResponseForInternalError(
     request: SHSRequest,
     statusCode?: number,
-    error?: any
+    error?: any,
   ) {
     const errorName =
       (error as any).code ||
@@ -337,12 +337,12 @@ export class SHSResponseWrapper {
       type,
       message,
       statusCode,
-      error
+      error,
     );
   }
 
   public static buildAlexaErrorResponseForInvalidDirectiveName(
-    request: SHSRequest
+    request: SHSRequest,
   ) {
     const type = "INVALID_DIRECTIVE";
     const message = `unknown 'name' '${request.directive.header.name}' in namespace '${request.directive.header.namespace}'.`;
@@ -350,7 +350,7 @@ export class SHSResponseWrapper {
   }
 
   public static buildAlexaErrorResponseForInvalidDirectiveNamespace(
-    request: SHSRequest
+    request: SHSRequest,
   ) {
     const type = "INVALID_DIRECTIVE";
     const message = `unknown namespace '${request.directive.header.namespace}'.`;
@@ -365,26 +365,26 @@ export class SHSResponseWrapper {
 
   public static buildAlexaErrorResponseNotSupportedInCurrentMode(
     request: SHSRequest,
-    message?: string
+    message?: string,
   ) {
     const type = "  NOT_SUPPORTED_IN_CURRENT_MODE";
     return SHSResponseWrapper.buildAlexaErrorResponse(
       request,
       type,
-      message || ""
+      message || "",
     );
   }
 
   public static buildAlexaErrorResponseForValueOutOfRange(
     request: SHSRequest,
-    validRange?: { minimumValue: any; maximumValue: any }
+    validRange?: { minimumValue: any; maximumValue: any },
   ) {
     const type = "VALUE_OUT_OF_RANGE";
     const message = "";
     const responseWrapper = SHSResponseWrapper.buildAlexaErrorResponse(
       request,
       type,
-      message
+      message,
     );
     if (typeof validRange !== "undefined") {
       responseWrapper.response.event.payload.validRange = validRange;
@@ -402,7 +402,7 @@ export class SHSResponseWrapper {
     request: SHSRequest,
     type: string,
     message: string,
-    statusCode?: number
+    statusCode?: number,
   ) {
     const error = new Error(message);
     error.name = type;
@@ -412,7 +412,7 @@ export class SHSResponseWrapper {
       type,
       message,
       statusCode || 200,
-      error
+      error,
     );
   }
 }

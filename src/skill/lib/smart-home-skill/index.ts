@@ -6,7 +6,7 @@ import * as Bridge from "./bridge-api";
 
 async function handlerWithErrors(
   alexaRequest: Common.SHS.Request,
-  context: AWSLambda.Context
+  context: AWSLambda.Context,
 ): Promise<Common.SHS.ResponseWrapper> {
   if (
     typeof alexaRequest.directive.endpoint === "undefined" ||
@@ -19,7 +19,7 @@ async function handlerWithErrors(
         return alexaDiscovery.handler(alexaRequest);
       default:
         throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
-          alexaRequest
+          alexaRequest,
         );
     }
   } else {
@@ -29,7 +29,7 @@ async function handlerWithErrors(
 
 async function handler(
   event: Common.SHS.Request,
-  context: AWSLambda.Context
+  context: AWSLambda.Context,
 ): Promise<Common.SHS.Response> {
   const alexaRequest = new Common.SHS.Request(event);
 
@@ -47,7 +47,7 @@ async function handler(
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
           alexaRequest,
           200,
-          error
+          error,
         );
     }
     Common.Debug.debug("smart home skill response message");

@@ -13,7 +13,7 @@ export class Authorization {
     const _db = await DatabaseTable.build(
       "middle",
       ["email", "skillToken"],
-      "email"
+      "email",
     );
 
     const authorization = new Authorization(configuration, _db);
@@ -31,7 +31,7 @@ export class Authorization {
 
       const authorizedEmails = await this._configuration.authorizedEmails();
       const found = authorizedEmails.find(
-        (authorizedEmail) => authorizedEmail === email
+        (authorizedEmail) => authorizedEmail === email,
       );
       if (typeof found === "undefined") {
         return false;
@@ -39,7 +39,7 @@ export class Authorization {
 
       await this._db.updateOrInsertRecord(
         { email },
-        { email, userId, skillToken }
+        { email, userId, skillToken },
       );
     } else {
       // CHeck if the email is still authorized and delete the record if it is
@@ -47,7 +47,7 @@ export class Authorization {
       const authorizedEmails = await this._configuration.authorizedEmails();
       const found = authorizedEmails.find(
         (authorizedEmail) =>
-          authorizedEmail === (record as DatabaseRecord).email
+          authorizedEmail === (record as DatabaseRecord).email,
       );
       if (typeof found === "undefined") {
         await this._db.deleteRecord({ skillToken });

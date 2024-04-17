@@ -15,7 +15,7 @@ import LGTV from "lgtv2";
 interface HandlerFunction {
   (
     alexaRequest: Common.SHS.Request,
-    backendControl: BackendControl
+    backendControl: BackendControl,
   ): Promise<Common.SHS.ResponseWrapper>;
 }
 
@@ -32,7 +32,7 @@ const handlers: {
 };
 
 function capabilities(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
     ...alexa.capabilities(backendControl),
@@ -46,7 +46,7 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   return [
     ...alexa.states(backendControl),
@@ -61,7 +61,7 @@ function states(
 
 async function addStates(
   alexaResponseWrapper: Common.SHS.ResponseWrapper,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
@@ -84,7 +84,7 @@ async function addStates(
 async function handler(
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
-  backend: Backend
+  backend: Backend,
 ): Promise<Common.SHS.ResponseWrapper> {
   const alexaRequest = new Common.SHS.Request(event);
 
@@ -95,7 +95,7 @@ async function handler(
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
         alexaRequest,
         "INVALID_AUTHORIZATION_CREDENTIAL",
-        ""
+        "",
       );
     }
   } catch (error) {
@@ -105,7 +105,7 @@ async function handler(
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         alexaRequest,
         200,
-        error
+        error,
       );
     }
   }
@@ -121,7 +121,7 @@ async function handler(
         return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
-          ""
+          "",
         );
       }
 
@@ -130,13 +130,13 @@ async function handler(
         return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
-          ""
+          "",
         );
       }
 
       if (!(alexaRequest.directive.header.namespace in handlers)) {
         return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
-          alexaRequest
+          alexaRequest,
         );
       }
 
@@ -146,7 +146,7 @@ async function handler(
       try {
         handlerResponseWrapper = await controllerHandler(
           alexaRequest,
-          backendControl
+          backendControl,
         );
       } catch (error) {
         if (error instanceof Common.SHS.ResponseWrapper) {
@@ -156,7 +156,7 @@ async function handler(
             Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
               alexaRequest,
               200,
-              error
+              error,
             );
         }
       }
@@ -176,7 +176,7 @@ async function handler(
               Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
                 alexaRequest,
                 200,
-                error
+                error,
               );
           }
         }
@@ -192,7 +192,7 @@ function callback(
   response: LGTV.Response,
   udn: string,
   authorization: DirectiveAuthorization,
-  backend: Backend
+  backend: Backend,
 ) {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);
   if (error) {

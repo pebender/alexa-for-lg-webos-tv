@@ -6,14 +6,14 @@ import { handler as smartHomeSkillHandler } from "./lib/smart-home-skill";
 
 async function skillHandler(
   request: ASKModel.RequestEnvelope | Common.SHS.Request,
-  context: ASKModel.Context | AWSLambda.Context
+  context: ASKModel.Context | AWSLambda.Context,
 ): Promise<ASKModel.ResponseEnvelope | Common.SHS.Response> {
   Common.Debug.debugJSON(request);
   let response: ASKModel.ResponseEnvelope | Common.SHS.Response;
   if ("session" in request) {
     response = await customSkillHandler(
       request as ASKModel.RequestEnvelope,
-      context as ASKModel.Context
+      context as ASKModel.Context,
     );
     Common.Debug.debugJSON(response);
 
@@ -23,7 +23,7 @@ async function skillHandler(
   if ("directive" in request) {
     response = await smartHomeSkillHandler(
       request as Common.SHS.Request,
-      context as AWSLambda.Context
+      context as AWSLambda.Context,
     );
     Common.Debug.debugJSON(response);
 

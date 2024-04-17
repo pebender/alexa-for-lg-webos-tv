@@ -104,7 +104,7 @@ function lgtvCmdsCommand(backend: Backend) {
     });
   console.log('"???" means the payload is unknown.');
   console.log(
-    "Some commands return values on my TV, so I do whether they work."
+    "Some commands return values on my TV, so I do whether they work.",
   );
 }
 
@@ -157,7 +157,7 @@ async function lgtvRunCommand(backend: Backend) {
     console.log("  lgtv run <udn-index> <command> [<payload>]");
     console.log("example:");
     console.log(
-      "  lgtv run 0 'com.webos.applicationManager/launch' '{ \"id\": \"amazon\" }'"
+      "  lgtv run 0 'com.webos.applicationManager/launch' '{ \"id\": \"amazon\" }'",
     );
   }
 }

@@ -2,7 +2,7 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 
 function capabilities(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -12,14 +12,14 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   return [];
 }
 
 function reportStateHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Common.SHS.ResponseWrapper {
   const response = new Common.SHS.Response({
     namespace: "Alexa",
@@ -32,7 +32,7 @@ function reportStateHandler(
 
 function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl
+  backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   switch (alexaRequest.directive.header.name) {
     case "ReportState":
@@ -40,8 +40,8 @@ function handler(
     default:
       return Promise.resolve(
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
-          alexaRequest
-        )
+          alexaRequest,
+        ),
       );
   }
 }

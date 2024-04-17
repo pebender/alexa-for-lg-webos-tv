@@ -22,7 +22,7 @@ export class Backend extends EventEmitter {
   private constructor(
     _configuration: Configuration,
     _controller: BackendController,
-    _searcher: BackendSearcher
+    _searcher: BackendSearcher,
   ) {
     super();
 

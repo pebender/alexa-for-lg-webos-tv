@@ -8,7 +8,7 @@ export class BackendController extends EventEmitter {
   private readonly _controls: { [x: string]: BackendControl };
   private constructor(
     _db: DatabaseTable,
-    _controls: { [x: string]: BackendControl }
+    _controls: { [x: string]: BackendControl },
   ) {
     super();
 
@@ -27,7 +27,7 @@ export class BackendController extends EventEmitter {
         if (typeof backendController._controls[tv.udn] === "undefined") {
           backendController._controls[tv.udn] = await BackendControl.build(
             backendController._db,
-            tv
+            tv,
           );
           backendController.eventsAdd(tv.udn);
           backendController._controls[tv.udn].start();
@@ -81,7 +81,7 @@ export class BackendController extends EventEmitter {
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
     if (typeof this._controls[udn] === "undefined") {
       throw new Error(
-        `the requested television '${udn}' is not known in 'BackendController.${methodName}'`
+        `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
       );
     }
   }
@@ -110,7 +110,7 @@ export class BackendController extends EventEmitter {
             url: tv.url,
             mac: tv.mac,
             key: "",
-          }
+          },
         );
       }
       if (typeof this._controls[tv.udn] === "undefined") {

@@ -5,7 +5,7 @@ import { constants } from "../../../../common/constants";
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backend: Backend
+  backend: Backend,
 ): Promise<Common.SHS.ResponseWrapper> {
   //
   // This looks strange at first. However, once it is explained, this
@@ -38,13 +38,13 @@ async function handler(
   // use 'await' to ensure we have the values from the resolved promises.
   //
   async function buildEndpoint(
-    backendControl: BackendControl
+    backendControl: BackendControl,
   ): Promise<Common.SHS.Event.Payload.Endpoint> {
     let capabilities: Common.SHS.Event.Payload.Endpoint.Capability[] = [];
     try {
       // Determine capabilities in parallel.
       capabilities = await Promise.all(
-        alexaSmartHomeCapabilities(backendControl)
+        alexaSmartHomeCapabilities(backendControl),
       );
     } catch (error) {
       capabilities = [];
@@ -67,13 +67,13 @@ async function handler(
   }
 
   function buildEndpoints(
-    backendControls: BackendControl[]
+    backendControls: BackendControl[],
   ): Promise<Common.SHS.Event.Payload.Endpoint[]> {
     return Promise.all(backendControls.map(buildEndpoint));
   }
 
   function buildResponse(
-    endpoints: Common.SHS.Event.Payload.Endpoint[]
+    endpoints: Common.SHS.Event.Payload.Endpoint[],
   ): Common.SHS.Response {
     const alexaResponse = new Common.SHS.Response({
       namespace: "Alexa.Discovery",

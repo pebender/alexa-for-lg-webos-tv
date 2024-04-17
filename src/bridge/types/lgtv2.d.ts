@@ -51,29 +51,29 @@ declare class LGTV extends EventEmitter {
   public request(uri: string): void;
   public request(
     uri: string,
-    callback: (error: Error, response: LGTV.Response) => void
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public request(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error, response: LGTV.Response) => void
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
-    callback: (error: Error, response: LGTV.Response) => void
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error, response: LGTV.Response) => void
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public getSocket(
     url: string,
-    callback?: (error: Error, response: LGTV.Response) => void
+    callback?: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public connect(host: string): void;

@@ -105,7 +105,7 @@ export class SHSRequest {
       name,
       message,
       200,
-      error
+      error,
     );
   }
 
@@ -121,7 +121,7 @@ export class SHSRequest {
       throw SHSResponseWrapper.buildAlexaErrorResponseForInternalError(
         this,
         200,
-        error
+        error,
       );
     }
   }

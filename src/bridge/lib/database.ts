@@ -25,10 +25,10 @@ export class DatabaseTable {
   public static async build(
     name: string,
     indexes: string[],
-    key: string
+    key: string,
   ): Promise<DatabaseTable> {
     const configurationDir = persistPath(
-      Common.constants.application.name.safe
+      Common.constants.application.name.safe,
     );
 
     //
@@ -78,7 +78,7 @@ export class DatabaseTable {
 
   public async updateRecord(
     query: DatabaseQuery,
-    update: DatabaseUpdate
+    update: DatabaseUpdate,
   ): Promise<void> {
     await this._db.updateAsync(query, update, {});
     await this._db.compactDatafileAsync();
@@ -86,7 +86,7 @@ export class DatabaseTable {
 
   public async updateOrInsertRecord(
     query: DatabaseQuery,
-    update: DatabaseUpdate
+    update: DatabaseUpdate,
   ): Promise<void> {
     await this._db.updateAsync(query, update, { upsert: true });
     await this._db.compactDatafileAsync();

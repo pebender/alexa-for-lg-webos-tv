@@ -25,21 +25,21 @@ function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {
 }
 
 async function creatHostnamesSimpleCardContent(
-  handlerInput: ASKHandlerInput
+  handlerInput: ASKHandlerInput,
 ): Promise<string> {
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
   const ipAddressA: Number = Number(
-    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressA")
+    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressA"),
   );
   const ipAddressB: Number = Number(
-    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressB")
+    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressB"),
   );
   const ipAddressC: Number = Number(
-    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressC")
+    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressC"),
   );
   const ipAddressD: Number = Number(
-    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressD")
+    ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressD"),
   );
   sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`;
   Reflect.deleteProperty(sessionAttributes, "hostnames");
@@ -47,20 +47,20 @@ async function creatHostnamesSimpleCardContent(
   try {
     sessionAttributes.hostnames = await getHostnames(
       sessionAttributes.ipAddress,
-      25392
+      25392,
     );
   } catch (error) {
     Common.Debug.debug(
-      `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'.`
+      `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'.`,
     );
     Common.Debug.debugError(error);
     throw new Error(
-      "I had a problem connecting to the bridge's I.P.  address."
+      "I had a problem connecting to the bridge's I.P.  address.",
     );
   }
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
   Common.Debug.debug(
-    `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`
+    `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`,
   );
   let cardContent: string = "";
   let index = 0;
@@ -72,20 +72,20 @@ async function creatHostnamesSimpleCardContent(
   index += 1;
   cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`;
   Common.Debug.debug(
-    `LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`
+    `LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`,
   );
   return cardContent;
 }
 
 async function saveBridgeHostnameAndToken(
-  handlerInput: ASKHandlerInput
+  handlerInput: ASKHandlerInput,
 ): Promise<void> {
   const apiEndpoint = handlerInput.requestEnvelope.context.System.apiEndpoint;
   const apiAccessToken =
     handlerInput.requestEnvelope.context.System.apiAccessToken;
   if (typeof apiAccessToken === "undefined") {
     throw new Error(
-      "There was a problem with account linking. Please re-link the skill and try again."
+      "There was a problem with account linking. Please re-link the skill and try again.",
     );
   }
   Common.Debug.debug(`apiEndpoint: ${apiEndpoint}`);
@@ -94,12 +94,12 @@ async function saveBridgeHostnameAndToken(
   try {
     email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken);
     Common.Debug.debug(
-      `LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`
+      `LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`,
     );
   } catch (error: any) {
     Common.Debug.debug(`LGTV_ConfigureBridgeIntent: ${error.message}`);
     throw new Error(
-      "I encountered a problem retrieving your user profile. So, I cannot configure your bridge."
+      "I encountered a problem retrieving your user profile. So, I cannot configure your bridge.",
     );
   }
 
@@ -107,7 +107,7 @@ async function saveBridgeHostnameAndToken(
     handlerInput.attributesManager.getSessionAttributes();
   const hostnameIndex = ASKRequestEnvelope.getSlotValue(
     handlerInput.requestEnvelope,
-    "hostnameIndex"
+    "hostnameIndex",
   ) as string;
   const hostname = sessionAttributes.hostnames[hostnameIndex];
 
@@ -119,27 +119,27 @@ async function saveBridgeHostnameAndToken(
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error:");
     Common.Debug.debugError(error);
     throw new Error(
-      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge."
+      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
   if (typeof bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error");
     throw new Error(
-      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge."
+      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
 
   try {
     await Database.setBridgeInformation(email, { hostname, bridgeToken });
     Common.Debug.debug(
-      "LGTV_ConfigureBridgeIntent: setBridgeInformation: success"
+      "LGTV_ConfigureBridgeIntent: setBridgeInformation: success",
     );
   } catch (error) {
     Common.Debug.debug(
-      "LGTV_ConfigureBridgeIntent setBridgeInformation: error:"
+      "LGTV_ConfigureBridgeIntent setBridgeInformation: error:",
     );
     throw new Error(
-      "I encountered a problem saving your bridge's configuration. So, I cannot configure your bridge."
+      "I encountered a problem saving your bridge's configuration. So, I cannot configure your bridge.",
     );
   }
 }
@@ -161,42 +161,42 @@ const ConfigureBridgeIntentHandler = {
     const intentRequest = handlerInput.requestEnvelope
       .request as ASKModel.IntentRequest;
     const dialogState: ASKModel.DialogState = ASKRequestEnvelope.getDialogState(
-      handlerInput.requestEnvelope
+      handlerInput.requestEnvelope,
     );
     Common.Debug.debug(`dialogState: ${dialogState}`);
 
     const ipAddressAString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "ipAddressA"
+        "ipAddressA",
       );
     const ipAddressBString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "ipAddressB"
+        "ipAddressB",
       );
     const ipAddressCString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "ipAddressC"
+        "ipAddressC",
       );
     const ipAddressDString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "ipAddressD"
+        "ipAddressD",
       );
     const ipAddressValidString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "ipAddressValid"
+        "ipAddressValid",
       );
     const hostnameIndexString: String | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
-        "hostnameIndex"
+        "hostnameIndex",
       );
     Common.Debug.debug(
-      `(dirty) address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`
+      `(dirty) address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`,
     );
 
     const ipAddressA: number = Number(ipAddressAString);
@@ -205,7 +205,7 @@ const ConfigureBridgeIntentHandler = {
     const ipAddressD: number = Number(ipAddressDString);
     const hostnameIndex: number = Number(hostnameIndexString);
     Common.Debug.debug(
-      `(clean) address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`
+      `(clean) address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`,
     );
 
     if (dialogState === "STARTED") {
@@ -332,7 +332,7 @@ const ConfigureBridgeIntentHandler = {
             .speak(
               `${
                 (error as Error).message
-              } Please check your bridge installation and start over.`
+              } Please check your bridge installation and start over.`,
             )
             .withShouldEndSession(true)
             .getResponse();
@@ -340,7 +340,7 @@ const ConfigureBridgeIntentHandler = {
 
         const cardTitle = "Bridge  Hostname Configuration";
         Common.Debug.debug(
-          `LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`
+          `LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`,
         );
         return handlerInput.responseBuilder
           .withSimpleCard(cardTitle, cardContent)
@@ -367,7 +367,7 @@ const ConfigureBridgeIntentHandler = {
       if (hostnameIndex === sessionAttributes.hostnames.length + 1) {
         return handlerInput.responseBuilder
           .speak(
-            "I'm sorry. I misheard your bridge's I.P. address. Will we need to start over."
+            "I'm sorry. I misheard your bridge's I.P. address. Will we need to start over.",
           )
           .withShouldEndSession(true)
           .getResponse();
@@ -380,11 +380,11 @@ const ConfigureBridgeIntentHandler = {
       if (intentRequest.intent.confirmationStatus !== "CONFIRMED") {
         const hostnameIndex = ASKRequestEnvelope.getSlotValue(
           handlerInput.requestEnvelope,
-          "hostnameIndex"
+          "hostnameIndex",
         );
         return handlerInput.responseBuilder
           .speak(
-            `Is your bridge's hostname ${sessionAttributes.hostnames[hostnameIndex]}?`
+            `Is your bridge's hostname ${sessionAttributes.hostnames[hostnameIndex]}?`,
           )
           .addConfirmIntentDirective()
           .getResponse();
@@ -402,7 +402,7 @@ const ConfigureBridgeIntentHandler = {
           Reflect.deleteProperty(sessionAttributes, "ipAddress");
           Reflect.deleteProperty(sessionAttributes, "hostnames");
           handlerInput.attributesManager.setSessionAttributes(
-            sessionAttributes
+            sessionAttributes,
           );
           return handlerInput.responseBuilder
             .speak((error as Error).message)
@@ -414,7 +414,7 @@ const ConfigureBridgeIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
         return handlerInput.responseBuilder
           .speak(
-            "Congratulations. Bridge configuration is complete. You can now use the skill to control your TV."
+            "Congratulations. Bridge configuration is complete. You can now use the skill to control your TV.",
           )
           .withShouldEndSession(true)
           .getResponse();
@@ -430,14 +430,14 @@ const ConfigureBridgeIntentHandler = {
       }
       return handlerInput.responseBuilder
         .speak(
-          "Not CONFIRMED or DENIED. How did I get here? I will start over."
+          "Not CONFIRMED or DENIED. How did I get here? I will start over.",
         )
         .withShouldEndSession(true)
         .getResponse();
     }
     return handlerInput.responseBuilder
       .speak(
-        "Not STARTED, IN_PROGRESS or COMPLETED. How did I get here? I will start over."
+        "Not STARTED, IN_PROGRESS or COMPLETED. How did I get here? I will start over.",
       )
       .withShouldEndSession(true)
       .getResponse();

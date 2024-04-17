@@ -31,7 +31,7 @@ export class Frontend {
     _ipBlacklist: any,
     _ajv: Ajv,
     _schemaValidator: AjvTypes.ValidateFunction,
-    _server: express.Express
+    _server: express.Express,
   ) {
     this._authorization = _authorization;
     this._middle = _middle;
@@ -83,14 +83,14 @@ export class Frontend {
       _ipBlacklist,
       _ajv,
       _schemaValidator,
-      _server
+      _server,
     );
 
     function buildServer(): void {
       function requestHeaderLoggingHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): void {
         Common.Debug.debug("HTTP request headers:");
         Common.Debug.debug(`hostname: ${req.hostname}`);
@@ -103,7 +103,7 @@ export class Frontend {
       function ipBlacklistHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): void {
         Common.Debug.debug("ipBlacklistHandler: start");
         frontend._ipBlacklist.checkBlacklist(req, res, next);
@@ -112,7 +112,7 @@ export class Frontend {
 
       function ipBlacklistIncrement(
         req: express.Request,
-        res: express.Response
+        res: express.Response,
       ): void {
         Common.Debug.debug("ipBlacklistIncrement: start");
         frontend._ipBlacklist.increment(req, res);
@@ -122,7 +122,7 @@ export class Frontend {
         err: any,
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): void {
         Common.Debug.debug("jwtErrorHandler: start");
         if (res.headersSent) {
@@ -143,7 +143,7 @@ export class Frontend {
       async function jwtPayloadHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ) {
         Common.Debug.debug("jwtPayloadHandler: start");
         const jwtPayload = (req as unknown as ExpressJwtRequest).auth;
@@ -186,7 +186,7 @@ export class Frontend {
           await frontend._authorization.setBridgeToken(
             email,
             hostname,
-            bridgeToken
+            bridgeToken,
           );
         } catch (error) {
           res.status(500).json({});
@@ -201,7 +201,7 @@ export class Frontend {
       async function bridgeTokenAuthorizationHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): Promise<void> {
         Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
         function shsInvalidAuthorizationCredentialResponse(message: string) {
@@ -223,7 +223,7 @@ export class Frontend {
         if (req.headers.authorization === "undefined") {
           ipBlacklistIncrement(req, res);
           const body = shsInvalidAuthorizationCredentialResponse(
-            'Bridge connection failed due to missing "authorization" header.'
+            'Bridge connection failed due to missing "authorization" header.',
           );
           Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
           Common.Debug.debugJSON(body);
@@ -234,12 +234,12 @@ export class Frontend {
           return;
         }
         const authorization = (req.headers.authorization as string).split(
-          /\s+/
+          /\s+/,
         );
         if (authorization.length !== 2) {
           ipBlacklistIncrement(req, res);
           const body = shsInvalidAuthorizationCredentialResponse(
-            'Bridge connection failed due to malformed "authorization" header.'
+            'Bridge connection failed due to malformed "authorization" header.',
           );
           Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
           Common.Debug.debugJSON(body);
@@ -252,7 +252,7 @@ export class Frontend {
         if (authorization[0].toLowerCase() !== "bearer") {
           ipBlacklistIncrement(req, res);
           const body = shsInvalidAuthorizationCredentialResponse(
-            "Bridge connection failed due to incorrect authorization method."
+            "Bridge connection failed due to incorrect authorization method.",
           );
           Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
           Common.Debug.debugJSON(body);
@@ -265,13 +265,12 @@ export class Frontend {
         const bridgeToken = authorization[1];
 
         try {
-          const authorized = await frontend._authorization.authorizeBridgeToken(
-            bridgeToken
-          );
+          const authorized =
+            await frontend._authorization.authorizeBridgeToken(bridgeToken);
           if (!authorized) {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
-              "Bridge connection failed due to invalid bearer token."
+              "Bridge connection failed due to invalid bearer token.",
             );
             res
               .setHeader("WWW-Authenticate", wwwAuthenticate)
@@ -293,7 +292,7 @@ export class Frontend {
       function requestTypeHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): void {
         const contentType = req.headers["content-type"];
         if (typeof contentType === "undefined") {
@@ -312,7 +311,7 @@ export class Frontend {
       async function testHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): Promise<void> {
         Common.Debug.debug("Test:");
 
@@ -322,7 +321,7 @@ export class Frontend {
       async function shsHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction
+        next: express.NextFunction,
       ): Promise<void> {
         const shsRequest = req.body;
         Common.Debug.debug("Smart Home Skill Request:");
@@ -344,17 +343,17 @@ export class Frontend {
           const valid = await frontend._schemaValidator(shsResponse);
           if (!valid) {
             Common.Debug.debug(
-              "Smart Home Skill Response schema validation validation"
+              "Smart Home Skill Response schema validation validation",
             );
             Common.Debug.debugJSON(frontend._schemaValidator.errors);
           } else {
             Common.Debug.debug(
-              "Smart Home Skill Response schema validation passed"
+              "Smart Home Skill Response schema validation passed",
             );
           }
         } catch (error) {
           Common.Debug.debug(
-            "Smart Home Skill Response schema validation error:"
+            "Smart Home Skill Response schema validation error:",
           );
           Common.Debug.debugError(error);
         }
@@ -374,7 +373,7 @@ export class Frontend {
           algorithms: ["RS256"],
         }),
         jwtErrorHandler,
-        jwtPayloadHandler
+        jwtPayloadHandler,
       );
       // Handle Smart Home Skill directives.
       frontend._server.post(
@@ -382,18 +381,18 @@ export class Frontend {
         bridgeTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
-        shsHandler
+        shsHandler,
       );
       // Handle test
       frontend._server.get(
         Common.constants.bridge.path.test,
         bridgeTokenAuthorizationHandler,
-        testHandler
+        testHandler,
       );
       frontend._server.use(
         (req: express.Request, res: express.Response): void => {
           res.status(404).json({});
-        }
+        },
       );
     }
 
@@ -403,6 +402,9 @@ export class Frontend {
   }
 
   public start(): void {
-    this._server.listen(Common.constants.bridge.port.http, Common.constants.bridge.host);
+    this._server.listen(
+      Common.constants.bridge.port.http,
+      Common.constants.bridge.host,
+    );
   }
 }

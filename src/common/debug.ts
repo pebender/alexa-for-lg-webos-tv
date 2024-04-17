@@ -31,8 +31,8 @@ export function debugErrorWithStack(error: any) {
     const name = (error as any).name
       ? (error as any).name
       : (error as any).code
-      ? (error as any).code
-      : "unknown";
+        ? (error as any).code
+        : "unknown";
     console.debug(`error: ${message} (${name})`);
 
     const stack = (error as any).stack

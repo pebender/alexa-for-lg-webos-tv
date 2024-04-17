@@ -20,7 +20,7 @@ export class BackendControl extends EventEmitter {
     _tv: TV,
     _connection: LGTV,
     _ssdpNotify: SsdpClient,
-    _ssdpResponse: SsdpClient
+    _ssdpResponse: SsdpClient,
   ) {
     super();
 
@@ -69,7 +69,7 @@ export class BackendControl extends EventEmitter {
       _tv,
       _connection,
       _ssdpNotify,
-      _ssdpResponse
+      _ssdpResponse,
     );
 
     // Added event handlers.
@@ -80,7 +80,7 @@ export class BackendControl extends EventEmitter {
         if (error && error.code !== "EHOSTUNREACH") {
           backendControl.emit("error", error, backendControl._tv.udn);
         }
-      }
+      },
     );
     backendControl._connection.on("connecting", (): void => {
       backendControl._connecting = true;
@@ -154,7 +154,7 @@ export class BackendControl extends EventEmitter {
 
     function startInterval(
       milliseconds: number,
-      handler: () => void
+      handler: () => void,
     ): NodeJS.Timeout {
       handler();
       return setInterval(handler, milliseconds);
@@ -206,7 +206,7 @@ export class BackendControl extends EventEmitter {
                 finishTimeoutObject = null;
               }
               resolve(finishUUID);
-            })
+            }),
         );
         if (finishUUID !== null && currentUUID === finishUUID) {
           if (finished === false) {
@@ -230,7 +230,7 @@ export class BackendControl extends EventEmitter {
       searchTimeoutObject = startInterval(251, (): void => {
         if (that._ssdpResponse !== null) {
           that._ssdpResponse.search(
-            "urn:lge-com:service:webos-second-screen:1"
+            "urn:lge-com:service:webos-second-screen:1",
           );
         }
       });
@@ -256,9 +256,9 @@ export class BackendControl extends EventEmitter {
                 return;
               }
               resolve(response);
-            }
+            },
           );
-        }
+        },
       );
     } else {
       lgtvResponse = await new Promise((resolve, reject): void => {
@@ -271,13 +271,13 @@ export class BackendControl extends EventEmitter {
               return;
             }
             resolve(response);
-          }
+          },
         );
       });
     }
     if (typeof lgtvResponse.returnValue === "undefined") {
       const error = new Error(
-        "'LGTVResponse' does not contain property 'returnValue'"
+        "'LGTVResponse' does not contain property 'returnValue'",
       );
       error.name = "NO_RETURN_VALUE";
       Error.captureStackTrace(error);

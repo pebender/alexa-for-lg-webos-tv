@@ -29,7 +29,7 @@ const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 export async function setBridgeInformation(
   email: string,
-  bridgeInformation: BridgeInformation
+  bridgeInformation: BridgeInformation,
 ) {
   const bridgeInformationUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -45,7 +45,7 @@ export async function setBridgeInformation(
   Common.Debug.debugJSON(bridgeInformationUpdateParams);
   try {
     await dynamoDBDocumentClient.send(
-      new UpdateCommand(bridgeInformationUpdateParams)
+      new UpdateCommand(bridgeInformationUpdateParams),
     );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
@@ -54,7 +54,7 @@ export async function setBridgeInformation(
 }
 
 export async function getBridgeInformationUsingEmail(
-  email: string
+  email: string,
 ): Promise<BridgeInformation | null> {
   const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -66,7 +66,7 @@ export async function getBridgeInformationUsingEmail(
   let data;
   try {
     data = await dynamoDBDocumentClient.send(
-      new QueryCommand(skillTokenQueryParams)
+      new QueryCommand(skillTokenQueryParams),
     );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
@@ -94,7 +94,7 @@ export async function getBridgeInformationUsingEmail(
 }
 
 export async function getBridgeInformation(
-  skillToken: string
+  skillToken: string,
 ): Promise<BridgeInformation | null> {
   const skillTokenQueryParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -107,7 +107,7 @@ export async function getBridgeInformation(
   let data;
   try {
     data = await dynamoDBDocumentClient.send(
-      new QueryCommand(skillTokenQueryParams)
+      new QueryCommand(skillTokenQueryParams),
     );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
@@ -146,7 +146,7 @@ export async function getEmail(skillToken: string): Promise<string | null> {
   let data;
   try {
     data = await dynamoDBDocumentClient.send(
-      new QueryCommand(skillTokenQueryParams)
+      new QueryCommand(skillTokenQueryParams),
     );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);
@@ -170,7 +170,7 @@ export async function getEmail(skillToken: string): Promise<string | null> {
 
 export async function setSkillToken(
   email: string,
-  skillToken: string
+  skillToken: string,
 ): Promise<void> {
   const skillTokenUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -181,7 +181,7 @@ export async function setSkillToken(
 
   try {
     await dynamoDBDocumentClient.send(
-      new UpdateCommand(skillTokenUpdateParams)
+      new UpdateCommand(skillTokenUpdateParams),
     );
   } catch (error) {
     Common.Debug.debugErrorWithStack(error);

@@ -35,7 +35,7 @@ export class Middle {
           response,
           udn,
           middle._authorization,
-          middle._backend
+          middle._backend,
         );
       });
     });
@@ -44,7 +44,7 @@ export class Middle {
   }
 
   public async handler(
-    alexaRequest: Common.SHS.Request
+    alexaRequest: Common.SHS.Request,
   ): Promise<Common.SHS.ResponseWrapper> {
     return await SHS.handler(alexaRequest, this._authorization, this._backend);
   }
