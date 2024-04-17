@@ -72,6 +72,8 @@ export class Frontend {
       "uuid",
       "json-pointer",
       "relative-json-pointer",
+      "int32",
+      "double",
       "regex",
     ]);
     const _schemaValidator = _ajv.compile(Common.SHS.schema);
