@@ -11,7 +11,7 @@
 // <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf>
 // <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
 //
-import * as dgram from "dgram";
+import * as dgram from "node:dgram";
 import { IP, MAC, TV, UDN } from "../tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { EventEmitter } from "node:events";

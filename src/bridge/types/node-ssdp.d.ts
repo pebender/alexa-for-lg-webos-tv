@@ -8,7 +8,7 @@
 /// <reference types="node" />
 
 import * as events from "node:events";
-import * as dgram from "dgram";
+import * as dgram from "node:dgram";
 
 export interface SsdpHeaders {
   /**
