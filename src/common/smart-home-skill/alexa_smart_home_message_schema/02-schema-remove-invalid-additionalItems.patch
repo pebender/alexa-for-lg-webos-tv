@@ -1,5 +1,5 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 15:22:50.008138388 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 15:23:07.556137691 -0700
+--- alexa_smart_home_message_schema.json.old	2024-04-17 17:56:44.527131837 -0700
++++ alexa_smart_home_message_schema.json.new	2024-04-17 17:57:55.315378239 -0700
 @@ -79,7 +79,6 @@
          "state.properties": {
              "type": "array",
@@ -8,7 +8,7 @@
              "items": {
                  "anyOf": [
                      {
-@@ -3062,7 +3061,6 @@
+@@ -3063,7 +3062,6 @@
              "type": "array",
              "minItems": 1,
              "uniqueItems": true,

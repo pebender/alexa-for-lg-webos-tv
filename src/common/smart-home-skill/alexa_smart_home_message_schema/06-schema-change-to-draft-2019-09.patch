@@ -1,5 +1,5 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 17:37:45.971816565 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 17:38:25.823814980 -0700
+--- alexa_smart_home_message_schema.json.old	2024-04-17 18:02:06.548164053 -0700
++++ alexa_smart_home_message_schema.json.new	2024-04-17 18:02:42.772268282 -0700
 @@ -1,5 +1,5 @@
  {
 -    "$schema": "http://json-schema.org/draft-04/schema#",

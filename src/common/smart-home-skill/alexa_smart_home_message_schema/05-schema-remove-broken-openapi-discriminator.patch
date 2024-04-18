@@ -1,6 +1,6 @@
---- alexa_smart_home_message_schema.json.old	2022-04-17 17:13:50.215873637 -0700
-+++ alexa_smart_home_message_schema.json.new	2022-04-17 17:14:29.371872081 -0700
-@@ -2669,10 +2669,7 @@
+--- alexa_smart_home_message_schema.json.old	2024-04-17 18:01:23.372037198 -0700
++++ alexa_smart_home_message_schema.json.new	2024-04-17 18:02:06.548164053 -0700
+@@ -2870,10 +2870,7 @@
                                          ]
                                      },
                                      "foodQuantity": {
