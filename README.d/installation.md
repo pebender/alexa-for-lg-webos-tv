@@ -15,8 +15,8 @@ To get the skill running, you need to
 
 To get the bridge running, you need to
 
-- acquire a TLS certificate (e.g. a TLS certificate from [Let's Encrypt](https://letsencrypt.org)),
-- set up a reverse proxy,
+- acquire a TLS certificate trusted by Amazon Web Services (e.g. a TLS certificate from [Let's Encrypt](https://letsencrypt.org)),
+- set up a reverse HTTP proxy,
 - install Node.js, and
 - install and start the bridge software.
 
@@ -28,14 +28,9 @@ When developing the software, I use [Visual Studio Code](https://code.visualstud
 
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Node.js Modules Intellisense](https://marketplace.visualstudio.com/items?itemName=leizongmin.node-module-intellisense)
-- [npm](https://marketplace.visualstudio.com/items?itemName=eg2.vscode-npm-script)
 - [npm Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.npm-intellisense)
-- [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
-- [Markdown Preview Enhanced](https://marketplace.visualstudio.com/items?itemName=shd101wyy.markdown-preview-enhanced)
 - [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
-- [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 - [Git History](https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory)
 
 ## Pre-Compilation
@@ -78,7 +73,7 @@ The DynamoDB table has the fields: email, hostname, bridgeToken and skillToken. 
 
 The bridge has three interfaces: an HTTP interface for communication with the Alexa skill, an SSDP/SSAP interface for communication with the LG webOS television(s), and a filesystem interface for storing a retrieving persistent configuration.
 
-While there is no reason to expect that the bridge won't run in a Node.js environment newer than version v20.x, versions other than v20.x have not been tested. While there is no reason to expect that the bridge won't run on non-Linux operating systems, operating systems other than Linux (specifically a [Synology NAS DSM](https://www.synology.com/en-global)) have not been tested.
+While there is no reason to expect that the bridge won't run in a Node.js environment new than version v20.x, versions other than v20.x have not been tested. While there is no reason to expect that the bridge won't run on non-Linux operating systems, operating systems other than Linux (specifically a [Synology NAS DSM](https://www.synology.com/en-global)) have not been tested.
 
 Because the Alexa skill communicates with the bridge's HTTP interface, the bridge's HTTP interface must be accessible from the internet. While the bridge does not support HTTPS, the Alexa skill expects HTTPS. One way to meet this requirement is to run the bridge behind a [NGINX](https://www.nginx.com) web server acting as a [reverse proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/).
 
@@ -86,4 +81,4 @@ The Alexa skill expects the HTTPS interface to be listening on port 25392. The b
 
 The Alexa skill must be able to validate the TLS certificate as well as be able to extract from the certificate the web server's Fully Qualified Domain Name (FQDN). Services such as [no-ip](https://www.noip.com) provide free FQDNs that will point to a dynamically assigned IP address. Services such as [Let's Encrypt](https://letsencrypt.org) provide free TLS certificates.
 
-Because LG webOS televisions advertise their capabilities using the Simple Service Discovery Protocol (SSDP), the bridge listens on port 1900 for SSDP messages. There is [SSDP DDoS attack](https://www.ncsc.gov.ie/emailsfrom/DDoS/SSDP/). Therefore, be sure that none of the SSDP ports, including 1900, are accessible from the internet.
+Because LG webOS televisions advertise their capabilities using the Simple Service Discovery Protocol (SSDP), the bridge listens on port 1900 for SSDP messages. There is [SSDP DDoS attack](https://www.cisa.gov/news-events/alerts/2014/01/17/udp-based-amplification-attacks). Therefore, be sure that none of the SSDP ports, including 1900, are accessible from the internet.
