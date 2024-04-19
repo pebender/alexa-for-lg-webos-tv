@@ -19,11 +19,11 @@ However, there are many things left to do
 
 ## Table of Contents
 
-- [Installation](./doc/installation.md#installation)
-  - [Development Environment](./doc/installation.md#development-environment)
-  - [Compilation](./doc/installation.md#compilation)
-  - [Skill Installation](./doc/installation.md#skill-installation)
-  - [Bridge Installation](./doc/installation.md#bridge-installation)
-- [Operation](./doc/operation.md#operation)
-- [Implementation](./doc/implementation.md#implementation)
-- [LG WebOS TV Commands](./doc/lg-webos-tv-commands.md#lg-webos-tv-commands)
+- [Installation](./README.d/installation.md#installation)
+  - [Development Environment](./README.d/installation.md#development-environment)
+  - [Compilation](./README.d/installation.md#compilation)
+  - [Skill Installation](./README.d/installation.md#skill-installation)
+  - [Bridge Installation](./README.d/installation.md#bridge-installation)
+- [Operation](./README.d/operation.md#operation)
+- [Implementation](./README.d/implementation.md#implementation)
+- [LG WebOS TV Commands](./README.d/lg-webos-tv-commands.md#lg-webos-tv-commands)
