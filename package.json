@@ -32,6 +32,7 @@
     "typescript": "5.4.5"
   },
   "scripts": {
+    "lint": "npx eslint `find src/ | grep '\\.ts$'`",
     "clean": "rm -rf node_modules package-lock.json && (cd pkg/skill && npm run clean) && (cd pkg/bridge && npm run clean) && (cd pkg/util && npm run clean)",
     "install_modules": "npm install && (cd pkg/skill && npm install) && (cd pkg/bridge && npm install) && (cd pkg/util && npm install)",
     "build": "(cd pkg/skill && npm run build) && (cd pkg/bridge && npm run build) && (cd pkg/util && npm run build)",
