@@ -116,6 +116,7 @@ The JWT has the form
     "aud": "https://HOSTNAME/api/ForLGwebOSTV/v1",
     "exp": "NOW + 1m"
 }
+```
 
 where EMAIL is the user's email address and HOSTNAME is the bridge's hostname. The expiration time is just 1m into the future to reduce the chance of replay attacks. The skill signs JWT using and x509 private key. The bridge authenticates the JWT using the corresponding x509 public key.
 
@@ -124,4 +125,3 @@ It is important to note that the authorization to use the service is the result 
 If the bridge accepts the JWT, then it responds with a bearer token. The skill uses this bearer token when communicating with the bridge's skill interface.
 
 As further protection, the bridge implements dynamic IP address blocking. After a small number of JWT authorization failures originating from an IP address, the IP address is temporarily blocked.
-```
