@@ -26,22 +26,22 @@ export interface SsdpHeaders {
 export interface SsdpOptions {
   /**
    * SSDP signature
-   * @default 'node.js/NODE_VERSION UPnP/1.1 node-ssdp/PACKAGE_VERSION'
+   * @defaultValue 'node.js/NODE_VERSION UPnP/1.1 node-ssdp/PACKAGE_VERSION'
    */
   ssdpSig?: string;
   /**
    * SSDP multicast group
-   * @default '239.255.255.250'
+   * @defaultValue '239.255.255.250'
    */
   ssdpIp?: string;
   /**
    * Multicast TTL
-   * @default 4
+   * @defaultValue 4
    */
   ssdpTtl?: number;
   /**
    * SSDP port
-   * @default 1900
+   * @defaultValue 1900
    */
   ssdpPort?: number;
   sourcePort?: number;
@@ -60,7 +60,7 @@ export interface ClientOptions extends SsdpOptions {
   explicitSocketBind?: boolean;
   /**
    * When true socket.bind() will reuse the address, even if another process has already bound a socket on it.
-   * @default true
+   * @defaultValue true
    */
   reuseAddr?: boolean;
 }
@@ -68,7 +68,7 @@ export interface ClientOptions extends SsdpOptions {
 export interface ServiceDescriptionLocation {
   /**
    * Location protocol.
-   * @default 'http://'
+   * @defaultValue 'http://'
    */
   protocol?: string;
   /**
@@ -90,27 +90,27 @@ export interface ServerOptions extends ClientOptions {
   location?: string | ServiceDescriptionLocation;
   /**
    * SSDP Unique Device Name
-   * @default 'uuid:f40c2981-7329-40b7-8b04-27f187aecfb5'
+   * @defaultValue 'uuid:f40c2981-7329-40b7-8b04-27f187aecfb5'
    */
   udn?: string;
   /**
    * Allow wildcards in M-SEARCH packets (non-standard)
-   * @default false
+   * @defaultValue false
    */
   allowWildcards?: boolean;
   /**
    * When true the SSDP server will not advertise the root device (i.e. the bare UDN). In some scenarios, this advertisement is not needed.
-   * @default false
+   * @defaultValue false
    */
   suppressRootDeviceAdvertisements?: boolean;
   /**
    * Interval at which to send out advertisement (ms)
-   * @default 10000
+   * @defaultValue 10000
    */
   adInterval?: number;
   /**
    * Packet TTL
-   * @default 1800
+   * @defaultValue 1800
    */
   ttl?: number;
 }
@@ -126,7 +126,7 @@ export class Client extends Base {
 
   /**
    * Start the listener for multicast notifications from SSDP devices
-   * @param cb callback to socket.bind
+   * @param cb - callback to socket.bind
    * @returns promise when socket.bind is ready
    */
   start(cb?: (error: Error) => void): Promise<void>;
@@ -183,7 +183,7 @@ export class Server extends Base {
 
   /**
    * Binds UDP socket to an interface/port and starts advertising.
-   * @param cb callback to socket.bind
+   * @param cb - callback to socket.bind
    * @returns promise when socket.bind is ready
    */
   start(cb?: (error: Error) => void): void | Promise<void>;

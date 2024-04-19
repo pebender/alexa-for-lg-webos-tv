@@ -9,10 +9,15 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
   },
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: [
+    "@typescript-eslint/eslint-plugin",
+    "eslint-plugin-tsdoc",
+    "prettier",
+  ],
   rules: {
     "no-redeclare": "off",
     "@typescript-eslint/no-redeclare": ["error"],
+    "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
   },
   overrides: [
