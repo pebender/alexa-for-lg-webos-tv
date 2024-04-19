@@ -2,7 +2,6 @@
 ._.DS_Store
 ._*
 node_modules/
-docs
 pkg/*/lib
 src/lib
 pkg/*/*.zip
