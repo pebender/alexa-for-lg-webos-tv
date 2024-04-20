@@ -25,15 +25,13 @@
   "exclude": [],
 
   "typedocOptions": {
-    "plugin": [
-      "typedoc-plugin-markdown"
-    ],
     "entryPoints": [
-      "src/common/index.ts",
-      "src/skill/index.ts",
-      "src/bridge/index.ts"
+      "src/skill/**/*.ts",
+      "src/bridge/**/*.ts",
+      "src/common/**/*.ts"
     ],
     "out": "README.d/source-code-api",
-    "readme": "none"
+    "readme": "README.d/source-code-api.md",
+    "disableSources": true
   }
 }
