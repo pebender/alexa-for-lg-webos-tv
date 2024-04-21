@@ -32,6 +32,7 @@
     ],
     "out": "README.d/source-code-api",
     "readme": "README.d/source-code-api.md",
-    "disableSources": true
+    "disableSources": true,
+    "excludeExternals": true
   }
 }

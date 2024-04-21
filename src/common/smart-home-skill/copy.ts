@@ -1,4 +1,10 @@
-type copyElementType = boolean | number | string | object | null | undefined;
+export type copyElementType =
+  | boolean
+  | number
+  | string
+  | object
+  | null
+  | undefined;
 
 export function copyElement(original: copyElementType): copyElementType {
   if (
