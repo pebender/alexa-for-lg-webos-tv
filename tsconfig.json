@@ -34,7 +34,7 @@
       "src/common/**/*.ts"
     ],
     "out": "docs",
-    "readme": "src/docs/README.md",
+    "readme": "docs.in/README.md",
     "disableSources": true,
     "excludeExternals": true
   }
