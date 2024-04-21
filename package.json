@@ -37,7 +37,7 @@
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json && (cd pkg/skill && npm run clean) && (cd pkg/bridge && npm run clean) && (cd pkg/util && npm run clean)",
     "install_modules": "npm install && (cd pkg/skill && npm install) && (cd pkg/bridge && npm install) && (cd pkg/util && npm install)",
-    "lint": "npx eslint `find src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'README.d/**/*.md' '!README.d/source-code-api/'",
+    "lint": "npx eslint `find src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'src/docs/**/*.md'",
     "build_doc": "rm -rf docs && mkdir docs && npx typedoc && cp -r src/docs/pages docs/pages",
     "build": "(cd pkg/skill && npm run build) && (cd pkg/bridge && npm run build) && (cd pkg/util && npm run build)",
     "pack": "(cd pkg/skill && npm run pack) && (cd pkg/bridge && npm run pack) && (cd pkg/util && npm run pack)",
