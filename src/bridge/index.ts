@@ -54,32 +54,64 @@ import { Middle } from "./lib/middle";
 import * as fs from "fs/promises";
 const persistPath = require("persist-path");
 
-export async function startBridge(): Promise<void> {
-  const configurationDir = persistPath(Common.constants.application.name.safe);
-
-  try {
-    await fs.mkdir(configurationDir, { recursive: true });
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw Error;
+export class Bridge {
+  private readonly _configuration: Configuration;
+  private readonly _backend: Backend;
+  private readonly _middle: Middle;
+  private readonly _frontend: Frontend;
+  private constructor(
+    _configuration: Configuration,
+    _backend: Backend,
+    _middle: Middle,
+    _frontend: Frontend,
+  ) {
+    this._configuration = _configuration;
+    this._backend = _backend;
+    this._middle = _middle;
+    this._frontend = _frontend;
   }
 
-  const configuration = await Configuration.build();
+  public static async build() {
+    const configurationDir = persistPath(
+      Common.constants.application.name.safe,
+    );
 
-  //
-  // I keep long term information needed to connect to each TV in a database.
-  // The long term information is the TV's unique device name (udn), friendly name
-  // (name), Internet Protocol address (ip), media access control address (mac)
-  // and client key (key).
-  //
+    try {
+      await fs.mkdir(configurationDir, { recursive: true });
+    } catch (error) {
+      Common.Debug.debugErrorWithStack(error);
+      throw Error;
+    }
 
-  const backend = await Backend.build(configuration);
-  backend.on("error", (error: Error, id: string): void => {
-    Common.Debug.debug(id);
-    Common.Debug.debugErrorWithStack(error);
-  });
-  const middle = await Middle.build(configuration, backend);
-  const frontend = await Frontend.build(configuration, middle);
-  await frontend.start();
-  await backend.start();
+    const _configuration = await Configuration.build();
+
+    //
+    // I keep long term information needed to connect to each TV in a database.
+    // The long term information is the TV's unique device name (udn), friendly name
+    // (name), Internet Protocol address (ip), media access control address (mac)
+    // and client key (key).
+    //
+
+    const _backend = await Backend.build(_configuration);
+    _backend.on("error", (error: Error, id: string): void => {
+      Common.Debug.debug(id);
+      Common.Debug.debugErrorWithStack(error);
+    });
+    const _middle = await Middle.build(_configuration, _backend);
+    const _frontend = await Frontend.build(_configuration, _middle);
+
+    const bridge = new Bridge(_configuration, _backend, _middle, _frontend);
+
+    return bridge;
+  }
+
+  public async start(): Promise<void> {
+    await this._frontend.start();
+    await this._backend.start();
+  }
+}
+
+export async function startBridge(): Promise<void> {
+  const bridge = await Bridge.build();
+  await bridge.start();
 }
