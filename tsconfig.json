@@ -30,8 +30,8 @@
       "src/bridge/**/*.ts",
       "src/common/**/*.ts"
     ],
-    "out": "README.d/source-code-api",
-    "readme": "README.d/source-code-api.md",
+    "out": "docs",
+    "readme": "src/docs/README.md",
     "disableSources": true,
     "excludeExternals": true
   }
