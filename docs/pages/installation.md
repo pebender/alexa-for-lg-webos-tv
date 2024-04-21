@@ -37,17 +37,17 @@ When developing the software, I use [Visual Studio Code](https://code.visualstud
 
 You need to do two things before you compile.
 
-First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary key (ForLGwebOSTV.key) and certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/custom-skill/login](../../src/skill/lib/custom-skill/login) and put the public certificate in [src/bridge/lib/frontend/authorization](../../src/bridge/lib/frontend/authorization).
+First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary key (ForLGwebOSTV.key) and certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/custom-skill/login/](../../src/skill/lib/custom-skill/login/) and put the public certificate in [src/bridge/lib/frontend/authorization/](../../src/bridge/lib/frontend/authorization/).
 
 Second, you need to install Node.js version v20.x.
 
 ## Compilation
 
-Once you have completed the pre-compilation steps, change to the [pkg/](../pkg) directory and run the command
+Once you have completed the pre-compilation steps, change to the [pkg/](../../pkg/) directory and run the command
 
 `npm run all`
 
-This will download the required node.js modules as well as compile and package the skill and bridge software. The skill software package is a zip file in [pkg/skill](../pkg/skill). The bridge software package is a tgz file in [pkg/bridge](../pkg/bridge)
+This will download the required node.js modules as well as compile and package the skill and bridge software. The skill software package is a zip file in [pkg/skill/](../../pkg/skill/). The bridge software package is a tgz file in [pkg/bridge/](../../pkg/bridge/)
 
 ## Skill Installation
 
