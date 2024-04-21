@@ -40,6 +40,6 @@
     "build_doc": "npx typedoc",
     "build": "(cd pkg/skill && npm run build) && (cd pkg/bridge && npm run build) && (cd pkg/util && npm run build)",
     "pack": "(cd pkg/skill && npm run pack) && (cd pkg/bridge && npm run pack) && (cd pkg/util && npm run pack)",
-    "all": "npm run clean && npm run install_modules && npm run lint && npm run build && npm run pack"
+    "all": "npm run clean && npm run install_modules && npm run lint && npm run build_doc && npm run build && npm run pack"
   }
 }
