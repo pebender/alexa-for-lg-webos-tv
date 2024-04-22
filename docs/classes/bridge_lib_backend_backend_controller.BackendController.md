@@ -147,7 +147,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `tv` | [`TV`](../interfaces/bridge_lib_tv.TV.md) |
+| `tv` | [`TV`](../interfaces/bridge_lib_backend_tv.TV.md) |
 
 #### Returns
 

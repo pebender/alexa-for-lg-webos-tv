@@ -7,7 +7,7 @@
 //
 
 import { EventEmitter } from "node:events";
-import { TV, UDN } from "../tv";
+import { TV, UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";

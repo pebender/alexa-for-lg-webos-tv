@@ -1,4 +1,4 @@
-import { TV, UDN } from "../tv";
+import { TV, UDN } from "./tv";
 import { EventEmitter } from "node:events";
 import { BackendControl } from "./backend-control";
 import { DatabaseRecord, DatabaseTable } from "../database";

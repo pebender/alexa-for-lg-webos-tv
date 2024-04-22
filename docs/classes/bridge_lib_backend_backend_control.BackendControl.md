@@ -51,7 +51,7 @@
 | Name | Type |
 | :------ | :------ |
 | `_db` | [`DatabaseTable`](bridge_lib_database.DatabaseTable.md) |
-| `_tv` | [`TV`](../interfaces/bridge_lib_tv.TV.md) |
+| `_tv` | [`TV`](../interfaces/bridge_lib_backend_tv.TV.md) |
 | `_connection` | [`export=`](bridge_types_lgtv2.export_-1.md) |
 | `_ssdpNotify` | [`Client`](bridge_types_node_ssdp.Client.md) |
 | `_ssdpResponse` | [`Client`](bridge_types_node_ssdp.Client.md) |
@@ -104,17 +104,17 @@ ___
 
 ### \_tv
 
-• `Private` `Readonly` **\_tv**: [`TV`](../interfaces/bridge_lib_tv.TV.md)
+• `Private` `Readonly` **\_tv**: [`TV`](../interfaces/bridge_lib_backend_tv.TV.md)
 
 ## Accessors
 
 ### tv
 
-• `get` **tv**(): [`TV`](../interfaces/bridge_lib_tv.TV.md)
+• `get` **tv**(): [`TV`](../interfaces/bridge_lib_backend_tv.TV.md)
 
 #### Returns
 
-[`TV`](../interfaces/bridge_lib_tv.TV.md)
+[`TV`](../interfaces/bridge_lib_backend_tv.TV.md)
 
 ## Methods
 
@@ -193,7 +193,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `db` | [`DatabaseTable`](bridge_lib_database.DatabaseTable.md) |
-| `tv` | [`TV`](../interfaces/bridge_lib_tv.TV.md) |
+| `tv` | [`TV`](../interfaces/bridge_lib_backend_tv.TV.md) |
 
 #### Returns
 

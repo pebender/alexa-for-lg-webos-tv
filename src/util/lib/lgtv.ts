@@ -2,7 +2,7 @@ import * as fs from "fs/promises";
 import LGTV from "lgtv2";
 import * as Common from "../../common";
 import { Configuration } from "../../bridge/lib/configuration";
-import { TV } from "../../bridge/lib/tv";
+import { TV } from "../../bridge/lib/backend/tv";
 import { Backend } from "../../bridge/lib/backend";
 
 const persistPath = require("persist-path");

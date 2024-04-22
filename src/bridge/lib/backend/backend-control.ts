@@ -5,7 +5,7 @@ import { EventEmitter } from "node:events";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { DatabaseTable } from "../database";
 import LGTV from "lgtv2";
-import { TV } from "../tv";
+import { TV } from "./tv";
 
 export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;

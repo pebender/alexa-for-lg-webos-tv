@@ -12,7 +12,7 @@
 // <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
 //
 import * as dgram from "node:dgram";
-import { IP, MAC, TV, UDN } from "../tv";
+import { IP, MAC, TV, UDN } from "./tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
