@@ -62,6 +62,8 @@ webOS TV.
 
 ▸ **startBridge**(): `Promise`\<`void`\>
 
+A convenience function to build and start the Bridge.
+
 #### Returns
 
 `Promise`\<`void`\>

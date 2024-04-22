@@ -54,11 +54,27 @@ import { Middle } from "./lib/middle";
 import * as fs from "fs/promises";
 const persistPath = require("persist-path");
 
+/**
+ * A class to build and start a bridge.
+ *
+ * A new instance of Bridge is created/built by calling {@link Bridge.build}().
+ *
+ * @example
+ * Build and start a bridge:
+ *
+ * ```ts
+ * const bridge = await Bridge.build();
+ * await bridge.start();
+ * ```
+ */
 export class Bridge {
   private readonly _configuration: Configuration;
   private readonly _backend: Backend;
   private readonly _middle: Middle;
   private readonly _frontend: Frontend;
+  /**
+   * The constructor is private. To create a Bridge, call {@link Bridge.build}().
+   */
   private constructor(
     _configuration: Configuration,
     _backend: Backend,
@@ -71,6 +87,20 @@ export class Bridge {
     this._frontend = _frontend;
   }
 
+  /**
+   * Builds the Bridge. When called, it
+   *
+   * - ensures the Configuration directory exists,
+   * - retrieves the Configuration,
+   * - builds a Backend using the retrieved Configuration,
+   * - builds a Middle using the retrieved Configuration and the built Backend,
+   * - builds a Frontend using the retrieved Configuration and the built Middle,
+   * - builds a Bridge containing the retrieved Configuration, the built
+   *   Backend, the built Middle and the built Frontend, and
+   * - returns the built bridge.
+   *
+   * @returns the Bridge built
+   */
   public static async build() {
     const configurationDir = persistPath(
       Common.constants.application.name.safe,
@@ -105,12 +135,21 @@ export class Bridge {
     return bridge;
   }
 
+  /**
+   * Starts the Bridge. When called, it
+   *
+   * - starts the Frontend, and
+   * - starts the Backend.
+   */
   public async start(): Promise<void> {
     await this._frontend.start();
     await this._backend.start();
   }
 }
 
+/**
+ * A convenience function to build and start the Bridge.
+ */
 export async function startBridge(): Promise<void> {
   const bridge = await Bridge.build();
   await bridge.start();

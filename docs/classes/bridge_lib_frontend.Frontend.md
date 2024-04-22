@@ -4,18 +4,31 @@
 
 [bridge/lib/frontend](../modules/bridge_lib_frontend.md).Frontend
 
-The frontend handles the communication link between the bridge and the skill.
-It is an HTTP server that maintains three path-differentiated communication
-links: an authorization link for skill and email address authorization, a
-test link for testing whether or not the skill and email address are
-currently authorized and a Alexa Smart Home Skill link for sending Alexa
-Smart Home Skill messages.
+The Frontend class handles the communication link between the bridge and the
+skill. It is an HTTP server that maintains three URL path-differentiated
+communication links:
+
+- an authorization link
+  - for skill and email address authorization, and
+  - identified by the URL path given in the constant
+    [Common.constants.bridge.path.login](../modules/common_constants.md#login)),
+- a test link
+  - for testing whether or not the skill and email address are currently
+    authorized,
+  - identified by the URL path given in the constant
+    [Common.constants.bridge.path.test](../modules/common_constants.md#test)), and
+- a skill link
+  - for sending/receiving Alexa Smart Home Skill messages, and
+  - identified by the URL path given in the constant
+    [Common.constants.bridge.path.skill](../modules/common_constants.md#skill)).
 
 The frontend uses a bearer token to authorize HTTP messages sent on the test
-link and the Alexa Smart Home Skill link.
+link and the skill link.
 
 The frontend uses the authorization link to authorize the skill and the email
-address and to establish the bearer token. The skill sends a JWT containing
+address and to establish the bearer token used to authorize HTTP messages
+sent on the test link and the skill link. The skill sends a JWT (see
+[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)) containing
 the bridge hostname and the email address and signed by the skill. The bridge
 verifies the JWT, checks that the email address is authorized and creates the
 bearer token. TODO: verify that the bridge hostname in the JWT matches the
@@ -46,6 +59,8 @@ bridge's hostname.
 ### constructor
 
 • **new Frontend**(`_authorization`, `_middle`, `_ipBlacklist`, `_ajv`, `_schemaValidator`, `_server`): [`Frontend`](bridge_lib_frontend.Frontend.md)
+
+The constructor is private. To instantiate a Frontend, use [Frontend.build](bridge_lib_frontend.Frontend.md#build)().
 
 #### Parameters
 
