@@ -53,12 +53,13 @@ ___
 
 ### handler
 
-▸ **handler**(`alexaRequest`): `Promise`\<[`SHSResponseWrapper`](common_smart_home_skill_response.SHSResponseWrapper.md)\>
+▸ **handler**(`authorizedEmail`, `alexaRequest`): `Promise`\<[`SHSResponseWrapper`](common_smart_home_skill_response.SHSResponseWrapper.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `authorizedEmail` | `string` |
 | `alexaRequest` | [`SHSRequest`](common_smart_home_skill_request.SHSRequest.md) |
 
 #### Returns

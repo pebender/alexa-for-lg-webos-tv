@@ -44,8 +44,14 @@ export class Middle {
   }
 
   public async handler(
+    authorizedEmail: string,
     alexaRequest: Common.SHS.Request,
   ): Promise<Common.SHS.ResponseWrapper> {
-    return await SHS.handler(alexaRequest, this._authorization, this._backend);
+    return await SHS.handler(
+      authorizedEmail,
+      alexaRequest,
+      this._authorization,
+      this._backend,
+    );
   }
 }

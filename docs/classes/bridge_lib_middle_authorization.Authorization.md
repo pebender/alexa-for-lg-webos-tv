@@ -53,12 +53,13 @@ ___
 
 ### authorize
 
-▸ **authorize**(`skillToken`): `Promise`\<`boolean`\>
+▸ **authorize**(`authorizedEmail`, `skillToken`): `Promise`\<`boolean`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `authorizedEmail` | `string` |
 | `skillToken` | `string` |
 
 #### Returns

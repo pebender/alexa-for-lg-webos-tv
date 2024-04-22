@@ -94,17 +94,19 @@ export class Authorization {
     );
   }
 
-  public async authorizeBridgeToken(bridgeToken: string): Promise<boolean> {
+  public async authorizeBridgeToken(
+    bridgeToken: string,
+  ): Promise<string | null> {
     const record = await this._db.getRecord({ bridgeToken });
     if (record === null) {
-      return false;
+      return null;
     }
     if (
       typeof record.email !== "string" ||
       typeof record.hostname !== "string"
     ) {
       await this._db.deleteRecord({ bridgeToken });
-      return false;
+      return null;
     }
 
     const email = record.email;
@@ -117,7 +119,7 @@ export class Authorization {
     );
     if (typeof found === "undefined") {
       await this._db.deleteRecord({ bridgeToken });
-      return false;
+      return null;
     }
 
     // Make sure the hostname is still authorized and delete the record if it is
@@ -125,9 +127,9 @@ export class Authorization {
     const authorizedHostname = await this._configuration.hostname();
     if (hostname !== authorizedHostname) {
       await this._db.deleteRecord({ bridgeToken });
-      return false;
+      return null;
     }
 
-    return true;
+    return email;
   }
 }

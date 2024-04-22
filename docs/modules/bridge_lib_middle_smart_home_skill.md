@@ -52,12 +52,13 @@ ___
 
 ### handler
 
-▸ **handler**(`event`, `authorization`, `backend`): `Promise`\<[`SHSResponseWrapper`](../classes/common_smart_home_skill_response.SHSResponseWrapper.md)\>
+▸ **handler**(`authorizedEmail`, `event`, `authorization`, `backend`): `Promise`\<[`SHSResponseWrapper`](../classes/common_smart_home_skill_response.SHSResponseWrapper.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `authorizedEmail` | `string` |
 | `event` | [`SHSRequest`](../classes/common_smart_home_skill_request.SHSRequest.md) |
 | `authorization` | [`Authorization`](../classes/bridge_lib_middle_authorization.Authorization.md) |
 | `backend` | [`Backend`](../classes/bridge_lib_backend.Backend.md) |

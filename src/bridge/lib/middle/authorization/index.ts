@@ -21,13 +21,19 @@ export class Authorization {
     return authorization;
   }
 
-  public async authorize(skillToken: string): Promise<boolean> {
+  public async authorize(
+    authorizedEmail: string,
+    skillToken: string,
+  ): Promise<boolean> {
     const record = await this._db.getRecord({ skillToken });
-
     if (record === null) {
       const profile = await Common.Profile.SHS.getUserProfile(skillToken);
       const userId = profile.user_id;
       const email = profile.email;
+
+      if (email !== authorizedEmail) {
+        return false;
+      }
 
       const authorizedEmails = await this._configuration.authorizedEmails();
       const found = authorizedEmails.find(
@@ -42,12 +48,17 @@ export class Authorization {
         { email, userId, skillToken },
       );
     } else {
+      const email = (record as DatabaseRecord).email;
+
+      if (email !== authorizedEmail) {
+        return false;
+      }
+
       // CHeck if the email is still authorized and delete the record if it is
       // not.
       const authorizedEmails = await this._configuration.authorizedEmails();
       const found = authorizedEmails.find(
-        (authorizedEmail) =>
-          authorizedEmail === (record as DatabaseRecord).email,
+        (authorizedEmail) => authorizedEmail === email,
       );
       if (typeof found === "undefined") {
         await this._db.deleteRecord({ skillToken });

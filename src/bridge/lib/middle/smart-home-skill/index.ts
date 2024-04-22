@@ -82,6 +82,7 @@ async function addStates(
 }
 
 async function handler(
+  authorizedEmail: string,
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
   backend: Backend,
@@ -90,7 +91,10 @@ async function handler(
 
   const bearerToken: string = alexaRequest.getBearerToken();
   try {
-    const authorized = await authorization.authorize(bearerToken);
+    const authorized = await authorization.authorize(
+      authorizedEmail,
+      bearerToken,
+    );
     if (!authorized) {
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
         alexaRequest,

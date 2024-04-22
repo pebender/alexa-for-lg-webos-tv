@@ -251,6 +251,9 @@ export class Frontend {
             },
           });
         }
+
+        res.locals.email = null;
+
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
         // part part of the URL or in the body. Since we put it in the header, we
@@ -302,9 +305,9 @@ export class Frontend {
         const bridgeToken = authorization[1];
 
         try {
-          const authorized =
+          const email =
             await frontend._authorization.authorizeBridgeToken(bridgeToken);
-          if (!authorized) {
+          if (email === null) {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
               "Bridge connection failed due to invalid bearer token.",
@@ -316,6 +319,7 @@ export class Frontend {
               .send();
             return;
           }
+          res.locals.email = email;
         } catch (error) {
           Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
           Common.Debug.debugError(error);
@@ -364,7 +368,10 @@ export class Frontend {
         Common.Debug.debug("Smart Home Skill Request:");
         Common.Debug.debugJSON(shsRequest);
 
-        const shsResponseWrapper = await frontend._middle.handler(shsRequest);
+        const shsResponseWrapper = await frontend._middle.handler(
+          res.locals.email,
+          shsRequest,
+        );
         const shsResponse = shsResponseWrapper.response;
         const statusCode = shsResponseWrapper.statusCode;
         Common.Debug.debug("Smart Home Skill Response:");

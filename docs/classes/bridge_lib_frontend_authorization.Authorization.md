@@ -65,7 +65,7 @@ ___
 
 ### authorizeBridgeToken
 
-▸ **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`boolean`\>
+▸ **authorizeBridgeToken**(`bridgeToken`): `Promise`\<``null`` \| `string`\>
 
 #### Parameters
 
@@ -75,7 +75,7 @@ ___
 
 #### Returns
 
-`Promise`\<`boolean`\>
+`Promise`\<``null`` \| `string`\>
 
 ___
 
