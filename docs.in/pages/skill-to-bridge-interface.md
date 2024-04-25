@@ -109,9 +109,9 @@ sequenceDiagram
 
   skill->>proxy: "Login Request" over HTTPS
   proxy->>bridge: "Login Request" over HTTP
-  note right of bridge: authorize LOGIN_TOKEN
+  note right of bridge: authorize login token
   alt is Authorization Succeeded
-    note right of bridge: allocate BRIDGE_TOKEN
+    note right of bridge: assign bridge token
     bridge->>proxy: "Login Accept Response" over HTTP
     proxy->>skill: "Login Accept Response" over HTTPS
   else is Authorization Failed
@@ -186,7 +186,7 @@ sequenceDiagram
 
   skill->>proxy: "Test Request" over HTTPS
   proxy->>bridge: "Test Request" over HTTP
-  note right of bridge: authorize BRIDGE_TOKEN
+  note right of bridge: authorize bridge token
   alt is Authorization Succeeded
     bridge->>proxy: "Test Accept Response" over HTTP
     proxy->>skill: "Test Accept Response" over HTTPS
@@ -260,7 +260,7 @@ sequenceDiagram
 
   skill->>proxy: "Service Request" over HTTPS
   proxy->>bridge: "Service Request" over HTTP
-  note right of bridge: authorize BRIDGE_TOKEN
+  note right of bridge: authorize bridge token
   alt is Authorization Succeeded
     note right of bridge: act on SHS Directive
     note right of bridge: generate SHS Synchronous Response
