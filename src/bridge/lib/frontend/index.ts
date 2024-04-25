@@ -18,38 +18,6 @@ import { Middle } from "../middle";
 import { Authorization } from "./authorization";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
-/**
- *
- * The Frontend class handles the communication link between the bridge and the
- * skill. It is an HTTP server that maintains three URL path-differentiated
- * communication links:
- *
- * - an authorization link
- *   - for skill and email address authorization, and
- *   - identified by the URL path given in the constant
- *     {@link Common.constants.bridge.path.login}),
- * - a test link
- *   - for testing whether or not the skill and email address are currently
- *     authorized,
- *   - identified by the URL path given in the constant
- *     {@link Common.constants.bridge.path.test}), and
- * - a skill link
- *   - for sending/receiving Alexa Smart Home Skill messages, and
- *   - identified by the URL path given in the constant
- *     {@link Common.constants.bridge.path.skill}).
- *
- * The frontend uses a bearer token to authorize HTTP messages sent on the test
- * link and the skill link.
- *
- * The frontend uses the authorization link to authorize the skill and the email
- * address and to establish the bearer token used to authorize HTTP messages
- * sent on the test link and the skill link. The skill sends a JWT (see
- * {@link https://datatracker.ietf.org/doc/html/rfc7519 | RFC7519}) containing
- * the bridge hostname and the email address and signed by the skill. The bridge
- * verifies the JWT, checks that the email address is authorized and creates the
- * bearer token. TODO: verify that the bridge hostname in the JWT matches the
- * bridge's hostname.
- */
 export class Frontend {
   private readonly _authorization: Authorization;
   private readonly _middle: Middle;
