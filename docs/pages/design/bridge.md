@@ -44,35 +44,24 @@ If the Directive's bearer token does not map to an email address then authorizat
 
 ## The Backend
 
+The backend is implemented by the [Backend](../../../docs/classes/src/bridge/lib/backend/index.ts) class in [src/bridge/lib/backend/index.ts](../../../src/bridge/lib/backend/index.ts).
+
 The backend manages the communication links between the backend and the LG webOS TVs being controlled. It
 
 - searches for LG webOS TVs on the network,
 - maintains connections with the LG webOS TVs it finds and
 - routes messages between the middle and the the LG webOS TVs being controlled.
 
-The backend contains a searcher and a controller. The controller contains a control for each LG webOS TV the backend is controlling.
+The backend contains a searcher and a controller. The controller contains a control for each LG webOS TV the backend is controlling. The searcher searches for LG webOS TVs on the local network. When it finds one, it alerts the controller. The controller allocates a control. The control connects to the TV, making it possible for the middle to send requests to and receive responses from the TV.
 
-```mermaid
-sequenceDiagram
-  box backend
-  participant searcher as searcher
-  participant controller as controller
-  participant control1 as control 1
-  participant control2 as control 2
-  participant controlN as control N
-  end
-  participant tv1 as tv 1
-  participant tv2 as tv 2
-  participant tvN as tv N
-  par controller to control1
-  controller->>control1: "Command"
-  control1->>tv1: "Command"
-  and controller to control2
-  controller->>control2: "Command"
-  control2->>tv2: "Command"
-  and controller to controlN
-  controller->>controlN: "Command"
-  controlN->>tvN: "Command"
-  
-  end
-```
+### The Searcher
+
+The searcher is implemented by the [BackendSearcher](../../../docs/classes/bridge_lib_backend_backend_searcher.BackendSearcher.md) class in [src/bridge/lib/backend/backend-searcher.ts](../../../src/bridge/lib/backend/backend-searcher.ts).
+
+The searcher uses UPnP discovery ([UPnP Device Architecture 1.1](https://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf)) along with LG Electronics custom service type `urn:lge-com:service:webos-second-screen:` to detect the LG webOS TVs on the local network. This appears to be the most reliable way to find LG webOS TVs because of the more targeted service type, the cleaner response headers and cleaner device description fields. Other UPnP service types advertised by LG webOS TVs appear to have either less consistent response headers or device description fields making it more difficult to identify them. My LG webOS TV advertises as [UPnP 1.0](https://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf). However, the discovery implemented by my TV complies with [UPnP 1.1](https://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf) and my TV accepts UPnP 1.1 as well.
+
+When the searcher detects a LG webOS TV, it alerts the controller.
+
+### The Controller
+
+The controller is implemented by the [BackendController](../../../docs/classes/bridge_lib_backend_backend_controller.BackendController.md) class in [src/bridge/lib/backend/backend-controller.ts](../../../src/bridge/lib/backend/backend-controller.ts).
