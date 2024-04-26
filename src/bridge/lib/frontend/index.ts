@@ -15,11 +15,13 @@ import { URL } from "url";
 import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 import { Middle } from "../middle";
-import { Authorization } from "./authorization";
+import { LoginTokenAuth } from "./login-token-auth";
+import { BridgeTokenAuth } from "./bridge-token-auth";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
 export class Frontend {
-  private readonly _authorization: Authorization;
+  private readonly _loginTokenAuth: LoginTokenAuth;
+  private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _middle: Middle;
   private readonly _ipBlacklist;
   private readonly _ajv: Ajv;
@@ -29,14 +31,16 @@ export class Frontend {
    * The constructor is private. To instantiate a Frontend, use {@link Frontend.build}().
    */
   private constructor(
-    _authorization: Authorization,
+    _loginTokenAuth: LoginTokenAuth,
+    _bridgeTokenAuth: BridgeTokenAuth,
     _middle: Middle,
     _ipBlacklist: any,
     _ajv: Ajv,
     _schemaValidator: AjvTypes.ValidateFunction,
     _server: express.Express,
   ) {
-    this._authorization = _authorization;
+    this._loginTokenAuth = _loginTokenAuth;
+    this._bridgeTokenAuth = _bridgeTokenAuth;
     this._middle = _middle;
     this._ipBlacklist = _ipBlacklist;
     this._ajv = _ajv;
@@ -45,7 +49,8 @@ export class Frontend {
   }
 
   public static async build(configuration: Configuration, middle: Middle) {
-    const _authorization = await Authorization.build(configuration);
+    const _loginToken = await LoginTokenAuth.build(configuration);
+    const _bridgeToken = await BridgeTokenAuth.build(configuration);
 
     // The blacklist is due to auth failures so blacklist quickly.
     // There should be no auth failures and each auth failure results
@@ -83,7 +88,8 @@ export class Frontend {
     const _server = express();
 
     const frontend = new Frontend(
-      _authorization,
+      _loginToken,
+      _bridgeToken,
       middle,
       _ipBlacklist,
       _ajv,
@@ -164,7 +170,7 @@ export class Frontend {
 
         try {
           const authorized =
-            frontend._authorization.authorizeJwTPayload(jwtPayload);
+            frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
           if (!authorized) {
             ipBlacklistIncrement(req, res);
             Common.Debug.debug("jwtPayloadHandler: failed authorization");
@@ -186,9 +192,9 @@ export class Frontend {
         }
         const url = new URL(jwtPayload.aud);
         const hostname = url.hostname;
-        const bridgeToken = frontend._authorization.generateBridgeToken();
+        const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
         try {
-          await frontend._authorization.setBridgeToken(
+          await frontend._bridgeTokenAuth.setBridgeToken(
             email,
             hostname,
             bridgeToken,
@@ -274,7 +280,7 @@ export class Frontend {
 
         try {
           const email =
-            await frontend._authorization.authorizeBridgeToken(bridgeToken);
+            await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
           if (email === null) {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
@@ -381,7 +387,7 @@ export class Frontend {
       frontend._server.get(
         Common.constants.bridge.path.login,
         expressjwt({
-          secret: frontend._authorization.x509PublicCert(),
+          secret: frontend._loginTokenAuth.x509PublicCert(),
           algorithms: ["RS256"],
         }),
         jwtErrorHandler,

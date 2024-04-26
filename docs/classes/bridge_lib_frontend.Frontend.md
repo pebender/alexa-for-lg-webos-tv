@@ -13,8 +13,9 @@
 ### Properties
 
 - [\_ajv](bridge_lib_frontend.Frontend.md#_ajv)
-- [\_authorization](bridge_lib_frontend.Frontend.md#_authorization)
+- [\_bridgeTokenAuth](bridge_lib_frontend.Frontend.md#_bridgetokenauth)
 - [\_ipBlacklist](bridge_lib_frontend.Frontend.md#_ipblacklist)
+- [\_loginTokenAuth](bridge_lib_frontend.Frontend.md#_logintokenauth)
 - [\_middle](bridge_lib_frontend.Frontend.md#_middle)
 - [\_schemaValidator](bridge_lib_frontend.Frontend.md#_schemavalidator)
 - [\_server](bridge_lib_frontend.Frontend.md#_server)
@@ -28,7 +29,7 @@
 
 ### constructor
 
-• **new Frontend**(`_authorization`, `_middle`, `_ipBlacklist`, `_ajv`, `_schemaValidator`, `_server`): [`Frontend`](bridge_lib_frontend.Frontend.md)
+• **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_ipBlacklist`, `_ajv`, `_schemaValidator`, `_server`): [`Frontend`](bridge_lib_frontend.Frontend.md)
 
 The constructor is private. To instantiate a Frontend, use [Frontend.build](bridge_lib_frontend.Frontend.md#build)().
 
@@ -36,7 +37,8 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](brid
 
 | Name | Type |
 | :------ | :------ |
-| `_authorization` | [`Authorization`](bridge_lib_frontend_authorization.Authorization.md) |
+| `_loginTokenAuth` | [`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md) |
+| `_bridgeTokenAuth` | [`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md) |
 | `_middle` | [`Middle`](bridge_lib_middle.Middle.md) |
 | `_ipBlacklist` | `any` |
 | `_ajv` | `Ajv2019` |
@@ -55,15 +57,21 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](brid
 
 ___
 
-### \_authorization
+### \_bridgeTokenAuth
 
-• `Private` `Readonly` **\_authorization**: [`Authorization`](bridge_lib_frontend_authorization.Authorization.md)
+• `Private` `Readonly` **\_bridgeTokenAuth**: [`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)
 
 ___
 
 ### \_ipBlacklist
 
 • `Private` `Readonly` **\_ipBlacklist**: `any`
+
+___
+
+### \_loginTokenAuth
+
+• `Private` `Readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)
 
 ___
 
