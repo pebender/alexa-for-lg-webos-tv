@@ -1,16 +1,3 @@
-//
-// I use UPnP discovery along with LG Electronics custom service type
-// urn:lge-com:service:webos-second-screen:1 to detect the LG webOS TVs. This
-// appears to be the most reliable way to find LG webOS TVs because of the more
-// targeted service type, the cleaner response headers and cleaner device
-// description fields. Other UPnP service types advertised by LG webOS TVs
-// appear to have either less consistent response headers or device description
-// fields making it more difficult to identify them. My LG webOS TV advertises
-// as UPnP 1.0. However, the discovery implemented complies with UPnP 1.1 it
-// accepts 1.1 as well.
-// <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf>
-// <http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf>
-//
 import * as dgram from "node:dgram";
 import { IP, MAC, TV, UDN } from "./tv";
 import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";

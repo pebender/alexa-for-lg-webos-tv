@@ -49,3 +49,30 @@ The backend manages the communication links between the backend and the LG webOS
 - searches for LG webOS TVs on the network,
 - maintains connections with the LG webOS TVs it finds and
 - routes messages between the middle and the the LG webOS TVs being controlled.
+
+The backend contains a searcher and a controller. The controller contains a control for each LG webOS TV the backend is controlling.
+
+```mermaid
+sequenceDiagram
+  box backend
+  participant searcher as searcher
+  participant controller as controller
+  participant control1 as control 1
+  participant control2 as control 2
+  participant controlN as control N
+  end
+  participant tv1 as tv 1
+  participant tv2 as tv 2
+  participant tvN as tv N
+  par controller to control1
+  controller->>control1: "Command"
+  control1->>tv1: "Command"
+  and controller to control2
+  controller->>control2: "Command"
+  control2->>tv2: "Command"
+  and controller to controlN
+  controller->>controlN: "Command"
+  controlN->>tvN: "Command"
+  
+  end
+```
