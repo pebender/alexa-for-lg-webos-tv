@@ -12,8 +12,8 @@ export class Authorization {
   public static async build(configuration: Configuration) {
     const _db = await DatabaseTable.build(
       "middle",
-      ["email", "skillToken"],
-      "email",
+      ["skillToken", "email"],
+      "skillToken",
     );
 
     const authorization = new Authorization(configuration, _db);
@@ -45,7 +45,7 @@ export class Authorization {
 
       await this._db.updateOrInsertRecord(
         { email },
-        { email, userId, skillToken },
+        { skillToken, email, userId },
       );
     } else {
       const email = (record as DatabaseRecord).email;
