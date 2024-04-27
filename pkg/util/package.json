@@ -52,7 +52,6 @@
     "axios",
     "express",
     "express-jwt",
-    "express-oauth2-bearer",
     "http-errors",
     "isnumeric",
     "jsonwebtoken",
