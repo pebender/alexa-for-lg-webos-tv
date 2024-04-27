@@ -168,7 +168,7 @@ async function sendHandler(
 export async function sendSkillDirective(
   request: Common.SHS.Request,
 ): Promise<Common.SHS.ResponseWrapper> {
-  const shsPath: string = `${Common.constants.bridge.path.skill}`;
+  const shsPath: string = `${Common.constants.bridge.path.service}`;
   try {
     return await sendHandler(shsPath, request, request);
   } catch (error) {

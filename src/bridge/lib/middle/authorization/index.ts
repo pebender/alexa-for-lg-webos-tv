@@ -35,11 +35,20 @@ export class Authorization {
         return false;
       }
 
-      const authorizedEmails = await this._configuration.authorizedEmails();
-      const found = authorizedEmails.find(
-        (authorizedEmail) => authorizedEmail === email,
+      const authorizedServicesAndUsers =
+        await this._configuration.authorizedServicesAndUsers();
+      const authorizedService = authorizedServicesAndUsers.find(
+        (authorizedService) =>
+          Common.constants.bridge.path.service === authorizedService.service,
       );
-      if (typeof found === "undefined") {
+      if (typeof authorizedService === "undefined") {
+        return false;
+      }
+      const authorizedUsers = authorizedService.users;
+      const authorizedUser = authorizedUsers.find(
+        (authorizedUser) => email === authorizedUser,
+      );
+      if (typeof authorizedUser === "undefined") {
         return false;
       }
 
@@ -56,11 +65,21 @@ export class Authorization {
 
       // CHeck if the email is still authorized and delete the record if it is
       // not.
-      const authorizedEmails = await this._configuration.authorizedEmails();
-      const found = authorizedEmails.find(
-        (authorizedEmail) => authorizedEmail === email,
+      const authorizedServicesAndUsers =
+        await this._configuration.authorizedServicesAndUsers();
+      const authorizedService = authorizedServicesAndUsers.find(
+        (authorizedService) =>
+          Common.constants.bridge.path.service === authorizedService.service,
       );
-      if (typeof found === "undefined") {
+      if (typeof authorizedService === "undefined") {
+        await this._db.deleteRecord({ skillToken });
+        return false;
+      }
+      const authorizedUsers = authorizedService.users;
+      const authorizedUser = authorizedUsers.find(
+        (authorizedUser) => email === authorizedUser,
+      );
+      if (typeof authorizedUser === "undefined") {
         await this._db.deleteRecord({ skillToken });
         return false;
       }

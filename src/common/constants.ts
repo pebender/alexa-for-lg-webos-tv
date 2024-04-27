@@ -35,8 +35,8 @@ export const constants = {
     },
     path: {
       login: "/login",
-      skill: `/api/${applicationNameSafe}/v1`,
       test: "/test",
+      service: `/service/${applicationNameSafe}/v1`,
     },
     jwt: {
       iss: applicationNamePretty,

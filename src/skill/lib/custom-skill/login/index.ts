@@ -15,7 +15,7 @@ function create(
   const payload: jwt.JwtPayload = {
     iss: Common.constants.bridge.jwt.iss,
     sub: email,
-    aud: `https://${hostname}${Common.constants.bridge.path.skill}`,
+    aud: `https://${hostname}${Common.constants.bridge.path.service}`,
   };
   const options: jwt.SignOptions = {
     algorithm: "RS256",

@@ -11,7 +11,7 @@ import * as AjvTypes from "ajv";
 import ajvFormats from "ajv-formats";
 import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
-import { URL } from "url";
+import { URL } from "node:url";
 import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 import { Middle } from "../middle";
@@ -185,19 +185,19 @@ export class Frontend {
           res.status(500).json({});
           return;
         }
-        const email = jwtPayload.sub;
+        const user = jwtPayload.sub;
         if (typeof jwtPayload.aud !== "string") {
           res.status(500).json({});
           return;
         }
         const url = new URL(jwtPayload.aud);
-        const hostname = url.hostname;
+        const service = url.pathname;
         const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
         try {
           await frontend._bridgeTokenAuth.setBridgeToken(
             bridgeToken,
-            hostname,
-            email,
+            service,
+            user,
           );
         } catch (error) {
           res.status(500).json({});
@@ -233,7 +233,7 @@ export class Frontend {
         // part part of the URL or in the body. Since we put it in the header, we
         // know that is were it will be. Pre RFC-6750, failure to find the Bearer
         // token results 401 response that includes a "WWW-Authenticate" header.
-        const wwwAuthenticate = `Bearer realm="https://${Common.constants.bridge.path.skill}"`;
+        const wwwAuthenticate = `Bearer realm="https://${Common.constants.bridge.path.service}"`;
         if (req.headers.authorization === "undefined") {
           ipBlacklistIncrement(req, res);
           const body = shsInvalidAuthorizationCredentialResponse(
@@ -395,7 +395,7 @@ export class Frontend {
       );
       // Handle Smart Home Skill directives.
       frontend._server.post(
-        Common.constants.bridge.path.skill,
+        Common.constants.bridge.path.service,
         bridgeTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),

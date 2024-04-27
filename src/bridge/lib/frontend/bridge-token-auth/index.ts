@@ -15,7 +15,7 @@ export class BridgeTokenAuth {
   ): Promise<BridgeTokenAuth> {
     const _db = await DatabaseTable.build(
       "frontend",
-      ["bridgeToken", "hostname", "email"],
+      ["bridgeToken", "service", "user"],
       "bridgeToken",
     );
 
@@ -30,12 +30,12 @@ export class BridgeTokenAuth {
 
   public async setBridgeToken(
     bridgeToken: string,
-    hostname: string,
-    email: string,
+    service: string,
+    user: string,
   ): Promise<void> {
     await this._db.updateOrInsertRecord(
-      { $and: [{ hostname }, { email }] },
-      { bridgeToken, hostname, email },
+      { $and: [{ service }, { user }] },
+      { bridgeToken, service, user },
     );
   }
 
@@ -46,35 +46,33 @@ export class BridgeTokenAuth {
     if (record === null) {
       return null;
     }
-    if (
-      typeof record.email !== "string" ||
-      typeof record.hostname !== "string"
-    ) {
+    if (typeof record.user !== "string" || typeof record.service !== "string") {
       await this._db.deleteRecord({ bridgeToken });
       return null;
     }
 
-    const email = record.email;
-    const hostname = record.hostname;
+    const user = record.user;
+    const service = record.service;
 
-    // CHeck if the email is still authorized and delete the record if it is not.
-    const authorizedEmails = await this._configuration.authorizedEmails();
-    const found = authorizedEmails.find(
-      (authorizedEmail) => email === authorizedEmail,
+    // CHeck if the service+user is still authorized and delete the record if it is not.
+    const authorizedServicesAndUsers =
+      await this._configuration.authorizedServicesAndUsers();
+    const authorizedService = authorizedServicesAndUsers.find(
+      (authorizedService) => service === authorizedService.service,
     );
-    if (typeof found === "undefined") {
+    if (typeof authorizedService === "undefined") {
+      await this._db.deleteRecord({ bridgeToken });
+      return null;
+    }
+    const authorizedUsers = authorizedService.users;
+    const authorizedUser = authorizedUsers.find(
+      (authorizedUser) => user === authorizedUser,
+    );
+    if (typeof authorizedUser === "undefined") {
       await this._db.deleteRecord({ bridgeToken });
       return null;
     }
 
-    // Make sure the hostname is still authorized and delete the record if it is
-    // not.
-    const authorizedHostname = await this._configuration.hostname();
-    if (hostname !== authorizedHostname) {
-      await this._db.deleteRecord({ bridgeToken });
-      return null;
-    }
-
-    return email;
+    return user;
   }
 }

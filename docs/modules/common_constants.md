@@ -28,15 +28,15 @@
 | `aws.dynamoDB.indexName` | `string` |
 | `aws.dynamoDB.tableName` | `string` |
 | `aws.region` | `string` |
-| `bridge` | \{ `host`: `string` = "0.0.0.0"; `jwt`: \{ `iss`: `string` = applicationNamePretty; `x509PrivateKeyFile`: `string` ; `x509PublicCertFile`: `string`  } ; `path`: \{ `login`: `string` = "/login"; `skill`: `string` ; `test`: `string` = "/test" } ; `port`: \{ `http`: `number` = 25391; `https`: `number` = 25392 }  } |
+| `bridge` | \{ `host`: `string` = "0.0.0.0"; `jwt`: \{ `iss`: `string` = applicationNamePretty; `x509PrivateKeyFile`: `string` ; `x509PublicCertFile`: `string`  } ; `path`: \{ `login`: `string` = "/login"; `service`: `string` ; `test`: `string` = "/test" } ; `port`: \{ `http`: `number` = 25391; `https`: `number` = 25392 }  } |
 | `bridge.host` | `string` |
 | `bridge.jwt` | \{ `iss`: `string` = applicationNamePretty; `x509PrivateKeyFile`: `string` ; `x509PublicCertFile`: `string`  } |
 | `bridge.jwt.iss` | `string` |
 | `bridge.jwt.x509PrivateKeyFile` | `string` |
 | `bridge.jwt.x509PublicCertFile` | `string` |
-| `bridge.path` | \{ `login`: `string` = "/login"; `skill`: `string` ; `test`: `string` = "/test" } |
+| `bridge.path` | \{ `login`: `string` = "/login"; `service`: `string` ; `test`: `string` = "/test" } |
 | `bridge.path.login` | `string` |
-| `bridge.path.skill` | `string` |
+| `bridge.path.service` | `string` |
 | `bridge.path.test` | `string` |
 | `bridge.port` | \{ `http`: `number` = 25391; `https`: `number` = 25392 } |
 | `bridge.port.http` | `number` |

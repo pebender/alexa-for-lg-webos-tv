@@ -6,12 +6,12 @@ const persistPath = require("persist-path");
 export class Configuration {
   private _configuration: {
     hostname: string;
-    authorizedEmails: string[];
+    authorizedServicesAndUsers: { service: string; users: string[] }[];
   };
 
   private constructor(_configuration: {
     hostname: string;
-    authorizedEmails: string[];
+    authorizedServicesAndUsers: { service: string; users: string[] }[];
   }) {
     this._configuration = _configuration;
   }
@@ -30,9 +30,9 @@ export class Configuration {
       Common.Debug.debugErrorWithStack(error);
       throw error;
     }
-    if (typeof cfg.authorizedEmails === "undefined") {
+    if (typeof cfg.authorizedServicesAndUsers === "undefined") {
       const error = new Error(
-        `configuration file '${cfgFile}' is missing 'authorizedEmails'.`,
+        `configuration file '${cfgFile}' is missing 'authorizedUsers'.`,
       );
       Common.Debug.debugErrorWithStack(error);
       throw error;
@@ -47,7 +47,9 @@ export class Configuration {
     return this._configuration.hostname;
   }
 
-  public async authorizedEmails(): Promise<string[]> {
-    return this._configuration.authorizedEmails;
+  public async authorizedServicesAndUsers(): Promise<
+    { service: string; users: string[] }[]
+  > {
+    return this._configuration.authorizedServicesAndUsers;
   }
 }

@@ -95,7 +95,7 @@ For the test interface, the bridge verifies that the bridge token belongs to an 
 
 The skill uses the login interface to request a bridge token that the skill can use to access a service interface on behalf of a user. The skill requests access by sending a `Login Request` authorized by a login token.
 
-Assuming the login token authorizes, the bridge assigns a bridge token granting the user from the login token access to the service requested in login token, and sends a `Login Accept Response` message containing the assigned bridge token. Otherwise, it sends a `Login Reject Response` message. If there is an error, then it sends a `Login Error Response` message.
+Assuming the login token authorizes, the bridge assigns a bridge token granting the user from the login token access to the service requested in login token, and sends a `Login  Response` message containing the assigned bridge token. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
 
 Only the most recent bridge token issued for granting a specific user access to a specific service is valid. In addition to granting access to the service's interface, the bridge token grants access to the test interface.
 
@@ -103,23 +103,30 @@ Only the most recent bridge token issued for granting a specific user access to 
 
 ```mermaid
 sequenceDiagram
-  participant skill as skill
+  box skill
+    participant skill_shs as SHS
+    participant skill_cs as CS
+    participant skill_link as link
+  end
   participant proxy as reverse proxy
-  participant bridge as bridge
+  box bridge
+    participant bridge_link as link
+    participant bridge_service as service
+  end
 
-  skill->>proxy: "Login Request" over HTTPS
-  proxy->>bridge: "Login Request" over HTTP
-  note right of bridge: authorize login token
+  skill_link->>proxy: "Login Request" over HTTPS
+  proxy->>bridge_link: "Login Request" over HTTP
+  note right of bridge_link: authorize login token
   alt is Authorization Succeeded
-    note right of bridge: assign bridge token
-    bridge->>proxy: "Login Accept Response" over HTTP
-    proxy->>skill: "Login Accept Response" over HTTPS
+    note right of bridge_link: assign bridge token
+    bridge_link->>proxy: "Login Response" over HTTP
+    proxy->>skill_link: "Login Response" over HTTPS
   else is Authorization Failed
-    bridge->>proxy: "Login Reject Response" over HTTP
-    proxy->>skill: "Login Reject Response" over HTTPS
+    bridge_link->>proxy: "Auth Failure Response" over HTTP
+    proxy->>skill_link: "Auth Failure Response" over HTTPS
   else is Error Occurred
-    bridge->>proxy: "Login Error Response" over HTTP
-    proxy->>skill: "Login Error Response" over HTTPS
+    bridge_link->>proxy: "Error Response" over HTTP
+    proxy->>skill_link: "Error Response" over HTTPS
   end
 ```
 
@@ -133,7 +140,7 @@ Host: BRIDGE_HOSTNAME
 Authentication: Bearer LOGIN_TOKEN
 ```
 
-The `Login Accept Response` message is the HTTP response header and body
+The `Login Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 200 OK
@@ -146,7 +153,7 @@ Content-Type: application/json
 }
 ```
 
-The `Login Reject Response` message is the HTTP response header and body
+The `Auth Failure Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 401 Unauthorized
@@ -157,7 +164,7 @@ Content-Type: application/json
 {}
 ```
 
-The `Login Error Response` message is the HTTP response header and body
+The `Error Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 500 Internal Server Error
@@ -172,7 +179,7 @@ Content-Type: application/json
 
 The skill uses the test interface to test that a bridge token is valid. The skill sends a `Test Request` message authorized by a bridge token.
 
-Assuming the bridge token is valid, the bridge sends a `Test Accept Response` message. Otherwise, it sends a `Test Reject Response` message. If there is an error, then it sends a `Test Error Response` message.
+Assuming the bridge token is valid, the bridge sends a `Test Response` message. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
 
 This interface allows a skill to discover that a bridge token is valid on the bridge. It does not allow the skill to discover the user or the service for which the bridge token is valid.
 
@@ -180,22 +187,29 @@ This interface allows a skill to discover that a bridge token is valid on the br
 
 ```mermaid
 sequenceDiagram
-  participant skill as skill
+  box skill
+    participant skill_shs as SHS
+    participant skill_cs as CS
+    participant skill_link as link
+  end
   participant proxy as reverse proxy
-  participant bridge as bridge
+  box bridge
+    participant bridge_link as link
+    participant bridge_service as service
+  end
 
-  skill->>proxy: "Test Request" over HTTPS
-  proxy->>bridge: "Test Request" over HTTP
-  note right of bridge: authorize bridge token
+  skill_link->>proxy: "Test Request" over HTTPS
+  proxy->>bridge_link: "Test Request" over HTTP
+  note right of bridge_link: authorize bridge token
   alt is Authorization Succeeded
-    bridge->>proxy: "Test Accept Response" over HTTP
-    proxy->>skill: "Test Accept Response" over HTTPS
+    bridge_link->>proxy: "Test Response" over HTTP
+    proxy->>skill_link: "Test Response" over HTTPS
   else is Authorization Failed
-    bridge->>proxy: "Test Reject Response" over HTTP
-    proxy->>skill: "Test Reject Response" over HTTPS
+    bridge_link->>proxy: "Auth Failure Response" over HTTP
+    proxy->>skill_link: "Auth Failure Response" over HTTPS
   else is Error Occurred
-    bridge->>proxy: "Test Error Response" over HTTP
-    proxy->>skill: "Test Error Response" over HTTPS
+    bridge_link->>proxy: "Error Response" over HTTP
+    proxy->>skill_link: "Error Response" over HTTPS
   end
 ```
 
@@ -209,7 +223,7 @@ Host: BRIDGE_HOSTNAME
 Authentication: Bearer BRIDGE_TOKEN
 ```
 
-The `Test Accept Response` message is the HTTP response header and body
+The `Test Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 200 OK
@@ -220,7 +234,7 @@ Content-Type: application/json
 {}
 ```
 
-The `Test Reject Response` message is the HTTP response header and body
+For the `Auth Failure Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 401 Unauthorized
@@ -231,7 +245,7 @@ Content-Type: application/json
 {}
 ```
 
-The `Test Error Response` message is the HTTP response header and body
+The `Error Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 500 Internal Server Error
@@ -246,7 +260,7 @@ Content-Type: application/json
 
 The skill uses the service interface to interact with the LG webOS TVs. The skill sends a `Service Request` message authorized by a bridge token and containing a Smart Home Skill Directive (SMART_HOME_SKILL_DIRECTIVE).
 
-Assuming the bridge token is valid, the bridge fulfills the Directive and sends a `Service Accept Response` message containing the resulting Smart Home Skill Synchronous Response (SMART_HOME_SKILL_SYNCHRONOUS_RESPONSE). Otherwise, it sends a `Service Reject Response` message. If there is an error, then it sends a `Service Error Response` message.
+Assuming the bridge token is valid, the bridge fulfills the Directive and sends a `Service Response` message containing the resulting Smart Home Skill Synchronous Response (SMART_HOME_SKILL_SYNCHRONOUS_RESPONSE). Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
 
 The service interface only accepts Directives for the user authorized to use the service interface. The bridge checks whether or not the user associated with the bearer token in the Directive is the same as the user associated with the bridge token used to access the service interface. If they are not the same, then the Directive is responded to with an `Alexa ErrorResponse` specifying `INVALID_AUTHORIZATION_CREDENTIAL`.
 
@@ -254,24 +268,37 @@ The service interface only accepts Directives for the user authorized to use the
 
 ```mermaid
 sequenceDiagram
-  participant skill as skill
+  box skill
+    participant skill_shs as SHS
+    participant skill_cs as CS
+    participant skill_link as link
+  end
   participant proxy as reverse proxy
-  participant bridge as bridge
+  box bridge
+    participant bridge_link as link
+    participant bridge_service as service
+  end
 
-  skill->>proxy: "Service Request" over HTTPS
-  proxy->>bridge: "Service Request" over HTTP
-  note right of bridge: authorize bridge token
+  skill_shs->>skill_link: "SHS Directive"
+  skill_link->>proxy: "Service Request" over HTTPS
+  proxy->>bridge_link: "Service Request" over HTTP
+  note right of bridge_link: authorize bridge token
   alt is Authorization Succeeded
-    note right of bridge: act on SHS Directive
-    note right of bridge: generate SHS Synchronous Response
-    bridge->>proxy: "Service Accept Response" over HTTP
-    proxy->>skill: "Service Accept Response" over HTTPS
+    bridge_link->>bridge_service: "SHS Directive"
+    note right of bridge_service: act on SHS Directive
+    note right of bridge_service: generate SHS Synchronous Response
+    bridge_service->>bridge_link: "SHS Synchronous Response"
+    bridge_link->>proxy: "Service Response" over HTTP
+    proxy->>skill_link: "Service Response" over HTTPS
+    skill_link->>skill_shs: "Service Response"
   else is Authorization Failed
-    bridge->>proxy: "Service Reject Response" over HTTP
-    proxy->>skill: "Service Reject Response" over HTTPS
+    bridge_link->>proxy: "Auth Failure Response" over HTTP
+    proxy->>skill_link: "Auth Failure Response" over HTTPS
+    skill_link->>skill_shs: "Auth Failure Response"
   else is Error Occurred
-    bridge->>proxy: "Service Error Response" over HTTP
-    proxy->>skill: "Service Error Response" over HTTPS
+    bridge_link->>proxy: "Error Response" over HTTP
+    proxy->>skill_link: "Error Response" over HTTPS
+    skill_link->>skill_shs: "Error Response"
   end
 ```
 
@@ -290,7 +317,7 @@ Content-Type: application/json
 SMART_HOME_SKILL_DIRECTIVE
 ```
 
-The `Service Accept Response` message is the HTTP response header and body
+The `Service Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 200 OK
@@ -301,7 +328,7 @@ Content-Type: application/json
 SMART_HOME_SKILL_SYNCHRONOUS_RESPONSE
 ```
 
-The `Service Reject Response` message is the HTTP response header and body
+The `Auth Failure Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 401 Unauthorized
@@ -312,7 +339,7 @@ Content-Type: application/json
 {}
 ```
 
-The `Service Error Response` message is the HTTP response header and body
+The `Error Response` message is the HTTP response header and body
 
 ```http
 HTTP/1.1 500 Internal Server Error

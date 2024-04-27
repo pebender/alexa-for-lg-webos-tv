@@ -16,7 +16,7 @@
 
 ### Methods
 
-- [authorizedEmails](bridge_lib_configuration.Configuration.md#authorizedemails)
+- [authorizedServicesAndUsers](bridge_lib_configuration.Configuration.md#authorizedservicesandusers)
 - [hostname](bridge_lib_configuration.Configuration.md#hostname)
 - [build](bridge_lib_configuration.Configuration.md#build)
 
@@ -31,7 +31,7 @@
 | Name | Type |
 | :------ | :------ |
 | `_configuration` | `Object` |
-| `_configuration.authorizedEmails` | `string`[] |
+| `_configuration.authorizedServicesAndUsers` | \{ `service`: `string` ; `users`: `string`[]  }[] |
 | `_configuration.hostname` | `string` |
 
 #### Returns
@@ -48,18 +48,18 @@
 
 | Name | Type |
 | :------ | :------ |
-| `authorizedEmails` | `string`[] |
+| `authorizedServicesAndUsers` | \{ `service`: `string` ; `users`: `string`[]  }[] |
 | `hostname` | `string` |
 
 ## Methods
 
-### authorizedEmails
+### authorizedServicesAndUsers
 
-▸ **authorizedEmails**(): `Promise`\<`string`[]\>
+▸ **authorizedServicesAndUsers**(): `Promise`\<\{ `service`: `string` ; `users`: `string`[]  }[]\>
 
 #### Returns
 
-`Promise`\<`string`[]\>
+`Promise`\<\{ `service`: `string` ; `users`: `string`[]  }[]\>
 
 ___
 
