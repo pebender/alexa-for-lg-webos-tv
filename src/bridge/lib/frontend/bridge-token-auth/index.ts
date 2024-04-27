@@ -15,8 +15,8 @@ export class BridgeTokenAuth {
   ): Promise<BridgeTokenAuth> {
     const _db = await DatabaseTable.build(
       "frontend",
-      ["email", "hostname", "bridgeToken"],
-      "email",
+      ["bridgeToken", "hostname", "email"],
+      "bridgeToken",
     );
 
     const bridgeTokenAuth = new BridgeTokenAuth(configuration, _db);
@@ -29,13 +29,13 @@ export class BridgeTokenAuth {
   }
 
   public async setBridgeToken(
-    email: string,
-    hostname: string,
     bridgeToken: string,
+    hostname: string,
+    email: string,
   ): Promise<void> {
     await this._db.updateOrInsertRecord(
-      { email },
-      { email, hostname, bridgeToken },
+      { $and: [{ hostname }, { email }] },
+      { bridgeToken, hostname, email },
     );
   }
 

@@ -195,9 +195,9 @@ export class Frontend {
         const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
         try {
           await frontend._bridgeTokenAuth.setBridgeToken(
-            email,
-            hostname,
             bridgeToken,
+            hostname,
+            email,
           );
         } catch (error) {
           res.status(500).json({});

@@ -81,15 +81,15 @@ ___
 
 ### setBridgeToken
 
-▸ **setBridgeToken**(`email`, `hostname`, `bridgeToken`): `Promise`\<`void`\>
+▸ **setBridgeToken**(`bridgeToken`, `hostname`, `email`): `Promise`\<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `email` | `string` |
-| `hostname` | `string` |
 | `bridgeToken` | `string` |
+| `hostname` | `string` |
+| `email` | `string` |
 
 #### Returns
 
