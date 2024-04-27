@@ -4,15 +4,15 @@ The bridge works in conjunction with the [skill](./skill.md#the-skill) to enable
 
 The bridge expects to be running as a service on the same network as the LG webOS TVs to be controlled by Alexa. The bridge expects to be accessible from the internet through a reverse proxy.
 
-The bridge is divided into a frontend, a middle and a backend.
+The bridge is divided into a frontend, a middle and a backend. The frontend handles the communication link between the bridge and the skill. The middle translates between the Smart Home Skill protocol and the LG webOS TV protocol. The backend handles the communication links between the bridge and the LG webOS TVs being controlled. From the perspective of the [Skill to Bridge Interface](./skill-to-bridge-interface.md#the-skill-to-bridge-interface), the frontend implements the link and collectively the middle and backend implement the service.
 
 ## The Frontend
 
-The frontend manages the communication link between the skill and the bridge. It
+The frontend handles the communication link between the skill and the bridge. It
 
 - implements an HTTP server,
 - routes the interfaces based on HTTP request method and path,
-- controls access to the interfaces based on the HTTP Authorization request header,
+- controls access to the interfaces based on the token in the HTTP Authorization request header,
 - handles login interface requests,
 - handles test interface requests, and
 - forwards service interface requests (which are Smart Home Skill Directives) to the middle for handling.
@@ -21,7 +21,12 @@ The frontend manages the communication link between the skill and the bridge. It
 
 #### Login Token Authorization
 
-It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the JWT came from the skill and that the skill believes the authorization is genuine. So, as part of the JWT validation, the bridge compares the email address against its list of authorized emails and the service against its URL before accepting the JWT.
+It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the login token came from the skill and that the skill believes the authorization is genuine. So, as part of the login token validation, the bridge
+
+- validates that it supports the login token specified service,
+- validates that the login token specified user email address is in a list of authorized users for the login token specified service
+
+If validation fails multiple times from the same address, the IP address of the skill is temporarily blocked.
 
 #### Bridge Token Authorization
 
@@ -46,7 +51,7 @@ If the Directive's bearer token does not map to an email address then authorizat
 
 The backend is implemented by the [Backend](../../../docs/classes/src/bridge/lib/backend/index.ts) class in [src/bridge/lib/backend/index.ts](../../../src/bridge/lib/backend/index.ts).
 
-The backend manages the communication links between the backend and the LG webOS TVs being controlled. It
+The backend handles the communication links between the backend and the LG webOS TVs being controlled. It
 
 - searches for LG webOS TVs on the network,
 - maintains connections with the LG webOS TVs it finds and
