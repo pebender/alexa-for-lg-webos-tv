@@ -2,12 +2,12 @@ module.exports = {
   env: {
     browser: true,
     commonjs: true,
-    es2021: true,
+    es2023: true,
   },
   extends: ["standard", "prettier"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2023,
   },
   plugins: [
     "@typescript-eslint/eslint-plugin",
