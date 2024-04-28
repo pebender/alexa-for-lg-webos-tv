@@ -1,12 +1,12 @@
-[alexa-for-lg-webos-tv](../README.md) / [Modules](../modules.md) / skill/lib/custom-skill/login
+[alexa-for-lg-webos-tv](../README.md) / [Modules](../modules.md) / skill/lib/link/login
 
-# Module: skill/lib/custom-skill/login
+# Module: skill/lib/link/login
 
 ## Table of contents
 
 ### Functions
 
-- [getBridgeToken](skill_lib_custom_skill_login.md#getbridgetoken)
+- [getBridgeToken](skill_lib_link_login.md#getbridgetoken)
 
 ## Functions
 
