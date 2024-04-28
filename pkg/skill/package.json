@@ -23,7 +23,6 @@
     "ask-sdk": "2.14.0",
     "@aws-sdk/client-dynamodb": "3.515.0",
     "@aws-sdk/lib-dynamodb": "3.515.0",
-    "@smithy/node-http-handler": "2.5.0",
     "certnames": "1.0.4",
     "jsonwebtoken": "9.0.2"
   },
@@ -35,7 +34,6 @@
   "bundledDependencies": [
     "ask-sdk-core",
     "ask-sdk-model",
-    "@smithy/node-http-handler",
     "certnames",
     "jsonwebtoken"
   ],

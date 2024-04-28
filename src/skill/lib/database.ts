@@ -1,11 +1,9 @@
-import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   QueryCommand,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
-import * as https from "node:https";
 import * as Common from "../../common";
 
 export type BridgeInformation = {
@@ -13,17 +11,7 @@ export type BridgeInformation = {
   bridgeToken: string;
 };
 
-// Use HTTP keepalive to improve performance.
-// <https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html>
-const agent = new https.Agent({
-  keepAlive: true,
-});
-
-const dynamoDBClient = new DynamoDBClient({
-  requestHandler: new NodeHttpHandler({
-    httpsAgent: agent,
-  }),
-});
+const dynamoDBClient = new DynamoDBClient();
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
