@@ -3,23 +3,35 @@ import * as path from "path";
 import { JwtPayload } from "jsonwebtoken";
 import * as Common from "../../../../common";
 import { Configuration } from "../../configuration";
+import { AuthorizationHandler } from "../auth";
 
 export class LoginTokenAuth {
   private readonly _configuration: Configuration;
+  private readonly _authorizationHandler: AuthorizationHandler;
   private readonly _x509PublicCert: Buffer;
-  private constructor(_configuration: Configuration, _x509PublicCert: Buffer) {
+  private constructor(
+    _configuration: Configuration,
+    _authorizationHandler: AuthorizationHandler,
+    _x509PublicCert: Buffer,
+  ) {
     this._configuration = _configuration;
+    this._authorizationHandler = _authorizationHandler;
     this._x509PublicCert = _x509PublicCert;
   }
 
   public static async build(
     configuration: Configuration,
+    authorizationHandler: AuthorizationHandler,
   ): Promise<LoginTokenAuth> {
     const _x509PublicCert = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile),
     );
 
-    const loginTokenAuth = new LoginTokenAuth(configuration, _x509PublicCert);
+    const loginTokenAuth = new LoginTokenAuth(
+      configuration,
+      authorizationHandler,
+      _x509PublicCert,
+    );
 
     return loginTokenAuth;
   }
@@ -43,27 +55,24 @@ export class LoginTokenAuth {
 
     const iss = jwtPayload.iss;
     const user = jwtPayload.sub;
-    const service = jwtPayload.aud;
+    const url = new URL(jwtPayload.aud);
+    const hostname = url.hostname;
+    const service = url.pathname;
 
     if (iss !== Common.constants.bridge.jwt.iss) {
       return false;
     }
 
-    const hostname = that._configuration.hostname();
-    const authorizedServicesAndUsers =
-      await this._configuration.authorizedServicesAndUsers();
-    const authorizedService = authorizedServicesAndUsers.find(
-      (authorizedService) =>
-        service === `https://${hostname}${authorizedService.service}`,
-    );
-    if (typeof authorizedService === "undefined") {
+    if (hostname !== (await that._configuration.hostname())) {
       return false;
     }
-    const authorizedUsers = authorizedService.users;
-    const authorizedUser = authorizedUsers.find(
-      (authorizedUser) => user === authorizedUser,
+
+    const authorized = await that._authorizationHandler(
+      that._configuration,
+      service,
+      user,
     );
-    if (typeof authorizedUser === "undefined") {
+    if (authorized === false) {
       return false;
     }
 

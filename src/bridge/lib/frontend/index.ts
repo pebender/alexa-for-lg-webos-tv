@@ -17,6 +17,7 @@ import { Configuration } from "../configuration";
 import { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
+import { authorizeServiceAndUser } from "./auth";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
 export class Frontend {
@@ -49,8 +50,14 @@ export class Frontend {
   }
 
   public static async build(configuration: Configuration, middle: Middle) {
-    const _loginToken = await LoginTokenAuth.build(configuration);
-    const _bridgeToken = await BridgeTokenAuth.build(configuration);
+    const _loginToken = await LoginTokenAuth.build(
+      configuration,
+      authorizeServiceAndUser,
+    );
+    const _bridgeToken = await BridgeTokenAuth.build(
+      configuration,
+      authorizeServiceAndUser,
+    );
 
     // The blacklist is due to auth failures so blacklist quickly.
     // There should be no auth failures and each auth failure results
@@ -144,7 +151,11 @@ export class Frontend {
           ipBlacklistIncrement(req, res);
           Common.Debug.debug("jwtErrorHandler: Failed Validation:");
           Common.Debug.debugError(err);
-          res.status(401).json({});
+          const wwwAuthenticate = "Bearer";
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json({});
           return;
         }
 
@@ -186,27 +197,18 @@ export class Frontend {
           return;
         }
         const user = jwtPayload.sub;
+
         if (typeof jwtPayload.aud !== "string") {
           res.status(500).json({});
           return;
         }
         const url = new URL(jwtPayload.aud);
         const service = url.pathname;
-        const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
-        try {
-          await frontend._bridgeTokenAuth.setBridgeToken(
-            bridgeToken,
-            service,
-            user,
-          );
-        } catch (error) {
-          res.status(500).json({});
-          return;
-        }
 
-        res.status(200).json({
-          token: bridgeToken,
-        });
+        res.locals.service = service;
+        res.locals.user = user;
+
+        next();
       }
 
       async function bridgeTokenAuthorizationHandler(
@@ -231,9 +233,9 @@ export class Frontend {
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
         // part part of the URL or in the body. Since we put it in the header, we
-        // know that is were it will be. Pre RFC-6750, failure to find the Bearer
+        // know that is were it will be. Per RFC-6750, failure to find the Bearer
         // token results 401 response that includes a "WWW-Authenticate" header.
-        const wwwAuthenticate = `Bearer realm="https://${Common.constants.bridge.path.service}"`;
+        const wwwAuthenticate = "Bearer";
         if (req.headers.authorization === "undefined") {
           ipBlacklistIncrement(req, res);
           const body = shsInvalidAuthorizationCredentialResponse(
@@ -244,7 +246,7 @@ export class Frontend {
           res
             .setHeader("WWW-Authenticate", wwwAuthenticate)
             .status(401)
-            .json(body);
+            .json({});
           return;
         }
         const authorization = (req.headers.authorization as string).split(
@@ -323,6 +325,33 @@ export class Frontend {
         next();
       }
 
+      async function loginHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): Promise<void> {
+        Common.Debug.debug("Login:");
+
+        const service = res.locals.service;
+        const user = res.locals.user;
+
+        const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
+        try {
+          await frontend._bridgeTokenAuth.setBridgeToken(
+            bridgeToken,
+            service,
+            user,
+          );
+        } catch (error) {
+          res.status(500).json({});
+          return;
+        }
+
+        res.status(200).json({
+          token: bridgeToken,
+        });
+      }
+
       async function testHandler(
         req: express.Request,
         res: express.Response,
@@ -383,7 +412,8 @@ export class Frontend {
       frontend._server.use(requestHeaderLoggingHandler);
       // Check the IP address blacklist.
       frontend._server.use(ipBlacklistHandler);
-      // Handle exchange of JWT for bridgeToken.
+
+      // Handle login
       frontend._server.get(
         Common.constants.bridge.path.login,
         expressjwt({
@@ -392,7 +422,16 @@ export class Frontend {
         }),
         jwtErrorHandler,
         jwtPayloadHandler,
+        loginHandler,
       );
+
+      // Handle test
+      frontend._server.get(
+        Common.constants.bridge.path.test,
+        bridgeTokenAuthorizationHandler,
+        testHandler,
+      );
+
       // Handle Smart Home Skill directives.
       frontend._server.post(
         Common.constants.bridge.path.service,
@@ -401,12 +440,7 @@ export class Frontend {
         express.json(),
         shsHandler,
       );
-      // Handle test
-      frontend._server.get(
-        Common.constants.bridge.path.test,
-        bridgeTokenAuthorizationHandler,
-        testHandler,
-      );
+
       frontend._server.use(
         (req: express.Request, res: express.Response): void => {
           res.status(404).json({});

@@ -12,6 +12,7 @@
 
 ### Properties
 
+- [\_authorizationHandler](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md#_authorizationhandler)
 - [\_configuration](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md#_configuration)
 - [\_x509PublicCert](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md#_x509publiccert)
 
@@ -25,13 +26,14 @@
 
 ### constructor
 
-• **new LoginTokenAuth**(`_configuration`, `_x509PublicCert`): [`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)
+• **new LoginTokenAuth**(`_configuration`, `_authorizationHandler`, `_x509PublicCert`): [`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_configuration` | [`Configuration`](bridge_lib_configuration.Configuration.md) |
+| `_authorizationHandler` | [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler) |
 | `_x509PublicCert` | `Buffer` |
 
 #### Returns
@@ -39,6 +41,12 @@
 [`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)
 
 ## Properties
+
+### \_authorizationHandler
+
+• `Private` `Readonly` **\_authorizationHandler**: [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler)
+
+___
 
 ### \_configuration
 
@@ -80,13 +88,14 @@ ___
 
 ### build
 
-▸ **build**(`configuration`): `Promise`\<[`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)\>
+▸ **build**(`configuration`, `authorizationHandler`): `Promise`\<[`LoginTokenAuth`](bridge_lib_frontend_login_token_auth.LoginTokenAuth.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `configuration` | [`Configuration`](bridge_lib_configuration.Configuration.md) |
+| `authorizationHandler` | [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler) |
 
 #### Returns
 

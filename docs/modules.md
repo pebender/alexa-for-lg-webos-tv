@@ -15,6 +15,7 @@
 - [bridge/lib/configuration](modules/bridge_lib_configuration.md)
 - [bridge/lib/database](modules/bridge_lib_database.md)
 - [bridge/lib/frontend](modules/bridge_lib_frontend.md)
+- [bridge/lib/frontend/auth](modules/bridge_lib_frontend_auth.md)
 - [bridge/lib/frontend/bridge-token-auth](modules/bridge_lib_frontend_bridge_token_auth.md)
 - [bridge/lib/frontend/login-token-auth](modules/bridge_lib_frontend_login_token_auth.md)
 - [bridge/lib/middle](modules/bridge_lib_middle.md)

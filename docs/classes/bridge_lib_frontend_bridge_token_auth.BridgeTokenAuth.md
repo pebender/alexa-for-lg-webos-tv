@@ -12,6 +12,7 @@
 
 ### Properties
 
+- [\_authorizationHandler](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#_authorizationhandler)
 - [\_configuration](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#_configuration)
 - [\_db](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#_db)
 
@@ -19,6 +20,7 @@
 
 - [authorizeBridgeToken](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#authorizebridgetoken)
 - [generateBridgeToken](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#generatebridgetoken)
+- [getBridgeToken](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#getbridgetoken)
 - [setBridgeToken](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#setbridgetoken)
 - [build](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md#build)
 
@@ -26,13 +28,14 @@
 
 ### constructor
 
-• **new BridgeTokenAuth**(`_configuration`, `_db`): [`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)
+• **new BridgeTokenAuth**(`_configuration`, `_authorizationHandler`, `_db`): [`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `_configuration` | [`Configuration`](bridge_lib_configuration.Configuration.md) |
+| `_authorizationHandler` | [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler) |
 | `_db` | [`DatabaseTable`](bridge_lib_database.DatabaseTable.md) |
 
 #### Returns
@@ -40,6 +43,12 @@
 [`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)
 
 ## Properties
+
+### \_authorizationHandler
+
+• `Private` `Readonly` **\_authorizationHandler**: [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler)
+
+___
 
 ### \_configuration
 
@@ -79,6 +88,22 @@ ___
 
 ___
 
+### getBridgeToken
+
+▸ **getBridgeToken**(`bridgeToken`): `Promise`\<``null`` \| \{ `service`: `string` ; `user`: `string`  }\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `bridgeToken` | `string` |
+
+#### Returns
+
+`Promise`\<``null`` \| \{ `service`: `string` ; `user`: `string`  }\>
+
+___
+
 ### setBridgeToken
 
 ▸ **setBridgeToken**(`bridgeToken`, `service`, `user`): `Promise`\<`void`\>
@@ -99,13 +124,14 @@ ___
 
 ### build
 
-▸ **build**(`configuration`): `Promise`\<[`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)\>
+▸ **build**(`configuration`, `authorizationHandler`): `Promise`\<[`BridgeTokenAuth`](bridge_lib_frontend_bridge_token_auth.BridgeTokenAuth.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `configuration` | [`Configuration`](bridge_lib_configuration.Configuration.md) |
+| `authorizationHandler` | [`AuthorizationHandler`](../modules/bridge_lib_frontend_auth.md#authorizationhandler) |
 
 #### Returns
 
