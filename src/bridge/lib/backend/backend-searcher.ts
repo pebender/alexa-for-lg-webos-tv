@@ -4,7 +4,6 @@ import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
 import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
 const arp = require("node-arp");
-const http = require("axios");
 
 export interface UPnPDevice {
   root?: {
@@ -123,73 +122,88 @@ export class BackendSearcher extends EventEmitter {
         callback(null, null);
         return;
       }
-      // descriptionXML has interface 'AxiosResponse'
-      http.get(headers.LOCATION).then((descriptionXml: any): void => {
-        xml2js(
-          descriptionXml.data,
-          (error: Error | null, description: UPnPDevice): void => {
-            if (error) {
-              callback(error, null);
-              return;
-            }
-            if (!description) {
-              callback(null, null);
-              return;
-            }
-
-            //
-            // These properties are required by the UPnP specification but
-            // check anyway.
-            //
-            if (
-              typeof description.root === "undefined" ||
-              typeof description.root.device === "undefined" ||
-              description.root.device.length !== 1 ||
-              typeof description.root.device[0].manufacturer === "undefined" ||
-              description.root.device[0].manufacturer.length !== 1 ||
-              typeof description.root.device[0].friendlyName === "undefined" ||
-              description.root.device[0].friendlyName.length !== 1 ||
-              typeof description.root.device[0].UDN === "undefined" ||
-              description.root.device[0].UDN.length !== 1
-            ) {
-              callback(null, null);
-              return;
-            }
-
-            //
-            // Make sure this is from LG Electronics and has both a friendly
-            // name and a UDN.
-            //
-            if (
-              !description.root.device[0].manufacturer[0].match(
-                /^LG Electronics$/i,
-              ) ||
-              description.root.device[0].friendlyName[0] === "" ||
-              description.root.device[0].UDN[0] === ""
-            ) {
-              callback(null, null);
-              return;
-            }
-            [tv.name] = description.root.device[0].friendlyName;
-            [tv.udn] = description.root.device[0].UDN;
-
-            //
-            // Get the mac address needed to turn on the TV using wake on
-            // lan.
-            //
-            arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
-              if (err) {
-                callback(err, null);
+      fetch(headers.LOCATION)
+        .then((response: Response): Promise<Blob> => {
+          if (response.status !== 200) {
+            throw new Error("Could not fetch descriptionXML from LG webOS TV");
+          }
+          return response.blob();
+        })
+        .then((blob: Blob) => {
+          const mimetype: string[] = blob.type.split(";");
+          if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
+            throw new Error("Could not fetch descriptionXML from LG webOS TV");
+          }
+          return blob.text();
+        })
+        .then((descriptionXml: string): void => {
+          xml2js(
+            descriptionXml,
+            (error: Error | null, description: UPnPDevice): void => {
+              if (error) {
+                callback(error, null);
                 return;
               }
-              tv.mac = mac;
-              callback(null, tv as TV);
-              // eslint-disable-next-line no-useless-return
-              return;
-            });
-          },
-        );
-      });
+              if (!description) {
+                callback(null, null);
+                return;
+              }
+
+              //
+              // These properties are required by the UPnP specification but
+              // check anyway.
+              //
+              if (
+                typeof description.root === "undefined" ||
+                typeof description.root.device === "undefined" ||
+                description.root.device.length !== 1 ||
+                typeof description.root.device[0].manufacturer ===
+                  "undefined" ||
+                description.root.device[0].manufacturer.length !== 1 ||
+                typeof description.root.device[0].friendlyName ===
+                  "undefined" ||
+                description.root.device[0].friendlyName.length !== 1 ||
+                typeof description.root.device[0].UDN === "undefined" ||
+                description.root.device[0].UDN.length !== 1
+              ) {
+                callback(null, null);
+                return;
+              }
+
+              //
+              // Make sure this is from LG Electronics and has both a friendly
+              // name and a UDN.
+              //
+              if (
+                !description.root.device[0].manufacturer[0].match(
+                  /^LG Electronics$/i,
+                ) ||
+                description.root.device[0].friendlyName[0] === "" ||
+                description.root.device[0].UDN[0] === ""
+              ) {
+                callback(null, null);
+                return;
+              }
+              [tv.name] = description.root.device[0].friendlyName;
+              [tv.udn] = description.root.device[0].UDN;
+
+              //
+              // Get the mac address needed to turn on the TV using wake on
+              // lan.
+              //
+              arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
+                if (err) {
+                  callback(err, null);
+                  return;
+                }
+                tv.mac = mac;
+                callback(null, tv as TV);
+                // eslint-disable-next-line no-useless-return
+                return;
+              });
+            },
+          );
+        });
     }
 
     backendSearcher._ssdpNotify.on(
