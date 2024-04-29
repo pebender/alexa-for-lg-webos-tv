@@ -2,7 +2,7 @@
 
 The skill and the bridge communicate over HTTP with the skill in the role of HTTP client and the bridge in the role of HTTP server. Access is controlled using tokens carried in the HTTP request Authorization header.
 
-The bridge presents the skill with three interface: the login interface, the test interface and the service interface. The login interface allows the skill to request and be granted access to services provided by the bridge. The test interface allows a skill to test whether or not it has access to the bridge. The service interface allows the skill to forward Smart Home Skill Directives to the bridge for handling.
+The bridge presents the skill with three interfaces: the login interface, the test interface and the service interface(s). The login interface allows the skill to request and be granted access to a service provided by the bridge. The test interface allows a skill to test whether or not it has access to the bridge. The service interface performs services on behalf of a skill. For example, the current implementation has a service interface that allows the skill to forward Smart Home Skill Directives to the bridge for handling.
 
 While alexa-for-lg-webos-tv has a specific function, the skill to bridge interface is designed to be generic. It's login and test interfaces are independent of the services supported, and it can support multiple services simultaneously.
 
