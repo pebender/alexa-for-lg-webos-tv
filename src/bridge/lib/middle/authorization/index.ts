@@ -27,7 +27,7 @@ export class Authorization {
   ): Promise<boolean> {
     const record = await this._db.getRecord({ skillToken });
     if (record === null) {
-      const profile = await Common.Profile.SHS.getUserProfile(skillToken);
+      const profile = await Common.Profile.getUserProfile(skillToken);
       const userId = profile.user_id;
       const email = profile.email;
 

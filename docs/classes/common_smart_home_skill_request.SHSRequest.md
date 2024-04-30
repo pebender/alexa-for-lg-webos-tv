@@ -20,7 +20,7 @@
 
 ### Methods
 
-- [getBearerToken](common_smart_home_skill_request.SHSRequest.md#getbearertoken)
+- [getAccessToken](common_smart_home_skill_request.SHSRequest.md#getaccesstoken)
 - [getCorrelationToken](common_smart_home_skill_request.SHSRequest.md#getcorrelationtoken)
 - [getEndpointId](common_smart_home_skill_request.SHSRequest.md#getendpointid)
 - [getUserEmail](common_smart_home_skill_request.SHSRequest.md#getuseremail)
@@ -60,9 +60,9 @@
 
 ## Methods
 
-### getBearerToken
+### getAccessToken
 
-▸ **getBearerToken**(): `string`
+▸ **getAccessToken**(): `string`
 
 #### Returns
 

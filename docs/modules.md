@@ -37,8 +37,6 @@
 - [common/debug](modules/common_debug.md)
 - [common/https-request](modules/common_https_request.md)
 - [common/profile](modules/common_profile.md)
-- [common/profile/custom-skill](modules/common_profile_custom_skill.md)
-- [common/profile/smart-home-skill](modules/common_profile_smart_home_skill.md)
 - [common/smart-home-skill](modules/common_smart_home_skill.md)
 - [common/smart-home-skill/copy](modules/common_smart_home_skill_copy.md)
 - [common/smart-home-skill/request](modules/common_smart_home_skill_request.md)

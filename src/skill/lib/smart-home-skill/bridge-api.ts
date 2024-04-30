@@ -41,10 +41,10 @@ async function getBridgeInformation(
 
   async function setSkillToken(
     email: string,
-    bearerToken: string,
+    accessToken: string,
   ): Promise<void> {
     try {
-      await Database.setSkillToken(email, bearerToken);
+      await Database.setSkillToken(email, accessToken);
     } catch (error) {
       throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         alexaRequest,
@@ -54,15 +54,15 @@ async function getBridgeInformation(
     }
   }
 
-  const bearerToken = alexaRequest.getBearerToken();
+  const accessToken = alexaRequest.getAccessToken();
   let bridgeInformation: Database.BridgeInformation | null = null;
-  bridgeInformation = await queryBridgeInformation(bearerToken);
+  bridgeInformation = await queryBridgeInformation(accessToken);
   if (bridgeInformation !== null) {
     return bridgeInformation;
   }
   const email = await alexaRequest.getUserEmail();
-  await setSkillToken(email, bearerToken);
-  bridgeInformation = await await queryBridgeInformation(bearerToken);
+  await setSkillToken(email, accessToken);
+  bridgeInformation = await await queryBridgeInformation(accessToken);
   if (bridgeInformation !== null) {
     return bridgeInformation;
   }

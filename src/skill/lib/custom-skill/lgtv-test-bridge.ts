@@ -6,26 +6,20 @@ import * as Database from "../database";
 import * as net from "node:net";
 import * as tls from "node:tls";
 
-function getEndpointAndAccessToken(
-  handlerInput: ASKHandlerInput,
-): Promise<{ endpoint: string; accessToken: string }> {
+function getAccessToken(handlerInput: ASKHandlerInput): Promise<string> {
   return new Promise((resolve, reject): void => {
-    const endpoint = handlerInput.requestEnvelope.context.System.apiEndpoint;
-    if (typeof endpoint === "undefined") {
-      reject(new Error());
-    }
     const accessToken =
-      handlerInput.requestEnvelope.context.System.apiAccessToken;
+      handlerInput.requestEnvelope.context.System.user.accessToken;
     if (typeof accessToken === "undefined") {
       reject(new Error());
     }
-    resolve({ endpoint, accessToken: accessToken as string });
+    resolve(accessToken as string);
   });
 }
 
-function getEmail(endpoint: string, accessToken: string): Promise<string> {
+function getEmail(accessToken: string): Promise<string> {
   return new Promise((resolve, reject): void => {
-    Common.Profile.CS.getUserEmail(endpoint, accessToken)
+    Common.Profile.getUserEmail(accessToken)
       .then(resolve)
       .catch(() => reject(new Error()));
   });
@@ -125,11 +119,10 @@ async function testBridgeConnection(
 }
 
 async function test(handlerInput: ASKHandlerInput): Promise<string> {
-  const { endpoint, accessToken } =
-    await getEndpointAndAccessToken(handlerInput);
+  const accessToken = await getAccessToken(handlerInput);
   let email;
   try {
-    email = await getEmail(endpoint, accessToken);
+    email = await getEmail(accessToken);
   } catch {
     const speechOutput =
       "There appears to have been a problem with account linking. " +

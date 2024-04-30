@@ -1,4 +1,4 @@
-import * as HTTPSRequest from "../https-request";
+import * as HTTPSRequest from "./https-request";
 
 const responseErrorMessages = {
   CONNECTION_INTERRUPTED:
@@ -21,7 +21,7 @@ const responseErrorMessages = {
 };
 
 export async function getUserProfile(
-  bearerToken: string,
+  accessToken: string,
 ): Promise<{ user_id: string; email: string; [x: string]: string }> {
   const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: "api.amazon.com",
@@ -32,7 +32,7 @@ export async function getUserProfile(
   };
   let response;
   try {
-    response = await HTTPSRequest.request(requestOptions, bearerToken);
+    response = await HTTPSRequest.request(requestOptions, accessToken);
   } catch (err) {
     const requestError = err as HTTPSRequest.ResponseError;
     const error = new Error("Sorry. I could not retrieve your profile.");
@@ -66,7 +66,7 @@ export async function getUserProfile(
   return response as { user_id: string; email: string; [x: string]: string };
 }
 
-export async function getUserEmail(bearerToken: string): Promise<string> {
-  const userProfile = await getUserProfile(bearerToken);
+export async function getUserEmail(accessToken: string): Promise<string> {
+  const userProfile = await getUserProfile(accessToken);
   return userProfile.email;
 }

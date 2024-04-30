@@ -8,57 +8,27 @@ The skill is a [Multi-Capability Skill](https://developer.amazon.com/en-US/docs/
 
 ## Account Linking
 
-For the skill's CS, the skill's SHS and the bridge's SHS service to work correctly, they must have a common method to identify a user. The common method used is the user's email obtained though [Account Linking](https://developer.amazon.com/en-US/docs/alexa/account-linking/add-account-linking.html) using [Login With Amazon (LWA)](https://developer.amazon.com/apps-and-games/login-with-amazon). Once the skill is linked to the user's Amazon account and the user agrees to share their email address, the skill's CS, the skill's SHS and the bridge's SHS service can retrieve the user's email address.
+For the skill to work correctly, the CS and SHS must be able to share the user's bridge hostname. To do this, the skill relies on [Account Linking](https://developer.amazon.com/en-US/docs/alexa/account-linking/add-account-linking.html) using [Login With Amazon (LWA)](https://developer.amazon.com/apps-and-games/login-with-amazon). Once account linking is complete, CS request events and SHS request directives contain an access token that depends on the user but not the message. So, the skill can use the access token to link the user's CS and SHS enabling it to share the user's bridge hostname between the user's CS and SHS.
 
-Amazon provides instructions on how to [Set Up Account Linking](https://developer.amazon.com/en-US/docs/alexa/smarthome/set-up-account-linking-tutorial.html). The one thing to remember is to be sure to set it up so that it requests access to the user's email address. Otherwise, neither the skill nor the bridge will have access to the user's email address through the linked account.
+## Retrieving the User's Access Token
 
-## Retrieving the email Address using the Custom Skill
+### Retrieving the User's Access Token from a Custom Skill Request Event
 
-Retrieving the user's email address is a two step process. First the CS retrieves the user's API Access Token from a CS request. Next the CS uses the API Access Token to retrieve the user's email address using the Alexa Customer Profile API.
+When a CS in linked to the user's Amazon account, CS request events contain an access token. The location of the access token in the CS request event is `handlerInput.requestEnvelope.context.System.user.accessToken`
 
-### Retrieving the API Access Token from a Custom Skill Request Event
+### Retrieving the User's Access Token from a Smart Home Skill Request Directive
 
-When a CS in linked to the user's Amazon account, request events contain an API Endpoint (apiEndpoint) and API Access Token (apiAccessToken). The CS can find the apiEndpoint in request event at `handlerInput.requestEnvelope.context.System.apiEndpoint`. The CS can find the apiAccessToken in the request event at `handlerInput.requestEnvelope.context.System.apiAccessToken`
-The CS can use this apiEndpoint and apiAccessToken to retrieve the user's email address.
+When an SHS in linked to the user's Amazon account, SHS request directives contain an access token. The location of the access token in the directive depends the type of directive. For the ["Alexa.Authorization" "AcceptGrant" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#acceptgrant-directive-example), the location is `directive.payload.grantee.token`. For the ["Alexa.Discovery" "Discover" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#discover-directive-example) the location is `directive.payload.scope.token`. For directives sent to a specific endpoint such as the ["Alexa.PowerController" "TurnOn" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html#directives), the location is `directive.endpoint.scope.token`.
 
-### Retrieving the email Address Using the Alexa Customer Profile API
+The alexa-for-lg-webos-tv's SHS implements the retrieval of the access token in the [getAccessToken](../../src/common/smart-home-skill/request.ts) function.
 
-Once the CS has the apiEndpoint and the user's apiAccessToken, it can request the user's email address from
+## Retrieving the User's Identifier
 
-```text
-<https://API_ENDPOINT/v2/accounts/~current/settings/Profile.email>
-```
+While the access token links a user's CS and SHS at a given time, the access token can change with time. To track a user's CS or SHS across time, the skill uses the User's Identifier (user_id).
 
-by sending a GET request to the URL with the HTTP authorization header
+Retrieving user_id is a two step process. First the skill retrieves the user's access token. Next the skill uses the access token to retrieve the user's profile using the Amazon User Profile API. Contained in the profile is user_id.
 
-```http
-Authorization: Bearer API_ACCESS_TOKEN
-```
-
-where API_ENDPOINT is the value of apiEndpoint and API_ACCESS_TOKEN is the value of the apiAccessToken. The full request would look like
-
-```http
-Host: API_ENDPOINT
-Accept: application/json
-Authorization: Bearer API_ACCESS_TOKEN
-GET <https://API_ENDPOINT/v2/accounts/~current/settings/Profile.email>
-```
-
-The alexa-for-lg-webos-tv's CS implements the retrieval of the email address in the [getUserEmail](../../src/common/profile/custom-skill.ts) function.
-
-You can find more information at ["Request Customer Contact Information for Use in Your Skill"](https://developer.amazon.com/en-US/docs/alexa/custom-skills/request-customer-contact-information-for-use-in-your-skill.html).
-
-## Retrieving the email Address using the Smart Home Skill
-
-### Retrieving the Bearer Token from a Smart Home Skill Request Directive
-
-When an SHS in linked to the user's Amazon account, request directives will contain a bearerToken (bearerToken). The SHS can use this bearerToken to retrieve the user's profile. Assuming the user granted access to their email address during account linking, the user's profile will contain user's email address.
-
-The location of the bearerToken in the SHS request directive depends the type of directive. For the ["Alexa.Authorization" "AcceptGrant" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#acceptgrant-directive-example), it is found at `directive.payload.grantee.token`. For the ["Alexa.Discovery" "Discover" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#discover-directive-example) it is found at `directive.payload.scope.token`. For directives sent to a specific endpoint such as the ["Alexa.PowerController" "TurnOn" directive](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html#directives), it is found at `directive.endpoint.scope.token`. The alexa-for-lg-webos-tv's SHS implements the retrieval of the bearerToken in the [getBearerToken](../../src/common/smart-home-skill/request.ts) function.
-
-### Retrieving the email Address
-
-Once the SHS has the user's bearerToken, it can request the user's profile from
+After the skill [retrieves the user's access token](#retrieving-the-users-access-token), it can request the user's profile from
 
 ```text
 <https://api.amazon.com/user/profile>
@@ -67,10 +37,10 @@ Once the SHS has the user's bearerToken, it can request the user's profile from
 by sending a GET request to the URL with the HTTP authorization header
 
 ```http
-Authorization: Bearer BEARER_TOKEN
+Authorization: Bearer ACCESS_TOKEN
 ```
 
-where BEARER_TOKEN is the value of the bearerToken. The full request would look like
+where ACCESS_TOKEN is the value of the access token. The full request would look like
 
 ```http
 Host: api.amazon.com
@@ -79,11 +49,7 @@ Authorization: Bearer _apiAccessToken_
 GET <https://api.amazon.com/user/profile>
 ```
 
-The response contains the items the user agreed to share, including the email address.
-
-## Linking the Custom Skill and the Smart Home Skill
-
-For the MCS to work correctly, the CS must share the bridge hostname with the SHS. The skill does this using the user's email address as a unique key into a database. Using the user's email address as a unique key, the CS writes the user's bridge hostname to the DynamoDB database and the SHS reads the user's bridge hostname from the DynamoDB database.
+The response contains user_id as well as any other information the user agreed to share during account linking.
 
 ## The Database
 
@@ -102,3 +68,93 @@ The alexa-for-lg-webos-tv skill's database functions are found [here](../../src/
 There are a three things to notice besides the functions for setting the bridge hostname (setHostname), getting the bridge hostname (getHostname), setting the bridge's bearer token (setBridgeToken), getting the bridge's bearer token (getBridgeToken) and setting the SHS's bearer token (setSkillToken).
 
 [Amazon provides recommendations on how to improve the performance of lambda functions by Amazon](https://aws.amazon.com/blogs/compute/operating-lambda-performance-optimization-part-2/). First, Amazon suggests maintaining the connection to databases outside of the handler. This ensures the lambda function establishes its connection to the database outside of the handler function. Doing this causes the lambda function to connect to the database once when it is loaded rather than every time the handler function is called. Second, Amazon suggests loading needed parts of the modules. Doing this reduces the lambda function load time. Third, Amazon recommends that the [DynamoDB connection enable HTTP keep-alive](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/node-reusing-connections.html) to improve connections. The alexa-for-lg-webos-tv's skill implements all of these suggestions.
+
+## Tracking Skill Tokens
+
+The skill's design depends on the skill being linked to the user's Amazon account and that the user agreed to share their email address with the skill during linking. The CS and SHS parts of the MCS need to communicate user information (e.g. the user's bridge hostname). Unfortunately, only the user's email address appears to be the only globally unique information that the CS and SHS have in common.
+
+When a Multi-Capability Skill is linked, Custom Skill Requests and Smart Home Skill Directives contain access tokens. Therefore, the skill rejects Custom Skill Requests and Smart Home Skill Directives that do not contain access tokens.
+
+The skill tracks the access tokens. Because the access tokens for the Custom Skill and Smart Home Skill are different, the skill tracks the most recent Custom Skill access token and the most recent Smart Home SKill access token for each user. The user is identified by the email address they shared during account linking.
+
+The skill stores this information in a database. When an access token is not found in the database, the skill queries the appropriate Amazon profile server for the email address associated with access token. If the query returns an email address, then the skill updates the database to reflect that this access token is the latest access token of this type for this email address. Otherwise, it rejects the message associated with the failed
+
+The skill uses the access token to retrieve the user's email from their
+
+The skill discards Custom Skill requests that don't contain an accessToken
+
+## Sending on the Test and Service Interfaces
+
+Sending a request on the test or service interfaces requires a bridge token from the bridge for authorization
+
+The skill assumes that any request it's being asked to send on either the test or the service interface on behalf of a user would be authorized by the bridge. Therefore, if the skill has no bridge token for the user or has an invalid bridge token for the user, then the skill will attempt to get a valid bridge token from the bridge before giving up.
+
+```mermaid
+stateDiagram-v2
+  direction TB
+
+  lookUpUserRecord: Look Up User Record<br>using CS/SHS Token
+  checkUserRecordForUserEmail: Check User Record<br>for User Email
+  checkUserRecordForBridgeHostname: Check User Record<br>for Bridge Hostname
+  checkUserRecordForBridgeToken: Check User Record<br>for Bridge Token
+  sendMessageToBridge: Send CS/SHS Message<br>to Bridge
+  succeedMessage: Succeed<br>with CS/SHS Response
+  [*] --> lookUpUserRecord: CS/SHS Message Received
+  lookUpUserRecord --> checkUserRecordForUserEmail: User Record Found
+  checkUserRecordForUserEmail --> checkUserRecordForBridgeHostname: User Email Found
+  checkUserRecordForBridgeHostname --> checkUserRecordForBridgeToken: Bridge Hostname Found
+  checkUserRecordForBridgeToken --> sendMessageToBridge: Bridge Token Found
+  sendMessageToBridge --> succeedMessage: Received CS/SHS Response<br>from bridge
+  succeedMessage --> [*]: CS/SHS Message Handled
+
+  updateSkillTokenInUserRecord: Update CS/SHS Token<br>in User Record
+  lookUpUserRecord --> updateSkillTokenInUserRecord: User Record Not Found<br>(out-of-date CS/SHS)
+  updateSkillTokenInUserRecord --> lookUpUserRecord: User Record Updated
+
+  updateBridgeTokenInUserRecord: Update Bridge Token<br>in User Record
+  checkUserRecordForUserEmail --> updateSkillTokenInUserRecord: User Email Not Found<br>(this should not happen)
+
+  failMessageNotAuthorized: Fail<br>with Not Authorized
+  updateSkillTokenInUserRecord --> failMessageNotAuthorized: User Record Not Updated<br>because Authorization Failed
+
+  failMessageNotAuthorized --> [*]: CS/SHS Message Handled
+
+  checkUserRecordForBridgeHostname --> failMessageUnreachable: Message not Authorized<br> with Bridge Not Configured
+
+  failMessageUnreachable: Fail<br>with Unreachable
+  failMessageUnreachable --> [*]: CS/SHS Message Handled
+
+  sendMessageToBridge --> updateBridgeTokenInUserRecord: Received Not Authorized from Bridge
+
+
+  updateBridgeTokenInUserRecord --> lookUpUserRecord: Bridge Token Updated
+```
+
+### Update Skill Token in the User Record
+
+The skill token is used as authorization to fetch the user's identifier and email address from the profile server. Assuming the fetch is successful, the skill token for the User Record associated with the user's email address is updated/created with the value of the CS token. If the CS token fails authorization or no email address is returned, then update fails with the reason "not authorized".
+
+```mermaid
+stateDiagram-v2
+    fetchUserProfile: Fetch<br>User Profile
+    checkUserProfileForUserId: Check<br>User Profile<br>for User's Identifier
+    checkUserProfileForUserEmail: Check<br>User Profile<br>for User's Email Address
+    updateUserRecordSkillToken: Add/Update<br>User Record<br>with SHS Token
+    succeed: Succeed
+    failAuthorization: Fail with Not Authorized
+
+    [*] --> fetchUserProfile: Update Requested
+    fetchUserProfile --> checkUserProfileForUserId: Profile Received
+    checkUserProfileForUserId --> checkUserProfileForUserEmail: Identifier<br>Found
+    checkUserProfileForUserEmail --> updateUserRecordSkillToken: Email Address<br>Found
+    updateUserRecordSkillToken --> succeed: Update<br>Succeeded
+    succeed --> [*]: Update <br>Succeeded
+
+    fetchUserProfile --> failAuthorization: Authorization Failed
+    checkUserProfileForUserId --> failAuthorization: Identifier<br>Not Found
+    checkUserProfileForUserEmail --> failAuthorization: Email Address<br>Not Found
+
+    failAuthorization --> [*]: Update Failed<br>with Not Authorized
+```
+
+### Update Bridge Token in User Record

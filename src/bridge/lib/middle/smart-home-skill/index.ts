@@ -89,11 +89,11 @@ async function handler(
 ): Promise<Common.SHS.ResponseWrapper> {
   const alexaRequest = new Common.SHS.Request(event);
 
-  const bearerToken: string = alexaRequest.getBearerToken();
+  const accessToken: string = alexaRequest.getAccessToken();
   try {
     const authorized = await authorization.authorize(
       authorizedEmail,
-      bearerToken,
+      accessToken,
     );
     if (!authorized) {
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(

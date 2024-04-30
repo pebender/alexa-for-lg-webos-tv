@@ -80,19 +80,17 @@ async function creatHostnamesSimpleCardContent(
 async function saveBridgeHostnameAndToken(
   handlerInput: ASKHandlerInput,
 ): Promise<void> {
-  const apiEndpoint = handlerInput.requestEnvelope.context.System.apiEndpoint;
-  const apiAccessToken =
-    handlerInput.requestEnvelope.context.System.apiAccessToken;
-  if (typeof apiAccessToken === "undefined") {
+  const accessToken =
+    handlerInput.requestEnvelope.context.System.user.accessToken;
+  if (typeof accessToken === "undefined") {
     throw new Error(
       "There was a problem with account linking. Please re-link the skill and try again.",
     );
   }
-  Common.Debug.debug(`apiEndpoint: ${apiEndpoint}`);
-  Common.Debug.debug(`apiAccessToken: ${apiAccessToken}`);
+  Common.Debug.debug(`accessToken: ${accessToken}`);
   let email;
   try {
-    email = await Common.Profile.CS.getUserEmail(apiEndpoint, apiAccessToken);
+    email = await Common.Profile.getUserEmail(accessToken);
     Common.Debug.debug(
       `LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`,
     );

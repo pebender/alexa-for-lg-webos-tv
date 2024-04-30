@@ -4,19 +4,39 @@
 
 ## Table of contents
 
-### References
+### Functions
 
-- [CS](common_profile.md#cs)
-- [SHS](common_profile.md#shs)
+- [getUserEmail](common_profile.md#getuseremail)
+- [getUserProfile](common_profile.md#getuserprofile)
 
-## References
+## Functions
 
-### CS
+### getUserEmail
 
-Renames and re-exports [common/profile/custom-skill](common_profile_custom_skill.md)
+▸ **getUserEmail**(`accessToken`): `Promise`\<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `accessToken` | `string` |
+
+#### Returns
+
+`Promise`\<`string`\>
 
 ___
 
-### SHS
+### getUserProfile
 
-Renames and re-exports [common/profile/smart-home-skill](common_profile_smart_home_skill.md)
+▸ **getUserProfile**(`accessToken`): `Promise`\<\{ `[x: string]`: `string`; `email`: `string` ; `user_id`: `string`  }\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `accessToken` | `string` |
+
+#### Returns
+
+`Promise`\<\{ `[x: string]`: `string`; `email`: `string` ; `user_id`: `string`  }\>
