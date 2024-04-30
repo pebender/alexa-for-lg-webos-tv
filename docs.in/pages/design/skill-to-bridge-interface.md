@@ -47,7 +47,7 @@ The login token is a JSON Web Token (JWT) with the form
 ```json
 {
     "iss": "For LG webOS TV",
-    "sub": "USER_EMAIL",
+    "sub": "SKILL_TOKEN",
     "aud": "https://BRIDGE_HOSTNAME/api/ForLGwebOSTV/v1",
     "exp": "NOW + 1m"
 }
@@ -59,7 +59,7 @@ The login token's `"iss"` field identifies the skill. In the skill implementatio
 "For LG webOS TV"
 ```
 
-The login token's `"sub"` field identifies the user. In the skill implementation, it is set to be the email address provided by account linking. In the bridge implementation, it is assumed to be the email address provided by account linking.
+The login token's `"sub"` field identifies the user. SKILL_TOKEN is the access token found in the messages of Account Linked skills.
 
 The login token's `"aud"` field identifies the service. It's a URL that identifies the service. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill. In the skill implementation and the bridge implementation, the path is set by `constants.bridge.path.skill` in [src/common/constants.ts](../../src/common/constants.ts) and is currently set to
 
@@ -75,7 +75,11 @@ The bridge verifies that the login came from a trusted skill. It does this by ve
 
 The bridge verifies that the login token has not expired. If verification fails, then the login token authorization fails.
 
+The bridge verifies that the the user is a valid Login with Amazon user.
+
 The bridge verifies that the skill identified by the login token is allowed to access the service identified in the login token on behalf of the user identified in the login token. If verification fails, then the login token authorization fails.
+
+In the implementation, the skill requires the user to share their email with skill when Account Linking because the bridge uses the user's email address to identify allowed users of the service.
 
 ### The Bridge Token
 

@@ -38,7 +38,7 @@ function create(
 }
 
 export async function getBridgeToken(
-  email: string,
+  skillToken: string,
   hostname: string,
 ): Promise<Common.SHS.Response> {
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
@@ -49,7 +49,7 @@ export async function getBridgeToken(
     headers: {},
   };
 
-  const token = await create(x509PrivateKey, email, hostname);
+  const token = await create(x509PrivateKey, skillToken, hostname);
 
   let response;
   try {

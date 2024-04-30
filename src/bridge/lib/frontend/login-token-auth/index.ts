@@ -54,7 +54,7 @@ export class LoginTokenAuth {
     }
 
     const iss = jwtPayload.iss;
-    const user = jwtPayload.sub;
+    const skillToken = jwtPayload.sub;
     const url = new URL(jwtPayload.aud);
     const hostname = url.hostname;
     const service = url.pathname;
@@ -64,6 +64,13 @@ export class LoginTokenAuth {
     }
 
     if (hostname !== (await that._configuration.hostname())) {
+      return false;
+    }
+
+    let user: string = "";
+    try {
+      user = await Common.Profile.getUserEmail(skillToken);
+    } catch (error) {
       return false;
     }
 

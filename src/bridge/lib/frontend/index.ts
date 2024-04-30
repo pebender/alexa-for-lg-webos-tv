@@ -196,7 +196,7 @@ export class Frontend {
           res.status(500).json({});
           return;
         }
-        const user = jwtPayload.sub;
+        const skillToken = jwtPayload.sub;
 
         if (typeof jwtPayload.aud !== "string") {
           res.status(500).json({});
@@ -204,6 +204,13 @@ export class Frontend {
         }
         const url = new URL(jwtPayload.aud);
         const service = url.pathname;
+
+        let user: string = "";
+        try {
+          user = await Common.Profile.getUserEmail(skillToken);
+        } catch (error) {
+          res.status(500).json({});
+        }
 
         res.locals.service = service;
         res.locals.user = user;

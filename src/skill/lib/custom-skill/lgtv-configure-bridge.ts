@@ -111,7 +111,7 @@ async function saveBridgeHostnameAndToken(
 
   let bridgeToken;
   try {
-    bridgeToken = await Login.getBridgeToken(email, hostname);
+    bridgeToken = await Login.getBridgeToken(accessToken, hostname);
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: success");
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error:");
