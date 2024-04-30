@@ -24,7 +24,7 @@ function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {
   });
 }
 
-async function creatHostnamesSimpleCardContent(
+async function createHostnamesSimpleCardContent(
   handlerInput: ASKHandlerInput,
 ): Promise<string> {
   const sessionAttributes =
@@ -324,7 +324,7 @@ const ConfigureBridgeIntentHandler = {
       if (typeof hostnameIndexString === "undefined") {
         let cardContent;
         try {
-          cardContent = await creatHostnamesSimpleCardContent(handlerInput);
+          cardContent = await createHostnamesSimpleCardContent(handlerInput);
         } catch (error) {
           return handlerInput.responseBuilder
             .speak(
