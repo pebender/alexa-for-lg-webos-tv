@@ -11,28 +11,10 @@ function getAccessToken(handlerInput: ASKHandlerInput): Promise<string> {
     const accessToken =
       handlerInput.requestEnvelope.context.System.user.accessToken;
     if (typeof accessToken === "undefined") {
-      reject(new Error());
+      reject(Common.Error.create("", { general: "unknown" }));
     }
     resolve(accessToken as string);
   });
-}
-
-function getEmail(accessToken: string): Promise<string> {
-  return new Promise((resolve, reject): void => {
-    Common.Profile.getUserEmail(accessToken)
-      .then(resolve)
-      .catch(() => reject(new Error()));
-  });
-}
-
-async function getBridgeHostnameAndToken(
-  email: string,
-): Promise<Database.BridgeInformation | null> {
-  try {
-    return await Database.getBridgeInformationUsingEmail(email);
-  } catch (error) {
-    throw new Error();
-  }
 }
 
 function testTcp(hostname: string, port: number): Promise<void> {
@@ -122,7 +104,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
   const accessToken = await getAccessToken(handlerInput);
   let email;
   try {
-    email = await getEmail(accessToken);
+    email = await Common.Profile.getUserEmail(accessToken);
   } catch {
     const speechOutput =
       "There appears to have been a problem with account linking. " +
@@ -131,7 +113,8 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
   }
   let bridgeHostnameAndToken;
   try {
-    bridgeHostnameAndToken = await getBridgeHostnameAndToken(email);
+    bridgeHostnameAndToken =
+      await Database.getBridgeInformationUsingEmail(email);
   } catch {
     const speechOutput =
       "There was a problem access the database. " + "Test your bridge again.";

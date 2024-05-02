@@ -7,8 +7,6 @@
 ### Type Aliases
 
 - [RequestOptions](common_https_request.md#requestoptions)
-- [ResponseError](common_https_request.md#responseerror)
-- [ResponseErrorNames](common_https_request.md#responseerrornames)
 
 ### Functions
 
@@ -29,31 +27,6 @@
 | `method` | ``"GET"`` \| ``"POST"`` |
 | `path` | `string` |
 | `port` | `number` |
-
-___
-
-### ResponseError
-
-Ƭ **ResponseError**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `body?` | `object` |
-| `error?` | `Error` |
-| `http?` | \{ `body?`: `string` \| `object` ; `contentType?`: `string` ; `statusCode?`: `number`  } |
-| `http.body?` | `string` \| `object` |
-| `http.contentType?` | `string` |
-| `http.statusCode?` | `number` |
-| `name` | [`ResponseErrorNames`](common_https_request.md#responseerrornames) |
-| `stack?` | `string` |
-
-___
-
-### ResponseErrorNames
-
-Ƭ **ResponseErrorNames**: ``"CONNECTION_INTERRUPTED"`` \| ``"STATUS_CODE_MISSING"`` \| ``"INVALID_AUTHORIZATION_CREDENTIAL"`` \| ``"INTERNAL_ERROR"`` \| ``"CONTENT_TYPE_MISSING"`` \| ``"CONTENT_TYPE_INCORRECT"`` \| ``"BODY_MISSING"`` \| ``"BODY_INVALID_FORMAT"`` \| ``"UNKNOWN_ERROR"`` \| ``"BAD_GATEWAY"``
 
 ## Functions
 

@@ -28,10 +28,10 @@ function create(
         if (typeof encoded !== "undefined") {
           resolve(encoded);
         } else {
-          reject(new Error());
+          throw Common.Error.create("", { general: "unknown" });
         }
       } else {
-        reject(err);
+        reject(Common.Error.create("", { general: "unknown", cause: err }));
       }
     });
   });
@@ -51,41 +51,14 @@ export async function getBridgeToken(
 
   const token = await create(x509PrivateKey, skillToken, hostname);
 
-  let response;
-  try {
-    response = await Common.HTTPSRequest.request(requestOptions, token);
-  } catch (error) {
-    const requestError = error as Common.HTTPSRequest.ResponseError;
-    switch (requestError.name) {
-      case "CONNECTION_INTERRUPTED":
-        throw Error();
-      case "STATUS_CODE_MISSING":
-        throw Error();
-      case "INVALID_AUTHORIZATION_CREDENTIAL":
-        throw Error();
-      case "INTERNAL_ERROR":
-        throw Error();
-      case "CONTENT_TYPE_MISSING":
-        throw Error();
-      case "CONTENT_TYPE_INCORRECT":
-        throw Error();
-      case "BODY_MISSING":
-        throw Error();
-      case "BODY_INVALID_FORMAT":
-        throw Error();
-      case "UNKNOWN_ERROR":
-        throw Error();
-      default:
-        throw Error();
-    }
-  }
+  const response = await Common.HTTPSRequest.request(requestOptions, token);
 
   if (typeof response !== "object") {
-    throw Error();
+    throw Common.Error.create("", { general: "unknown" });
   }
 
   if (typeof response.token !== "string") {
-    throw Error();
+    throw Common.Error.create("", { general: "unknown" });
   }
 
   return response.token;

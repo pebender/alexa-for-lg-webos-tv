@@ -7,6 +7,7 @@
 ### References
 
 - [Debug](common.md#debug)
+- [Error](common.md#error)
 - [HTTPSRequest](common.md#httpsrequest)
 - [Profile](common.md#profile)
 - [SHS](common.md#shs)
@@ -17,6 +18,12 @@
 ### Debug
 
 Renames and re-exports [common/debug](common_debug.md)
+
+___
+
+### Error
+
+Renames and re-exports [common/error](common_error.md)
 
 ___
 

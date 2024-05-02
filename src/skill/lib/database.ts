@@ -35,9 +35,9 @@ export async function setBridgeInformation(
     await dynamoDBDocumentClient.send(
       new UpdateCommand(bridgeInformationUpdateParams),
     );
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw error;
+  } catch (cause) {
+    Common.Debug.debugErrorWithStack(cause);
+    throw Common.Error.create("", { general: "database", cause });
   }
 }
 
@@ -56,9 +56,9 @@ export async function getBridgeInformationUsingEmail(
     data = await dynamoDBDocumentClient.send(
       new QueryCommand(skillTokenQueryParams),
     );
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw error;
+  } catch (cause) {
+    Common.Debug.debugErrorWithStack(cause);
+    throw Common.Error.create("", { general: "database", cause });
   }
 
   if (
@@ -97,9 +97,8 @@ export async function getBridgeInformation(
     data = await dynamoDBDocumentClient.send(
       new QueryCommand(skillTokenQueryParams),
     );
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw error;
+  } catch (cause) {
+    throw Common.Error.create("", { general: "database", cause });
   }
 
   if (
@@ -136,9 +135,8 @@ export async function getEmail(skillToken: string): Promise<string | null> {
     data = await dynamoDBDocumentClient.send(
       new QueryCommand(skillTokenQueryParams),
     );
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw error;
+  } catch (cause) {
+    throw Common.Error.create("", { general: "database", cause });
   }
 
   if (
@@ -171,8 +169,8 @@ export async function setSkillToken(
     await dynamoDBDocumentClient.send(
       new UpdateCommand(skillTokenUpdateParams),
     );
-  } catch (error) {
-    Common.Debug.debugErrorWithStack(error);
-    throw error;
+  } catch (cause) {
+    Common.Debug.debugErrorWithStack(cause);
+    throw Common.Error.create("", { general: "database", cause });
   }
 }

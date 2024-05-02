@@ -116,13 +116,13 @@ async function saveBridgeHostnameAndToken(
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error:");
     Common.Debug.debugError(error);
-    throw new Error(
+    throw Common.Error.create(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
   if (typeof bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error");
-    throw new Error(
+    throw Common.Error.create(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
@@ -136,7 +136,7 @@ async function saveBridgeHostnameAndToken(
     Common.Debug.debug(
       "LGTV_ConfigureBridgeIntent setBridgeInformation: error:",
     );
-    throw new Error(
+    throw Common.Error.create(
       "I encountered a problem saving your bridge's configuration. So, I cannot configure your bridge.",
     );
   }

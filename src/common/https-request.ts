@@ -1,5 +1,6 @@
 import * as https from "node:https";
 import * as Debug from "./debug";
+import * as CommonError from "./error";
 
 export type RequestOptions = {
   hostname: string;
@@ -9,29 +10,26 @@ export type RequestOptions = {
   headers: { [x: string]: string };
 };
 
-export type ResponseErrorNames =
+type ResponseErrorNames =
   | "CONNECTION_INTERRUPTED"
   | "STATUS_CODE_MISSING"
-  | "INVALID_AUTHORIZATION_CREDENTIAL"
-  | "INTERNAL_ERROR"
+  | "BAD_REQUEST"
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "INTERNAL_SERVER_ERROR"
+  | "BAD_GATEWAY"
   | "CONTENT_TYPE_MISSING"
   | "CONTENT_TYPE_INCORRECT"
   | "BODY_MISSING"
   | "BODY_INVALID_FORMAT"
-  | "UNKNOWN_ERROR"
-  | "BAD_GATEWAY";
+  | "UNKNOWN_ERROR";
 
-export type ResponseError = {
-  name: ResponseErrorNames;
-  body?: object;
-  stack?: string;
-  error?: Error;
-  http?: {
-    statusCode?: number;
-    contentType?: string;
-    body?: string | object;
-  };
-};
+function createHttpError(
+  specific: ResponseErrorNames,
+): CommonError.AlexaForLGwebOSTVError {
+  const general = "http";
+  return CommonError.create("", { general, specific });
+}
 
 export async function request(
   requestOptions: RequestOptions,
@@ -68,11 +66,7 @@ export async function request(
       });
       res.on("end", (): void => {
         if (!res.complete) {
-          const responseError: ResponseError = {
-            name: "CONNECTION_INTERRUPTED",
-          };
-          Error.captureStackTrace(responseError);
-          reject(responseError);
+          reject(createHttpError("CONNECTION_INTERRUPTED"));
         }
 
         Debug.debug("HTTP Response");
@@ -84,115 +78,50 @@ export async function request(
         const contentType = res.headers["content-type"];
 
         if (typeof statusCode === "undefined") {
-          const responseError: ResponseError = {
-            name: "STATUS_CODE_MISSING",
-          };
-          Error.captureStackTrace(responseError);
-          reject(responseError);
+          reject(createHttpError("STATUS_CODE_MISSING"));
         }
         switch (statusCode) {
+          case 400: {
+            reject(createHttpError("BAD_REQUEST"));
+            break;
+          }
           case 401: {
-            const responseError: ResponseError = {
-              name: "INVALID_AUTHORIZATION_CREDENTIAL",
-              http: {
-                statusCode,
-              },
-            };
-            Error.captureStackTrace(responseError);
-            reject(responseError);
+            reject(createHttpError("UNAUTHORIZED"));
             break;
           }
           case 403: {
-            const responseError: ResponseError = {
-              name: "INVALID_AUTHORIZATION_CREDENTIAL",
-              http: {
-                statusCode,
-              },
-            };
-            Error.captureStackTrace(responseError);
-            reject(responseError);
+            reject(createHttpError("FORBIDDEN"));
             break;
           }
           case 500: {
-            const responseError: ResponseError = {
-              name: "INTERNAL_ERROR",
-              http: {
-                statusCode,
-              },
-            };
-            Error.captureStackTrace(responseError);
-            reject(responseError);
+            reject(createHttpError("INTERNAL_SERVER_ERROR"));
             break;
           }
           case 502: {
-            const responseError: ResponseError = {
-              name: "BAD_GATEWAY",
-              http: {
-                statusCode,
-              },
-            };
-            Error.captureStackTrace(responseError);
-            reject(responseError);
+            reject(createHttpError("BAD_GATEWAY"));
             break;
           }
         }
 
         if (typeof contentType === "undefined") {
-          const responseError: ResponseError = {
-            name: "CONTENT_TYPE_MISSING",
-            http: {
-              statusCode,
-            },
-          };
-          Error.captureStackTrace(responseError);
-          reject(responseError);
+          reject(createHttpError("CONTENT_TYPE_MISSING"));
         }
 
         if (!/^application\/json/.test((contentType as string).toLowerCase())) {
-          const responseError: ResponseError = {
-            name: "CONTENT_TYPE_INCORRECT",
-            http: {
-              statusCode,
-              contentType,
-            },
-          };
-          Error.captureStackTrace(responseError);
-          reject(responseError);
+          reject(createHttpError("CONTENT_TYPE_INCORRECT"));
         }
 
         try {
           body = JSON.parse(data);
-        } catch (error: any) {
-          const name = error.name
-            ? error.name
-            : error.code
-              ? error.code
-              : "unknown";
-          const message = error.message ? error.message : "unknown";
-          const responseErrorError = new Error(message);
-          responseErrorError.name = name;
-          const responseError: ResponseError = {
-            name: "UNKNOWN_ERROR",
-            error: responseErrorError,
-          };
-          reject(responseError);
+        } catch (cause) {
+          reject(createHttpError("BODY_INVALID_FORMAT"));
         }
         // Return the body.
         resolve(body);
       });
     });
-    req.on("error", (error: Error): void => {
-      Debug.debug("HTTP Error");
-      Debug.debugError(error);
-      const name = error.name ? error.name : "unknown";
-      const message = error.message;
-      const responseErrorError = new Error(message);
-      responseErrorError.name = name;
-      const responseError: ResponseError = {
-        name: "UNKNOWN_ERROR",
-        error: responseErrorError,
-      };
-      reject(responseError);
+    req.on("error", (cause): void => {
+      reject(createHttpError("UNKNOWN_ERROR"));
     });
     if (requestOptions.method === "POST") {
       req.write(content);

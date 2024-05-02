@@ -35,6 +35,7 @@
 - [common](modules/common.md)
 - [common/constants](modules/common_constants.md)
 - [common/debug](modules/common_debug.md)
+- [common/error](modules/common_error.md)
 - [common/https-request](modules/common_https_request.md)
 - [common/profile](modules/common_profile.md)
 - [common/smart-home-skill](modules/common_smart_home_skill.md)
