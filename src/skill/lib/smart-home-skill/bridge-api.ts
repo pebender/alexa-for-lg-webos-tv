@@ -1,4 +1,4 @@
-import * as Database from "../database";
+import * as Link from "../link";
 import * as Common from "../../../common";
 
 export interface Request {
@@ -13,52 +13,22 @@ export interface Response {
   [x: string]: number | string | object | undefined;
 }
 
-async function getBridgeInformation(
-  alexaRequest: Common.SHS.Request,
-): Promise<Database.BridgeInformation> {
-  Common.Debug.debug("getBridgeInformation: alexaRequest:");
-  Common.Debug.debugJSON(alexaRequest);
-
-  async function queryBridgeInformation(
-    skillToken: string,
-  ): Promise<Database.BridgeInformation | null> {
-    const bridgeInformation = await Database.getBridgeInformation(skillToken);
-    if (bridgeInformation !== null) {
-      return bridgeInformation;
-    } else {
-      return null;
-    }
-  }
-
-  const accessToken = alexaRequest.getAccessToken();
-  let bridgeInformation: Database.BridgeInformation | null = null;
-
-  bridgeInformation = await queryBridgeInformation(accessToken);
-  if (bridgeInformation !== null) {
-    return bridgeInformation;
-  }
-  const email = await alexaRequest.getUserEmail();
-  await Database.setSkillToken(email, accessToken);
-
-  bridgeInformation = await queryBridgeInformation(accessToken);
-  if (bridgeInformation !== null) {
-    return bridgeInformation;
-  }
-
-  throw Common.Error.create("", {
-    general: "authorization",
-    specific: "bridgeHostname_or_bridgeToken_not_found",
-    receiver: "skill_user_db",
-    sender: "skill",
-  });
-}
-
 async function sendHandler(
   path: string,
   alexaRequest: Common.SHS.Request,
   message: Request,
 ): Promise<Common.SHS.ResponseWrapper> {
-  const { hostname, bridgeToken } = await getBridgeInformation(alexaRequest);
+  const accessToken = alexaRequest.getAccessToken();
+
+  const { hostname, bridgeToken } = await Link.getCredentials(accessToken);
+  if (hostname === null || bridgeToken === null) {
+    throw Common.Error.create("", {
+      general: "authorization",
+      specific: "bridgeHostname_or_bridgeToken_not_found",
+      receiver: "skill_user_db",
+      sender: "skill",
+    });
+  }
 
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
