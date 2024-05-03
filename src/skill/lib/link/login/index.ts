@@ -40,7 +40,7 @@ function create(
 export async function getBridgeToken(
   skillToken: string,
   hostname: string,
-): Promise<Common.SHS.Response> {
+): Promise<string> {
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
     hostname,
     path: Common.constants.bridge.path.login,
@@ -51,13 +51,13 @@ export async function getBridgeToken(
 
   const token = await create(x509PrivateKey, skillToken, hostname);
 
-  const response = await Common.HTTPSRequest.request(requestOptions, token);
+  const response: { token?: string; [key: string]: any } =
+    await Common.HTTPSRequest.request(requestOptions, token);
 
-  if (typeof response !== "object") {
-    throw Common.Error.create("", { general: "unknown" });
-  }
-
-  if (typeof response.token !== "string") {
+  if (
+    typeof response.token === "undefined" ||
+    typeof response.token !== "string"
+  ) {
     throw Common.Error.create("", { general: "unknown" });
   }
 

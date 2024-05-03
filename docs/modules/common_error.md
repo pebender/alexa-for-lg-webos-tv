@@ -22,13 +22,13 @@
 
 ### AlexaForLGwebOSTVErrorGeneral
 
-Ƭ **AlexaForLGwebOSTVErrorGeneral**: ``"unknown"`` \| ``"authorization"`` \| ``"database"`` \| ``"http"``
+Ƭ **AlexaForLGwebOSTVErrorGeneral**: ``"unknown"`` \| ``"authorization"`` \| ``"database"`` \| ``"http"`` \| ``"link"``
 
 ___
 
 ### AlexaForLGwebOSTVErrorLocation
 
-Ƭ **AlexaForLGwebOSTVErrorLocation**: ``"skill"`` \| ``"skill_user_profile"`` \| ``"skill_user_db"`` \| ``"bridge_link"`` \| ``"bridge_link_user_profile"`` \| ``"bridge_link_user_db"`` \| ``"bridge_service"`` \| ``"bridge_service_user_profile"`` \| ``"bridge_service_user_db"`` \| ``"bridge_service_auth_db"``
+Ƭ **AlexaForLGwebOSTVErrorLocation**: ``"skill"`` \| ``"skill_link"`` \| ``"skill_user_profile"`` \| ``"skill_user_db"`` \| ``"bridge_link"`` \| ``"bridge_link_user_profile"`` \| ``"bridge_link_user_db"`` \| ``"bridge_service"`` \| ``"bridge_service_user_profile"`` \| ``"bridge_service_user_db"`` \| ``"bridge_service_auth_db"``
 
 ___
 

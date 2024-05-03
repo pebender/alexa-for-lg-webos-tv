@@ -2,10 +2,12 @@ export type AlexaForLGwebOSTVErrorGeneral =
   | "unknown"
   | "authorization"
   | "database"
-  | "http";
+  | "http"
+  | "link";
 
 export type AlexaForLGwebOSTVErrorLocation =
   | "skill"
+  | "skill_link"
   | "skill_user_profile"
   | "skill_user_db"
   | "bridge_link"

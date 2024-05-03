@@ -7,12 +7,18 @@
 ### Type Aliases
 
 - [BridgeInformation](skill_lib_database.md#bridgeinformation)
+- [Field](skill_lib_database.md#field)
+- [Record](skill_lib_database.md#record)
 
 ### Functions
 
 - [getBridgeInformation](skill_lib_database.md#getbridgeinformation)
 - [getBridgeInformationUsingEmail](skill_lib_database.md#getbridgeinformationusingemail)
 - [getEmail](skill_lib_database.md#getemail)
+- [getRecordUsingEmail](skill_lib_database.md#getrecordusingemail)
+- [getRecordUsingSkillToken](skill_lib_database.md#getrecordusingskilltoken)
+- [getRequiredRecordUsingEmail](skill_lib_database.md#getrequiredrecordusingemail)
+- [getRequiredRecordUsingSkillToken](skill_lib_database.md#getrequiredrecordusingskilltoken)
 - [setBridgeInformation](skill_lib_database.md#setbridgeinformation)
 - [setSkillToken](skill_lib_database.md#setskilltoken)
 
@@ -28,6 +34,27 @@
 | :------ | :------ |
 | `bridgeToken` | `string` |
 | `hostname` | `string` |
+
+___
+
+### Field
+
+Ƭ **Field**: ``"email"`` \| ``"skillToken"`` \| ``"hostname"`` \| ``"bridgeToken"``
+
+___
+
+### Record
+
+Ƭ **Record**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `bridgeToken` | `string` \| ``null`` |
+| `email` | `string` \| ``null`` |
+| `hostname` | `string` \| ``null`` |
+| `skillToken` | `string` \| ``null`` |
 
 ## Functions
 
@@ -76,6 +103,80 @@ ___
 #### Returns
 
 `Promise`\<`string` \| ``null``\>
+
+___
+
+### getRecordUsingEmail
+
+▸ **getRecordUsingEmail**(`email`, `options?`): `Promise`\<[`Record`](skill_lib_database.md#record) \| ``null``\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `email` | `string` |
+| `options?` | `Object` |
+| `options.required?` | `boolean` |
+| `options.requiredFields?` | [`Field`](skill_lib_database.md#field)[] |
+
+#### Returns
+
+`Promise`\<[`Record`](skill_lib_database.md#record) \| ``null``\>
+
+___
+
+### getRecordUsingSkillToken
+
+▸ **getRecordUsingSkillToken**(`skillToken`, `options?`): `Promise`\<[`Record`](skill_lib_database.md#record) \| ``null``\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `skillToken` | `string` |
+| `options?` | `Object` |
+| `options.required?` | `boolean` |
+| `options.requiredFields?` | [`Field`](skill_lib_database.md#field)[] |
+
+#### Returns
+
+`Promise`\<[`Record`](skill_lib_database.md#record) \| ``null``\>
+
+___
+
+### getRequiredRecordUsingEmail
+
+▸ **getRequiredRecordUsingEmail**(`email`, `options?`): `Promise`\<[`Record`](skill_lib_database.md#record)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `email` | `string` |
+| `options?` | `Object` |
+| `options.requiredFields?` | [`Field`](skill_lib_database.md#field)[] |
+
+#### Returns
+
+`Promise`\<[`Record`](skill_lib_database.md#record)\>
+
+___
+
+### getRequiredRecordUsingSkillToken
+
+▸ **getRequiredRecordUsingSkillToken**(`skillToken`, `options?`): `Promise`\<[`Record`](skill_lib_database.md#record)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `skillToken` | `string` |
+| `options?` | `Object` |
+| `options.requiredFields?` | [`Field`](skill_lib_database.md#field)[] |
+
+#### Returns
+
+`Promise`\<[`Record`](skill_lib_database.md#record)\>
 
 ___
 

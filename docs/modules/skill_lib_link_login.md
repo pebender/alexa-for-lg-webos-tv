@@ -12,7 +12,7 @@
 
 ### getBridgeToken
 
-▸ **getBridgeToken**(`skillToken`, `hostname`): `Promise`\<[`SHSResponse`](../classes/common_smart_home_skill_response.SHSResponse.md)\>
+▸ **getBridgeToken**(`skillToken`, `hostname`): `Promise`\<`string`\>
 
 #### Parameters
 
@@ -23,4 +23,4 @@
 
 #### Returns
 
-`Promise`\<[`SHSResponse`](../classes/common_smart_home_skill_response.SHSResponse.md)\>
+`Promise`\<`string`\>

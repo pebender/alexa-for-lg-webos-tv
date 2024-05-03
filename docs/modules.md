@@ -47,6 +47,7 @@
 - [skill/lib/custom-skill/lgtv-configure-bridge](modules/skill_lib_custom_skill_lgtv_configure_bridge.md)
 - [skill/lib/custom-skill/lgtv-test-bridge](modules/skill_lib_custom_skill_lgtv_test_bridge.md)
 - [skill/lib/database](modules/skill_lib_database.md)
+- [skill/lib/link](modules/skill_lib_link.md)
 - [skill/lib/link/login](modules/skill_lib_link_login.md)
 - [skill/lib/smart-home-skill](modules/skill_lib_smart_home_skill.md)
 - [skill/lib/smart-home-skill/authorization](modules/skill_lib_smart_home_skill_authorization.md)
