@@ -45,7 +45,7 @@ Visual Studio Code has builtin support for the [TypeScript](https://code.visuals
 
 You need to do two things before you compile.
 
-First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary private key (ForLGwebOSTV.key) and public certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/link/login/](../../src/skill/lib/link/login/) and put the public certificate in [src/bridge/lib/frontend/authorization/](../../src/bridge/lib/frontend/authorization/).
+First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary private key (ForLGwebOSTV.key) and public certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/link/login/](../../src/skill/lib/link/login/) and put the public certificate in [src/bridge/lib/frontend/login-token-auth/](../../src/bridge/lib/frontend/login-token-auth/).
 
 Second, you need to install Node.js version v20.x.
 
@@ -64,7 +64,7 @@ The skill is in the development phase. Therefore, you need to install your own v
 - the [Alexa Developer Console](https://developer.amazon.com/alexa/console/ask) to create the Alexa Multi-Capability Skill (MCS),
 - the [AWS Lambda Console](https://console.aws.amazon.com/lambda) to create the skill's lambda function,
 - the [Security Profile Management Console](https://developer.amazon.com/settings/console/securityprofile/overview.html) to create the security profile for the skill's account linking, and
-- the [DynamoDB Dashboard](https://console.aws.amazon.com/dynamodbv2) to create the database for the skill's email address to bridge configuration mapping.
+- the [DynamoDB Dashboard](https://console.aws.amazon.com/dynamodbv2) to create the database for the user identifier to bridge configuration mapping.
 
 When you create them,
 
