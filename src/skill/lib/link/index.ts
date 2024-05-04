@@ -78,7 +78,7 @@ export async function getCredentials(
       skillToken,
       hostname,
     );
-    await Database.setBridgeInformation(record.email, {
+    await Database.setBridgeCredentials(record.email, {
       hostname,
       bridgeToken,
     });

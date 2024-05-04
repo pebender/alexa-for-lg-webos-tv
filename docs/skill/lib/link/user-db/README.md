@@ -10,19 +10,15 @@
 
 ### Type Aliases
 
-- [BridgeInformation](type-aliases/BridgeInformation.md)
 - [Field](type-aliases/Field.md)
 - [Record](type-aliases/Record.md)
 
 ### Functions
 
-- [getBridgeInformation](functions/getBridgeInformation.md)
-- [getBridgeInformationUsingEmail](functions/getBridgeInformationUsingEmail.md)
-- [getEmail](functions/getEmail.md)
 - [getRecordUsingEmail](functions/getRecordUsingEmail.md)
 - [getRecordUsingSkillToken](functions/getRecordUsingSkillToken.md)
 - [getRequiredRecordUsingEmail](functions/getRequiredRecordUsingEmail.md)
 - [getRequiredRecordUsingSkillToken](functions/getRequiredRecordUsingSkillToken.md)
-- [setBridgeInformation](functions/setBridgeInformation.md)
+- [setBridgeCredentials](functions/setBridgeCredentials.md)
 - [setHostname](functions/setHostname.md)
 - [setSkillToken](functions/setSkillToken.md)
