@@ -58,6 +58,12 @@ export class AlexaForLGwebOSTVError
         this.code = `${this.code}.${this.sender}`;
       }
     }
+    if (
+      typeof process.env.NODE_ENV !== "undefined" &&
+      process.env.NODE_ENV === "development"
+    ) {
+      Error.captureStackTrace(this);
+    }
   }
 }
 

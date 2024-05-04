@@ -1,3 +1,5 @@
+import * as util from "node:util";
+
 export function debug(message?: any) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
@@ -12,13 +14,7 @@ export function debugError(error: any) {
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    const message = (error as any).message || "unknown";
-    const name =
-      (error as any).name ||
-      (error as any).code ||
-      (error as any).type ||
-      "unknown";
-    console.debug(`error: ${message} (${name})`);
+    console.debug("error:" + "\n" + util.inspect(error));
   }
 }
 
@@ -27,18 +23,10 @@ export function debugErrorWithStack(error: any) {
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    const message = (error as any).message ? (error as any).message : "unknown";
-    const name = (error as any).name
-      ? (error as any).name
-      : (error as any).code
-        ? (error as any).code
-        : "unknown";
-    console.debug(`error: ${message} (${name})`);
-
-    const stack = (error as any).stack
-      ? (error as any).stack
-      : Error.captureStackTrace(error);
-    console.debug(stack);
+    if (typeof error.stack === "undefined") {
+      Error.captureStackTrace(error);
+    }
+    console.debug("error:" + "\n" + util.inspect(error));
   }
 }
 
