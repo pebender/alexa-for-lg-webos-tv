@@ -3,9 +3,30 @@ import * as tls from "node:tls";
 import * as Common from "../../../common";
 import * as Database from "../database";
 import * as Login from "./login";
+const certnames = require("certnames");
+
+export async function getHostnames(ipAddress: string) {
+  const ipPort = Common.constants.bridge.port.https;
+
+  return new Promise((resolve, reject): void => {
+    const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false });
+    sock.on("secureConnect", (): void => {
+      const cert = sock.getPeerCertificate().raw;
+      sock.on("close", (): void => {
+        const hostnames = certnames.getCommonNames(cert);
+        return resolve(hostnames);
+      });
+      sock.end();
+    });
+    sock.on("error", (error): void => {
+      reject(error);
+    });
+  });
+}
 
 export async function getCredentials(
   skillToken: string,
+  hostname?: string,
 ): Promise<{ hostname: string | null; bridgeToken: string | null }> {
   let record: Database.Record | null;
   record = await Database.getRecordUsingSkillToken(skillToken, {
@@ -35,6 +56,21 @@ export async function getCredentials(
         specific: "field_value_not_found+email",
       },
     );
+  }
+  if (typeof hostname === "string") {
+    await Database.setHostname(record.email, hostname);
+    record = await Database.getRequiredRecordUsingSkillToken(skillToken, {
+      requiredFields: ["email"],
+    });
+    if (record.email === null) {
+      throw Common.Error.create(
+        `skill link user database is missing field 'email' for 'skillToken'='${skillToken}'`,
+        {
+          general: "database",
+          specific: "field_value_not_found+email",
+        },
+      );
+    }
   }
   if (record.hostname !== null && record.bridgeToken === null) {
     const hostname: string = record.hostname;

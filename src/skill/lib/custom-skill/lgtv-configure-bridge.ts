@@ -2,27 +2,7 @@ import * as Common from "../../../common";
 import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as ASKModel from "ask-sdk-model";
-import * as Database from "../database";
-import * as Login from "./../link/login";
-import * as tls from "node:tls";
-const certnames = require("certnames");
-
-function getHostnames(ipAddress: string, ipPort: number): Promise<string[]> {
-  return new Promise((resolve, reject): void => {
-    const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false });
-    sock.on("secureConnect", (): void => {
-      const cert = sock.getPeerCertificate().raw;
-      sock.on("close", (): void => {
-        const hostnames = certnames.getCommonNames(cert);
-        return resolve(hostnames);
-      });
-      sock.end();
-    });
-    sock.on("error", (error): void => {
-      reject(error);
-    });
-  });
-}
+import * as Link from "../link";
 
 async function createHostnamesSimpleCardContent(
   handlerInput: ASKHandlerInput,
@@ -45,9 +25,8 @@ async function createHostnamesSimpleCardContent(
   Reflect.deleteProperty(sessionAttributes, "hostnames");
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
   try {
-    sessionAttributes.hostnames = await getHostnames(
+    sessionAttributes.hostnames = await Link.getHostnames(
       sessionAttributes.ipAddress,
-      25392,
     );
   } catch (error) {
     Common.Debug.debug(
@@ -109,9 +88,9 @@ async function saveBridgeHostnameAndToken(
   ) as string;
   const hostname = sessionAttributes.hostnames[hostnameIndex];
 
-  let bridgeToken;
+  let credentials: { hostname: string | null; bridgeToken: string | null };
   try {
-    bridgeToken = await Login.getBridgeToken(accessToken, hostname);
+    credentials = await Link.getCredentials(accessToken, hostname);
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: success");
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error:");
@@ -120,24 +99,10 @@ async function saveBridgeHostnameAndToken(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
-  if (typeof bridgeToken !== "string") {
+  if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error");
     throw Common.Error.create(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
-    );
-  }
-
-  try {
-    await Database.setBridgeInformation(email, { hostname, bridgeToken });
-    Common.Debug.debug(
-      "LGTV_ConfigureBridgeIntent: setBridgeInformation: success",
-    );
-  } catch (error) {
-    Common.Debug.debug(
-      "LGTV_ConfigureBridgeIntent setBridgeInformation: error:",
-    );
-    throw Common.Error.create(
-      "I encountered a problem saving your bridge's configuration. So, I cannot configure your bridge.",
     );
   }
 }

@@ -99,7 +99,7 @@ async function getRecords(
 
     if (typeof item.email !== "undefined") {
       if (typeof item.email === "string") {
-        record.email = item.email;
+        record.email = item.email === "" ? null : item.email;
       } else {
         throw createDatabaseError(
           `invalid type. field 'email' should be type 'string' but was type '${typeof item.email}'`,
@@ -109,7 +109,7 @@ async function getRecords(
     }
     if (typeof item.skillToken !== "undefined") {
       if (typeof item.skillToken === "string") {
-        record.skillToken = item.skillToken;
+        record.skillToken = item.skillToken === "" ? null : item.skillToken;
       } else {
         throw createDatabaseError(
           `invalid type. field 'skillToken' should be type 'string' but was type '${typeof item.skillToken}'`,
@@ -119,7 +119,7 @@ async function getRecords(
     }
     if (typeof item.hostname !== "undefined") {
       if (typeof item.hostname === "string") {
-        record.hostname = item.hostname;
+        record.hostname = item.hostname === "" ? null : item.hostname;
       } else {
         throw createDatabaseError(
           `invalid type. field 'hostname' should be type 'string' but was type '${typeof item.hostname}'`,
@@ -129,7 +129,7 @@ async function getRecords(
     }
     if (typeof item.bridgeToken !== "undefined") {
       if (typeof item.bridgeToken === "string") {
-        record.bridgeToken = item.bridgeToken;
+        record.bridgeToken = item.bridgeToken === "" ? null : item.bridgeToken;
       } else {
         throw createDatabaseError(
           `invalid type. field 'bridgeToken' should be type 'string' but was type '${typeof item.bridgeToken}'`,
@@ -223,6 +223,27 @@ export async function getRequiredRecordUsingEmail(
   Object.assign(newOptions, options);
   newOptions.required = true;
   return getRecordUsingEmail(email, newOptions) as Promise<Record>;
+}
+
+export async function setHostname(email: string, hostname: string) {
+  const hostnameUpdateParams = {
+    TableName: Common.constants.aws.dynamoDB.tableName,
+    Key: { email },
+    UpdateExpression:
+      "set hostname = :newHostname, bridgeToken = :newBridgeToken",
+    ExpressionAttributeValues: {
+      ":newHostname": hostname,
+      ":newBridgeToken": "",
+    },
+  };
+  Common.Debug.debug("hostnameUpdateParams");
+  Common.Debug.debugJSON(hostnameUpdateParams);
+  try {
+    await dynamoDBDocumentClient.send(new UpdateCommand(hostnameUpdateParams));
+  } catch (cause) {
+    Common.Debug.debugErrorWithStack(cause);
+    throw createDatabaseError("", { cause });
+  }
 }
 
 export async function setBridgeInformation(
