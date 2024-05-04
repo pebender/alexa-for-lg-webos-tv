@@ -6,11 +6,11 @@
 
 # Function: setSkillToken()
 
-> **setSkillToken**(`email`, `skillToken`): `Promise`\<`void`\>
+> **setSkillToken**(`userId`, `skillToken`): `Promise`\<`void`\>
 
 ## Parameters
 
-• **email**: `string`
+• **userId**: `string`
 
 • **skillToken**: `string`
 

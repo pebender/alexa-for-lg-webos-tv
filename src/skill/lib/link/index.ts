@@ -26,16 +26,16 @@ export async function getHostnames(ipAddress: string) {
 
 export async function getCredentials(
   skillToken: string,
-  hostname?: string,
-): Promise<{ hostname: string | null; bridgeToken: string | null }> {
+  bridgeHostname?: string,
+): Promise<{ bridgeHostname: string | null; bridgeToken: string | null }> {
   let record: Database.Record | null;
   record = await Database.getRecordUsingSkillToken(skillToken, {
-    requiredFields: ["email"],
+    requiredFields: ["userId"],
   });
   if (record === null) {
-    let email: string;
+    let userId: string;
     try {
-      email = await Common.Profile.getUserEmail(skillToken);
+      userId = await Common.Profile.getUserId(skillToken);
     } catch (cause: any) {
       throw Common.Error.create("", {
         general: "link",
@@ -43,51 +43,54 @@ export async function getCredentials(
         cause,
       });
     }
-    await Database.setSkillToken(email, skillToken);
+    await Database.setSkillToken(userId, skillToken);
     record = await Database.getRequiredRecordUsingSkillToken(skillToken, {
-      requiredFields: ["email"],
+      requiredFields: ["userId"],
     });
   }
-  if (record.email === null) {
+  if (record.userId === null) {
     throw Common.Error.create(
-      `skill link user database is missing field 'email' for 'skillToken'='${skillToken}'`,
+      `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
       {
         general: "database",
-        specific: "field_value_not_found+email",
+        specific: "field_value_not_found+userId",
       },
     );
   }
-  if (typeof hostname === "string") {
-    await Database.setHostname(record.email, hostname);
+  if (typeof bridgeHostname === "string") {
+    await Database.setBridgeHostname(record.userId, bridgeHostname);
     record = await Database.getRequiredRecordUsingSkillToken(skillToken, {
-      requiredFields: ["email"],
+      requiredFields: ["userId"],
     });
-    if (record.email === null) {
+    if (record.userId === null) {
       throw Common.Error.create(
-        `skill link user database is missing field 'email' for 'skillToken'='${skillToken}'`,
+        `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
         {
           general: "database",
-          specific: "field_value_not_found+email",
+          specific: "field_value_not_found+userId",
         },
       );
     }
   }
-  if (record.hostname !== null && record.bridgeToken === null) {
-    const hostname: string = record.hostname;
+  if (record.bridgeHostname !== null && record.bridgeToken === null) {
+    const bridgeHostname: string = record.bridgeHostname;
     const bridgeToken: string = await Login.getBridgeToken(
       skillToken,
-      hostname,
+      bridgeHostname,
     );
-    await Database.setBridgeCredentials(record.email, {
-      hostname,
+    await Database.setBridgeCredentials(record.userId, {
+      bridgeHostname,
       bridgeToken,
     });
     record = await Database.getRequiredRecordUsingSkillToken(skillToken, {
-      requiredFields: ["email"],
+      requiredFields: ["userId"],
     });
   }
 
-  return { hostname: record.hostname, bridgeToken: record.bridgeToken };
+  return {
+    bridgeHostname: record.bridgeHostname,
+    bridgeToken: record.bridgeToken,
+  };
 }
 
 export async function testConnection(skillToken: string): Promise<void> {
@@ -226,10 +229,10 @@ export async function testConnection(skillToken: string): Promise<void> {
   }
 
   const bridgeCredentials: {
-    hostname: string | null;
+    bridgeHostname: string | null;
     bridgeToken: string | null;
   } = await getCredentials(skillToken);
-  if (bridgeCredentials.hostname === null) {
+  if (bridgeCredentials.bridgeHostname === null) {
     throw Common.Error.create("", {
       general: "link",
       specific: "bridge_hostname_not_found",
@@ -246,11 +249,11 @@ export async function testConnection(skillToken: string): Promise<void> {
     });
   }
 
-  const { hostname, bridgeToken } = bridgeCredentials;
+  const { bridgeHostname, bridgeToken } = bridgeCredentials;
   const port = Common.constants.bridge.port.https;
-  await testTcp(hostname, port);
-  await testTls(hostname, port);
-  await testTlsTestCertificate(hostname, port);
-  await testTlsTestHostname(hostname, port);
-  await testBridgeConnection(hostname, port, bridgeToken);
+  await testTcp(bridgeHostname, port);
+  await testTls(bridgeHostname, port);
+  await testTlsTestCertificate(bridgeHostname, port);
+  await testTlsTestHostname(bridgeHostname, port);
+  await testBridgeConnection(bridgeHostname, port, bridgeToken);
 }

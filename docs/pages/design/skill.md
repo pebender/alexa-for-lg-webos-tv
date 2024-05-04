@@ -55,33 +55,17 @@ The response contains user_id as well as any other information the user agreed t
 
 The skill uses DynamoDB as its database.
 
-The database has a table named ForLGwebOSTV. This table uses the user's email address as its key. And it contains the user's email address (email), bridge hostname (hostname), the bridge bearer token (bridgeToken) and SHS bearer token (skillToken) for each user. In addition, the database table has an associated Global Secondary Index (GSI) named skillToken_index. This GSI uses skillToken as its index. And it contains skillToken, email, hostname and bridgeToken for each user.
+The database has a table named ForLGwebOSTV. This table uses the user's linked Amazon account identifier (userId) as its key. And it contains the userId, bridge hostname (bridgeHostname), the bridge bearer token (bridgeToken) and CS/SHS access token (skillToken) for each user. In addition, the database table has an associated Global Secondary Index (GSI) named skillToken_index. This GSI uses skillToken as its index. And it contains skillToken, userId, bridgeHostname and bridgeToken for each user.
 
-Using email as the table's key makes it easy for both the CS and the SHS to look up hostname and bridgeToken after they have used their respective tokens to retrieve the user's email address. When the user configures their bridge through interaction with the skill, the CS stores the bridge hostname (hostname) and bridge bearer token (bridgeToken) in the table keyed to user's email address (email). When the SHS needs to send a message to the bridge, it can look up hostname and bridgeToken in the table using email.
+Using userId as the table's key makes it easy to associate bridgeHostname and bridgeToken with the user even when skillToken changes.
 
-However, the SHS looking up hostname and bridgeToken using email is inefficient. If it used the email to look up hostname and bridgeToken, it would first need to use its bearer token to retrieve the user's profile from LWA profile server. Retrieving the profile every time it had a message to send would add needless delay in sending the message as well as add needless load on the LWA profile server. Instead, the SHS looks up hostname and bridgeToken in the GSI using the skillToken. If it does not find skillToken in the GSI, it uses the skillToken to retrieve the user's profile and uses the uses the user's email address to add skillToken to the table. After adding skillToken to the table, the SHS as able to look up hostname and bridgeToken in the GSI using the skillToken.
+However, it is inefficient for the the skill to look up bridgeHostname and bridgeToken using userId for every skill message requiring bridge interaction. If it used the userId to look up bridgeHostname and bridgeToken, it would first need to use skillToken to retrieve the user's profile from the LWA profile server. Retrieving the profile every time it had a message to send would add needless delay in sending the message as well as add needless load on the LWA profile server. Instead, the skill looks up bridgeHostname and bridgeToken in the GSI using the skillToken. If it does not find skillToken in the GSI, it uses the skillToken to retrieve the user's profile and uses the userId to add skillToken to the table. After adding skillToken to the table, the skill is able to look up bridgeHostname and bridgeToken in the GSI using the skillToken.
 
-The alexa-for-lg-webos-tv skill's database functions are found [here](../../src/skill/lib/database.ts).
+The alexa-for-lg-webos-tv skill's link user database functions are found [here](../../src/skill/lib/link/user-db.ts).
 
 ### Database Performance
 
-There are a three things to notice besides the functions for setting the bridge hostname (setHostname), getting the bridge hostname (getHostname), setting the bridge's bearer token (setBridgeToken), getting the bridge's bearer token (getBridgeToken) and setting the SHS's bearer token (setSkillToken).
-
 [Amazon provides recommendations on how to improve the performance of lambda functions by Amazon](https://aws.amazon.com/blogs/compute/operating-lambda-performance-optimization-part-2/). First, Amazon suggests maintaining the connection to databases outside of the handler. This ensures the lambda function establishes its connection to the database outside of the handler function. Doing this causes the lambda function to connect to the database once when it is loaded rather than every time the handler function is called. Second, Amazon suggests loading needed parts of the modules. Doing this reduces the lambda function load time. Third, Amazon recommends that the [DynamoDB connection enable HTTP keep-alive](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/node-reusing-connections.html) to improve connections. The alexa-for-lg-webos-tv's skill implements all of these suggestions.
-
-## Tracking Skill Tokens
-
-The skill's design depends on the skill being linked to the user's Amazon account and that the user agreed to share their email address with the skill during linking. The CS and SHS parts of the MCS need to communicate user information (e.g. the user's bridge hostname). Unfortunately, only the user's email address appears to be the only globally unique information that the CS and SHS have in common.
-
-When a Multi-Capability Skill is linked, Custom Skill Requests and Smart Home Skill Directives contain access tokens. Therefore, the skill rejects Custom Skill Requests and Smart Home Skill Directives that do not contain access tokens.
-
-The skill tracks the access tokens. Because the access tokens for the Custom Skill and Smart Home Skill are different, the skill tracks the most recent Custom Skill access token and the most recent Smart Home SKill access token for each user. The user is identified by the email address they shared during account linking.
-
-The skill stores this information in a database. When an access token is not found in the database, the skill queries the appropriate Amazon profile server for the email address associated with access token. If the query returns an email address, then the skill updates the database to reflect that this access token is the latest access token of this type for this email address. Otherwise, it rejects the message associated with the failed
-
-The skill uses the access token to retrieve the user's email from their
-
-The skill discards Custom Skill requests that don't contain an accessToken
 
 ## Sending on the Test and Service Interfaces
 
@@ -94,14 +78,14 @@ stateDiagram-v2
   direction TB
 
   lookUpUserRecord: Look Up User Record<br>using CS/SHS Token
-  checkUserRecordForUserEmail: Check User Record<br>for User Email
+  checkUserRecordForUserId: Check User Record<br>for User Id
   checkUserRecordForBridgeHostname: Check User Record<br>for Bridge Hostname
   checkUserRecordForBridgeToken: Check User Record<br>for Bridge Token
   sendMessageToBridge: Send CS/SHS Message<br>to Bridge
   succeedMessage: Succeed<br>with CS/SHS Response
   [*] --> lookUpUserRecord: CS/SHS Message Received
-  lookUpUserRecord --> checkUserRecordForUserEmail: User Record Found
-  checkUserRecordForUserEmail --> checkUserRecordForBridgeHostname: User Email Found
+  lookUpUserRecord --> checkUserRecordForUserId: User Record Found
+  checkUserRecordForUserId --> checkUserRecordForBridgeHostname: User Id Found
   checkUserRecordForBridgeHostname --> checkUserRecordForBridgeToken: Bridge Hostname Found
   checkUserRecordForBridgeToken --> sendMessageToBridge: Bridge Token Found
   sendMessageToBridge --> succeedMessage: Received CS/SHS Response<br>from bridge
@@ -132,14 +116,14 @@ stateDiagram-v2
 
 ### Update Skill Token in the User Record
 
-The skill token is used as authorization to fetch the user's identifier and email address from the profile server. Assuming the fetch is successful, the skill token for the User Record associated with the user's email address is updated/created with the value of the CS token. If the CS token fails authorization or no email address is returned, then update fails with the reason "not authorized".
+The skill token is used as authorization to fetch the user's identifier and email address from the profile server. Assuming the fetch is successful, the skill token for the User Record associated with the user's identifier is updated/created with the value of the CS/SHS token. If the CS/SHS token fails authorization or no email address is returned, then update fails with the reason "not authorized".
 
 ```mermaid
 stateDiagram-v2
     fetchUserProfile: Fetch<br>User Profile
     checkUserProfileForUserId: Check<br>User Profile<br>for User's Identifier
     checkUserProfileForUserEmail: Check<br>User Profile<br>for User's Email Address
-    updateUserRecordSkillToken: Add/Update<br>User Record<br>with SHS Token
+    updateUserRecordSkillToken: Add/Update<br>User Record<br>with CS/SHS Token
     succeed: Succeed
     failAuthorization: Fail with Not Authorized
 

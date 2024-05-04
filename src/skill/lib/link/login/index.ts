@@ -9,13 +9,13 @@ const x509PrivateKey = fs.readFileSync(
 
 function create(
   x509PrivateKey: Buffer,
-  email: string,
-  hostname: string,
+  skillToken: string,
+  bridgeHostname: string,
 ): Promise<string> {
   const payload: jwt.JwtPayload = {
     iss: Common.constants.bridge.jwt.iss,
-    sub: email,
-    aud: `https://${hostname}${Common.constants.bridge.path.service}`,
+    sub: skillToken,
+    aud: `https://${bridgeHostname}${Common.constants.bridge.path.service}`,
   };
   const options: jwt.SignOptions = {
     algorithm: "RS256",
@@ -39,17 +39,17 @@ function create(
 
 export async function getBridgeToken(
   skillToken: string,
-  hostname: string,
+  bridgeHostname: string,
 ): Promise<string> {
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
-    hostname,
+    hostname: bridgeHostname,
     path: Common.constants.bridge.path.login,
     port: Common.constants.bridge.port.https,
     method: "GET",
     headers: {},
   };
 
-  const token = await create(x509PrivateKey, skillToken, hostname);
+  const token = await create(x509PrivateKey, skillToken, bridgeHostname);
 
   const response: { token?: string; [key: string]: any } =
     await Common.HTTPSRequest.request(requestOptions, token);

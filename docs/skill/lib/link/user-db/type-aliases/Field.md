@@ -6,4 +6,4 @@
 
 # Type alias: Field
 
-> **Field**: `"email"` \| `"skillToken"` \| `"hostname"` \| `"bridgeToken"`
+> **Field**: `"userId"` \| `"skillToken"` \| `"bridgeHostname"` \| `"bridgeToken"`

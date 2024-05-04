@@ -15,10 +15,10 @@
 
 ### Functions
 
-- [getRecordUsingEmail](functions/getRecordUsingEmail.md)
 - [getRecordUsingSkillToken](functions/getRecordUsingSkillToken.md)
-- [getRequiredRecordUsingEmail](functions/getRequiredRecordUsingEmail.md)
+- [getRecordUsingUserId](functions/getRecordUsingUserId.md)
 - [getRequiredRecordUsingSkillToken](functions/getRequiredRecordUsingSkillToken.md)
+- [getRequiredRecordUsingUserId](functions/getRequiredRecordUsingUserId.md)
 - [setBridgeCredentials](functions/setBridgeCredentials.md)
-- [setHostname](functions/setHostname.md)
+- [setBridgeHostname](functions/setBridgeHostname.md)
 - [setSkillToken](functions/setSkillToken.md)

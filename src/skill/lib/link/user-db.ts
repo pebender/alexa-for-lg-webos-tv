@@ -8,13 +8,13 @@ import {
 import * as Common from "../../../common";
 
 export type Record = {
-  email: string | null;
+  userId: string | null;
   skillToken: string | null;
-  hostname: string | null;
+  bridgeHostname: string | null;
   bridgeToken: string | null;
 };
 
-export type Field = "email" | "skillToken" | "hostname" | "bridgeToken";
+export type Field = "userId" | "skillToken" | "bridgeHostname" | "bridgeToken";
 
 const dynamoDBClient = new DynamoDBClient();
 
@@ -78,9 +78,9 @@ async function getRecords(
 
   data.Items.forEach((item) => {
     const record: Record = {
-      email: null,
+      userId: null,
       skillToken: null,
-      hostname: null,
+      bridgeHostname: null,
       bridgeToken: null,
     };
 
@@ -92,13 +92,13 @@ async function getRecords(
       }
     });
 
-    if (typeof item.email !== "undefined") {
-      if (typeof item.email === "string") {
-        record.email = item.email === "" ? null : item.email;
+    if (typeof item.userId !== "undefined") {
+      if (typeof item.userId === "string") {
+        record.userId = item.userId === "" ? null : item.userId;
       } else {
         throw createDatabaseError(
-          `invalid type. field 'email' should be type 'string' but was type '${typeof item.email}'`,
-          { specific: "invalid_field+email" },
+          `invalid type. field 'userId' should be type 'string' but was type '${typeof item.userId}'`,
+          { specific: "invalid_field+userId" },
         );
       }
     }
@@ -112,13 +112,14 @@ async function getRecords(
         );
       }
     }
-    if (typeof item.hostname !== "undefined") {
-      if (typeof item.hostname === "string") {
-        record.hostname = item.hostname === "" ? null : item.hostname;
+    if (typeof item.bridgeHostname !== "undefined") {
+      if (typeof item.bridgeHostname === "string") {
+        record.bridgeHostname =
+          item.bridgeHostname === "" ? null : item.bridgeHostname;
       } else {
         throw createDatabaseError(
-          `invalid type. field 'hostname' should be type 'string' but was type '${typeof item.hostname}'`,
-          { specific: "invalid_field+hostname" },
+          `invalid type. field 'bridgeHostname' should be type 'string' but was type '${typeof item.bridgeHostname}'`,
+          { specific: "invalid_field+bridgeHostname" },
         );
       }
     }
@@ -167,8 +168,8 @@ export async function getRecordUsingSkillToken(
   }
 }
 
-export async function getRecordUsingEmail(
-  email: string,
+export async function getRecordUsingUserId(
+  userId: string,
   options?: { required?: boolean; requiredFields?: Field[] },
 ): Promise<Record | null> {
   const newOptions: {
@@ -181,9 +182,9 @@ export async function getRecordUsingEmail(
 
   const queryCommandInput: QueryCommandInput = {
     TableName: Common.constants.aws.dynamoDB.tableName,
-    KeyConditionExpression: "#email = :email_value",
-    ExpressionAttributeNames: { "#email": "email" },
-    ExpressionAttributeValues: { ":email_value": email },
+    KeyConditionExpression: "#userId = :userId_value",
+    ExpressionAttributeNames: { "#userId": "userId" },
+    ExpressionAttributeValues: { ":userId_value": userId },
   };
   const queryCommand: QueryCommand = new QueryCommand(queryCommandInput);
   const records: Record[] = await getRecords(queryCommand, newOptions);
@@ -207,8 +208,8 @@ export async function getRequiredRecordUsingSkillToken(
   return getRecordUsingSkillToken(skillToken, newOptions) as Promise<Record>;
 }
 
-export async function getRequiredRecordUsingEmail(
-  email: string,
+export async function getRequiredRecordUsingUserId(
+  userId: string,
   options?: { requiredFields?: Field[] },
 ): Promise<Record> {
   const newOptions: {
@@ -217,24 +218,29 @@ export async function getRequiredRecordUsingEmail(
   } = {};
   Object.assign(newOptions, options);
   newOptions.required = true;
-  return getRecordUsingEmail(email, newOptions) as Promise<Record>;
+  return getRecordUsingUserId(userId, newOptions) as Promise<Record>;
 }
 
-export async function setHostname(email: string, hostname: string) {
-  const hostnameUpdateParams = {
+export async function setBridgeHostname(
+  userId: string,
+  bridgeHostname: string,
+) {
+  const bridgeHostnameUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
-    Key: { email },
+    Key: { userId },
     UpdateExpression:
-      "set hostname = :newHostname, bridgeToken = :newBridgeToken",
+      "set bridgeHostname = :newBridgeHostname, bridgeToken = :newBridgeToken",
     ExpressionAttributeValues: {
-      ":newHostname": hostname,
+      ":newBridgeHostname": bridgeHostname,
       ":newBridgeToken": "",
     },
   };
-  Common.Debug.debug("hostnameUpdateParams");
-  Common.Debug.debugJSON(hostnameUpdateParams);
+  Common.Debug.debug("bridgeHostnameUpdateParams");
+  Common.Debug.debugJSON(bridgeHostnameUpdateParams);
   try {
-    await dynamoDBDocumentClient.send(new UpdateCommand(hostnameUpdateParams));
+    await dynamoDBDocumentClient.send(
+      new UpdateCommand(bridgeHostnameUpdateParams),
+    );
   } catch (cause) {
     Common.Debug.debugErrorWithStack(cause);
     throw createDatabaseError("", { cause });
@@ -242,16 +248,16 @@ export async function setHostname(email: string, hostname: string) {
 }
 
 export async function setBridgeCredentials(
-  email: string,
-  bridgeCredentials: { hostname: string; bridgeToken: string },
+  userId: string,
+  bridgeCredentials: { bridgeHostname: string; bridgeToken: string },
 ) {
   const bridgeCredentialsUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
-    Key: { email },
+    Key: { userId },
     UpdateExpression:
-      "set hostname = :newHostname, bridgeToken = :newBridgeToken",
+      "set bridgeHostname = :newBridgeHostname, bridgeToken = :newBridgeToken",
     ExpressionAttributeValues: {
-      ":newHostname": bridgeCredentials.hostname,
+      ":newBridgeHostname": bridgeCredentials.bridgeHostname,
       ":newBridgeToken": bridgeCredentials.bridgeToken,
     },
   };
@@ -268,12 +274,12 @@ export async function setBridgeCredentials(
 }
 
 export async function setSkillToken(
-  email: string,
+  userId: string,
   skillToken: string,
 ): Promise<void> {
   const skillTokenUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
-    Key: { email },
+    Key: { userId },
     UpdateExpression: "set skillToken = :newSkillToken",
     ExpressionAttributeValues: { ":newSkillToken": skillToken },
   };

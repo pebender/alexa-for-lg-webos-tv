@@ -6,13 +6,13 @@
 
 # Function: getBridgeToken()
 
-> **getBridgeToken**(`skillToken`, `hostname`): `Promise`\<`string`\>
+> **getBridgeToken**(`skillToken`, `bridgeHostname`): `Promise`\<`string`\>
 
 ## Parameters
 
 • **skillToken**: `string`
 
-• **hostname**: `string`
+• **bridgeHostname**: `string`
 
 ## Returns
 

@@ -66,19 +66,6 @@ async function saveBridgeHostnameAndToken(
       "There was a problem with account linking. Please re-link the skill and try again.",
     );
   }
-  Common.Debug.debug(`accessToken: ${accessToken}`);
-  let email;
-  try {
-    email = await Common.Profile.getUserEmail(accessToken);
-    Common.Debug.debug(
-      `LGTV_ConfigureBridgeIntent: getUserEmail: success: email: ${email}`,
-    );
-  } catch (error: any) {
-    Common.Debug.debug(`LGTV_ConfigureBridgeIntent: ${error.message}`);
-    throw new Error(
-      "I encountered a problem retrieving your user profile. So, I cannot configure your bridge.",
-    );
-  }
 
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
@@ -86,21 +73,24 @@ async function saveBridgeHostnameAndToken(
     handlerInput.requestEnvelope,
     "hostnameIndex",
   ) as string;
-  const hostname = sessionAttributes.hostnames[hostnameIndex];
+  const bridgeHostname = sessionAttributes.hostnames[hostnameIndex];
 
-  let credentials: { hostname: string | null; bridgeToken: string | null };
+  let credentials: {
+    bridgeHostname: string | null;
+    bridgeToken: string | null;
+  };
   try {
-    credentials = await Link.getCredentials(accessToken, hostname);
-    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: success");
+    credentials = await Link.getCredentials(accessToken, bridgeHostname);
+    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
   } catch (error) {
-    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error:");
+    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
     Common.Debug.debugError(error);
     throw Common.Error.create(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
   if (typeof credentials.bridgeToken !== "string") {
-    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getBridgeToken: error");
+    Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");
     throw Common.Error.create(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );

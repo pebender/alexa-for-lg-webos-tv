@@ -62,6 +62,11 @@ export async function getUserProfile(
   return response as { user_id: string; email: string; [x: string]: string };
 }
 
+export async function getUserId(accessToken: string): Promise<string> {
+  const userProfile = await getUserProfile(accessToken);
+  return userProfile.user_id;
+}
+
 export async function getUserEmail(accessToken: string): Promise<string> {
   const userProfile = await getUserProfile(accessToken);
   return userProfile.email;

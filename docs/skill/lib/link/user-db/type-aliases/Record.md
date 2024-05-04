@@ -10,18 +10,18 @@
 
 ## Type declaration
 
+### bridgeHostname
+
+> **bridgeHostname**: `string` \| `null`
+
 ### bridgeToken
 
 > **bridgeToken**: `string` \| `null`
 
-### email
-
-> **email**: `string` \| `null`
-
-### hostname
-
-> **hostname**: `string` \| `null`
-
 ### skillToken
 
 > **skillToken**: `string` \| `null`
+
+### userId
+
+> **userId**: `string` \| `null`

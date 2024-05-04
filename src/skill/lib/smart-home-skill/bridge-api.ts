@@ -20,8 +20,9 @@ async function sendHandler(
 ): Promise<Common.SHS.ResponseWrapper> {
   const accessToken = alexaRequest.getAccessToken();
 
-  const { hostname, bridgeToken } = await Link.getCredentials(accessToken);
-  if (hostname === null || bridgeToken === null) {
+  const { bridgeHostname, bridgeToken } =
+    await Link.getCredentials(accessToken);
+  if (bridgeHostname === null || bridgeToken === null) {
     throw Common.Error.create("", {
       general: "authorization",
       specific: "bridgeHostname_or_bridgeToken_not_found",
@@ -31,7 +32,7 @@ async function sendHandler(
   }
 
   const requestOptions: Common.HTTPSRequest.RequestOptions = {
-    hostname,
+    hostname: bridgeHostname,
     path,
     port: Common.constants.bridge.port.https,
     method: "POST",

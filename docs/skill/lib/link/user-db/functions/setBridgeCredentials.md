@@ -6,17 +6,17 @@
 
 # Function: setBridgeCredentials()
 
-> **setBridgeCredentials**(`email`, `bridgeCredentials`): `Promise`\<`void`\>
+> **setBridgeCredentials**(`userId`, `bridgeCredentials`): `Promise`\<`void`\>
 
 ## Parameters
 
-• **email**: `string`
+• **userId**: `string`
 
 • **bridgeCredentials**
 
-• **bridgeCredentials.bridgeToken**: `string`
+• **bridgeCredentials.bridgeHostname**: `string`
 
-• **bridgeCredentials.hostname**: `string`
+• **bridgeCredentials.bridgeToken**: `string`
 
 ## Returns
 

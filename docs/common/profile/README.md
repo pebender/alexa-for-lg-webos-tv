@@ -11,4 +11,5 @@
 ### Functions
 
 - [getUserEmail](functions/getUserEmail.md)
+- [getUserId](functions/getUserId.md)
 - [getUserProfile](functions/getUserProfile.md)

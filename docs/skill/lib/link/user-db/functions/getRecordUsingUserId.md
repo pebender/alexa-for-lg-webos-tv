@@ -2,15 +2,15 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / getRecordUsingEmail
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / getRecordUsingUserId
 
-# Function: getRecordUsingEmail()
+# Function: getRecordUsingUserId()
 
-> **getRecordUsingEmail**(`email`, `options`?): `Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
+> **getRecordUsingUserId**(`userId`, `options`?): `Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
 
 ## Parameters
 
-• **email**: `string`
+• **userId**: `string`
 
 • **options?**
 
