@@ -1,4 +1,6 @@
-alexa-for-lg-webos-tv / [Modules](modules.md)
+**alexa-for-lg-webos-tv** • [**Docs**](modules.md)
+
+***
 
 # Introduction
 
@@ -31,4 +33,5 @@ However, there are many things left to do
   - [The Skill to Bridge Interface](./pages/design/skill-to-bridge-interface.md#the-skill-to-bridge-interface)
   - [The Skill](./pages/design/skill.md#the-skill)
   - [The Bridge](./pages/design/bridge.md#the-bridge)
+  - [Software Modules](../docs/modules.md)
 - [LG WebOS TV Commands](./pages/lg-webos-tv-commands.md#lg-webos-tv-commands)

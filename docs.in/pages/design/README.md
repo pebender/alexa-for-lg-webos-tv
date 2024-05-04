@@ -9,3 +9,4 @@ The skill communicates with the bridge using [the skill to bridge interface](./s
 - [The Skill to Bridge Interface](./skill-to-bridge-interface.md#the-skill-to-bridge-interface)
 - [The Skill](./skill.md#the-skill)
 - [The Bridge](./bridge.md#the-bridge)
+- [Software Modules](../../../docs/)
