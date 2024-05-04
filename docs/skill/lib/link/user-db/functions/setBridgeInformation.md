@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../modules.md) / [skill/lib/database](../README.md) / setBridgeInformation
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / setBridgeInformation
 
 # Function: setBridgeInformation()
 

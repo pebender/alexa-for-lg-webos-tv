@@ -1,10 +1,10 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / skill/lib/database
+[alexa-for-lg-webos-tv](../../../../modules.md) / skill/lib/link/user-db
 
-# skill/lib/database
+# skill/lib/link/user-db
 
 ## Index
 

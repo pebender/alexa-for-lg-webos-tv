@@ -5,7 +5,7 @@ import {
   QueryCommandInput,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
-import * as Common from "../../common";
+import * as Common from "../../../common";
 
 export type BridgeInformation = {
   hostname: string;
