@@ -1,7 +1,7 @@
-import * as Common from "../../../common";
 import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as ASKModel from "ask-sdk-model";
+import * as Common from "../../../common";
 import * as Link from "../link";
 
 async function createHostnamesSimpleCardContent(
@@ -56,7 +56,7 @@ async function createHostnamesSimpleCardContent(
   return cardContent;
 }
 
-async function saveBridgeHostnameAndToken(
+async function setBridgeCredentials(
   handlerInput: ASKHandlerInput,
 ): Promise<void> {
   const accessToken =
@@ -350,7 +350,7 @@ const ConfigureBridgeIntentHandler = {
     if (dialogState === "COMPLETED") {
       if (intentRequest.intent.confirmationStatus === "CONFIRMED") {
         try {
-          await saveBridgeHostnameAndToken(handlerInput);
+          await setBridgeCredentials(handlerInput);
         } catch (error) {
           Reflect.deleteProperty(sessionAttributes, "ipAddress");
           Reflect.deleteProperty(sessionAttributes, "hostnames");

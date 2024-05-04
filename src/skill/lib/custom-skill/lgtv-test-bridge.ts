@@ -1,22 +1,18 @@
-import * as Link from "../link";
-import * as Common from "../../../common";
 import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as ASKModel from "ask-sdk-model";
-
-function getAccessToken(handlerInput: ASKHandlerInput): Promise<string> {
-  return new Promise((resolve, reject): void => {
-    const accessToken =
-      handlerInput.requestEnvelope.context.System.user.accessToken;
-    if (typeof accessToken === "undefined") {
-      reject(Common.Error.create("", { general: "unknown" }));
-    }
-    resolve(accessToken as string);
-  });
-}
+import * as Common from "../../../common";
+import * as Link from "../link";
 
 async function test(handlerInput: ASKHandlerInput): Promise<string> {
-  const accessToken: string = await getAccessToken(handlerInput);
+  const accessToken =
+    handlerInput.requestEnvelope.context.System.user.accessToken;
+  if (typeof accessToken === "undefined") {
+    const speechOutput =
+      "There appears to have been a problem with account linking. " +
+      "Relink your account and reconfigure your bridge.";
+    throw speechOutput;
+  }
 
   try {
     await Link.testConnection(accessToken);
