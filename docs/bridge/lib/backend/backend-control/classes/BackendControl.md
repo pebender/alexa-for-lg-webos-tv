@@ -24,7 +24,7 @@
 
 • **\_connection**: [`export=`](../../../../types/lgtv2/classes/export=.md)
 
-• **\_ssdpNotify**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
+• **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
 
 • **\_ssdpResponse**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
 
@@ -64,7 +64,7 @@
 
 ### \_ssdpNotify
 
-> `private` `readonly` **\_ssdpNotify**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
+> `private` `readonly` **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
 
 ***
 

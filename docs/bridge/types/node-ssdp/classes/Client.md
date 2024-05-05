@@ -50,11 +50,9 @@
 
 ### emit()
 
-#### emit(event, headers, statusCode, rinfo)
-
 > **emit**(`event`, `headers`, `statusCode`, `rinfo`): `boolean`
 
-##### Parameters
+#### Parameters
 
 • **event**: `"response"`
 
@@ -64,31 +62,11 @@
 
 • **rinfo**: `RemoteInfo`
 
-##### Returns
+#### Returns
 
 `boolean`
 
-##### Overrides
-
-`Base.emit`
-
-#### emit(event, headers, rinfo)
-
-> **emit**(`event`, `headers`, `rinfo`): `boolean`
-
-##### Parameters
-
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
-
-• **headers**: [`SsdpHeaders`](../interfaces/SsdpHeaders.md)
-
-• **rinfo**: `RemoteInfo`
-
-##### Returns
-
-`boolean`
-
-##### Overrides
+#### Overrides
 
 `Base.emit`
 
@@ -96,39 +74,19 @@
 
 ### on()
 
-#### on(event, listener)
-
 > **on**(`event`, `listener`): `this`
 
-##### Parameters
+#### Parameters
 
 • **event**: `"response"`
 
 • **listener**
 
-##### Returns
+#### Returns
 
 `this`
 
-##### Overrides
-
-`Base.on`
-
-#### on(event, listener)
-
-> **on**(`event`, `listener`): `this`
-
-##### Parameters
-
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
-
-• **listener**
-
-##### Returns
-
-`this`
-
-##### Overrides
+#### Overrides
 
 `Base.on`
 
@@ -136,39 +94,19 @@
 
 ### once()
 
-#### once(event, listener)
-
 > **once**(`event`, `listener`): `this`
 
-##### Parameters
+#### Parameters
 
 • **event**: `"response"`
 
 • **listener**
 
-##### Returns
+#### Returns
 
 `this`
 
-##### Overrides
-
-`Base.once`
-
-#### once(event, listener)
-
-> **once**(`event`, `listener`): `this`
-
-##### Parameters
-
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
-
-• **listener**
-
-##### Returns
-
-`this`
-
-##### Overrides
+#### Overrides
 
 `Base.once`
 

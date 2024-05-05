@@ -18,7 +18,7 @@
 
 #### Parameters
 
-• **\_ssdpNotify**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
+• **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
 
 • **\_ssdpResponse**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
 
@@ -34,7 +34,7 @@
 
 ### \_ssdpNotify
 
-> `private` **\_ssdpNotify**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
+> `private` **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
 
 ***
 

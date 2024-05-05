@@ -16,7 +16,8 @@
 
 > `optional` **customLogger**: (`format`, ...`args`) => `void`
 
-A logger function to use instead of the default. The first argument to the function can contain a format string.
+A logger function to use instead of the default. The first argument to the
+function can contain a format string.
 
 #### Parameters
 
@@ -50,7 +51,8 @@ Path to SSDP description file
 
 > `optional` **explicitSocketBind**: `boolean`
 
-Bind sockets to each discovered interface explicitly instead of relying on the system. Might help with issues with multiple NICs.
+Bind sockets to each discovered interface explicitly instead of relying on
+the system. Might help with issues with multiple NICs.
 
 ***
 
@@ -70,7 +72,8 @@ Additional headers
 
 > `optional` **interfaces**: `string`[]
 
-List of interfaces to explicitly bind. By default, bind to all available interfaces.
+List of interfaces to explicitly bind. By default, bind to all available
+interfaces.
 
 ***
 
@@ -78,23 +81,14 @@ List of interfaces to explicitly bind. By default, bind to all available interfa
 
 > `optional` **reuseAddr**: `boolean`
 
-When true socket.bind() will reuse the address, even if another process has already bound a socket on it.
+When true socket.bind() will reuse the address, even if another process has
+already bound a socket on it.
 
 #### Default Value
 
 ```ts
 true
 ```
-
-***
-
-### sourcePort?
-
-> `optional` **sourcePort**: `number`
-
-#### Inherited from
-
-[`SsdpOptions`](SsdpOptions.md).[`sourcePort`](SsdpOptions.md#sourceport)
 
 ***
 

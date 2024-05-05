@@ -1,0 +1,13 @@
+--- node-ssdp.d.ts	2024-05-05 11:33:05.933246326 -0700
++++ node-ssdp.d.ts	2024-05-05 13:18:23.314093262 -0700
+@@ -151,7 +150,7 @@
+     stop(): void;
+     advertise(alive?: boolean): void;
+ 
+-    on(event: "advertise-alive" | "advertise-bye", listener: (headers: SsdpHeaders) => void): this;
+-    once(event: "advertise-alive" | "advertise-bye", listener: (headers: SsdpHeaders) => void): this;
+-    emit(event: "advertise-alive" | "advertise-bye", headers: SsdpHeaders): boolean;
++    on(event: "advertise-alive" | "advertise-bye", listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void): this;
++    once(event: "advertise-alive" | "advertise-bye", listener: (headers: SsdpHeaders, rinfo: dgram.RemoteInfo) => void): this;
++    emit(event: "advertise-alive" | "advertise-bye", headers: SsdpHeaders, rinfo: dgram.RemoteInfo): boolean;
+ }

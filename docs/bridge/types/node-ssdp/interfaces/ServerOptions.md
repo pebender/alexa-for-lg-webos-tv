@@ -44,7 +44,8 @@ false
 
 > `optional` **customLogger**: (`format`, ...`args`) => `void`
 
-A logger function to use instead of the default. The first argument to the function can contain a format string.
+A logger function to use instead of the default. The first argument to the
+function can contain a format string.
 
 #### Parameters
 
@@ -78,7 +79,8 @@ Path to SSDP description file
 
 > `optional` **explicitSocketBind**: `boolean`
 
-Bind sockets to each discovered interface explicitly instead of relying on the system. Might help with issues with multiple NICs.
+Bind sockets to each discovered interface explicitly instead of relying on
+the system. Might help with issues with multiple NICs.
 
 #### Inherited from
 
@@ -102,7 +104,8 @@ Additional headers
 
 > `optional` **interfaces**: `string`[]
 
-List of interfaces to explicitly bind. By default, bind to all available interfaces.
+List of interfaces to explicitly bind. By default, bind to all available
+interfaces.
 
 #### Inherited from
 
@@ -114,9 +117,10 @@ List of interfaces to explicitly bind. By default, bind to all available interfa
 
 > `optional` **location**: `string` \| [`ServiceDescriptionLocation`](ServiceDescriptionLocation.md)
 
-URL pointing to description of your service, or a function that returns that URL.
-For cases where there are multiple network interfaces or the IP of the host isn't known in advance,
-it's possible to specify location as an object. Host will be set to the IP of the responding interface.
+URL pointing to description of your service, or a function that returns
+that URL. For cases where there are multiple network interfaces or the IP
+of the host isn't known in advance, it's possible to specify location as an
+object. Host will be set to the IP of the responding interface.
 
 ***
 
@@ -124,7 +128,8 @@ it's possible to specify location as an object. Host will be set to the IP of th
 
 > `optional` **reuseAddr**: `boolean`
 
-When true socket.bind() will reuse the address, even if another process has already bound a socket on it.
+When true socket.bind() will reuse the address, even if another process has
+already bound a socket on it.
 
 #### Default Value
 
@@ -135,16 +140,6 @@ true
 #### Inherited from
 
 [`ClientOptions`](ClientOptions.md).[`reuseAddr`](ClientOptions.md#reuseaddr)
-
-***
-
-### sourcePort?
-
-> `optional` **sourcePort**: `number`
-
-#### Inherited from
-
-[`ClientOptions`](ClientOptions.md).[`sourcePort`](ClientOptions.md#sourceport)
 
 ***
 
@@ -224,7 +219,8 @@ Multicast TTL
 
 > `optional` **suppressRootDeviceAdvertisements**: `boolean`
 
-When true the SSDP server will not advertise the root device (i.e. the bare UDN). In some scenarios, this advertisement is not needed.
+When true the SSDP server will not advertise the root device (i.e. the bare
+UDN). In some scenarios, this advertisement is not needed.
 
 #### Default Value
 

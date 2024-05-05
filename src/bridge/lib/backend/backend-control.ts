@@ -2,7 +2,11 @@ import { randomUUID } from "crypto";
 import { Mutex } from "async-mutex";
 import * as wol from "wake_on_lan";
 import { EventEmitter } from "node:events";
-import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
+import {
+  Client as SsdpClient,
+  Server as SsdpServer,
+  SsdpHeaders,
+} from "node-ssdp";
 import { DatabaseTable } from "../database";
 import LGTV from "lgtv2";
 import { TV } from "./tv";
@@ -13,13 +17,13 @@ export class BackendControl extends EventEmitter {
   private readonly _db: DatabaseTable;
   private readonly _tv: TV;
   private readonly _connection: LGTV;
-  private readonly _ssdpNotify: SsdpClient;
+  private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
   private constructor(
     _db: DatabaseTable,
     _tv: TV,
     _connection: LGTV,
-    _ssdpNotify: SsdpClient,
+    _ssdpNotify: SsdpServer,
     _ssdpResponse: SsdpClient,
   ) {
     super();
@@ -61,7 +65,7 @@ export class BackendControl extends EventEmitter {
       saveKey,
     });
 
-    const _ssdpNotify = new SsdpClient({ sourcePort: 1900 });
+    const _ssdpNotify = new SsdpServer();
     const _ssdpResponse = new SsdpClient();
 
     const backendControl = new BackendControl(

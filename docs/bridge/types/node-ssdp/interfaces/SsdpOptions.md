@@ -16,7 +16,8 @@
 
 > `optional` **customLogger**: (`format`, ...`args`) => `void`
 
-A logger function to use instead of the default. The first argument to the function can contain a format string.
+A logger function to use instead of the default. The first argument to the
+function can contain a format string.
 
 #### Parameters
 
@@ -43,12 +44,6 @@ Path to SSDP description file
 > `optional` **headers**: [`SsdpHeaders`](SsdpHeaders.md)
 
 Additional headers
-
-***
-
-### sourcePort?
-
-> `optional` **sourcePort**: `number`
 
 ***
 

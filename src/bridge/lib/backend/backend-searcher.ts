@@ -1,6 +1,10 @@
 import * as dgram from "node:dgram";
 import { IP, MAC, TV, UDN } from "./tv";
-import { Client as SsdpClient, SsdpHeaders } from "node-ssdp";
+import {
+  Client as SsdpClient,
+  Server as SsdpServer,
+  SsdpHeaders,
+} from "node-ssdp";
 import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
 const arp = require("node-arp");
@@ -16,9 +20,9 @@ export interface UPnPDevice {
 }
 
 export class BackendSearcher extends EventEmitter {
-  private _ssdpNotify: SsdpClient;
+  private _ssdpNotify: SsdpServer;
   private _ssdpResponse: SsdpClient;
-  public constructor(_ssdpNotify: SsdpClient, _ssdpResponse: SsdpClient) {
+  public constructor(_ssdpNotify: SsdpServer, _ssdpResponse: SsdpClient) {
     super();
 
     this._ssdpNotify = _ssdpNotify;
@@ -26,7 +30,7 @@ export class BackendSearcher extends EventEmitter {
   }
 
   public static async build(): Promise<BackendSearcher> {
-    const _ssdpNotify = new SsdpClient({ sourcePort: 1900 });
+    const _ssdpNotify = new SsdpServer();
     const _ssdpResponse = new SsdpClient();
 
     const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);

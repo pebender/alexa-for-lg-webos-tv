@@ -16,7 +16,8 @@
 
 > `optional` **LOCATION**: `string`
 
-Available while handling an SSDP response. A URL where the service description can be found.
+Available while handling an SSDP response. A URL where the service
+description can be found.
 
 ***
 
@@ -30,4 +31,5 @@ Available while handling an SSDP response. A URL where the service description c
 
 > `optional` **USN**: `string`
 
-Available while handling an SSDP response. The Unique Service Name (USN) of the responding device.
+Available while handling an SSDP response. The Unique Service Name (USN) of
+the responding device.
