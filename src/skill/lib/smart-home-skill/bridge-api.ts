@@ -132,6 +132,7 @@ export async function sendSkillDirective(
   try {
     return await sendHandler(shsPath, request, request);
   } catch (error: any) {
+    Common.Debug.debugErrorWithStack(error);
     return mapErrorToAlexaResponse(request, error);
   }
 }

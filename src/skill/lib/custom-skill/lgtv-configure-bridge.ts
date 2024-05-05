@@ -85,13 +85,13 @@ async function setBridgeCredentials(
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
     Common.Debug.debugError(error);
-    throw Common.Error.create(
+    throw new Error(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
   if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");
-    throw Common.Error.create(
+    throw new Error(
       "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     );
   }
