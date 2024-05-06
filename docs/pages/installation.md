@@ -75,7 +75,7 @@ When you create them,
 
 The source code includes [the Custom Skill's interaction model](../../src/skill/lib/custom-skill/interaction-model.json). If you paste this into the "JSON Editor" window under the skill's build tab, then the Custom Skill's configuration will be complete. After that, set up account linking and the skill will be complete.
 
-The DynamoDB table has the fields: email, hostname, bridgeToken and skillToken. The email field is the key field. There is no sort field. In addition, the DynamoDB table has a corresponding Global Secondary Index (GSI) named 'skillToken_index'. The skillToken field is the index field. The GSI includes all fields from the table.
+The DynamoDB table has the fields: userId, skillToken, bridgeHostname and bridgeToken. The userId field is the key field. There is no sort field. In addition, the DynamoDB table has a corresponding Global Secondary Index (GSI) named 'skillToken_index'. The skillToken field is the index field. The GSI includes all fields from the table.
 
 ## Bridge Installation
 

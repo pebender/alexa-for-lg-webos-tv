@@ -23,10 +23,11 @@ The frontend handles the communication link between the skill and the bridge. It
 
 It is important to note that the authorization to use the service is the result of the user using the skill to configure the bridge's hostname. Therefore, the bridge can only trust that the login token came from the skill and that the skill believes the authorization is genuine. So, as part of the login token validation, the bridge
 
-- validates that it supports the login token specified service,
-- validates that the login token specified user email address is in a list of authorized users for the login token specified service
+- verifies that the service specified in the login token is supported by the bridge,
+- verifies with Amazon profile server that the skill token specified in the login token is valid and maps the skill token to the user's linked Amazon account identifier, and
+- verifies with the service that the user associated with the Amazon account identifier is authorized to use the service.
 
-If validation fails multiple times from the same address, the IP address of the skill is temporarily blocked.
+If validation fails multiple times from the same IP address, the IP address of the skill is temporarily blocked.
 
 #### Bridge Token Authorization
 
@@ -34,18 +35,23 @@ If validation fails multiple times from the same address, the IP address of the 
 
 The middle translates between the Smart Home Skill signaling and the LG webOS TV signaling. It
 
-- translates between the Smart Home Skill signaling and the LG webOS TV signaling, and
-- controls access based on the bearer tokens in the Smart Home Skill Directives.
+- translates between the Smart Home Skill signaling and the LG webOS TV signaling,
+- controls access based on the access token in the Smart Home Skill Directives, and
+- provides the frontend with user authorization services.
 
 ### Smart Home Skill Service Authorization
 
-Each Smart Home Skill Directive contains a bearer token (SKILL_TOKEN or skillToken).
+When a skill is linked to the user's Amazon account, the user's skill messages contain an access token that is user specific. [The skill to bridge interface](./skill-to-bridge-interface.md#the-skill-to-bridge-interface) uses this skill access token to authorize the user during [login](./skill-to-bridge-interface.md#the-login-interface). The SHS-LGTV service uses this skill access token to authorize the Smart Home Skill Directives before processing them. The middle is responsible for performing these authorizations.
 
-The middle maintains a database (~/.ForLGwebOSTV/middle.nedb) mapping Directive's bearer tokens (skillToken) to user's email addresses (email).
+The service has Amazon's profile server verify the skill access token and translate the skill access token into the user's Amazon account identifier and email address. The service verifies that the email address belongs to an authorized user.
 
-If a Directive's bearer token is not found in the database, then the middle attempts to map the Directive's bearer token to the user's email address using the procedure outlined in ["Retrieving the email Address using the Smart Home Skill"](./skill.md#retrieving-the-email-address-using-the-smart-home-skill). If the attempt is successful, then the email address is compared with the email address associated with the bridge token used to authorize the Service Request message containing the Directive. If they match, then the bearer token to email address mapping is added to the database.
+The middle maintains a database (~/.ForLGwebOSTV/middle.nedb) with records containing the skill access token (skillToken), the user's Amazon account identifier (userId) and email address (email). If the skillToken isn't found in the database, then the middle attempts to map skillToken to the user's Amazon account identifier and email address using the procedure outlined in ["Retrieving the User's Identifier"](./skill.md#retrieving-the-users-identifier). If the attempt is successful, then the email address is compared with the email address associated with the bridge token used to authorize the Service Request message containing the Directive. If they match, then the bearer token to email address mapping is added to the database.
 
-If the Directive's bearer token does not map to an email address then authorization fails. If email address associated with the Directive's bearer token does not match the email address associated with the bridge token used to authorize the Service Request message containing the Directive, then authorization fails. If authorization fails, then the middle responds with an `Alexa ErrorResponse` specifying `INVALID_AUTHORIZATION_CREDENTIAL`.
+If the skill access token does not map to an email address then authorization fails.
+
+If the email address associated with the Directive's access token does not match the email address associated with the bridge token used to authorize the Service Request message containing the Directive, then authorization fails.
+
+If authorization fails, then the middle responds with an `Alexa ErrorResponse` specifying `INVALID_AUTHORIZATION_CREDENTIAL`.
 
 ## The Backend
 

@@ -30,11 +30,11 @@ However, the bridge only supports HTTP. It doesn't support HTTPS. If your home n
 
 The bridge consumes resources. Therefore, even though the services supported by the bridge may have protections against misuse, the bridge needs its own protections against misuse.
 
-[As mentioned above](#the-skill-to-bridge-interface), interface access is controlled using tokens carried in the HTTP request Authorization header. The token is bound to a user and a service. The token enables the bridge to verify that message is from a trusted skill and that the message is being sent on behalf of a user who has been authorized to use the service.
+[As mentioned above](#the-skill-to-bridge-interface), interface access is controlled using tokens carried in the HTTP request Authorization header. The token is bound to a user and a service. The token enables the bridge to verify that the message is from a trusted skill and that the message is being sent on behalf of a user who has been authorized to use the service.
 
 When the bridge receives a message on any skill to bridge interface, it verifies the token. If token verification fails, then the bridge rejects the message. After some number of repeated token verification failures originating from the same IP address, the bridge may (temporarily) block the IP address.
 
-There are two types of tokens: the login token and the bridge token. The skill uses a login token when accessing the login interface. The skill uses a bridge token when accessing a service interface as well as the test interface. The skill uses the login interface to "exchange" a login token for a bridge token. Login tokens are exchanged for bridge tokens because bridge tokens are less expensive to transmit and verify.
+There are two types of tokens: the login token and the bridge token. The skill uses a login token when accessing the login interface. The skill uses a bridge token when accessing a service interface as well as the test interface. The skill uses the login interface to "exchange" a login token for a bridge token. Login tokens are exchanged for bridge tokens because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
 
 ### The Login Token
 
@@ -48,7 +48,7 @@ The login token is a JSON Web Token (JWT) with the form
 {
     "iss": "For LG webOS TV",
     "sub": "SKILL_TOKEN",
-    "aud": "https://BRIDGE_HOSTNAME/api/ForLGwebOSTV/v1",
+    "aud": "https://BRIDGE_HOSTNAME/service/ForLGwebOSTV/v1",
     "exp": "NOW + 1m"
 }
 ```
@@ -59,19 +59,19 @@ The login token's `"iss"` field identifies the skill. In the skill implementatio
 "For LG webOS TV"
 ```
 
-The login token's `"sub"` field identifies the user. SKILL_TOKEN is the access token found in the messages of Account Linked skills.
+The login token's `"sub"` field identifies the user. SKILL_TOKEN is the access token found in the messages of account-linked skills.
 
-The login token's `"aud"` field identifies the service. It's a URL that identifies the service. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill. In the skill implementation and the bridge implementation, the path is set by `constants.bridge.path.skill` in [src/common/constants.ts](../../src/common/constants.ts) and is currently set to
+The login token's `"aud"` field identifies the service. It's a URL that identifies the service. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill. In the skill implementation and the bridge implementation, the path is set by `constants.bridge.path.service` in [src/common/constants.ts](../../src/common/constants.ts) and is currently set to
 
 ```text
-/api/ForLGwebOSTV/v1
+/service/ForLGwebOSTV/v1
 ```
 
 The login token's `"exp"` field specifies when the login token will expire. It's recommended that the login token have a short lifetime in order to reduce the chance of replay. In the skill implementation, the login token is set to expire one minute after it was generated.
 
 #### The Login Token Authorization
 
-The bridge verifies that the login came from a trusted skill. It does this by verifying that the login token was signed using a private key belonging to the skill. If verification fails, then login token authorization fails.
+The bridge verifies that the login came from a trusted skill. It does this by verifying that the login token was signed using a private key belonging to the skill.
 
 The bridge verifies that the login token has not expired. If verification fails, then the login token authorization fails.
 
@@ -85,7 +85,7 @@ In the implementation, the skill requires the user to share their email with ski
 
 The bridge uses the bridge token to grant access to a service interface. The skill can request a bridge token using the login interface. The returned bridge token is bound to the user and service from the login token.
 
-The indirect bridge token rather than the direct login token is used to access the service interfaces because the bridge token is less expensive to transmit and verify.
+The indirect bridge token rather than the direct login token is used to access the service interfaces because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
 
 #### The Bridge Token Format
 
@@ -311,7 +311,7 @@ sequenceDiagram
 The `Service Request` message is the HTTP request header and body
 
 ```http
-POST /api/ForLGwebOSTV/v1
+POST /service/ForLGwebOSTV/v1
 Host: BRIDGE_HOSTNAME
 Authentication: Bearer BRIDGE_TOKEN
 Content-Type: application/json

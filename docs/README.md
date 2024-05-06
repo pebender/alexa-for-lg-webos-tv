@@ -8,9 +8,9 @@ With alexa-for-lg-webos-tv, Alexa can control LG Electronics televisions that ru
 
 I am reasonably happy with the basic functionality
 
-- Use account linking so both the Custom and Smart Home parts of the skill can retrieve the user's email address.
+- Use account linking so that the skill and bridge can securely identify the user,
 - Use Alexa to configure the bridge's hostname,
-- Use JSON Web Tokens to create a bearer token that the skill and bridge use to communicate securely, and
+- Use a JSON Web Token to create an access token that the skill and bridge use to communicate securely, and
 - Control basic TV functions.
 
 However, there are many things left to do
