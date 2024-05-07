@@ -10,6 +10,11 @@
 
 - `EventEmitter`
 
+## Extended by
+
+- [`Client`](Client.md)
+- [`Server`](Server.md)
+
 ## Constructors
 
 ### new Base()

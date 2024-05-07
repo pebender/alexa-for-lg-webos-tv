@@ -10,6 +10,10 @@
 
 - [`SsdpOptions`](SsdpOptions.md)
 
+## Extended by
+
+- [`ServerOptions`](ServerOptions.md)
+
 ## Properties
 
 ### customLogger()?
