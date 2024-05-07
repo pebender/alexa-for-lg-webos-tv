@@ -36,7 +36,7 @@ export async function getCredentials(
     typeof options.bridgeHostname === "undefined"
       ? undefined
       : options.bridgeHostname;
-  const updateBridgeToken: boolean =
+  let updateBridgeToken: boolean =
     typeof options === "undefined" ||
     typeof options.updateBridgeToken === "undefined"
       ? false
@@ -47,6 +47,10 @@ export async function getCredentials(
     requiredFields: ["userId"],
   });
   if (record === null) {
+    /* skillToken changed (or is new), so get a new bridgeToken (if
+    bridgeHostname is known) */
+    updateBridgeToken = true;
+
     let userId: string;
     try {
       userId = await Common.Profile.getUserId(skillToken);
