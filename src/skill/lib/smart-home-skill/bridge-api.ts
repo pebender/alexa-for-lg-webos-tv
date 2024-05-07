@@ -39,11 +39,49 @@ async function sendHandler(
     headers: {},
   };
 
-  const response = await Common.HTTPSRequest.request(
-    requestOptions,
-    bridgeToken,
-    message,
-  );
+  let response: any;
+  try {
+    response = await Common.HTTPSRequest.request(
+      requestOptions,
+      bridgeToken,
+      message,
+    );
+  } catch (error: any) {
+    if (
+      (error as Common.Error.AlexaForLGwebOSTVError).general === "http" &&
+      (error as Common.Error.AlexaForLGwebOSTVError).specific === "UNAUTHORIZED"
+    ) {
+      /* try again with a new bridge token */
+      const { bridgeHostname, bridgeToken } = await Link.getCredentials(
+        accessToken,
+        { updateBridgeToken: true },
+      );
+      if (bridgeHostname === null || bridgeToken === null) {
+        throw Common.Error.create("", {
+          general: "authorization",
+          specific: "bridgeHostname_or_bridgeToken_not_found",
+          receiver: "skill_user_db",
+          sender: "skill",
+        });
+      }
+
+      const requestOptions: Common.HTTPSRequest.RequestOptions = {
+        hostname: bridgeHostname,
+        path,
+        port: Common.constants.bridge.port.https,
+        method: "POST",
+        headers: {},
+      };
+
+      response = await Common.HTTPSRequest.request(
+        requestOptions,
+        bridgeToken,
+        message,
+      );
+    } else {
+      throw error;
+    }
+  }
 
   return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }

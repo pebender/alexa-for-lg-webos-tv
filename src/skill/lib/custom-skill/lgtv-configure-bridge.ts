@@ -80,7 +80,7 @@ async function setBridgeCredentials(
     bridgeToken: string | null;
   };
   try {
-    credentials = await Link.getCredentials(accessToken, bridgeHostname);
+    credentials = await Link.getCredentials(accessToken, { bridgeHostname });
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");

@@ -6,13 +6,17 @@
 
 # Function: getCredentials()
 
-> **getCredentials**(`skillToken`, `bridgeHostname`?): `Promise`\<`object`\>
+> **getCredentials**(`skillToken`, `options`?): `Promise`\<`object`\>
 
 ## Parameters
 
 • **skillToken**: `string`
 
-• **bridgeHostname?**: `string`
+• **options?**
+
+• **options.bridgeHostname?**: `string`
+
+• **options.updateBridgeToken?**: `boolean`
 
 ## Returns
 

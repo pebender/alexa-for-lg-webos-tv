@@ -26,8 +26,22 @@ export async function getHostnames(ipAddress: string) {
 
 export async function getCredentials(
   skillToken: string,
-  bridgeHostname?: string,
+  options?: {
+    bridgeHostname?: string;
+    updateBridgeToken?: boolean;
+  },
 ): Promise<{ bridgeHostname: string | null; bridgeToken: string | null }> {
+  const bridgeHostname: string | undefined =
+    typeof options === "undefined" ||
+    typeof options.bridgeHostname === "undefined"
+      ? undefined
+      : options.bridgeHostname;
+  const updateBridgeToken: boolean =
+    typeof options === "undefined" ||
+    typeof options.updateBridgeToken === "undefined"
+      ? false
+      : options.updateBridgeToken;
+
   let record: Database.Record | null;
   record = await Database.getRecordUsingSkillToken(skillToken, {
     requiredFields: ["userId"],
@@ -72,7 +86,10 @@ export async function getCredentials(
       );
     }
   }
-  if (record.bridgeHostname !== null && record.bridgeToken === null) {
+  if (
+    record.bridgeHostname !== null &&
+    (updateBridgeToken === true || record.bridgeToken === null)
+  ) {
     const bridgeHostname: string = record.bridgeHostname;
     const bridgeToken: string = await Login.getBridgeToken(
       skillToken,
