@@ -104,11 +104,11 @@ Fields in the user record can become stale. As an example, the user record may n
 
 Fetching the bridge credentials has three stages:
 
-1. updates the skill token (skillToken) in the User Record if needed,
-2. updates the bridge hostname (bridgeHostname) in the User Record if requested, and
-3. updates the Bridge Token (bridgeToken) in the User Record if needed or requested.
+1. updates skillToken in the user record if needed,
+2. updates bridgeHostname and bridgeToken in the user record if requested,
+3. updates the bridgeToken in the user record if needed.
 
-Fetching bridge credentials updates skillToken when the user database contains no user record containing skillToken. Fetching bridge credentials updates bridgeHostname when newBridgeHostname is set to a hostname in the request to fetch bridge credentials. Fetching bridge credentials updates bridgeToken when bridgeToken is set, skillToken was updated, bridgeHostname was updated, or newBridgeToken is set to true in the request to fetch bridge credentials.
+Fetching bridge credentials updates skillToken when the user database contains no user record containing skillToken. Fetching bridge credentials updates bridgeHostname when newBridgeHostname is set to a hostname in the request to fetch bridge credentials. Fetching bridge credentials updates bridgeToken when bridgeToken is not set, skillToken was updated, bridgeHostname was updated, or newBridgeToken is set to true in the request to fetch bridge credentials.
 
 ```mermaid
 stateDiagram-v2
@@ -135,7 +135,7 @@ checkBridgeToken6: Check For Bridge Token
 updateUserRecord7: Update User Record<br>- delete Bridge Token
 
 fetchBridgeToken8: Fetch Bridge Token
-updateUserRecord8: Update User Record<br>-update Bridge Token
+updateUserRecord8: Update User Record<br>- update Bridge Token
 fetchUserRecord8: Fetch User Record
 
 [*] --> fetchUserRecord1: Bridge Credentials Requested<br>- optional newBridgeHostname<br>- optional newBridgeToken
