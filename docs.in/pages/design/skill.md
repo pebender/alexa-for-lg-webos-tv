@@ -79,71 +79,103 @@ The skill assumes that any request it's being asked to send on either the test o
 stateDiagram-v2
   direction TB
 
-  lookUpUserRecord: Look Up User Record<br>using CS/SHS Token
-  checkUserRecordForUserId: Check User Record<br>for User Id
-  checkUserRecordForBridgeHostname: Check User Record<br>for Bridge Hostname
-  checkUserRecordForBridgeToken: Check User Record<br>for Bridge Token
-  sendMessageToBridge: Send CS/SHS Message<br>to Bridge
-  succeedMessage: Succeed<br>with CS/SHS Response
-  [*] --> lookUpUserRecord: CS/SHS Message Received
-  lookUpUserRecord --> checkUserRecordForUserId: User Record Found
-  checkUserRecordForUserId --> checkUserRecordForBridgeHostname: User Id Found
-  checkUserRecordForBridgeHostname --> checkUserRecordForBridgeToken: Bridge Hostname Found
-  checkUserRecordForBridgeToken --> sendMessageToBridge: Bridge Token Found
-  sendMessageToBridge --> succeedMessage: Received CS/SHS Response<br>from bridge
-  succeedMessage --> [*]: CS/SHS Message Handled
+  fetchBridgeCredentials1: Fetch Bridge Credentials
+  sendMessageToBridge1: Send Request Message to Bridge
 
-  updateSkillTokenInUserRecord: Update CS/SHS Token<br>in User Record
-  lookUpUserRecord --> updateSkillTokenInUserRecord: User Record Not Found<br>(out-of-date CS/SHS)
-  updateSkillTokenInUserRecord --> lookUpUserRecord: User Record Updated
+  fetchBridgeCredentials2: Fetch Bridge Credentials<br>with Bridge Token Update
+  sendMessageToBridge2: Send Request Message to Bridge
 
-  updateBridgeTokenInUserRecord: Update Bridge Token<br>in User Record
-  checkUserRecordForUserEmail --> updateSkillTokenInUserRecord: User Email Not Found<br>(this should not happen)
+  [*] --> fetchBridgeCredentials1: Request Message and Skill Token
+  fetchBridgeCredentials1 --> sendMessageToBridge1: Bridge Credentials Found
+  sendMessageToBridge1 --> [*]: Response Message Received
+  fetchBridgeCredentials1 --> [*]: Authorizatoin Failed
 
-  failMessageNotAuthorized: Fail<br>with Not Authorized
-  updateSkillTokenInUserRecord --> failMessageNotAuthorized: User Record Not Updated<br>because Authorization Failed
-
-  failMessageNotAuthorized --> [*]: CS/SHS Message Handled
-
-  checkUserRecordForBridgeHostname --> failMessageUnreachable: Message not Authorized<br> with Bridge Not Configured
-
-  failMessageUnreachable: Fail<br>with Unreachable
-  failMessageUnreachable --> [*]: CS/SHS Message Handled
-
-  sendMessageToBridge --> updateBridgeTokenInUserRecord: Received Not Authorized from Bridge
-
-
-  updateBridgeTokenInUserRecord --> lookUpUserRecord: Bridge Token Updated
+  sendMessageToBridge1 --> fetchBridgeCredentials2: Authorization Failure Received
+  fetchBridgeCredentials2 --> sendMessageToBridge2: Bridge Credentials Found
+  sendMessageToBridge2 --> [*]:  Response Message Received
+  fetchBridgeCredentials2 --> [*]: Authorizatoin Failed
 ```
 
-### Update Skill Token in the User Record
+### Fetch Bridge Credentials
 
-The skill token is used as authorization to fetch the user's identifier from the profile server. Assuming the fetch is successful, the skill token for the User Record associated with the user's identifier is updated/created with the value of the CS/SHS token. If the CS/SHS token fails authorization or no email address is returned, then update fails with the reason "not authorized".
+The bridge credentials are the bridge hostname and bridge token. The bridge credentials are stored in the user record in the link user database. The user record contains the user's linked Amazon account identifier (userId), the skill access token (skillToken), the bridge hostname (bridgeHostname) and the bridge token (bridgeToken).
 
-While the skill will not need the user's email, the bridge will. So, the skill ensures that it is present so it can alert the user. TODO: Fix. The skill should not be checking. The bridge should be failing authorization with lack-of-email being the reason.
-It should be the bridge that alerts the skill of the lack of email during login token and bridge token authorization.
+Fields in the user record can become stale. As an example, the user record may not contain user's current skill token, requiring the skill to retrieve the user's linked Amazon account profile. As another example, the user record may not contain a bridge token, requiring the skill to request a bridge token from the bridge. As part of fetching the bridge credentials, the skill makes sure the user record is not stale.
+
+Fetching the bridge credentials has three stages:
+
+1. updates the skill token (skillToken) in the User Record if needed,
+2. updates the bridge hostname (bridgeHostname) in the User Record if requested, and
+3. updates the Bridge Token (bridgeToken) in the User Record if needed or requested.
+
+Fetching bridge credentials updates skillToken when the user database contains no user record containing skillToken. Fetching bridge credentials updates bridgeHostname when newBridgeHostname is set to a hostname in the request to fetch bridge credentials. Fetching bridge credentials updates bridgeToken when bridgeToken is set, skillToken was updated, bridgeHostname was updated, or newBridgeToken is set to true in the request to fetch bridge credentials.
 
 ```mermaid
 stateDiagram-v2
-    fetchUserProfile: Fetch<br>User Profile
-    checkUserProfileForUserId: Check<br>User Profile<br>for User's Identifier
-    checkUserProfileForUserEmail: Check<br>User Profile<br>for User's Email Address
-    updateUserRecordSkillToken: Add/Update<br>User Record<br>with CS/SHS Token
-    succeed: Succeed
-    failAuthorization: Fail with Not Authorized
+  direction TB
 
-    [*] --> fetchUserProfile: Update Requested
-    fetchUserProfile --> checkUserProfileForUserId: Profile Received
-    checkUserProfileForUserId --> checkUserProfileForUserEmail: Identifier<br>Found
-    checkUserProfileForUserEmail --> updateUserRecordSkillToken: Email Address<br>Found
-    updateUserRecordSkillToken --> succeed: Update<br>Succeeded
-    succeed --> [*]: Update <br>Succeeded
+fetchUserRecord1: Fetch User Record
 
-    fetchUserProfile --> failAuthorization: Authorization Failed
-    checkUserProfileForUserId --> failAuthorization: Identifier<br>Not Found
-    checkUserProfileForUserEmail --> failAuthorization: Email Address<br>Not Found
+fetchUserProfile2: Fetch User Profile
+updateUserRecord2: Update/Create User Record<br>- update Skill Token<br>- delete Bridge Token
+fetchUserRecord2: Fetch User Record
 
-    failAuthorization --> [*]: Update Failed<br>with Not Authorized
+checkBridgeHostnameUpdateValue: Check Bridge Hostname Update Value?
+updateUserRecord3: Update User Record<br>- update Bridge Hostname<br>- delete Bridge Token
+fetchUserRecord3: Fetch User Record
+
+checkBridgeTokenUpdateFlag: Check Bridge Token Update Flag?
+updateUserRecord4: Update User Record<br>- delete Bridge Token
+fetchUserRecord4: Fetch User Record
+
+checkBridgeHostname5: Check For Bridge Hostname
+
+checkBridgeToken6: Check For Bridge Token
+
+updateUserRecord7: Update User Record<br>- delete Bridge Token
+
+fetchBridgeToken8: Fetch Bridge Token
+updateUserRecord8: Update User Record<br>-update Bridge Token
+fetchUserRecord8: Fetch User Record
+
+[*] --> fetchUserRecord1: Bridge Credentials Requested<br>- optional newBridgeHostname<br>- optional newBridgeToken
+
+fetchUserRecord1 --> checkBridgeHostnameUpdateValue: User Record Found
+fetchUserRecord1 --> fetchUserProfile2: User Record Not Found
+
+fetchUserProfile2 --> updateUserRecord2: User Profile Retrieved
+updateUserRecord2 --> fetchUserRecord2: User Record Updated
+
+fetchUserRecord2 --> checkBridgeHostnameUpdateValue: User Record Found
+
+checkBridgeHostnameUpdateValue --> checkBridgeTokenUpdateFlag: Bridge Hostname Updated Not Requested
+checkBridgeHostnameUpdateValue --> updateUserRecord3: Bridge Hostname Update Requested
+
+updateUserRecord3 --> fetchUserRecord3: User Record Updated
+
+fetchUserRecord3 -->  checkBridgeTokenUpdateFlag: User Record Found
+
+checkBridgeTokenUpdateFlag --> checkBridgeHostname5: Bridge Token Update Not Requested
+checkBridgeTokenUpdateFlag --> updateUserRecord4: Bridge Token Update Requested
+
+updateUserRecord4 --> fetchUserRecord4: User Record Updated
+
+fetchUserRecord4 --> checkBridgeHostname5: User Record Found
+
+checkBridgeHostname5 --> checkBridgeToken6: Bridge Hostname Found
+checkBridgeHostname5 --> updateUserRecord7: Bridge Hostname Not Found
+
+checkBridgeToken6 --> [*]: Bridge Credentials Returned
+checkBridgeToken6 --> fetchBridgeToken8: Bridge Token Not Found
+
+updateUserRecord7 --> [*]: Failed
+
+fetchBridgeToken8 --> updateUserRecord8: Bridge Token Updated
+
+updateUserRecord8 --> fetchUserRecord8: User Record Updated
+fetchUserRecord8 --> [*]: Bridge Credentials Returned
+
+
+fetchBridgeToken8 --> [*]: Authorization Failed
+fetchUserProfile2 --> [*]: Authorization Failed
 ```
-
-### Update Bridge Token in User Record
