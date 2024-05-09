@@ -55,6 +55,12 @@ export async function getCredentials(
     try {
       userId = await Common.Profile.getUserId(skillToken);
     } catch (cause: any) {
+      if (
+        typeof cause.general === "string" &&
+        cause.general === "authorization"
+      ) {
+        throw cause;
+      }
       throw Common.Error.create("", {
         general: "link",
         specific: "skill_user_profile",
