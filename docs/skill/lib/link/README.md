@@ -12,4 +12,5 @@
 
 - [getCredentials](functions/getCredentials.md)
 - [getHostnames](functions/getHostnames.md)
+- [sendMessageUsingBridgeToken](functions/sendMessageUsingBridgeToken.md)
 - [testConnection](functions/testConnection.md)

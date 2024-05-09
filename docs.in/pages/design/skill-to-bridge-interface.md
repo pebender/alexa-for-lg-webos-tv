@@ -89,9 +89,7 @@ The bridge token can be any base64 string. As it is assigned by the bridge and s
 
 #### The Bridge Token Authorization
 
-On the link's test interface, the bridge verifies that the bridge token belongs to an authorized user of the bridge.
-
-On the link's service interface, the bridge verifies that the bridge token belongs to an authorized user of the bridge. In addition, it verifies that the bridgeToken is not stale. It does this by making sure that the bridge token is for a linked Amazon Account and that the bridge token was requested using the same skill access token as the access token found in the CS/SHS request message being transported by the link's service interface. Therefore, the skill should ensure that a user's bridge token does not fail authorization for this reason by requesting a new bridge token for the user when it receives a CS/SHS request message for the user with a new access token.
+The bridge verifies that the bridge token belongs to an authorized user of the bridge. In addition, it verifies that the bridgeToken is not stale. It does this by making sure that the bridge token is for a linked Amazon Account and that the bridge token was requested using the same skill access token as the access token found in the request message being transported by the link's interface. Therefore, the skill should ensure that a user's bridge token does not fail authorization for this reason by requesting a new bridge token for the user when it receives a CS/SHS request message for the user with a new access token.
 
 ## The Login Interface
 
@@ -181,9 +179,9 @@ Content-Type: application/json
 
 The skill uses the test interface to test that a bridge token is valid. The skill sends a `Test Request` message authorized by a bridge token.
 
-Assuming the bridge token is valid, the bridge sends a `Test Response` message. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
+The `Test Request` message contains a skillToken. As part of authorization, the bridge will verify that this skill token is the same as the skill token used when requesting the current bridgeToken and is a current valid Login with Amazon access token.
 
-This interface allows a skill to discover that a bridge token is valid on the bridge. It does not allow the skill to discover the user or the service for which the bridge token is valid.
+Assuming the bridge token is valid, the bridge sends a `Test Response` message. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
 
 ### The Test Interface Message Flow
 
@@ -220,9 +218,15 @@ sequenceDiagram
 The `Test Request` message is the HTTP request header
 
 ```http
-GET /test
+POST /test
 Host: BRIDGE_HOSTNAME
 Authentication: Bearer BRIDGE_TOKEN
+```
+
+```json
+{
+  skillToken: SKILL_TOKEN
+}
 ```
 
 The `Test Response` message is the HTTP response header and body

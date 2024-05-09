@@ -205,8 +205,23 @@ export class Frontend {
             await Common.Profile.getUserProfile(skillToken);
           userId = profile.user_id;
           email = profile.email;
-        } catch (error) {
-          res.status(500).json({});
+        } catch (e: any) {
+          const error: Common.Error.AlexaForLGwebOSTVError =
+            e as Common.Error.AlexaForLGwebOSTVError;
+          if (
+            typeof error.general === "string" &&
+            error.general === "authorization"
+          ) {
+            const wwwAuthenticate = "Bearer";
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json({})
+              .send();
+            return;
+          }
+          res.status(500).json({}).send();
+          return;
         }
 
         res.locals.bridgeHostname = bridgeHostname;
@@ -410,6 +425,48 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("Test:");
 
+        const testRequest: { skillToken?: string } = res.locals.json;
+
+        if (typeof testRequest.skillToken !== "string") {
+          ipBlacklistIncrement(req, res);
+          res.status(422).json({}).send();
+          return;
+        }
+
+        const authorizedSkillToken: string = res.locals.skillToken;
+        const skillToken: string = testRequest.skillToken;
+
+        if (authorizedSkillToken !== skillToken) {
+          const wwwAuthenticate = "Bearer";
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json({})
+            .send();
+          return;
+        }
+
+        try {
+          await Common.Profile.getUserProfile(skillToken);
+        } catch (e: any) {
+          const error: Common.Error.AlexaForLGwebOSTVError =
+            e as Common.Error.AlexaForLGwebOSTVError;
+          if (
+            typeof error.general === "string" &&
+            error.general === "authorization"
+          ) {
+            const wwwAuthenticate = "Bearer";
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json({})
+              .send();
+            return;
+          }
+          res.status(500).json({}).send();
+          return;
+        }
+
         res.status(200).json({});
       }
 
@@ -477,9 +534,11 @@ export class Frontend {
       );
 
       // Handle test
-      frontend._server.get(
+      frontend._server.post(
         Common.constants.bridge.path.test,
         bridgeTokenAuthorizationHandler,
+        requestTypeHandler,
+        express.json(),
         testHandler,
       );
 

@@ -114,6 +114,75 @@ export async function getCredentials(
   };
 }
 
+export async function sendMessageUsingBridgeToken(
+  path: string,
+  skillToken: string,
+  message: object,
+): Promise<any> {
+  const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
+  if (bridgeHostname === null || bridgeToken === null) {
+    throw Common.Error.create("", {
+      general: "authorization",
+      specific: "bridgeHostname_or_bridgeToken_not_found",
+      receiver: "skill_user_db",
+      sender: "skill",
+    });
+  }
+
+  const requestOptions: Common.HTTPSRequest.RequestOptions = {
+    hostname: bridgeHostname,
+    path,
+    port: Common.constants.bridge.port.https,
+    method: "POST",
+    headers: {},
+  };
+
+  let response: any;
+  try {
+    response = await Common.HTTPSRequest.request(
+      requestOptions,
+      bridgeToken,
+      message,
+    );
+  } catch (error: any) {
+    if (
+      (error as Common.Error.AlexaForLGwebOSTVError).general === "http" &&
+      (error as Common.Error.AlexaForLGwebOSTVError).specific === "UNAUTHORIZED"
+    ) {
+      /* try again with a new bridge token */
+      const { bridgeHostname, bridgeToken } = await getCredentials(skillToken, {
+        updateBridgeToken: true,
+      });
+      if (bridgeHostname === null || bridgeToken === null) {
+        throw Common.Error.create("", {
+          general: "authorization",
+          specific: "bridgeHostname_or_bridgeToken_not_found",
+          receiver: "skill_user_db",
+          sender: "skill",
+        });
+      }
+
+      const requestOptions: Common.HTTPSRequest.RequestOptions = {
+        hostname: bridgeHostname,
+        path,
+        port: Common.constants.bridge.port.https,
+        method: "POST",
+        headers: {},
+      };
+
+      response = await Common.HTTPSRequest.request(
+        requestOptions,
+        bridgeToken,
+        message,
+      );
+    } else {
+      throw error;
+    }
+  }
+
+  return response;
+}
+
 export async function testConnection(skillToken: string): Promise<void> {
   function testTcp(hostname: string, port: number): Promise<void> {
     return new Promise((resolve, reject): void => {
@@ -203,50 +272,39 @@ export async function testConnection(skillToken: string): Promise<void> {
   }
 
   async function testBridgeConnection(
-    hostname: string,
-    port: number,
     bridgeToken: string,
+    skillToken: string,
   ): Promise<void> {
-    const requestOptions: Common.HTTPSRequest.RequestOptions = {
-      hostname,
-      path: Common.constants.bridge.path.test,
-      port,
-      method: "GET",
-      headers: {},
-    };
-    return new Promise((resolve, reject): void => {
-      Common.HTTPSRequest.request(requestOptions, bridgeToken)
-        .then(resolve)
-        .catch((cause: any) => {
-          if (
-            typeof cause.general === "string" &&
-            cause.general === "http" &&
-            typeof cause.specific === "string"
-          ) {
-            switch (cause.specific) {
-              case "BAD_GATEWAY":
-                reject(
-                  Common.Error.create("", {
-                    general: "link",
-                    specific: "link_failed_http",
-                    cause,
-                  }),
-                );
-                return;
-              case "INVALID_AUTHORIZATION_CREDENTIAL":
-                reject(
-                  Common.Error.create("", {
-                    general: "link",
-                    specific: "link_failed_authorization",
-                    cause,
-                  }),
-                );
-                return;
-            }
-          }
-          reject(cause);
-        });
-    });
+    try {
+      const request = { skillToken };
+      sendMessageUsingBridgeToken(
+        Common.constants.bridge.path.test,
+        bridgeToken,
+        request,
+      );
+    } catch (cause: any) {
+      if (
+        typeof cause.general === "string" &&
+        cause.general === "http" &&
+        typeof cause.specific === "string"
+      ) {
+        switch (cause.specific) {
+          case "BAD_GATEWAY":
+            throw Common.Error.create("", {
+              general: "link",
+              specific: "link_failed_http",
+              cause,
+            });
+          case "INVALID_AUTHORIZATION_CREDENTIAL":
+            throw Common.Error.create("", {
+              general: "link",
+              specific: "link_failed_authorization",
+              cause,
+            });
+        }
+      }
+      throw cause;
+    }
   }
 
   const bridgeCredentials: {
@@ -276,5 +334,5 @@ export async function testConnection(skillToken: string): Promise<void> {
   await testTls(bridgeHostname, port);
   await testTlsTestCertificate(bridgeHostname, port);
   await testTlsTestHostname(bridgeHostname, port);
-  await testBridgeConnection(bridgeHostname, port, bridgeToken);
+  await testBridgeConnection(bridgeToken, skillToken);
 }
