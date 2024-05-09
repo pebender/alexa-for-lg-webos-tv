@@ -379,28 +379,6 @@ export class Frontend {
           return;
         }
 
-        try {
-          await Common.Profile.getUserProfile(skillToken);
-        } catch (e: any) {
-          const error: Common.Error.AlexaForLGwebOSTVError =
-            e as Common.Error.AlexaForLGwebOSTVError;
-          if (
-            typeof error.general === "string" &&
-            error.general === "authorization"
-          ) {
-            ipBlacklistIncrement(req, res);
-            const wwwAuthenticate = "Bearer";
-            res
-              .setHeader("WWW-Authenticate", wwwAuthenticate)
-              .status(401)
-              .json({})
-              .send();
-            return;
-          }
-          res.status(500).json({}).send();
-          return;
-        }
-
         next();
       }
 
@@ -409,10 +387,6 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): Promise<void> {
-        const authorized = await frontend._middle.authorizer(
-          req.body,
-          res.locals.skillToken,
-        );
         function shsInvalidAuthorizationCredentialResponse(message: string) {
           return new Common.SHS.Response({
             namespace: "Alexa",
@@ -424,7 +398,10 @@ export class Frontend {
           });
         }
 
-        if (!authorized) {
+        const authorizedSkillToken: string = res.locals.skillToken;
+        const skillToken: string = frontend._middle.getSkillToken(req.body);
+
+        if (authorizedSkillToken !== skillToken) {
           ipBlacklistIncrement(req, res);
           const wwwAuthenticate = "Bearer";
           const body = shsInvalidAuthorizationCredentialResponse(
@@ -437,6 +414,7 @@ export class Frontend {
             .send();
           return;
         }
+
         next();
       }
 

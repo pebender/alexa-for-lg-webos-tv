@@ -36,19 +36,17 @@
 
 ## Methods
 
-### authorizer()
+### getSkillToken()
 
-> **authorizer**(`rawRequest`, `authorizedSkillToken`): `Promise`\<`boolean`\>
+> **getSkillToken**(`rawRequest`): `string`
 
 #### Parameters
 
 • **rawRequest**: `any`
 
-• **authorizedSkillToken**: `string`
-
 #### Returns
 
-`Promise`\<`boolean`\>
+`string`
 
 ***
 

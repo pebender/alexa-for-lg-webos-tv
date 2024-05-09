@@ -43,16 +43,9 @@ export class Middle {
     return middle;
   }
 
-  public async authorizer(
-    rawRequest: any,
-    authorizedSkillToken: string,
-  ): Promise<boolean> {
+  public getSkillToken(rawRequest: any): string {
     const shsRequest = new Common.SHS.Request(rawRequest);
-
-    if (shsRequest.getAccessToken() !== authorizedSkillToken) {
-      return false;
-    }
-    return this._authorization.authorizeSkillToken(authorizedSkillToken);
+    return shsRequest.getAccessToken();
   }
 
   public async handler(rawRequest: any): Promise<Common.SHS.ResponseWrapper> {
