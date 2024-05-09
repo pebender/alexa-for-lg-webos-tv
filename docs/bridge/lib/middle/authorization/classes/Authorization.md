@@ -36,13 +36,11 @@
 
 ## Methods
 
-### authorize()
+### authorizeSkillToken()
 
-> **authorize**(`authorizedEmail`, `skillToken`): `Promise`\<`boolean`\>
+> **authorizeSkillToken**(`skillToken`): `Promise`\<`boolean`\>
 
 #### Parameters
-
-• **authorizedEmail**: `string`
 
 • **skillToken**: `string`
 

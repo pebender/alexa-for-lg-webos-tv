@@ -15,7 +15,7 @@ function create(
   const payload: jwt.JwtPayload = {
     iss: Common.constants.bridge.jwt.iss,
     sub: skillToken,
-    aud: `https://${bridgeHostname}${Common.constants.bridge.path.service}`,
+    aud: `https://${bridgeHostname}`,
   };
   const options: jwt.SignOptions = {
     algorithm: "RS256",

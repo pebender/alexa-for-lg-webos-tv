@@ -16,9 +16,7 @@
 
 • **\_configuration**
 
-• **\_configuration.authorizedServicesAndUsers**: `object`[]
-
-• **\_configuration.hostname**: `string`
+• **\_configuration.authorizedUsers**: `object`[]
 
 #### Returns
 
@@ -30,33 +28,19 @@
 
 > `private` **\_configuration**: `object`
 
-#### authorizedServicesAndUsers
+#### authorizedUsers
 
-> **authorizedServicesAndUsers**: `object`[]
-
-#### hostname
-
-> **hostname**: `string`
+> **authorizedUsers**: `object`[]
 
 ## Methods
 
-### authorizedServicesAndUsers()
+### authorizedUsers()
 
-> **authorizedServicesAndUsers**(): `Promise`\<`object`[]\>
+> **authorizedUsers**(): `Promise`\<`object`[]\>
 
 #### Returns
 
 `Promise`\<`object`[]\>
-
-***
-
-### hostname()
-
-> **hostname**(): `Promise`\<`string`\>
-
-#### Returns
-
-`Promise`\<`string`\>
 
 ***
 

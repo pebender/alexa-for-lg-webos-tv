@@ -36,13 +36,27 @@
 
 ## Methods
 
-### handler()
+### authorizer()
 
-> **handler**(`authorizedEmail`, `alexaRequest`): `Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+> **authorizer**(`skillToken`): `Promise`\<`boolean`\>
 
 #### Parameters
 
-• **authorizedEmail**: `string`
+• **skillToken**: `string`
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+***
+
+### handler()
+
+> **handler**(`authorizedSkillToken`, `alexaRequest`): `Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+
+#### Parameters
+
+• **authorizedSkillToken**: `string`
 
 • **alexaRequest**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
 

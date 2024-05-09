@@ -8,10 +8,6 @@
 
 ## Index
 
-### Type Aliases
-
-- [AuthorizationHandler](type-aliases/AuthorizationHandler.md)
-
 ### Functions
 
-- [authorizeServiceAndUser](functions/authorizeServiceAndUser.md)
+- [authorizeUser](functions/authorizeUser.md)

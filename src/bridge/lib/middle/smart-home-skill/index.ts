@@ -82,36 +82,19 @@ async function addStates(
 }
 
 async function handler(
-  authorizedEmail: string,
+  authorizedSkillToken: string,
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
   backend: Backend,
 ): Promise<Common.SHS.ResponseWrapper> {
   const alexaRequest = new Common.SHS.Request(event);
 
-  const accessToken: string = alexaRequest.getAccessToken();
-  try {
-    const authorized = await authorization.authorize(
-      authorizedEmail,
-      accessToken,
+  if (alexaRequest.getAccessToken() !== authorizedSkillToken) {
+    return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+      alexaRequest,
+      "INVALID_AUTHORIZATION_CREDENTIAL",
+      "",
     );
-    if (!authorized) {
-      return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
-        alexaRequest,
-        "INVALID_AUTHORIZATION_CREDENTIAL",
-        "",
-      );
-    }
-  } catch (error) {
-    if (error instanceof Common.SHS.ResponseWrapper) {
-      return error;
-    } else {
-      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
-        alexaRequest,
-        200,
-        error,
-      );
-    }
   }
 
   switch (alexaRequest.directive.header.namespace) {

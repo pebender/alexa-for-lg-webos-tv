@@ -44,14 +44,18 @@ export class Middle {
   }
 
   public async handler(
-    authorizedEmail: string,
+    authorizedSkillToken: string,
     alexaRequest: Common.SHS.Request,
   ): Promise<Common.SHS.ResponseWrapper> {
     return await SHS.handler(
-      authorizedEmail,
+      authorizedSkillToken,
       alexaRequest,
       this._authorization,
       this._backend,
     );
+  }
+
+  public async authorizer(skillToken: string): Promise<boolean> {
+    return this._authorization.authorizeSkillToken(skillToken);
   }
 }

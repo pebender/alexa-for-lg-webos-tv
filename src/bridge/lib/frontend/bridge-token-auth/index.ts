@@ -1,37 +1,42 @@
 import * as crypto from "crypto";
+import * as Common from "../../../../common";
 import { DatabaseTable } from "../../database";
 import { Configuration } from "../../configuration";
-import { AuthorizationHandler } from "../auth";
+import { authorizeUser } from "../auth";
+
+export type BridgeTokenAuthRecord = {
+  bridgeToken: string;
+  bridgeHostname: string;
+  email: string;
+  userId: string;
+  skillToken: string;
+};
+
+export type BridgeTokenAuthField =
+  | "bridgeToken"
+  | "bridgeHostname"
+  | "email"
+  | "userId"
+  | "skillToken";
 
 export class BridgeTokenAuth {
   private readonly _configuration: Configuration;
-  private readonly _authorizationHandler: AuthorizationHandler;
   private readonly _db: DatabaseTable;
-  private constructor(
-    _configuration: Configuration,
-    _authorizationHandler: AuthorizationHandler,
-    _db: DatabaseTable,
-  ) {
+  private constructor(_configuration: Configuration, _db: DatabaseTable) {
     this._configuration = _configuration;
-    this._authorizationHandler = _authorizationHandler;
     this._db = _db;
   }
 
   public static async build(
     configuration: Configuration,
-    authorizationHandler: AuthorizationHandler,
   ): Promise<BridgeTokenAuth> {
     const _db = await DatabaseTable.build(
       "frontend",
-      ["bridgeToken", "service", "user"],
+      ["bridgeToken", "bridgeHostname", "email", "userId", "skillToken"],
       "bridgeToken",
     );
 
-    const bridgeTokenAuth = new BridgeTokenAuth(
-      configuration,
-      authorizationHandler,
-      _db,
-    );
+    const bridgeTokenAuth = new BridgeTokenAuth(configuration, _db);
 
     return bridgeTokenAuth;
   }
@@ -42,57 +47,70 @@ export class BridgeTokenAuth {
 
   public async setBridgeToken(
     bridgeToken: string,
-    service: string,
-    user: string,
+    bridgeHostname: string,
+    email: string,
+    userId: string,
+    skillToken: string,
   ): Promise<void> {
+    const record = { bridgeToken, bridgeHostname, email, userId, skillToken };
+    Common.Debug.debug("setBridgeToken");
+    Common.Debug.debugJSON(record);
     await this._db.updateOrInsertRecord(
-      { $and: [{ service }, { user }] },
-      { bridgeToken, service, user },
+      { $and: [{ bridgeHostname }, { email }] },
+      record,
     );
   }
 
   public async getBridgeToken(
     bridgeToken: string,
-  ): Promise<{ service: string; user: string } | null> {
+  ): Promise<BridgeTokenAuthRecord | null> {
     // get bridgeToken record.
     const record = await this._db.getRecord({ bridgeToken });
     if (record === null) {
       return null;
     }
+    Common.Debug.debug("getBridgeToken");
+    Common.Debug.debugJSON(record);
 
     // bad bridgeToken record.
-    if (typeof record.service !== "string" || typeof record.user !== "string") {
+    if (
+      typeof record.bridgeToken !== "string" ||
+      typeof record.bridgeHostname !== "string" ||
+      typeof record.email !== "string" ||
+      typeof record.userId !== "string" ||
+      typeof record.skillToken !== "string"
+    ) {
       await this._db.deleteRecord({ bridgeToken });
       return null;
     }
 
     return {
-      service: record.service,
-      user: record.user,
+      bridgeToken: record.bridgeToken,
+      bridgeHostname: record.bridgeHostname,
+      email: record.email,
+      userId: record.userId,
+      skillToken: record.skillToken,
     };
   }
 
   public async authorizeBridgeToken(
     bridgeToken: string,
-  ): Promise<string | null> {
+  ): Promise<BridgeTokenAuthRecord | null> {
     const record = await this.getBridgeToken(bridgeToken);
     if (record === null) {
       return null;
     }
 
-    const service = record.service;
-    const user = record.user;
-
-    const authorized = await this._authorizationHandler(
+    const authorized = await authorizeUser(
       this._configuration,
-      service,
-      user,
+      record.bridgeHostname,
+      record.email,
     );
     if (authorized === false) {
       await this._db.deleteRecord({ bridgeToken });
       return null;
     }
 
-    return user;
+    return record;
   }
 }

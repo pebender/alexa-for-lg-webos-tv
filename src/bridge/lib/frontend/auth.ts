@@ -1,36 +1,42 @@
+import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 
-export type AuthorizationHandler = (
+export async function authorizeUser(
   configuration: Configuration,
-  service: string | null,
-  user: string | null,
-) => Promise<boolean>;
-
-export async function authorizeServiceAndUser(
-  configuration: Configuration,
-  service: string | null,
-  user: string | null,
+  bridgeHostname: string | null,
+  email: string | null,
 ): Promise<boolean> {
-  if (service === null) {
+  Common.Debug.debug("authorizeUser");
+  Common.Debug.debugJSON({ bridgeHostname, email });
+  if (bridgeHostname === null) {
     return false;
   }
-  if (user === null) {
+  if (email === null) {
     return false;
   }
 
-  const authorizedServicesAndUsers =
-    await configuration.authorizedServicesAndUsers();
-  const authorizedService = authorizedServicesAndUsers.find(
-    (authorizedService) => service === authorizedService.service,
+  const authorizedBridgeHostnamesAndEmails: {
+    bridgeHostname: string;
+    emails: string[];
+  }[] = await configuration.authorizedUsers();
+  const authorizedBridgeHostnameAndEmails:
+    | { bridgeHostname: string; emails: string[] }
+    | undefined = authorizedBridgeHostnamesAndEmails.find(
+    (authorizedBridgeHostnameAndEmails) =>
+      bridgeHostname === authorizedBridgeHostnameAndEmails.bridgeHostname,
   );
-  if (typeof authorizedService === "undefined") {
+  if (typeof authorizedBridgeHostnameAndEmails === "undefined") {
+    Common.Debug.debug(`bridgeHostname="${bridgeHostname}" not found`);
     return false;
   }
-  const authorizedUsers = authorizedService.users;
-  const authorizedUser = authorizedUsers.find(
-    (authorizedUser) => user === authorizedUser,
+  const authorizedEmails: string[] = authorizedBridgeHostnameAndEmails.emails;
+  const authorizedEmail = authorizedEmails.find(
+    (authorizedEmail) => email === authorizedEmail,
   );
-  if (typeof authorizedUser === "undefined") {
+  if (typeof authorizedEmail === "undefined") {
+    Common.Debug.debug(
+      `email="${email}" in bridgeHostname="${bridgeHostname}" not found`,
+    );
     return false;
   }
   return true;

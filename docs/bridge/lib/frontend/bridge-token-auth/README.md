@@ -11,3 +11,8 @@
 ### Classes
 
 - [BridgeTokenAuth](classes/BridgeTokenAuth.md)
+
+### Type Aliases
+
+- [BridgeTokenAuthField](type-aliases/BridgeTokenAuthField.md)
+- [BridgeTokenAuthRecord](type-aliases/BridgeTokenAuthRecord.md)

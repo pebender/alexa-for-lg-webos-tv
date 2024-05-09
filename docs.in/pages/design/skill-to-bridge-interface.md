@@ -4,7 +4,7 @@ The skill and the bridge communicate over HTTP with the skill in the role of HTT
 
 The bridge presents the skill with three interfaces: the login interface, the test interface and the service interface(s). The login interface allows the skill to request and be granted access to a service provided by the bridge. The test interface allows a skill to test whether or not it has access to the bridge. The service interface performs services on behalf of a skill. For example, the current implementation has a service interface that allows the skill to forward Smart Home Skill Directives to the bridge for handling.
 
-While alexa-for-lg-webos-tv has a specific function, the skill to bridge interface is designed to be generic. It's login and test interfaces are independent of the services supported, and it can support multiple services simultaneously.
+While alexa-for-lg-webos-tv has a specific function, the skill to bridge interface is designed to be generic.
 
 - [The Reverse Proxy](#the-reverse-proxy)
 - [Interface Authorization](#interface-authorization)
@@ -30,15 +30,15 @@ However, the bridge only supports HTTP. It doesn't support HTTPS. If your home n
 
 The bridge consumes resources. Therefore, even though the services supported by the bridge may have protections against misuse, the bridge needs its own protections against misuse.
 
-[As mentioned above](#the-skill-to-bridge-interface), interface access is controlled using tokens carried in the HTTP request Authorization header. The token is bound to a user and a service. The token enables the bridge to verify that the message is from a trusted skill and that the message is being sent on behalf of a user who has been authorized to use the service.
+[As mentioned above](#the-skill-to-bridge-interface), interface access is controlled using tokens carried in the HTTP request Authorization header. The token is bound to a user and a bridge. The token enables the bridge to verify that the message is from a trusted skill and that the message is being sent on behalf of a user who has been authorized to use the bridge.
 
 When the bridge receives a message on any skill to bridge interface, it verifies the token. If token verification fails, then the bridge rejects the message. After some number of repeated token verification failures originating from the same IP address, the bridge may (temporarily) block the IP address.
 
-There are two types of tokens: the login token and the bridge token. The skill uses a login token when accessing the login interface. The skill uses a bridge token when accessing a service interface as well as the test interface. The skill uses the login interface to "exchange" a login token for a bridge token. Login tokens are exchanged for bridge tokens because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
+There are two types of tokens: the login token and the bridge token. The skill uses a login token when accessing the login interface. The skill uses a bridge token when accessing the test interface or any service interface. The skill uses the login interface to "exchange" a login token for a bridge token. Login tokens are exchanged for bridge tokens because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
 
 ### The Login Token
 
-The skill uses a login token (referred to as LOGIN_TOKEN or loginToken) to request access on behalf of a user to a service provided by the bridge. It generates the login token. It uses the login token when accessing the login interface to request access to a service interface on behalf of a user.
+The skill uses a login token (LOGIN_TOKEN) to request access on behalf of a user to the bridge. It generates the login token. It uses the login token when accessing the login interface to request access to the test and service interfaces on behalf of a user.
 
 #### The Login Token Format
 
@@ -48,7 +48,7 @@ The login token is a JSON Web Token (JWT) with the form
 {
     "iss": "For LG webOS TV",
     "sub": "SKILL_TOKEN",
-    "aud": "https://BRIDGE_HOSTNAME/service/ForLGwebOSTV/v1",
+    "aud": "https://BRIDGE_HOSTNAME",
     "exp": "NOW + 1m"
 }
 ```
@@ -61,11 +61,7 @@ The login token's `"iss"` field identifies the skill. In the skill implementatio
 
 The login token's `"sub"` field identifies the user. SKILL_TOKEN is the access token found in the messages of account-linked skills.
 
-The login token's `"aud"` field identifies the service. It's a URL that identifies the service. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill. In the skill implementation and the bridge implementation, the path is set by `constants.bridge.path.service` in [src/common/constants.ts](../../src/common/constants.ts) and is currently set to
-
-```text
-/service/ForLGwebOSTV/v1
-```
+The login token's `"aud"` field identifies the service. It's a URL that identifies the bridge. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill.
 
 The login token's `"exp"` field specifies when the login token will expire. It's recommended that the login token have a short lifetime in order to reduce the chance of replay. In the skill implementation, the login token is set to expire one minute after it was generated.
 
@@ -75,17 +71,17 @@ The bridge verifies that the login came from a trusted skill. It does this by ve
 
 The bridge verifies that the login token has not expired. If verification fails, then the login token authorization fails.
 
-The bridge verifies that the the user is a valid Login with Amazon user.
+The bridge verifies that the user is a valid Login with Amazon user.
 
-The bridge verifies that the skill identified by the login token is allowed to access the service identified in the login token on behalf of the user identified in the login token. If verification fails, then the login token authorization fails.
+The bridge verifies that the skill identified by the login token is allowed to access the bridge identified in the login token on behalf of the user identified in the login token. If verification fails, then the login token authorization fails.
 
-In the implementation, the skill requires the user to share their email with skill when Account Linking because the bridge uses the user's email address to identify allowed users of the service.
+In the implementation, the skill requires the user to share their email with skill when Account Linking because the bridge uses the user's email address to identify allowed users of the bridge.
 
 ### The Bridge Token
 
-The bridge uses the bridge token to grant access to a service interface. The skill can request a bridge token using the login interface. The returned bridge token is bound to the user and service from the login token.
+The bridge uses the bridge token to grant access to a service interface. The skill can request a bridge token using the login interface. The returned bridge token is bound to the user and bridge from the login token.
 
-The indirect bridge token rather than the direct login token is used to access the service interfaces because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
+The indirect bridge token rather than the direct login token is used to access the test and service interfaces because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
 
 #### The Bridge Token Format
 
@@ -93,15 +89,17 @@ The bridge token can be any base64 string. As it is assigned by the bridge and s
 
 #### The Bridge Token Authorization
 
-For the test interface, the bridge verifies that the bridge token belongs to an authorized user of a service on the bridge. For the service interface, the bridge verifies that the bridge token belongs to an authorized user of the service. If verification fails, then bridge token authorization fails.
+On the link's test interface, the bridge verifies that the bridge token belongs to an authorized user of the bridge.
+
+On the link's service interface, the bridge verifies that the bridge token belongs to an authorized user of the bridge. In addition, it verifies that the bridgeToken is not stale. It does this by making sure that the bridge token is for a linked Amazon Account and that the bridge token was requested using the same skill access token as the access token found in the CS/SHS request message being transported by the link's service interface. Therefore, the skill should ensure that a user's bridge token does not fail authorization for this reason by requesting a new bridge token for the user when it receives a CS/SHS request message for the user with a new access token.
 
 ## The Login Interface
 
-The skill uses the login interface to request a bridge token that the skill can use to access a service interface on behalf of a user. The skill requests access by sending a `Login Request` authorized by a login token.
+The skill uses the login interface to request a bridge token that the skill can use to access the bridge on behalf of a user. The skill requests access by sending a `Login Request` authorized by a login token.
 
-Assuming the login token authorizes, the bridge assigns a bridge token granting the user from the login token access to the service requested in login token, and sends a `Login  Response` message containing the assigned bridge token. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
+Assuming the login token authorizes, the bridge assigns a bridge token granting the user from the login token access to the bridge requested in the login token, and sends a `Login  Response` message containing the assigned bridge token. Otherwise, it sends an `Auth Failure Response` message. If there is an error, then it sends an `Error Response` message.
 
-Only the most recent bridge token issued for granting a specific user access to a specific service is valid. In addition to granting access to the service's interface, the bridge token grants access to the test interface.
+Only the most recent bridge token issued for granting a specific user access to the bridge is valid.
 
 ### The Login Interface Message Flow
 

@@ -10,13 +10,11 @@
 
 ### new LoginTokenAuth()
 
-> `private` **new LoginTokenAuth**(`_configuration`, `_authorizationHandler`, `_x509PublicCert`): [`LoginTokenAuth`](LoginTokenAuth.md)
+> `private` **new LoginTokenAuth**(`_configuration`, `_x509PublicCert`): [`LoginTokenAuth`](LoginTokenAuth.md)
 
 #### Parameters
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
-
-• **\_authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
 
 • **\_x509PublicCert**: `Buffer`
 
@@ -25,12 +23,6 @@
 [`LoginTokenAuth`](LoginTokenAuth.md)
 
 ## Properties
-
-### \_authorizationHandler
-
-> `private` `readonly` **\_authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
-
-***
 
 ### \_configuration
 
@@ -70,13 +62,11 @@
 
 ### build()
 
-> `static` **build**(`configuration`, `authorizationHandler`): `Promise`\<[`LoginTokenAuth`](LoginTokenAuth.md)\>
+> `static` **build**(`configuration`): `Promise`\<[`LoginTokenAuth`](LoginTokenAuth.md)\>
 
 #### Parameters
 
 • **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
-
-• **authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
 
 #### Returns
 

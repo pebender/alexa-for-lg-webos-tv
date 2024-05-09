@@ -10,13 +10,11 @@
 
 ### new BridgeTokenAuth()
 
-> `private` **new BridgeTokenAuth**(`_configuration`, `_authorizationHandler`, `_db`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
+> `private` **new BridgeTokenAuth**(`_configuration`, `_db`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
 
 #### Parameters
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
-
-• **\_authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
 
 • **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
@@ -25,12 +23,6 @@
 [`BridgeTokenAuth`](BridgeTokenAuth.md)
 
 ## Properties
-
-### \_authorizationHandler
-
-> `private` `readonly` **\_authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
-
-***
 
 ### \_configuration
 
@@ -46,7 +38,7 @@
 
 ### authorizeBridgeToken()
 
-> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| `string`\>
+> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -54,7 +46,7 @@
 
 #### Returns
 
-`Promise`\<`null` \| `string`\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 
@@ -70,7 +62,7 @@
 
 ### getBridgeToken()
 
-> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| `object`\>
+> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -78,21 +70,25 @@
 
 #### Returns
 
-`Promise`\<`null` \| `object`\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 
 ### setBridgeToken()
 
-> **setBridgeToken**(`bridgeToken`, `service`, `user`): `Promise`\<`void`\>
+> **setBridgeToken**(`bridgeToken`, `bridgeHostname`, `email`, `userId`, `skillToken`): `Promise`\<`void`\>
 
 #### Parameters
 
 • **bridgeToken**: `string`
 
-• **service**: `string`
+• **bridgeHostname**: `string`
 
-• **user**: `string`
+• **email**: `string`
+
+• **userId**: `string`
+
+• **skillToken**: `string`
 
 #### Returns
 
@@ -102,13 +98,11 @@
 
 ### build()
 
-> `static` **build**(`configuration`, `authorizationHandler`): `Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
+> `static` **build**(`configuration`): `Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
 
 #### Parameters
 
 • **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
-
-• **authorizationHandler**: [`AuthorizationHandler`](../../auth/type-aliases/AuthorizationHandler.md)
 
 #### Returns
 

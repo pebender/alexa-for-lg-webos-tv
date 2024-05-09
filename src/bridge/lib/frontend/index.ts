@@ -17,7 +17,6 @@ import { Configuration } from "../configuration";
 import { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
-import { authorizeServiceAndUser } from "./auth";
 const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
 export class Frontend {
@@ -50,14 +49,8 @@ export class Frontend {
   }
 
   public static async build(configuration: Configuration, middle: Middle) {
-    const _loginToken = await LoginTokenAuth.build(
-      configuration,
-      authorizeServiceAndUser,
-    );
-    const _bridgeToken = await BridgeTokenAuth.build(
-      configuration,
-      authorizeServiceAndUser,
-    );
+    const _loginToken = await LoginTokenAuth.build(configuration);
+    const _bridgeToken = await BridgeTokenAuth.build(configuration);
 
     // The blacklist is due to auth failures so blacklist quickly.
     // There should be no auth failures and each auth failure results
@@ -203,17 +196,23 @@ export class Frontend {
           return;
         }
         const url = new URL(jwtPayload.aud);
-        const service = url.pathname;
+        const bridgeHostname = url.hostname;
 
-        let user: string = "";
+        let userId: string = "";
+        let email: string = "";
         try {
-          user = await Common.Profile.getUserEmail(skillToken);
+          const profile: { user_id: string; email: string } =
+            await Common.Profile.getUserProfile(skillToken);
+          userId = profile.user_id;
+          email = profile.email;
         } catch (error) {
           res.status(500).json({});
         }
 
-        res.locals.service = service;
-        res.locals.user = user;
+        res.locals.bridgeHostname = bridgeHostname;
+        res.locals.userId = userId;
+        res.locals.email = email;
+        res.locals.skillToken = skillToken;
 
         next();
       }
@@ -235,7 +234,10 @@ export class Frontend {
           });
         }
 
+        res.locals.bridgeHostname = null;
+        res.locals.userId = null;
         res.locals.email = null;
+        res.locals.skillToken = null;
 
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
@@ -288,9 +290,9 @@ export class Frontend {
         const bridgeToken = authorization[1];
 
         try {
-          const email =
+          const record =
             await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
-          if (email === null) {
+          if (record === null) {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
               "Bridge connection failed due to invalid bearer token.",
@@ -302,7 +304,10 @@ export class Frontend {
               .send();
             return;
           }
-          res.locals.email = email;
+          res.locals.bridgeHostname = record.bridgeHostname;
+          res.locals.email = record.email;
+          res.locals.userId = record.userId;
+          res.locals.skillToken = record.skillToken;
         } catch (error) {
           Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
           Common.Debug.debugError(error);
@@ -310,6 +315,41 @@ export class Frontend {
           return;
         }
         Common.Debug.debug("bridgeTokenAuthorizationHandler: success");
+        next();
+      }
+
+      async function shsSkillTokenAuthorizationHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): Promise<void> {
+        const authorized = await frontend._middle.authorizer(
+          res.locals.skillToken,
+        );
+        function shsInvalidAuthorizationCredentialResponse(message: string) {
+          return new Common.SHS.Response({
+            namespace: "Alexa",
+            name: "ErrorResponse",
+            payload: {
+              type: "INVALID_AUTHORIZATION_CREDENTIAL",
+              message,
+            },
+          });
+        }
+
+        if (!authorized) {
+          ipBlacklistIncrement(req, res);
+          const wwwAuthenticate = "Bearer";
+          const body = shsInvalidAuthorizationCredentialResponse(
+            "Bridge connection failed due to invalid bearer token.",
+          );
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json(body)
+            .send();
+          return;
+        }
         next();
       }
 
@@ -339,15 +379,19 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("Login:");
 
-        const service = res.locals.service;
-        const user = res.locals.user;
+        const bridgeHostname = res.locals.bridgeHostname;
+        const email = res.locals.email;
+        const userId = res.locals.userId;
+        const skillToken = res.locals.skillToken;
 
         const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
         try {
           await frontend._bridgeTokenAuth.setBridgeToken(
             bridgeToken,
-            service,
-            user,
+            bridgeHostname,
+            email,
+            userId,
+            skillToken,
           );
         } catch (error) {
           res.status(500).json({});
@@ -379,7 +423,7 @@ export class Frontend {
         Common.Debug.debugJSON(shsRequest);
 
         const shsResponseWrapper = await frontend._middle.handler(
-          res.locals.email,
+          res.locals.skillToken,
           shsRequest,
         );
         const shsResponse = shsResponseWrapper.response;
@@ -443,6 +487,7 @@ export class Frontend {
       frontend._server.post(
         Common.constants.bridge.path.service,
         bridgeTokenAuthorizationHandler,
+        shsSkillTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
         shsHandler,
