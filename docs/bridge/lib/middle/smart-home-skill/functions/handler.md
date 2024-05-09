@@ -6,11 +6,9 @@
 
 # Function: handler()
 
-> **handler**(`authorizedSkillToken`, `event`, `authorization`, `backend`): `Promise`\<[`SHSResponseWrapper`](../../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+> **handler**(`event`, `authorization`, `backend`): `Promise`\<[`SHSResponseWrapper`](../../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
 
 ## Parameters
-
-• **authorizedSkillToken**: `string`
 
 • **event**: [`SHSRequest`](../../../../../common/smart-home-skill/request/classes/SHSRequest.md)
 

@@ -333,12 +333,84 @@ export class Frontend {
         next();
       }
 
-      async function shsSkillTokenAuthorizationHandler(
+      function requestTypeHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): void {
+        const contentType = req.headers["content-type"];
+        if (typeof contentType === "undefined") {
+          ipBlacklistIncrement(req, res);
+          res.status(400).json({});
+          return;
+        }
+        if (!/^application\/json/.test((contentType as string).toLowerCase())) {
+          ipBlacklistIncrement(req, res);
+          res.status(415).json({});
+          return;
+        }
+        next();
+      }
+
+      async function testAuthorizationHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): Promise<void> {
+        const testRequest: { skillToken?: string } = req.body;
+
+        if (typeof testRequest.skillToken !== "string") {
+          ipBlacklistIncrement(req, res);
+          res.status(422).json({}).send();
+          return;
+        }
+
+        const authorizedSkillToken: string = res.locals.skillToken;
+        const skillToken: string = testRequest.skillToken;
+
+        if (authorizedSkillToken !== skillToken) {
+          ipBlacklistIncrement(req, res);
+          const wwwAuthenticate = "Bearer";
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json({})
+            .send();
+          return;
+        }
+
+        try {
+          await Common.Profile.getUserProfile(skillToken);
+        } catch (e: any) {
+          const error: Common.Error.AlexaForLGwebOSTVError =
+            e as Common.Error.AlexaForLGwebOSTVError;
+          if (
+            typeof error.general === "string" &&
+            error.general === "authorization"
+          ) {
+            ipBlacklistIncrement(req, res);
+            const wwwAuthenticate = "Bearer";
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json({})
+              .send();
+            return;
+          }
+          res.status(500).json({}).send();
+          return;
+        }
+
+        next();
+      }
+
+      async function serviceAuthorizationHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
       ): Promise<void> {
         const authorized = await frontend._middle.authorizer(
+          req.body,
           res.locals.skillToken,
         );
         function shsInvalidAuthorizationCredentialResponse(message: string) {
@@ -363,25 +435,6 @@ export class Frontend {
             .status(401)
             .json(body)
             .send();
-          return;
-        }
-        next();
-      }
-
-      function requestTypeHandler(
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction,
-      ): void {
-        const contentType = req.headers["content-type"];
-        if (typeof contentType === "undefined") {
-          ipBlacklistIncrement(req, res);
-          res.status(400).json({});
-          return;
-        }
-        if (!/^application\/json/.test((contentType as string).toLowerCase())) {
-          ipBlacklistIncrement(req, res);
-          res.status(415).json({});
           return;
         }
         next();
@@ -425,52 +478,10 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("Test:");
 
-        const testRequest: { skillToken?: string } = res.locals.json;
-
-        if (typeof testRequest.skillToken !== "string") {
-          ipBlacklistIncrement(req, res);
-          res.status(422).json({}).send();
-          return;
-        }
-
-        const authorizedSkillToken: string = res.locals.skillToken;
-        const skillToken: string = testRequest.skillToken;
-
-        if (authorizedSkillToken !== skillToken) {
-          const wwwAuthenticate = "Bearer";
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json({})
-            .send();
-          return;
-        }
-
-        try {
-          await Common.Profile.getUserProfile(skillToken);
-        } catch (e: any) {
-          const error: Common.Error.AlexaForLGwebOSTVError =
-            e as Common.Error.AlexaForLGwebOSTVError;
-          if (
-            typeof error.general === "string" &&
-            error.general === "authorization"
-          ) {
-            const wwwAuthenticate = "Bearer";
-            res
-              .setHeader("WWW-Authenticate", wwwAuthenticate)
-              .status(401)
-              .json({})
-              .send();
-            return;
-          }
-          res.status(500).json({}).send();
-          return;
-        }
-
         res.status(200).json({});
       }
 
-      async function shsHandler(
+      async function serviceHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
@@ -479,10 +490,7 @@ export class Frontend {
         Common.Debug.debug("Smart Home Skill Request:");
         Common.Debug.debugJSON(shsRequest);
 
-        const shsResponseWrapper = await frontend._middle.handler(
-          res.locals.skillToken,
-          shsRequest,
-        );
+        const shsResponseWrapper = await frontend._middle.handler(shsRequest);
         const shsResponse = shsResponseWrapper.response;
         const statusCode = shsResponseWrapper.statusCode;
         Common.Debug.debug("Smart Home Skill Response:");
@@ -539,6 +547,7 @@ export class Frontend {
         bridgeTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
+        testAuthorizationHandler,
         testHandler,
       );
 
@@ -546,10 +555,10 @@ export class Frontend {
       frontend._server.post(
         Common.constants.bridge.path.service,
         bridgeTokenAuthorizationHandler,
-        shsSkillTokenAuthorizationHandler,
         requestTypeHandler,
         express.json(),
-        shsHandler,
+        serviceAuthorizationHandler,
+        serviceHandler,
       );
 
       frontend._server.use(

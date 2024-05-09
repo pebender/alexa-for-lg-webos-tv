@@ -82,20 +82,11 @@ async function addStates(
 }
 
 async function handler(
-  authorizedSkillToken: string,
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
   backend: Backend,
 ): Promise<Common.SHS.ResponseWrapper> {
   const alexaRequest = new Common.SHS.Request(event);
-
-  if (alexaRequest.getAccessToken() !== authorizedSkillToken) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
-      alexaRequest,
-      "INVALID_AUTHORIZATION_CREDENTIAL",
-      "",
-    );
-  }
 
   switch (alexaRequest.directive.header.namespace) {
     case "Alexa.Authorization":

@@ -43,19 +43,21 @@ export class Middle {
     return middle;
   }
 
-  public async handler(
+  public async authorizer(
+    rawRequest: any,
     authorizedSkillToken: string,
-    alexaRequest: Common.SHS.Request,
-  ): Promise<Common.SHS.ResponseWrapper> {
-    return await SHS.handler(
-      authorizedSkillToken,
-      alexaRequest,
-      this._authorization,
-      this._backend,
-    );
+  ): Promise<boolean> {
+    const shsRequest = new Common.SHS.Request(rawRequest);
+
+    if (shsRequest.getAccessToken() !== authorizedSkillToken) {
+      return false;
+    }
+    return this._authorization.authorizeSkillToken(authorizedSkillToken);
   }
 
-  public async authorizer(skillToken: string): Promise<boolean> {
-    return this._authorization.authorizeSkillToken(skillToken);
+  public async handler(rawRequest: any): Promise<Common.SHS.ResponseWrapper> {
+    const shsRequest = new Common.SHS.Request(rawRequest);
+
+    return await SHS.handler(shsRequest, this._authorization, this._backend);
   }
 }

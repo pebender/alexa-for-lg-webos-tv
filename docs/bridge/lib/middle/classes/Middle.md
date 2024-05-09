@@ -38,11 +38,13 @@
 
 ### authorizer()
 
-> **authorizer**(`skillToken`): `Promise`\<`boolean`\>
+> **authorizer**(`rawRequest`, `authorizedSkillToken`): `Promise`\<`boolean`\>
 
 #### Parameters
 
-• **skillToken**: `string`
+• **rawRequest**: `any`
+
+• **authorizedSkillToken**: `string`
 
 #### Returns
 
@@ -52,13 +54,11 @@
 
 ### handler()
 
-> **handler**(`authorizedSkillToken`, `alexaRequest`): `Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+> **handler**(`rawRequest`): `Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
 
 #### Parameters
 
-• **authorizedSkillToken**: `string`
-
-• **alexaRequest**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
+• **rawRequest**: `any`
 
 #### Returns
 
