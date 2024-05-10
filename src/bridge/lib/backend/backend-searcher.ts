@@ -1,5 +1,6 @@
 import * as dgram from "node:dgram";
 import { IP, MAC, TV, UDN } from "./tv";
+import * as arp from "node-arp";
 import {
   Client as SsdpClient,
   Server as SsdpServer,
@@ -7,7 +8,6 @@ import {
 } from "node-ssdp";
 import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
-const arp = require("node-arp");
 
 export interface UPnPDevice {
   root?: {
@@ -52,14 +52,6 @@ export class BackendSearcher extends EventEmitter {
       rinfo: dgram.RemoteInfo,
       callback: (error: Error | null, tv: TV | null) => void,
     ): void {
-      const tv: {
-        udn?: UDN;
-        name?: string;
-        ip?: IP;
-        url?: string;
-        mac?: MAC;
-        key?: string;
-      } = {};
       if (typeof headers.USN === "undefined") {
         callback(null, null);
         return;
@@ -114,8 +106,18 @@ export class BackendSearcher extends EventEmitter {
         callback(null, null);
         return;
       }
-      tv.ip = rinfo.address;
-      tv.url = `ws://${tv.ip}:3000`;
+
+      const tv: {
+        udn?: UDN;
+        name?: string;
+        ip: IP;
+        url: string;
+        mac?: MAC;
+        key?: string;
+      } = {
+        ip: rinfo.address,
+        url: `ws://${rinfo.address}:3000`,
+      };
 
       //
       // Get the device description. I use this to make sure that this is an
@@ -195,12 +197,12 @@ export class BackendSearcher extends EventEmitter {
               // Get the mac address needed to turn on the TV using wake on
               // lan.
               //
-              arp.getMAC(tv.ip, (err: Error, mac: MAC): void => {
-                if (err) {
-                  callback(err, null);
+              arp.getMAC(tv.ip, (isError: boolean, result: string): void => {
+                if (isError) {
+                  callback(Error(result), null);
                   return;
                 }
-                tv.mac = mac;
+                tv.mac = result;
                 callback(null, tv as TV);
                 // eslint-disable-next-line no-useless-return
                 return;
