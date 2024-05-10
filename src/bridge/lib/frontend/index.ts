@@ -11,19 +11,19 @@ import * as AjvTypes from "ajv";
 import ajvFormats from "ajv-formats";
 import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
+import IPBlacklist from "@outofsync/express-ip-blacklist";
 import { URL } from "node:url";
 import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 import { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
-const IPBlacklist = require("@outofsync/express-ip-blacklist");
 
 export class Frontend {
   private readonly _loginTokenAuth: LoginTokenAuth;
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _middle: Middle;
-  private readonly _ipBlacklist;
+  private readonly _ipBlacklist: IPBlacklist;
   private readonly _ajv: Ajv;
   private readonly _schemaValidator: AjvTypes.ValidateFunction;
   private readonly _server: express.Express;
