@@ -98,7 +98,7 @@ export class BackendController extends EventEmitter {
         ],
       });
       if (record === null) {
-        if (Reflect.has(this._controls, tv.udn) === true) {
+        if (Reflect.has(this._controls, tv.udn)) {
           Reflect.deleteProperty(this._controls, tv.udn);
         }
         await this._db.updateOrInsertRecord(

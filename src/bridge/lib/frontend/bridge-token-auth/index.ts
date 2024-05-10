@@ -106,7 +106,7 @@ export class BridgeTokenAuth {
       record.bridgeHostname,
       record.email,
     );
-    if (authorized === false) {
+    if (!authorized) {
       await this._db.deleteRecord({ bridgeToken });
       return null;
     }

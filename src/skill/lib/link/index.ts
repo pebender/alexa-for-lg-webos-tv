@@ -98,7 +98,7 @@ export async function getCredentials(
   }
   if (
     record.bridgeHostname !== null &&
-    (updateBridgeToken === true || record.bridgeToken === null)
+    (updateBridgeToken || record.bridgeToken === null)
   ) {
     const bridgeHostname: string = record.bridgeHostname;
     const bridgeToken: string = await Login.getBridgeToken(

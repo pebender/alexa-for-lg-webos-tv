@@ -33,7 +33,7 @@ async function turnOffHandler(
   backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   const poweredOff = await backendControl.turnOff();
-  if (poweredOff === false) {
+  if (!poweredOff) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
     );
@@ -46,7 +46,7 @@ async function turnOnHandler(
   backendControl: BackendControl,
 ): Promise<Common.SHS.ResponseWrapper> {
   const poweredOn = await backendControl.turnOn();
-  if (poweredOn === false) {
+  if (!poweredOn) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
     );

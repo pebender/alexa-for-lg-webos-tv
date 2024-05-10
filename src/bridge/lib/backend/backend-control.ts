@@ -104,7 +104,7 @@ export class BackendControl extends EventEmitter {
         headers.USN ===
         `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
-        if (backendControl._connecting === false) {
+        if (!backendControl._connecting) {
           backendControl._connection.connect(backendControl._tv.url);
         }
       }
@@ -187,7 +187,7 @@ export class BackendControl extends EventEmitter {
         const currentUUID = await finishMutex.runExclusive(
           (): Promise<string | null> =>
             new Promise<string | null>((resolve): void => {
-              if (finished === true) {
+              if (finished) {
                 resolve(null);
                 return;
               }
@@ -213,7 +213,7 @@ export class BackendControl extends EventEmitter {
             }),
         );
         if (finishUUID !== null && currentUUID === finishUUID) {
-          if (finished === false) {
+          if (!finished) {
             finishUUID = null;
             finished = true;
             resolve(poweredOn);
@@ -224,7 +224,7 @@ export class BackendControl extends EventEmitter {
       finishTimeoutObject = setTimeout(finish, 7000, false);
 
       monitorTimeoutObject = startInterval(100, (): void => {
-        if (that._poweredOn === true) {
+        if (that._poweredOn) {
           finish(true);
         }
       });
@@ -287,7 +287,7 @@ export class BackendControl extends EventEmitter {
       Error.captureStackTrace(error);
       throw error;
     }
-    if (lgtvResponse.returnValue === false) {
+    if (!lgtvResponse.returnValue) {
       const error = new Error(lgtvResponse.errorText?.toString());
       switch (typeof lgtvResponse.errorCode) {
         case "string":

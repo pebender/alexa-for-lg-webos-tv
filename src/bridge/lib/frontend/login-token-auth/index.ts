@@ -63,7 +63,7 @@ export class LoginTokenAuth {
       hostname,
       email,
     );
-    if (authorized === false) {
+    if (!authorized) {
       return false;
     }
 

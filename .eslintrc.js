@@ -32,7 +32,6 @@ module.exports = {
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-redundant-type-constituents": "off",
     "@typescript-eslint/no-this-alias": "off",
-    "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
     "@typescript-eslint/no-unnecessary-condition": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/no-unsafe-argument": "off",
