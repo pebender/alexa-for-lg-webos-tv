@@ -232,17 +232,15 @@ export class BackendSearcher extends EventEmitter {
   }
 
   public async start(): Promise<void> {
-    const that = this;
-
     // Start listening from multicast notifications from the TVs.
-    await that._ssdpNotify.start();
+    await this._ssdpNotify.start();
 
     // Periodically search for TVs.
-    function periodicSearch(): void {
+    const periodicSearch = (): void => {
       // Search every 1800s as that is the UPnP recommended time.
-      that._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+      this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
       setTimeout(periodicSearch, 1800000);
-    }
+    };
     periodicSearch();
 
     // Do one immediate search.

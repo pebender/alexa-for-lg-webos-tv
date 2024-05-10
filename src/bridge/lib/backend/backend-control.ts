@@ -156,8 +156,6 @@ export class BackendControl extends EventEmitter {
     // response before its 8 second timeout.
      */
   public turnOn(): Promise<boolean> {
-    const that = this;
-
     function startInterval(
       milliseconds: number,
       handler: () => void,
@@ -167,8 +165,8 @@ export class BackendControl extends EventEmitter {
     }
 
     return new Promise<boolean>((resolve): void => {
-      that._poweredOn = false;
-      that._connection.disconnect();
+      this._poweredOn = false;
+      this._connection.disconnect();
       let finishTimeoutObject: NodeJS.Timeout | null = null;
       let monitorTimeoutObject: NodeJS.Timeout | null = null;
       let wolTimeoutObject: NodeJS.Timeout | null = null;
@@ -226,16 +224,16 @@ export class BackendControl extends EventEmitter {
       finishTimeoutObject = setTimeout(finish, 7000, false);
 
       monitorTimeoutObject = startInterval(100, (): void => {
-        if (that._poweredOn) {
+        if (this._poweredOn) {
           finish(true);
         }
       });
       wolTimeoutObject = startInterval(201, (): void => {
-        wol.wake(that._tv.mac);
+        wol.wake(this._tv.mac);
       });
       searchTimeoutObject = startInterval(251, (): void => {
-        if (that._ssdpResponse !== null) {
-          that._ssdpResponse.search(
+        if (this._ssdpResponse !== null) {
+          this._ssdpResponse.search(
             "urn:lge-com:service:webos-second-screen:1",
           );
         }
@@ -306,57 +304,55 @@ export class BackendControl extends EventEmitter {
   }
 
   private addSubscriptionEvents() {
-    const that = this;
-
     {
       const uri = "ssap://audio/getStatus";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
 
     {
       const uri = "ssap://audio/getVolume";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
     {
       const uri = "ssap://com.webos.applicationManager/getForegroundAppInfo";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
         if (response.appId === "com.webos.app.livetv") {
           const u: string = "ssap://tv/getCurrentChannel";
-          that._connection.subscribe(u, (e, r) => that.emit(u, e, r));
+          this._connection.subscribe(u, (e, r) => this.emit(u, e, r));
         }
       });
     }
 
     {
       const uri = "ssap://com.webos.applicationManager/listApps";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
 
     {
       const uri = "ssap://com.webos.applicationManager/listLaunchPoints";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
 
     {
       const uri = "ssap://tv/getChannelList";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
 
     {
       const uri = "ssap://tv/getExternalInputList";
-      that._connection.subscribe(uri, (error, response) => {
-        that.emit(uri, error, response);
+      this._connection.subscribe(uri, (error, response) => {
+        this.emit(uri, error, response);
       });
     }
   }

@@ -30,8 +30,6 @@ export class LoginTokenAuth {
   }
 
   public async authorizeJwTPayload(jwtPayload: JwtPayload): Promise<boolean> {
-    const that = this;
-
     if (typeof jwtPayload.iss === "undefined") {
       return false;
     }
@@ -59,7 +57,7 @@ export class LoginTokenAuth {
     }
 
     const authorized = await authorizeUser(
-      that._configuration,
+      this._configuration,
       hostname,
       email,
     );

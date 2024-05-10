@@ -55,8 +55,6 @@ export class BackendController extends EventEmitter {
   }
 
   private eventsAdd(udn: UDN): void {
-    const that = this;
-
     const uriList: string[] = [
       "ssap://audio/getStatus",
       "ssap://audio/getVolume",
@@ -68,13 +66,13 @@ export class BackendController extends EventEmitter {
       "ssap://tv/getExternalInputList",
     ];
     uriList.forEach((uri) => {
-      that._controls[udn].on(uri, (error, response) => {
-        that.emit(uri, error, response, udn);
+      this._controls[udn].on(uri, (error, response) => {
+        this.emit(uri, error, response, udn);
       });
     });
 
-    that._controls[udn].on("error", (error: Error): void => {
-      that.emit("error", error, udn);
+    this._controls[udn].on("error", (error: Error): void => {
+      this.emit("error", error, udn);
     });
   }
 
