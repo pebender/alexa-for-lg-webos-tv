@@ -9,16 +9,16 @@ async function createHostnamesSimpleCardContent(
 ): Promise<string> {
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
-  const ipAddressA: Number = Number(
+  const ipAddressA: number = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressA"),
   );
-  const ipAddressB: Number = Number(
+  const ipAddressB: number = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressB"),
   );
-  const ipAddressC: Number = Number(
+  const ipAddressC: number = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressC"),
   );
-  const ipAddressD: Number = Number(
+  const ipAddressD: number = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressD"),
   );
   sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`;
@@ -118,32 +118,32 @@ const ConfigureBridgeIntentHandler = {
     );
     Common.Debug.debug(`dialogState: ${dialogState}`);
 
-    const ipAddressAString: String | undefined =
+    const ipAddressAString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "ipAddressA",
       );
-    const ipAddressBString: String | undefined =
+    const ipAddressBString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "ipAddressB",
       );
-    const ipAddressCString: String | undefined =
+    const ipAddressCString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "ipAddressC",
       );
-    const ipAddressDString: String | undefined =
+    const ipAddressDString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "ipAddressD",
       );
-    const ipAddressValidString: String | undefined =
+    const ipAddressValidString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "ipAddressValid",
       );
-    const hostnameIndexString: String | undefined =
+    const hostnameIndexString: string | undefined =
       ASKRequestEnvelope.getSlotValue(
         handlerInput.requestEnvelope,
         "hostnameIndex",
