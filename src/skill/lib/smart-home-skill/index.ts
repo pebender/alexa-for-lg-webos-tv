@@ -6,6 +6,7 @@ import * as Bridge from "./bridge-api";
 
 async function handlerWithErrors(
   alexaRequest: Common.SHS.Request,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   context: AWSLambda.Context,
 ): Promise<Common.SHS.ResponseWrapper> {
   if (

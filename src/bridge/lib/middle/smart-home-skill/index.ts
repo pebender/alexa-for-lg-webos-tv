@@ -169,7 +169,9 @@ function callback(
   error: Error,
   response: LGTV.Response,
   udn: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   authorization: DirectiveAuthorization,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
 ) {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);

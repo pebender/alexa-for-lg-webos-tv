@@ -2,6 +2,7 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 
 function capabilities(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [

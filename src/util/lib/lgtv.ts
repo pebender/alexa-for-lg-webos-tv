@@ -44,7 +44,10 @@ function getSortedTVList(backend: Backend): TV[] {
   return tvList;
 }
 
-function lgtvCmdsCommand(backend: Backend) {
+function lgtvCmdsCommand(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  backend: Backend,
+) {
   console.log("Known Commands");
   const cmds: { [cmd: string]: object | null } = {
     "api/getServiceList": null,

@@ -2,6 +2,7 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 
 function capabilities(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
@@ -12,6 +13,7 @@ function capabilities(
 }
 
 function states(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   return [];
@@ -19,6 +21,7 @@ function states(
 
 function reportStateHandler(
   alexaRequest: Common.SHS.Request,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Common.SHS.ResponseWrapper {
   const response = new Common.SHS.Response({

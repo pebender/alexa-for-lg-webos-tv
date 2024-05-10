@@ -3,6 +3,7 @@ import { BackendControl } from "../../backend";
 import LGTV from "lgtv2";
 
 function capabilities(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
   return [
@@ -16,6 +17,7 @@ function capabilities(
 }
 
 function states(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
 ): Promise<Common.SHS.Context.Property>[] {
   return [];

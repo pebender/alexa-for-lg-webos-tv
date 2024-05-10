@@ -44,8 +44,8 @@ export class Frontend {
     this._middle = _middle;
     this._ipBlacklist = _ipBlacklist;
     this._ajv = _ajv;
-    this._schemaValidator = this._ajv.compile(Common.SHS.schema);
-    this._server = express();
+    this._schemaValidator = _schemaValidator;
+    this._server = _server;
   }
 
   public static async build(configuration: Configuration, middle: Middle) {
@@ -421,7 +421,6 @@ export class Frontend {
       async function loginHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction,
       ): Promise<void> {
         Common.Debug.debug("Login:");
 
@@ -452,7 +451,6 @@ export class Frontend {
       async function testHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction,
       ): Promise<void> {
         Common.Debug.debug("Test:");
 
@@ -462,7 +460,6 @@ export class Frontend {
       async function serviceHandler(
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction,
       ): Promise<void> {
         const shsRequest = req.body;
         Common.Debug.debug("Smart Home Skill Request:");

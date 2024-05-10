@@ -120,7 +120,7 @@ export async function request(
         resolve(body);
       });
     });
-    req.on("error", (cause): void => {
+    req.on("error", (): void => {
       reject(createHttpError("UNKNOWN_ERROR"));
     });
     if (requestOptions.method === "POST") {
