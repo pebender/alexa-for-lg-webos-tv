@@ -44,7 +44,6 @@ module.exports = {
     "@typescript-eslint/prefer-promise-reject-errors": "off",
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/unified-signatures": "off",
     "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
   },
   overrides: [

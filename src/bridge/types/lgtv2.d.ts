@@ -48,10 +48,9 @@ declare class LGTV extends EventEmitter {
   public clientKey: string;
 
   public register(): void;
-  public request(uri: string): void;
   public request(
     uri: string,
-    callback: (error: Error, response: LGTV.Response) => void,
+    callback?: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public request(
@@ -79,11 +78,9 @@ declare class LGTV extends EventEmitter {
   public connect(host: string): void;
   public disconnect(): void;
 
-  public on(event: "close", listener: (error: Error) => void): this;
-  public on(event: "connect", listener: () => void): this;
+  public on(event: "close" | "error", listener: (error: Error) => void): this;
+  public on(event: "connect" | "prompt", listener: () => void): this;
   public on(event: "connecting", listener: (host: string) => void): this;
-  public on(event: "error", listener: (error: Error) => void): this;
-  public on(event: "prompt", listener: () => void): this;
 
   //    once(event: "close", listener: (error: Error) => void): this;
   //    once(event: "connect", listener: () => void): this;
