@@ -23,8 +23,6 @@ module.exports = {
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
     "@typescript-eslint/await-thenable": "off",
-
-    "@typescript-eslint/no-base-to-string": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
     "@typescript-eslint/no-duplicate-type-constituents": "off",
     "@typescript-eslint/no-dynamic-delete": "off",

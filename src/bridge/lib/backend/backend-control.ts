@@ -289,8 +289,13 @@ export class BackendControl extends EventEmitter {
     }
     if (lgtvResponse.returnValue === false) {
       const error = new Error(lgtvResponse.errorText?.toString());
-      if (typeof lgtvResponse.errorCode !== "undefined") {
-        error.name = lgtvResponse.errorCode?.toString();
+      switch (typeof lgtvResponse.errorCode) {
+        case "string":
+          error.name = lgtvResponse.errorCode;
+          break;
+        case "number":
+          error.name = lgtvResponse.errorCode.toString();
+          break;
       }
       Error.captureStackTrace(error);
       throw error;
