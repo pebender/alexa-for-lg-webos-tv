@@ -1,9 +1,12 @@
 import * as HTTPSRequest from "./https-request";
 import * as CommonError from "./error";
 
-export async function getUserProfile(
-  accessToken: string,
-): Promise<{ user_id: string; email: string; [x: string]: string }> {
+export type Profile = {
+  user_id: string;
+  email: string;
+};
+
+export async function getUserProfile(accessToken: string): Promise<Profile> {
   const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: "api.amazon.com",
     port: 443,
@@ -46,13 +49,13 @@ export async function getUserProfile(
     }
   }
 
-  if (typeof response.user_id === "undefined") {
+  if (typeof (response as Profile).user_id === "undefined") {
     throw CommonError.create("there was no 'user_id' field in your profile", {
       general: "authorization",
       specific: "missing_user_id",
     });
   }
-  if (typeof response.email === "undefined") {
+  if (typeof (response as Profile).email === "undefined") {
     throw CommonError.create("there was no 'email' field in your profile", {
       general: "authorization",
       specific: "missing_email",

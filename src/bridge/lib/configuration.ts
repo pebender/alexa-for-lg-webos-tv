@@ -17,9 +17,11 @@ export class Configuration {
     const cfgDir = persistPath(Common.constants.application.name.safe);
     // Should check whether or not file exists and is readable.
     const cfgFile = `${cfgDir}/config.json`;
-    const raw = await fs.readFile(cfgFile);
-    const cfg = JSON.parse(raw as any);
+    const raw: string = await fs.readFile(cfgFile, { encoding: "utf8" });
 
+    const cfg = JSON.parse(raw) as {
+      authorizedUsers: { bridgeHostname: string; emails: string[] }[];
+    };
     if (typeof cfg.authorizedUsers === "undefined") {
       const error = new Error(
         `configuration file '${cfgFile}' is missing 'authorizedUsers'.`,
@@ -27,9 +29,7 @@ export class Configuration {
       Common.Debug.debugErrorWithStack(error);
       throw error;
     }
-    (
-      cfg.authorizedUsers as { bridgeHostname?: string; emails?: string[] }[]
-    ).forEach((authorizedUser, index) => {
+    cfg.authorizedUsers.forEach((authorizedUser, index) => {
       if (typeof authorizedUser.bridgeHostname === "undefined") {
         const error = new Error(
           `configuration file '${cfgFile}' is missing 'authorizedUsers[${index}].hostname'.`,

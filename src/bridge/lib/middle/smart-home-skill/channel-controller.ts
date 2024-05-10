@@ -41,17 +41,24 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
     }
     const channelList = lgtvResponse.channelList as any[];
     const channels: Channel[] = [];
-    channelList.forEach((channel) => {
-      if (
-        typeof channel.channelNumber !== "undefined" &&
-        typeof channel.channelName !== "undefined"
-      ) {
-        channels.push({
-          channelNumber: channel.channelNumber as string,
-          channelName: channel.channelName as string,
-        });
-      }
-    });
+    channelList.forEach(
+      (channel: {
+        channelNumber?: string;
+        channelName?: string;
+        [key: string]: unknown;
+      }) => {
+        if (
+          typeof channel === "object" &&
+          typeof channel.channelNumber === "string" &&
+          typeof channel.channelName === "string"
+        ) {
+          channels.push({
+            channelNumber: channel.channelNumber,
+            channelName: channel.channelName,
+          });
+        }
+      },
+    );
     return channels;
   } catch {
     return [];
@@ -125,11 +132,11 @@ function getChannelNumberToNumberMap(channels: Channel[]): {
 // <call-sign>-DT or <call-sign>HD. So, when a channel name ending in -HD, -DT
 // or HD is encountered, an additional mapping with the ending removed is
 // created.
-function getChannelNameToNumberMap(channels: any[]): {
+function getChannelNameToNumberMap(channels: Channel[]): {
   [x: string]: string;
 } {
   const channelNameToNumber: { [x: string]: string } = {};
-  channels.forEach((channelItem) => {
+  channels.forEach((channelItem: Channel) => {
     const channelNumber: string = channelItem.channelNumber;
     const channelName: string = channelItem.channelName.toUpperCase();
     channelNameToNumber[channelName] = channelNumber;
