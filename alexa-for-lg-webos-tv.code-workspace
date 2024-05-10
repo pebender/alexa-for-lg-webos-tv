@@ -30,6 +30,7 @@
 			"ForLGWebOSTVController",
 			"ForLGwebOSTVGateway",
 			"hostnames",
+			"ipaddress",
 			"IPADDRESS_VALID",
 			"isnumeric",
 			"lamba",
