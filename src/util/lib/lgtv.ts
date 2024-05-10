@@ -1,11 +1,10 @@
 import * as fs from "fs/promises";
+import persistPath from "persist-path";
 import LGTV from "lgtv2";
 import * as Common from "../../common";
 import { Configuration } from "../../bridge/lib/configuration";
 import { TV } from "../../bridge/lib/backend/tv";
 import { Backend } from "../../bridge/lib/backend";
-
-const persistPath = require("persist-path");
 
 export async function getBackend(): Promise<Backend> {
   const configurationDir = persistPath(Common.constants.application.name.safe);

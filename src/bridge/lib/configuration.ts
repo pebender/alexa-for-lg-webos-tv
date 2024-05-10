@@ -1,7 +1,6 @@
 import * as fs from "fs/promises";
+import persistPath from "persist-path";
 import * as Common from "../../common";
-
-const persistPath = require("persist-path");
 
 export class Configuration {
   private _configuration: {

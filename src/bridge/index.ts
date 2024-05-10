@@ -4,7 +4,7 @@ import { Configuration } from "./lib/configuration";
 import { Frontend } from "./lib/frontend";
 import { Middle } from "./lib/middle";
 import * as fs from "fs/promises";
-const persistPath = require("persist-path");
+import persistPath from "persist-path";
 
 /**
  * A class to build and start a bridge.

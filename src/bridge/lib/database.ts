@@ -1,6 +1,6 @@
 import Datastore from "@seald-io/nedb";
+import persistPath from "persist-path";
 import * as Common from "../../common";
-const persistPath = require("persist-path");
 
 export interface DatabaseUpdate {
   [x: string]: boolean | number | string | object | null;
