@@ -40,7 +40,6 @@ module.exports = {
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-return": "off",
-    "@typescript-eslint/no-useless-template-literals": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/only-throw-error": "off",
     "@typescript-eslint/prefer-promise-reject-errors": "off",
