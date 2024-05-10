@@ -302,9 +302,10 @@ const ConfigureBridgeIntentHandler = {
       }
 
       const hostnameIndex: number = Number(hostnameIndexString);
+      const hostnameCount: number = Number(sessionAttributes.hostnames.length);
       if (
         !Number.isInteger(hostnameIndex) ||
-        hostnameIndex >= sessionAttributes.hostnames.length + 2 ||
+        hostnameIndex >= hostnameCount + 2 ||
         hostnameIndex < 0
       ) {
         const speechOutput =
@@ -317,7 +318,7 @@ const ConfigureBridgeIntentHandler = {
           .addElicitSlotDirective("hostnameIndex")
           .getResponse();
       }
-      if (hostnameIndex === sessionAttributes.hostnames.length + 1) {
+      if (hostnameIndex === hostnameCount + 1) {
         return handlerInput.responseBuilder
           .speak(
             "I'm sorry. I misheard your bridge's I.P. address. Will we need to start over.",
@@ -325,7 +326,7 @@ const ConfigureBridgeIntentHandler = {
           .withShouldEndSession(true)
           .getResponse();
       }
-      if (hostnameIndex === sessionAttributes.hostnames.length) {
+      if (hostnameIndex === hostnameCount) {
         return handlerInput.responseBuilder
           .speak("I'm sorry. I could not discover your bridge's hostname.")
           .getResponse();
