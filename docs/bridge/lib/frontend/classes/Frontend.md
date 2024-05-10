@@ -50,7 +50,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ### \_ipBlacklist
 
-> `private` `readonly` **\_ipBlacklist**: `any`
+> `private` `readonly` **\_ipBlacklist**: [`default`](../../../types/@outofsync/express-ip-blacklist/classes/default.md)
 
 ***
 
