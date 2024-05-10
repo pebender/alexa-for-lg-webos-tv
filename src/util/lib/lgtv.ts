@@ -178,10 +178,10 @@ async function lgtvCommand() {
 
   switch (argv[2]) {
     case "cmds":
-      await lgtvCmdsCommand(backend);
+      lgtvCmdsCommand(backend);
       break;
     case "udns":
-      await lgtvUdnsCommand(backend);
+      lgtvUdnsCommand(backend);
       break;
     case "run":
       await lgtvRunCommand(backend);

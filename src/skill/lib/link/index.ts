@@ -14,12 +14,14 @@ export async function getHostnames(ipAddress: string) {
       const cert = sock.getPeerCertificate().raw;
       sock.on("close", (): void => {
         const hostnames = certnames.getCommonNames(cert);
-        return resolve(hostnames);
+        resolve(hostnames);
+        return;
       });
       sock.end();
     });
     sock.on("error", (error): void => {
       reject(error);
+      return;
     });
   });
 }
@@ -199,6 +201,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
+          return;
         })
         .on("error", (cause: any): void => {
           const error = Common.Error.create("", {
@@ -207,6 +210,7 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
+          return;
         });
     });
   }
@@ -220,6 +224,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
+          return;
         })
         .on("error", (cause: any): void => {
           const error = Common.Error.create("", {
@@ -228,6 +233,7 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
+          return;
         });
     });
   }
@@ -244,6 +250,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
+          return;
         })
         .on("error", (cause: any): void => {
           const error = Common.Error.create("", {
@@ -252,6 +259,7 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
+          return;
         });
     });
   }
@@ -265,6 +273,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
+          return;
         })
         .on("error", (cause: any): void => {
           const error = Common.Error.create("", {
@@ -273,6 +282,7 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
+          return;
         });
     });
   }

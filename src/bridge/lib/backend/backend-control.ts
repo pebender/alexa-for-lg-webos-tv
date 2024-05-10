@@ -54,7 +54,9 @@ export class BackendControl extends EventEmitter {
           _tv.key = key;
           _connection.clientKey = key;
         })
-        .catch((error): void => callback(error));
+        .catch((error): void => {
+          callback(error);
+        });
     }
 
     const _connection = new LGTV({

@@ -137,7 +137,8 @@ export class Frontend {
       ): void {
         Common.Debug.debug("jwtErrorHandler: start");
         if (res.headersSent) {
-          return next(err);
+          next(err);
+          return;
         }
 
         if (err) {
@@ -153,6 +154,7 @@ export class Frontend {
         }
 
         next(err);
+        return;
       }
 
       async function jwtPayloadHandler(
