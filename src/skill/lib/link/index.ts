@@ -1,9 +1,9 @@
 import * as net from "node:net";
 import * as tls from "node:tls";
+import * as certnames from "certnames";
 import * as Common from "../../../common";
 import * as Database from "./user-db";
 import * as Login from "./login";
-const certnames = require("certnames");
 
 export async function getHostnames(ipAddress: string) {
   const ipPort = Common.constants.bridge.port.https;
