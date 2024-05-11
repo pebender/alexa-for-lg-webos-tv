@@ -10,7 +10,7 @@
 
 ### Type Aliases
 
-- [Profile](type-aliases/Profile.md)
+- [UserProfile](type-aliases/UserProfile.md)
 
 ### Functions
 

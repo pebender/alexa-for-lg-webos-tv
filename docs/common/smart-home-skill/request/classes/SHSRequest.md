@@ -92,18 +92,20 @@
 
 ***
 
-### getUserProfile()
+### getUserId()
 
-> **getUserProfile**(): `Promise`\<`object`\>
+> **getUserId**(): `Promise`\<`string`\>
 
 #### Returns
 
-`Promise`\<`object`\>
+`Promise`\<`string`\>
 
-##### email
+***
 
-> **email**: `string`
+### getUserProfile()
 
-##### user\_id
+> **getUserProfile**(): `Promise`\<[`UserProfile`](../../../profile/type-aliases/UserProfile.md)\>
 
-> **user\_id**: `string`
+#### Returns
+
+`Promise`\<[`UserProfile`](../../../profile/type-aliases/UserProfile.md)\>

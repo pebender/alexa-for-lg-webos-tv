@@ -20,8 +20,8 @@ export async function getUserProfile(
   try {
     response = await HTTPSRequest.request(requestOptions, accessToken);
   } catch (cause: any) {
-    const general = (cause as CommonError.AlexaForLGwebOSTVError).general;
-    const specific = (cause as CommonError.AlexaForLGwebOSTVError).specific;
+    const general = (cause as CommonError.CommonError).general;
+    const specific = (cause as CommonError.CommonError).specific;
     switch (general) {
       case "http":
         switch (specific) {

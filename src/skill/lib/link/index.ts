@@ -57,8 +57,7 @@ export async function getCredentials(
     try {
       userId = await Common.Profile.getUserId(skillToken);
     } catch (c) {
-      const cause: Common.Error.AlexaForLGwebOSTVError =
-        c as Common.Error.AlexaForLGwebOSTVError;
+      const cause: Common.Error.CommonError = c as Common.Error.CommonError;
       if (
         typeof cause.general === "string" &&
         cause.general === "authorization"
@@ -156,8 +155,8 @@ export async function sendMessageUsingBridgeToken(
     );
   } catch (error) {
     if (
-      (error as Common.Error.AlexaForLGwebOSTVError).general === "http" &&
-      (error as Common.Error.AlexaForLGwebOSTVError).specific === "UNAUTHORIZED"
+      (error as Common.Error.CommonError).general === "http" &&
+      (error as Common.Error.CommonError).specific === "UNAUTHORIZED"
     ) {
       /* try again with a new bridge token */
       const { bridgeHostname, bridgeToken } = await getCredentials(skillToken, {
@@ -301,7 +300,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         request,
       );
     } catch (cause) {
-      if (cause instanceof Common.Error.AlexaForLGwebOSTVError) {
+      if (cause instanceof Common.Error.CommonError) {
         switch (cause.specific) {
           case "BAD_GATEWAY":
             throw Common.Error.create("", {

@@ -59,8 +59,7 @@ export class Middle {
         shsRequest.getAccessToken(),
       );
     } catch (c) {
-      const cause: Common.Error.AlexaForLGwebOSTVError =
-        c as Common.Error.AlexaForLGwebOSTVError;
+      const cause: Common.Error.CommonError = c as Common.Error.CommonError;
       if (
         typeof cause.general === "string" &&
         cause.general === "authorization"

@@ -28,7 +28,7 @@ async function sendHandler(
 
 function mapErrorToAlexaResponse(
   alexaRequest: Common.SHS.Request,
-  error: Common.Error.AlexaForLGwebOSTVError,
+  error: Common.Error.CommonError,
 ): Common.SHS.ResponseWrapper {
   switch (error.general) {
     case "http":
@@ -110,8 +110,7 @@ export async function sendSkillDirective(
   try {
     return await sendHandler(shsPath, request, request);
   } catch (e) {
-    const error: Common.Error.AlexaForLGwebOSTVError =
-      e as Common.Error.AlexaForLGwebOSTVError;
+    const error: Common.Error.CommonError = e as Common.Error.CommonError;
     Common.Debug.debugErrorWithStack(error);
     return mapErrorToAlexaResponse(request, error);
   }

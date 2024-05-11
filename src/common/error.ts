@@ -1,11 +1,11 @@
-export type AlexaForLGwebOSTVErrorGeneral =
+export type CommonErrorGeneral =
   | "unknown"
   | "authorization"
   | "database"
   | "http"
   | "link";
 
-export type AlexaForLGwebOSTVErrorLocation =
+export type CommonErrorLocation =
   | "skill"
   | "skill_link"
   | "skill_user_profile"
@@ -18,25 +18,22 @@ export type AlexaForLGwebOSTVErrorLocation =
   | "bridge_service_user_db"
   | "bridge_service_auth_db";
 
-export type AlexaForLGwebOSTVErrorOptions = {
-  general: AlexaForLGwebOSTVErrorGeneral;
+export type CommonErrorOptions = {
+  general: CommonErrorGeneral;
   specific?: string;
-  sender?: AlexaForLGwebOSTVErrorLocation;
-  receiver?: AlexaForLGwebOSTVErrorLocation;
+  sender?: CommonErrorLocation;
+  receiver?: CommonErrorLocation;
   cause?: any;
 };
 
-export class AlexaForLGwebOSTVError
-  extends Error
-  implements NodeJS.ErrnoException
-{
+export class CommonError extends Error implements NodeJS.ErrnoException {
   public readonly code: string;
-  public readonly general: AlexaForLGwebOSTVErrorGeneral;
+  public readonly general: CommonErrorGeneral;
   public readonly specific?: string;
-  public readonly receiver?: AlexaForLGwebOSTVErrorLocation;
-  public readonly sender?: AlexaForLGwebOSTVErrorLocation;
+  public readonly receiver?: CommonErrorLocation;
+  public readonly sender?: CommonErrorLocation;
 
-  constructor(message: string, options?: AlexaForLGwebOSTVErrorOptions) {
+  constructor(message: string, options?: CommonErrorOptions) {
     if (typeof options === "undefined") {
       super(message);
       this.general = "unknown";
@@ -69,7 +66,7 @@ export class AlexaForLGwebOSTVError
 
 export function create(
   message: string,
-  options?: AlexaForLGwebOSTVErrorOptions,
-): AlexaForLGwebOSTVError {
-  return new AlexaForLGwebOSTVError(message, options);
+  options?: CommonErrorOptions,
+): CommonError {
+  return new CommonError(message, options);
 }

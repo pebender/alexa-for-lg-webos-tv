@@ -24,7 +24,7 @@ function createDatabaseError(
   message: string,
   options?: { specific?: string; cause?: unknown },
 ) {
-  const databaseErrorOptions: Common.Error.AlexaForLGwebOSTVErrorOptions = {
+  const databaseErrorOptions: Common.Error.CommonErrorOptions = {
     general: "database",
     receiver: "skill_user_db",
   };

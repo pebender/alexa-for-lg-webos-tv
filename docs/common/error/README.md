@@ -10,13 +10,13 @@
 
 ### Classes
 
-- [AlexaForLGwebOSTVError](classes/AlexaForLGwebOSTVError.md)
+- [CommonError](classes/CommonError.md)
 
 ### Type Aliases
 
-- [AlexaForLGwebOSTVErrorGeneral](type-aliases/AlexaForLGwebOSTVErrorGeneral.md)
-- [AlexaForLGwebOSTVErrorLocation](type-aliases/AlexaForLGwebOSTVErrorLocation.md)
-- [AlexaForLGwebOSTVErrorOptions](type-aliases/AlexaForLGwebOSTVErrorOptions.md)
+- [CommonErrorGeneral](type-aliases/CommonErrorGeneral.md)
+- [CommonErrorLocation](type-aliases/CommonErrorLocation.md)
+- [CommonErrorOptions](type-aliases/CommonErrorOptions.md)
 
 ### Functions
 

@@ -230,8 +230,8 @@ export class Frontend {
             userId = userProfile.userId;
             email = userProfile.email;
           } catch (e) {
-            const error: Common.Error.AlexaForLGwebOSTVError =
-              e as Common.Error.AlexaForLGwebOSTVError;
+            const error: Common.Error.CommonError =
+              e as Common.Error.CommonError;
             if (
               typeof error.general === "string" &&
               error.general === "authorization"

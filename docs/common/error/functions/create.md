@@ -6,14 +6,14 @@
 
 # Function: create()
 
-> **create**(`message`, `options`?): [`AlexaForLGwebOSTVError`](../classes/AlexaForLGwebOSTVError.md)
+> **create**(`message`, `options`?): [`CommonError`](../classes/CommonError.md)
 
 ## Parameters
 
 • **message**: `string`
 
-• **options?**: [`AlexaForLGwebOSTVErrorOptions`](../type-aliases/AlexaForLGwebOSTVErrorOptions.md)
+• **options?**: [`CommonErrorOptions`](../type-aliases/CommonErrorOptions.md)
 
 ## Returns
 
-[`AlexaForLGwebOSTVError`](../classes/AlexaForLGwebOSTVError.md)
+[`CommonError`](../classes/CommonError.md)

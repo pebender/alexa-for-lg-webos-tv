@@ -6,7 +6,7 @@
 
 # Function: getUserProfile()
 
-> **getUserProfile**(`accessToken`): `Promise`\<[`Profile`](../type-aliases/Profile.md)\>
+> **getUserProfile**(`accessToken`): `Promise`\<[`UserProfile`](../type-aliases/UserProfile.md)\>
 
 ## Parameters
 
@@ -14,4 +14,4 @@
 
 ## Returns
 
-`Promise`\<[`Profile`](../type-aliases/Profile.md)\>
+`Promise`\<[`UserProfile`](../type-aliases/UserProfile.md)\>

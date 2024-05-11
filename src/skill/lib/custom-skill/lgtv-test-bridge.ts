@@ -17,8 +17,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
   try {
     await Link.testConnection(accessToken);
   } catch (c) {
-    const cause: Common.Error.AlexaForLGwebOSTVError =
-      c as Common.Error.AlexaForLGwebOSTVError;
+    const cause: Common.Error.CommonError = c as Common.Error.CommonError;
     Common.Debug.debugErrorWithStack(cause);
     if (typeof cause.general === "string") {
       switch (cause.general) {

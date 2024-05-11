@@ -26,7 +26,7 @@ type ResponseErrorNames =
 
 function createHttpError(
   specific: ResponseErrorNames,
-): CommonError.AlexaForLGwebOSTVError {
+): CommonError.CommonError {
   const general = "http";
   return CommonError.create("", { general, specific });
 }
@@ -61,7 +61,7 @@ export async function request(
   const response = new Promise(
     (
       resolve: (value: object) => void,
-      reject: (error: CommonError.AlexaForLGwebOSTVError) => void,
+      reject: (error: CommonError.CommonError) => void,
     ): void => {
       const req = https.request(options, (res): void => {
         res.setEncoding("utf8");
