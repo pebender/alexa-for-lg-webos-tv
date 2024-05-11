@@ -1,5 +1,6 @@
 import * as dgram from "node:dgram";
 import { IP, MAC, TV, UDN } from "./tv";
+import * as Common from "../../../common";
 import * as arp from "node-arp";
 import {
   Client as SsdpClient,
@@ -208,8 +209,15 @@ export class BackendSearcher extends EventEmitter {
             },
           );
         })
-        .catch((reason) => {
-          callback(reason, null);
+        .catch((reason: unknown) => {
+          if (reason instanceof Error) {
+            callback(reason, null);
+          } else {
+            callback(
+              Common.Error.create("", { general: "unknown", cause: reason }),
+              null,
+            );
+          }
         });
     }
 

@@ -10,7 +10,7 @@
 
 ## Parameters
 
-• **error**: `any`
+• **error**: `unknown`
 
 ## Returns
 

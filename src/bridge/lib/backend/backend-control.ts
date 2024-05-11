@@ -55,8 +55,16 @@ export class BackendControl extends EventEmitter {
           _tv.key = key;
           _connection.clientKey = key;
         })
-        .catch((error): void => {
-          callback(error);
+        .catch((error: unknown) => {
+          if (error instanceof Error) {
+            callback(error);
+            return;
+          } else {
+            callback(
+              Common.Error.create("", { general: "unknown", cause: error }),
+            );
+            return;
+          }
         });
     }
 
@@ -224,9 +232,7 @@ export class BackendControl extends EventEmitter {
           }
         }
 
-        void asyncFinish(powerOn).catch((reason) => {
-          Common.Debug.debugErrorWithStack(reason);
-        });
+        void asyncFinish(powerOn).catch(Common.Debug.debugErrorWithStack);
       }
 
       finishTimeoutObject = setTimeout(finish, 7000, false);

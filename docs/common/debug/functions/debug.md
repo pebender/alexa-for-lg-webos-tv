@@ -10,7 +10,7 @@
 
 ## Parameters
 
-• **message?**: `any`
+• **message?**: `unknown`
 
 ## Returns
 

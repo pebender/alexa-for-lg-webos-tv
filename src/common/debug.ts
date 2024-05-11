@@ -1,6 +1,6 @@
 import * as util from "node:util";
 
-export function debug(message?: any) {
+export function debug(message?: unknown) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
@@ -9,7 +9,7 @@ export function debug(message?: any) {
   }
 }
 
-export function debugError(error: any) {
+export function debugError(error: unknown) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
@@ -18,19 +18,23 @@ export function debugError(error: any) {
   }
 }
 
-export function debugErrorWithStack(error: any) {
+export function debugErrorWithStack(error: unknown) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
   ) {
-    if (typeof error.stack === "undefined") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      typeof (error as any).stack === "undefined"
+    ) {
       Error.captureStackTrace(error);
     }
     console.debug("error:" + "\n" + util.inspect(error));
   }
 }
 
-export function debugJSON(message: any) {
+export function debugJSON(message: unknown) {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"

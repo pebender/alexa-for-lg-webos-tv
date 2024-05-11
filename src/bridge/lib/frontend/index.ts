@@ -139,7 +139,11 @@ export class Frontend {
           algorithms: ["RS256"],
         });
 
-        void asyncLoginTokenAuthorizationHandler(req, res, next).catch(next);
+        void asyncLoginTokenAuthorizationHandler(req, res, next).catch(
+          (error: unknown) => {
+            next(error);
+          },
+        );
       }
 
       function jwtErrorHandler(
@@ -252,7 +256,9 @@ export class Frontend {
           next();
         }
 
-        void asyncJwtPayloadHandler(req, res, next).catch(next);
+        void asyncJwtPayloadHandler(req, res, next).catch((error: unknown) => {
+          next(error);
+        });
       }
 
       function bridgeTokenAuthorizationHandler(
@@ -361,7 +367,11 @@ export class Frontend {
           next();
         }
 
-        void asyncBridgeTokenAuthorizationHandler(req, res, next).catch(next);
+        void asyncBridgeTokenAuthorizationHandler(req, res, next).catch(
+          (error: unknown) => {
+            next(error);
+          },
+        );
       }
 
       function requestTypeHandler(
@@ -486,7 +496,9 @@ export class Frontend {
           });
         }
 
-        void asyncLoginHandler(req, res).catch(next);
+        void asyncLoginHandler(req, res).catch((error: unknown) => {
+          next(error);
+        });
       }
 
       function testHandler(req: express.Request, res: express.Response): void {
@@ -544,7 +556,9 @@ export class Frontend {
           res.status(statusCode).json(shsResponse);
         }
 
-        asyncServiceHandler(req, res).catch(next);
+        asyncServiceHandler(req, res).catch((error: unknown) => {
+          next(error);
+        });
       }
 
       // Log request message

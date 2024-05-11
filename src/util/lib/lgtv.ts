@@ -160,7 +160,7 @@ function lgtvRunCommand(backend: Backend) {
         }
       };
 
-      asyncConnect().catch((error) => {
+      asyncConnect().catch((error: unknown) => {
         if (error instanceof Error) {
           console.log(`error: ${error.message} (${error.name})`);
         }
