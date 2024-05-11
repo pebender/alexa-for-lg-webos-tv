@@ -22,7 +22,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 • **\_middle**: [`Middle`](../../middle/classes/Middle.md)
 
-• **\_ipBlacklist**: `any`
+• **\_ipBlacklist**: [`default`](../../../types/@outofsync/express-ip-blacklist/classes/default.md)
 
 • **\_ajv**: `Ajv2019`
 

@@ -62,7 +62,7 @@
 
 ### build()
 
-> `static` **build**(`configuration`): `Promise`\<[`LoginTokenAuth`](LoginTokenAuth.md)\>
+> `static` **build**(`configuration`): [`LoginTokenAuth`](LoginTokenAuth.md)
 
 #### Parameters
 
@@ -70,4 +70,4 @@
 
 #### Returns
 
-`Promise`\<[`LoginTokenAuth`](LoginTokenAuth.md)\>
+[`LoginTokenAuth`](LoginTokenAuth.md)

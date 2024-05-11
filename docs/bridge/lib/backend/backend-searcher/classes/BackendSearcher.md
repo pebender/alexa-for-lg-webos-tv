@@ -66,8 +66,8 @@
 
 ### build()
 
-> `static` **build**(): `Promise`\<[`BackendSearcher`](BackendSearcher.md)\>
+> `static` **build**(): [`BackendSearcher`](BackendSearcher.md)
 
 #### Returns
 
-`Promise`\<[`BackendSearcher`](BackendSearcher.md)\>
+[`BackendSearcher`](BackendSearcher.md)

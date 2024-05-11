@@ -42,7 +42,7 @@
 
 #### Parameters
 
-• **rawRequest**: `any`
+• **rawRequest**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
 
 #### Returns
 
@@ -56,7 +56,7 @@
 
 #### Parameters
 
-• **rawRequest**: `any`
+• **rawRequest**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
 
 #### Returns
 

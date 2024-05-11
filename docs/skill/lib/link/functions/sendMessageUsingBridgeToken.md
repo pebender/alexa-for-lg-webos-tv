@@ -6,7 +6,7 @@
 
 # Function: sendMessageUsingBridgeToken()
 
-> **sendMessageUsingBridgeToken**(`path`, `skillToken`, `message`): `Promise`\<`any`\>
+> **sendMessageUsingBridgeToken**(`path`, `skillToken`, `message`): `Promise`\<`object`\>
 
 ## Parameters
 
@@ -18,4 +18,4 @@
 
 ## Returns
 
-`Promise`\<`any`\>
+`Promise`\<`object`\>

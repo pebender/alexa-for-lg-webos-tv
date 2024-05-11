@@ -96,7 +96,7 @@
 
 ##### Parameters
 
-• **event**: `"close"`
+• **event**: `"error"` \| `"close"`
 
 • **listener**
 
@@ -114,7 +114,7 @@
 
 ##### Parameters
 
-• **event**: `"connect"`
+• **event**: `"connect"` \| `"prompt"`
 
 • **listener**
 
@@ -144,42 +144,6 @@
 
 `EventEmitter.on`
 
-#### on(event, listener)
-
-> **on**(`event`, `listener`): `this`
-
-##### Parameters
-
-• **event**: `"error"`
-
-• **listener**
-
-##### Returns
-
-`this`
-
-##### Overrides
-
-`EventEmitter.on`
-
-#### on(event, listener)
-
-> **on**(`event`, `listener`): `this`
-
-##### Parameters
-
-• **event**: `"prompt"`
-
-• **listener**
-
-##### Returns
-
-`this`
-
-##### Overrides
-
-`EventEmitter.on`
-
 ***
 
 ### register()
@@ -194,27 +158,15 @@
 
 ### request()
 
-#### request(uri)
-
-> **request**(`uri`): `void`
-
-##### Parameters
-
-• **uri**: `string`
-
-##### Returns
-
-`void`
-
 #### request(uri, callback)
 
-> **request**(`uri`, `callback`): `void`
+> **request**(`uri`, `callback`?): `void`
 
 ##### Parameters
 
 • **uri**: `string`
 
-• **callback**
+• **callback?**
 
 ##### Returns
 

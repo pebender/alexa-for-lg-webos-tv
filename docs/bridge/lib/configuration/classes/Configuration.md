@@ -36,11 +36,11 @@
 
 ### authorizedUsers()
 
-> **authorizedUsers**(): `Promise`\<`object`[]\>
+> **authorizedUsers**(): `object`[]
 
 #### Returns
 
-`Promise`\<`object`[]\>
+`object`[]
 
 ***
 

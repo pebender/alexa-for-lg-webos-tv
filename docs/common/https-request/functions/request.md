@@ -6,7 +6,7 @@
 
 # Function: request()
 
-> **request**(`requestOptions`, `bearerToken`, `requestBody`?): `Promise`\<`any`\>
+> **request**(`requestOptions`, `bearerToken`, `requestBody`?): `Promise`\<`object`\>
 
 ## Parameters
 
@@ -18,4 +18,4 @@
 
 ## Returns
 
-`Promise`\<`any`\>
+`Promise`\<`object`\>

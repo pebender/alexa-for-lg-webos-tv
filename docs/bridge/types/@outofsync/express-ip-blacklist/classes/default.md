@@ -20,7 +20,7 @@
 
 • **cache?**: `any`
 
-• **log?**: `any`
+• **log?**: `unknown`
 
 #### Returns
 

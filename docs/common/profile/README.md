@@ -8,6 +8,10 @@
 
 ## Index
 
+### Type Aliases
+
+- [Profile](type-aliases/Profile.md)
+
 ### Functions
 
 - [getUserEmail](functions/getUserEmail.md)
