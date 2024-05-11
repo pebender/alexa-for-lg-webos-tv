@@ -130,14 +130,18 @@ export class BackendSearcher extends EventEmitter {
       void fetch(headers.LOCATION)
         .then((response: Response): Promise<Blob> => {
           if (response.status !== 200) {
-            throw new Error("Could not fetch descriptionXML from LG webOS TV");
+            throw Common.Error.create(
+              "Could not fetch descriptionXML from LG webOS TV",
+            );
           }
           return response.blob();
         })
         .then((blob: Blob) => {
           const mimetype: string[] = blob.type.split(";");
           if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
-            throw new Error("Could not fetch descriptionXML from LG webOS TV");
+            throw Common.Error.create(
+              "Could not fetch descriptionXML from LG webOS TV",
+            );
           }
           return blob.text();
         })

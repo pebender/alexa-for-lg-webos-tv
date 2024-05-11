@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import * as CommonError from "../error";
 import { copyElement } from "./copy";
 import { SHSDirective, SHSRequest } from "./request";
 
@@ -250,33 +251,21 @@ export class SHSResponseWrapper {
   public readonly request: SHSRequest;
   public readonly response: SHSResponse;
   public readonly statusCode: number;
-  public readonly error?: any;
+  public readonly error?: CommonError.CommonError;
 
   public constructor(
     request: SHSRequest,
     response: SHSResponse,
     statusCode?: number,
-    error?: Error,
+    error?: unknown,
   ) {
     this.request = request;
     this.response = response;
     this.statusCode = statusCode || 200;
-    if (error) {
-      if (error instanceof Error) {
-        this.error = error;
-      } else {
-        const message = (error as any).message || "unknown";
-        const name =
-          (error as any).name ||
-          (error as any).type ||
-          (error as any).code ||
-          "unknown";
-        this.error = new Error(message);
-        this.error.name = name;
-      }
-      if (this.error.stack) {
-        Error.captureStackTrace(this.error);
-      }
+    if (error instanceof CommonError.CommonError) {
+      this.error = error;
+    } else {
+      this.error = CommonError.create("", { general: "unknown", cause: error });
     }
   }
 
@@ -304,7 +293,7 @@ export class SHSResponseWrapper {
     type: string,
     message: string,
     statusCode?: number,
-    error?: any,
+    error?: unknown,
   ) {
     const response = new SHSResponse({
       namespace: "Alexa",
@@ -322,19 +311,41 @@ export class SHSResponseWrapper {
   public static buildAlexaErrorResponseForInternalError(
     request: SHSRequest,
     statusCode?: number,
-    error?: any,
+    error?: unknown,
   ) {
-    const errorName = error.code || error.name || error.type || "unknown";
-    const errorMessage = error.message || "unknown";
-    const type = "INTERNAL_ERROR";
-    const message = `error: ${errorMessage} (${errorName})`;
-    return SHSResponseWrapper.buildAlexaErrorResponse(
-      request,
-      type,
-      message,
-      statusCode,
-      error,
-    );
+    if (error instanceof CommonError.CommonError) {
+      const errorName = `${error.general || "unknown"}.${error.specific || "unknown"}`;
+      const errorMessage = error.message || "unknown";
+      const type = "INTERNAL_ERROR";
+      const message = `error: ${errorMessage} (${errorName})`;
+      return SHSResponseWrapper.buildAlexaErrorResponse(
+        request,
+        type,
+        message,
+        statusCode,
+        error,
+      );
+    } else if (error instanceof Error) {
+      const errorName = error.name || "unknown";
+      const errorMessage = error.message || "unknown";
+      const type = "INTERNAL_ERROR";
+      const message = `error: ${errorMessage} (${errorName})`;
+      return SHSResponseWrapper.buildAlexaErrorResponse(
+        request,
+        type,
+        message,
+        statusCode,
+        error,
+      );
+    } else {
+      return SHSResponseWrapper.buildAlexaErrorResponse(
+        request,
+        "unknown",
+        "unknown",
+        statusCode,
+        error,
+      );
+    }
   }
 
   public static buildAlexaErrorResponseForInvalidDirectiveName(
@@ -400,7 +411,7 @@ export class SHSResponseWrapper {
     message: string,
     statusCode?: number,
   ) {
-    const error = new Error(message);
+    const error = CommonError.create(message);
     error.name = type;
     Error.captureStackTrace(error);
     return SHSResponseWrapper.buildAlexaErrorResponse(

@@ -1,3 +1,4 @@
+import * as Common from "../../../common";
 import { TV, UDN } from "./tv";
 import { EventEmitter } from "node:events";
 import { BackendControl } from "./backend-control";
@@ -78,7 +79,7 @@ export class BackendController extends EventEmitter {
 
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
     if (typeof this._controls[udn] === "undefined") {
-      throw new Error(
+      throw Common.Error.create(
         `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
       );
     }

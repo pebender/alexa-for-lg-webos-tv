@@ -1,3 +1,4 @@
+import * as CommonError from "../error";
 import * as Profile from "../profile";
 import { copyElement } from "./copy";
 import { SHSResponseWrapper } from "./response";
@@ -97,7 +98,7 @@ export class SHSRequest {
     }
     const name = "INVALID_DIRECTIVE";
     const message = "Access Token not found";
-    const error = new Error(message);
+    const error = CommonError.create(message);
     error.name = name;
     Error.captureStackTrace(error);
     throw SHSResponseWrapper.buildAlexaErrorResponse(

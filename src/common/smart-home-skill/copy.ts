@@ -1,3 +1,5 @@
+import * as CommonError from "../error";
+
 export type copyElementType =
   | boolean
   | number
@@ -39,5 +41,7 @@ export function copyElement(original: copyElementType): copyElementType {
     return copy;
   }
 
-  throw new Error("'original' contains an object that cannot be copied.");
+  throw CommonError.create(
+    "'original' contains an object that cannot be copied.",
+  );
 }

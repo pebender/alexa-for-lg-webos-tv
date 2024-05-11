@@ -294,7 +294,7 @@ export class BackendControl extends EventEmitter {
       });
     }
     if (typeof lgtvResponse.returnValue === "undefined") {
-      const error = new Error(
+      const error = Common.Error.create(
         "'LGTVResponse' does not contain property 'returnValue'",
       );
       error.name = "NO_RETURN_VALUE";
@@ -302,7 +302,15 @@ export class BackendControl extends EventEmitter {
       throw error;
     }
     if (!lgtvResponse.returnValue) {
-      const error = new Error(lgtvResponse.errorText?.toString());
+      let error: Common.Error.CommonError;
+      if (
+        typeof lgtvResponse.errorText === "undefined" ||
+        typeof lgtvResponse.errorText === "object"
+      ) {
+        error = Common.Error.create("unknown LGTV response error");
+      } else {
+        error = Common.Error.create(lgtvResponse.errorText.toString());
+      }
       switch (typeof lgtvResponse.errorCode) {
         case "string":
           error.name = lgtvResponse.errorCode;

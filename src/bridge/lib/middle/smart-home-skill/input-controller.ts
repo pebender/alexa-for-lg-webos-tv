@@ -252,7 +252,7 @@ function states(
           lgtvRequest,
         )) as LGTV.ResponseForegroundAppInfo;
       if (typeof lgtvResponse.appId === "undefined") {
-        throw new Error("invalid LGTVResponse message");
+        throw Common.Error.create("invalid LGTVResponse message");
       }
       return lgtvResponse.appId;
     }

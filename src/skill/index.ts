@@ -30,7 +30,7 @@ async function skillHandler(
     return response;
   }
 
-  throw new Error("Unhandled request");
+  throw Common.Error.create("Unhandled request");
 }
 
 export { skillHandler as handler };

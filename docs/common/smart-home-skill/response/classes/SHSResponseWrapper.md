@@ -20,7 +20,7 @@
 
 • **statusCode?**: `number`
 
-• **error?**: `Error`
+• **error?**: `unknown`
 
 #### Returns
 
@@ -30,7 +30,7 @@
 
 ### error?
 
-> `optional` `readonly` **error**: `any`
+> `optional` `readonly` **error**: [`CommonError`](../../../error/classes/CommonError.md)
 
 ***
 
@@ -94,7 +94,7 @@
 
 • **statusCode?**: `number`
 
-• **error?**: `any`
+• **error?**: `unknown`
 
 #### Returns
 
@@ -132,7 +132,7 @@
 
 • **statusCode?**: `number`
 
-• **error?**: `any`
+• **error?**: `unknown`
 
 #### Returns
 
