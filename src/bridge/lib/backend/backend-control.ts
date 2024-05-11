@@ -249,18 +249,17 @@ export class BackendControl extends EventEmitter {
     let lgtvResponse: LGTV.Response = {
       returnValue: false,
     };
-    if (typeof lgtvRequest.payload !== "undefined") {
+    if (lgtvRequest.payload === null) {
       lgtvResponse = await new Promise<LGTV.Response>(
         (resolve, reject): void => {
           this._connection.request(
             lgtvRequest.uri,
-            (error: Error | null, response?: LGTV.Response): void => {
+            (error: Error, response: LGTV.Response): void => {
               if (error) {
                 reject(error);
                 return;
               }
-              resolve(response as LGTV.Response);
-              return;
+              resolve(response);
             },
           );
         },
@@ -270,12 +269,12 @@ export class BackendControl extends EventEmitter {
         this._connection.request(
           lgtvRequest.uri,
           lgtvRequest.payload as LGTV.RequestPayload,
-          (error: Error | null, response?: LGTV.Response): void => {
+          (error: Error, response: LGTV.Response): void => {
             if (error) {
               reject(error);
               return;
             }
-            resolve(response as LGTV.Response);
+            resolve(response);
           },
         );
       });
@@ -322,7 +321,7 @@ export class BackendControl extends EventEmitter {
       const uri = "ssap://com.webos.applicationManager/getForegroundAppInfo";
       this._connection.subscribe(uri, (error, response) => {
         this.emit(uri, error, response);
-        if ((response as LGTV.Response).appId === "com.webos.app.livetv") {
+        if (response.appId === "com.webos.app.livetv") {
           const u: string = "ssap://tv/getCurrentChannel";
           this._connection.subscribe(u, (e, r) => this.emit(u, e, r));
         }

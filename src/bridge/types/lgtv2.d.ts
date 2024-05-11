@@ -42,7 +42,7 @@ declare class LGTV extends EventEmitter {
     reconnect?: number;
     clientKey?: string;
     keyFile?: string;
-    saveKey?: (key: string, callback: (error: Error | null) => void) => void;
+    saveKey?: (key: string, callback: (error: Error) => void) => void;
   });
 
   public clientKey: string;
@@ -50,29 +50,29 @@ declare class LGTV extends EventEmitter {
   public register(): void;
   public request(
     uri: string,
-    callback?: (error: Error | null, response?: LGTV.Response) => void,
+    callback?: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public request(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error | null, response?: LGTV.Response) => void,
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
-    callback: (error: Error | null, response?: LGTV.Response) => void,
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error | null, response?: LGTV.Response) => void,
+    callback: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public getSocket(
     url: string,
-    callback?: (error: Error | null, response?: LGTV.Response) => void,
+    callback?: (error: Error, response: LGTV.Response) => void,
   ): void;
 
   public connect(host: string): void;
