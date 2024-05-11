@@ -297,7 +297,7 @@ export async function testConnection(skillToken: string): Promise<void> {
       const request = { skillToken };
       await sendMessageUsingBridgeToken(
         Common.constants.bridge.path.test,
-        bridgeToken,
+        skillToken,
         request,
       );
     } catch (cause) {
