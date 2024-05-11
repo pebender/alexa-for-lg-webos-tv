@@ -225,10 +225,10 @@ export class Frontend {
           let userId: string = "";
           let email: string = "";
           try {
-            const profile: { user_id: string; email: string } =
+            const userProfile: Common.Profile.UserProfile =
               await Common.Profile.getUserProfile(skillToken);
-            userId = profile.user_id;
-            email = profile.email;
+            userId = userProfile.userId;
+            email = userProfile.email;
           } catch (e) {
             const error: Common.Error.AlexaForLGwebOSTVError =
               e as Common.Error.AlexaForLGwebOSTVError;

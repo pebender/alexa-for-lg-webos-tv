@@ -109,11 +109,7 @@ export class SHSRequest {
     );
   }
 
-  public async getUserProfile(): Promise<{
-    user_id: string;
-    email: string;
-    [x: string]: string;
-  }> {
+  public async getUserProfile(): Promise<Profile.UserProfile> {
     const accessToken = this.getAccessToken();
     try {
       return await Profile.getUserProfile(accessToken);
@@ -124,6 +120,11 @@ export class SHSRequest {
         error,
       );
     }
+  }
+
+  public async getUserId(): Promise<string> {
+    const userProfile = await this.getUserProfile();
+    return userProfile.userId;
   }
 
   public async getUserEmail(): Promise<string> {
