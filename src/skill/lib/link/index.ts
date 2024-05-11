@@ -19,7 +19,7 @@ export async function getHostnames(ipAddress: string) {
       });
       sock.end();
     });
-    sock.on("error", (error): void => {
+    sock.on("error", (error: Error): void => {
       reject(error);
       return;
     });
