@@ -13,7 +13,6 @@ export async function getUserProfile(
     hostname: "api.amazon.com",
     port: 443,
     path: "/user/profile",
-    method: "GET",
     headers: {},
   };
   let response;

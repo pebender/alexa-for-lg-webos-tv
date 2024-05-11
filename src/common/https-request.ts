@@ -6,7 +6,6 @@ export type RequestOptions = {
   hostname: string;
   port: number;
   path: string;
-  method: "GET" | "POST";
   headers: { [x: string]: string };
 };
 
@@ -31,24 +30,52 @@ function createHttpError(
   return CommonError.create("", { general, specific });
 }
 
+/**
+ *
+ * This function makes the HTTPS request specified by {@link requestOptions}.
+ * The HTTPS request authenticates itself to the receiver by including
+ * {@link bearerToken} as the bearer token in the HTTP authorization header. If
+ * {@link requestBody} is provided, then the request is made using the HTTP
+ * request method "POST" and includes requestBody as "application/json".
+ * Otherwise, the request is made using the HTTP request method "GET". If the
+ * request is successful, this function returns the JSON formatted response
+ * received. Otherwise, this function throws a {@link CommonError.CommonError}.
+ *
+ * @param requestOptions - basic HTTP options.
+ * @param bearerToken - the bearer token for authorizing the request with the
+ * receiver.
+ * @param requestBody - a JSON object containing the request message to be sent.
+ * @returns a JSON object containing the response body.
+ *
+ * @throws a {@link CommonError.CommonError} with general="http" and specific from
+ * {@link ResponseErrorNames}.
+ */
 export async function request(
   requestOptions: RequestOptions,
   bearerToken: string,
   requestBody?: object,
 ): Promise<object> {
-  const content = JSON.stringify(requestBody);
-  const options: RequestOptions = {
+  const content =
+    typeof requestBody === "undefined" ? "" : JSON.stringify(requestBody);
+  const options: {
+    hostname: string;
+    port: number;
+    path: string;
+    method: string;
+    headers: { [x: string]: string };
+  } = {
     hostname: requestOptions.hostname,
     port: requestOptions.port,
     path: requestOptions.path,
-    method: requestOptions.method,
+    method: typeof requestBody === "undefined" ? "GET" : "POST",
     headers: {},
   };
 
   Object.assign(options.headers, requestOptions.headers);
   options.headers.authorization = `Bearer ${bearerToken}`;
-  options.headers["content-type"] = "application/json";
-  if (requestOptions.method === "POST") {
+  options.headers["Accept"] = "application/json";
+  if (options.method === "POST") {
+    options.headers["content-type"] = "application/json";
     options.headers["content-length"] = Buffer.byteLength(content).toString();
   }
 
@@ -134,7 +161,7 @@ export async function request(
       req.on("error", (): void => {
         reject(createHttpError("UNKNOWN_ERROR"));
       });
-      if (requestOptions.method === "POST") {
+      if (options.method === "POST") {
         req.write(content);
       }
       req.end();

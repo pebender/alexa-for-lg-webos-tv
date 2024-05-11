@@ -45,7 +45,6 @@ export async function getBridgeToken(
     hostname: bridgeHostname,
     path: Common.constants.bridge.path.login,
     port: Common.constants.bridge.port.https,
-    method: "GET",
     headers: {},
   };
 

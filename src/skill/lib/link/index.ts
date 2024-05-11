@@ -142,7 +142,6 @@ export async function sendMessageUsingBridgeToken(
     hostname: bridgeHostname,
     path,
     port: Common.constants.bridge.port.https,
-    method: "POST",
     headers: {},
   };
 
@@ -175,7 +174,6 @@ export async function sendMessageUsingBridgeToken(
         hostname: bridgeHostname,
         path,
         port: Common.constants.bridge.port.https,
-        method: "POST",
         headers: {},
       };
 

@@ -22,10 +22,6 @@
 
 > **hostname**: `string`
 
-### method
-
-> **method**: `"GET"` \| `"POST"`
-
 ### path
 
 > **path**: `string`
