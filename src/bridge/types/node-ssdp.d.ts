@@ -51,7 +51,7 @@ export interface SsdpOptions {
   headers?: SsdpHeaders | undefined;
   /** A logger function to use instead of the default. The first argument to the
    * function can contain a format string. */
-  customLogger?: ((format: string, ...args: any[]) => void) | undefined;
+  customLogger?: ((format: string, ...args: unknown[]) => void) | undefined;
 }
 
 export interface ClientOptions extends SsdpOptions {

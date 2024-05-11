@@ -147,7 +147,7 @@ export class Frontend {
       }
 
       function jwtErrorHandler(
-        err: any,
+        err: unknown,
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
@@ -516,13 +516,11 @@ export class Frontend {
           req: express.Request,
           res: express.Response,
         ): Promise<void> {
-          const shsRequest: object = req.body as object;
+          const shsRequest = req.body as { [key: string]: unknown };
           Common.Debug.debug("Smart Home Skill Request:");
           Common.Debug.debugJSON(shsRequest);
 
-          const shsResponseWrapper = await frontend._middle.handler(
-            shsRequest as any,
-          );
+          const shsResponseWrapper = await frontend._middle.handler(shsRequest);
           const shsResponse = shsResponseWrapper.response;
           const statusCode = shsResponseWrapper.statusCode;
           Common.Debug.debug("Smart Home Skill Response:");

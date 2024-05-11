@@ -39,57 +39,67 @@ export async function getUserProfile(
     path: "/user/profile",
     headers: {},
   };
-  let response;
+  let response: {
+    user_id: unknown;
+    email: unknown;
+    [key: string]: unknown;
+  };
   try {
-    response = await HTTPSRequest.request(requestOptions, accessToken);
-  } catch (cause: any) {
-    const general = (cause as CommonError.CommonError).general;
-    const specific = (cause as CommonError.CommonError).specific;
-    switch (general) {
-      case "http":
-        switch (specific) {
-          case "BAD_REQUEST":
-            throw CommonError.create(
-              "there was an authentication error while retrieving your profile",
-              {
-                general: "authorization",
-                specific: "invalid_token",
-                cause,
-              },
-            );
-          case "UNAUTHORIZED":
-            throw CommonError.create(
-              "there was an authorization error while retrieving your profile",
-              {
-                general: "authorization",
-                specific: "invalid_scope",
-                cause,
-              },
-            );
-          default:
-            throw cause;
-        }
-      default:
-        throw cause;
+    response = (await HTTPSRequest.request(requestOptions, accessToken)) as {
+      user_id: unknown;
+      email: unknown;
+      [key: string]: unknown;
+    };
+  } catch (cause) {
+    if (cause instanceof CommonError.CommonError) {
+      const general = cause.general;
+      const specific = cause.specific;
+      switch (general) {
+        case "http":
+          switch (specific) {
+            case "BAD_REQUEST":
+              throw CommonError.create(
+                "there was an authentication error while retrieving your profile",
+                {
+                  general: "authorization",
+                  specific: "invalid_token",
+                  cause,
+                },
+              );
+            case "UNAUTHORIZED":
+              throw CommonError.create(
+                "there was an authorization error while retrieving your profile",
+                {
+                  general: "authorization",
+                  specific: "invalid_scope",
+                  cause,
+                },
+              );
+            default:
+              throw cause;
+          }
+        default:
+          throw cause;
+      }
     }
     throw cause;
   }
 
-  if (typeof (response as any).user_id === "undefined") {
+  if (typeof response.user_id !== "string") {
     throw CommonError.create("there was no 'user_id' field in your profile", {
       general: "authorization",
       specific: "missing_user_id",
     });
   }
-  if (typeof (response as any).email === "undefined") {
+  if (typeof response.email !== "string") {
     throw CommonError.create("there was no 'email' field in your profile", {
       general: "authorization",
       specific: "missing_email",
     });
   }
   const userProfile: UserProfile = {
-    userId: (response as any).user_id,
-    email: (response as any).email,
+    userId: response.user_id,
+    email: response.email,
   };
   return userProfile;
 }

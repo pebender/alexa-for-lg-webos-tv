@@ -12,7 +12,7 @@
 
 ### cause?
 
-> `optional` **cause**: `any`
+> `optional` **cause**: `unknown`
 
 ### general
 

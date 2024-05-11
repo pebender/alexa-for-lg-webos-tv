@@ -56,7 +56,7 @@
 
 #### Parameters
 
-• **rawRequest**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
+• **rawRequest**: `object`
 
 #### Returns
 

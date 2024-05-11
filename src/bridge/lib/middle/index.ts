@@ -49,9 +49,9 @@ export class Middle {
   }
 
   public async handler(
-    rawRequest: Common.SHS.Request,
+    rawRequest: object,
   ): Promise<Common.SHS.ResponseWrapper> {
-    const shsRequest = new Common.SHS.Request(rawRequest);
+    const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
 
     let authorized: boolean = false;
     try {

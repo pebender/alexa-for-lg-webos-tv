@@ -23,7 +23,7 @@ export type CommonErrorOptions = {
   specific?: string;
   sender?: CommonErrorLocation;
   receiver?: CommonErrorLocation;
-  cause?: any;
+  cause?: unknown;
 };
 
 export class CommonError extends Error implements NodeJS.ErrnoException {

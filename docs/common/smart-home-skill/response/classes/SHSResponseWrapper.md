@@ -206,9 +206,9 @@
 
 • **validRange?**
 
-• **validRange.maximumValue?**: `any`
+• **validRange.maximumValue?**: `unknown`
 
-• **validRange.minimumValue?**: `any`
+• **validRange.minimumValue?**: `unknown`
 
 #### Returns
 

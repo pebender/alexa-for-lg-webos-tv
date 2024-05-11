@@ -389,7 +389,7 @@ export class SHSResponseWrapper {
 
   public static buildAlexaErrorResponseForValueOutOfRange(
     request: SHSRequest,
-    validRange?: { minimumValue: any; maximumValue: any },
+    validRange?: { minimumValue: unknown; maximumValue: unknown },
   ) {
     const type = "VALUE_OUT_OF_RANGE";
     const message = "";

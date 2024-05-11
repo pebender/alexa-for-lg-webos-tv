@@ -18,11 +18,11 @@ async function sendHandler(
   alexaRequest: Common.SHS.Request,
   message: Request,
 ): Promise<Common.SHS.ResponseWrapper> {
-  const response: any = await Link.sendMessageUsingBridgeToken(
+  const response: Common.SHS.Response = (await Link.sendMessageUsingBridgeToken(
     path,
     alexaRequest.getAccessToken(),
     message,
-  );
+  )) as Common.SHS.Response;
   return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }
 

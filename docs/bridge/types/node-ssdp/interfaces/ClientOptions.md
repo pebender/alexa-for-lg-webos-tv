@@ -27,7 +27,7 @@ function can contain a format string.
 
 • **format**: `string`
 
-• ...**args**: `any`[]
+• ...**args**: `unknown`[]
 
 #### Returns
 
