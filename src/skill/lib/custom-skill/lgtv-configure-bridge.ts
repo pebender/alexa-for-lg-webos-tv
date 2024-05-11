@@ -43,10 +43,12 @@ async function createHostnamesSimpleCardContent(
   Common.Debug.debug(
     `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`,
   );
+  const hostnames: string[] = sessionAttributes.hostnames;
+  const hostnameCount = hostnames.length;
   let cardContent: string = "";
-  let index = 0;
-  while (index < sessionAttributes.hostnames.length) {
-    cardContent += `${index}: ${sessionAttributes.hostnames[index]}\n`;
+  let index: number = 0;
+  while (index < hostnameCount) {
+    cardContent += `${index}: ${hostnameCount}\n`;
     index += 1;
   }
   cardContent += `\n${index}: My bridge is not in the list of hostnames.`;
@@ -71,15 +73,14 @@ async function setBridgeCredentials(
 
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
+  const hostnames: string[] = sessionAttributes.hostnames;
   const hostnameIndex: number = Number(
     ASKRequestEnvelope.getSlotValue(
       handlerInput.requestEnvelope,
       "hostnameIndex",
     ),
   );
-  const bridgeHostname: string = sessionAttributes.hostnames[
-    hostnameIndex
-  ] as string;
+  const bridgeHostname: string = hostnames[hostnameIndex];
 
   let credentials: {
     bridgeHostname: string | null;
@@ -309,8 +310,9 @@ const ConfigureBridgeIntentHandler = {
           .getResponse();
       }
 
+      const hostnames: string[] = sessionAttributes.hostnames;
       const hostnameIndex: number = Number(hostnameIndexString);
-      const hostnameCount: number = Number(sessionAttributes.hostnames.length);
+      const hostnameCount: number = Number(hostnames);
       if (
         !Number.isInteger(hostnameIndex) ||
         hostnameIndex >= hostnameCount + 2 ||
@@ -340,14 +342,14 @@ const ConfigureBridgeIntentHandler = {
           .getResponse();
       }
       if (intentRequest.intent.confirmationStatus !== "CONFIRMED") {
-        const hostnameIndex = ASKRequestEnvelope.getSlotValue(
-          handlerInput.requestEnvelope,
-          "hostnameIndex",
+        const hostnameIndex: number = Number(
+          ASKRequestEnvelope.getSlotValue(
+            handlerInput.requestEnvelope,
+            "hostnameIndex",
+          ),
         );
         return handlerInput.responseBuilder
-          .speak(
-            `Is your bridge's hostname ${sessionAttributes.hostnames[hostnameIndex]}?`,
-          )
+          .speak(`Is your bridge's hostname ${hostnames[hostnameIndex]}?`)
           .addConfirmIntentDirective()
           .getResponse();
       }
