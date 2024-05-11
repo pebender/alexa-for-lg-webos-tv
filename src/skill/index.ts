@@ -22,7 +22,7 @@ async function skillHandler(
 
   if ("directive" in request) {
     response = await smartHomeSkillHandler(
-      request as Common.SHS.Request,
+      request,
       context as AWSLambda.Context,
     );
     Common.Debug.debugJSON(response);

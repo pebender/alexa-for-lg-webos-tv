@@ -52,7 +52,10 @@ export async function getBridgeToken(
   const token = await create(x509PrivateKey, skillToken, bridgeHostname);
 
   const response: { token?: string; [key: string]: unknown } =
-    await Common.HTTPSRequest.request(requestOptions, token);
+    (await Common.HTTPSRequest.request(requestOptions, token)) as {
+      token?: string;
+      [key: string]: unknown;
+    };
 
   if (
     typeof response.token === "undefined" ||

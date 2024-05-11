@@ -346,7 +346,7 @@ export class Frontend {
           res.status(400).json({});
           return;
         }
-        if (!/^application\/json/.test((contentType as string).toLowerCase())) {
+        if (!/^application\/json/.test(contentType.toLowerCase())) {
           ipBlacklistIncrement(req, res);
           res.status(415).json({});
           return;

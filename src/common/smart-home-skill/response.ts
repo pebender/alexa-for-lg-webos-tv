@@ -324,12 +324,8 @@ export class SHSResponseWrapper {
     statusCode?: number,
     error?: any,
   ) {
-    const errorName =
-      (error as any).code ||
-      (error as any).name ||
-      (error as any).type ||
-      "unknown";
-    const errorMessage = (error as any).message || "unknown";
+    const errorName = error.code || error.name || error.type || "unknown";
+    const errorMessage = error.message || "unknown";
     const type = "INTERNAL_ERROR";
     const message = `error: ${errorMessage} (${errorName})`;
     return SHSResponseWrapper.buildAlexaErrorResponse(

@@ -57,9 +57,7 @@ export class BackendSearcher extends EventEmitter {
         return;
       }
       if (
-        !(headers.USN as string).endsWith(
-          "::urn:lge-com:service:webos-second-screen:1",
-        )
+        !headers.USN.endsWith("::urn:lge-com:service:webos-second-screen:1")
       ) {
         callback(null, null);
         return;

@@ -108,7 +108,7 @@ async function launchTargetHandler(
 ): Promise<Common.SHS.ResponseWrapper> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
-    typeof alexaToLGTV[alexaRequest.directive.payload.identifier as string] ===
+    typeof alexaToLGTV[alexaRequest.directive.payload.identifier] ===
       "undefined"
   ) {
     return Promise.resolve(

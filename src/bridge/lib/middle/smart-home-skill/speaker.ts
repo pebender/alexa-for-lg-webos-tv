@@ -136,7 +136,7 @@ async function adjustVolumeHandler(
     if (typeof lgtvResponse.volume === "undefined") {
       throw new Error("the T.V. did not return it's volume");
     }
-    let volume = lgtvResponse.volume as number;
+    let volume = lgtvResponse.volume;
     if (typeof alexaRequest.directive.payload.volume !== "undefined") {
       if (alexaRequest.directive.payload.volumeDefault === true) {
         if ((alexaRequest.directive.payload.volume as number) < 0) {

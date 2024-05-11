@@ -73,7 +73,7 @@ async function setBridgeCredentials(
     ASKRequestEnvelope.getSlotValue(
       handlerInput.requestEnvelope,
       "hostnameIndex",
-    ) as string,
+    ),
   );
   const bridgeHostname: string = sessionAttributes.hostnames[
     hostnameIndex
