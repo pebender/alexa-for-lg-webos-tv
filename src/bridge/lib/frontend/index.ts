@@ -176,7 +176,7 @@ export class Frontend {
 
         try {
           const authorized =
-            frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
+            await frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
           if (!authorized) {
             ipBlacklistIncrement(req, res);
             Common.Debug.debug("jwtPayloadHandler: failed authorization");
