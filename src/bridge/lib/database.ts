@@ -38,10 +38,18 @@ export class DatabaseTable {
     //
     const db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
 
-    db.loadDatabaseAsync();
+    try {
+      db.loadDatabaseAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
 
     function index(fieldName: string): Promise<void> {
-      return db.ensureIndexAsync({ fieldName, unique: true });
+      return db
+        .ensureIndexAsync({ fieldName, unique: true })
+        .catch((cause: unknown) => {
+          throw Common.Error.create("", { general: "database", cause });
+        });
     }
     await Promise.all(indexes.map(index));
 
@@ -54,41 +62,69 @@ export class DatabaseTable {
     const query2: DatabaseQuery = {};
     query2[this._key] = null;
     const query: DatabaseQuery = { $or: [query1, query2] };
-    await this._db.removeAsync(query, { multi: true });
-    await this._db.compactDatafileAsync();
+    try {
+      await this._db.removeAsync(query, { multi: true });
+      await this._db.compactDatafileAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async deleteRecord(query: DatabaseQuery): Promise<void> {
-    await this._db.removeAsync(query, { multi: true });
-    await this._db.compactDatafileAsync();
+    try {
+      await this._db.removeAsync(query, { multi: true });
+      await this._db.compactDatafileAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord | null> {
-    return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
+    try {
+      return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
-    return await this._db.findAsync<DatabaseRecord>(query).execAsync();
+    try {
+      return await this._db.findAsync<DatabaseRecord>(query).execAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async insertRecord(record: DatabaseRecord): Promise<void> {
-    await this._db.insertAsync(record);
-    await this._db.compactDatafileAsync();
+    try {
+      await this._db.insertAsync(record);
+      await this._db.compactDatafileAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async updateRecord(
     query: DatabaseQuery,
     update: DatabaseUpdate,
   ): Promise<void> {
-    await this._db.updateAsync(query, update, {});
-    await this._db.compactDatafileAsync();
+    try {
+      await this._db.updateAsync(query, update, {});
+      await this._db.compactDatafileAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 
   public async updateOrInsertRecord(
     query: DatabaseQuery,
     update: DatabaseUpdate,
   ): Promise<void> {
-    await this._db.updateAsync(query, update, { upsert: true });
-    await this._db.compactDatafileAsync();
+    try {
+      await this._db.updateAsync(query, update, { upsert: true });
+      await this._db.compactDatafileAsync();
+    } catch (cause) {
+      throw Common.Error.create("", { general: "database", cause });
+    }
   }
 }
