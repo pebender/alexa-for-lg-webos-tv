@@ -359,7 +359,9 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): Promise<void> {
-        const testRequest: { skillToken?: string } = req.body;
+        const testRequest: { skillToken?: string } = req.body as {
+          skillToken?: string;
+        };
 
         if (typeof testRequest.skillToken !== "string") {
           ipBlacklistIncrement(req, res);
@@ -367,7 +369,7 @@ export class Frontend {
           return;
         }
 
-        const authorizedSkillToken: string = res.locals.skillToken;
+        const authorizedSkillToken: string = res.locals.skillToken as string;
         const skillToken: string = testRequest.skillToken;
 
         if (authorizedSkillToken !== skillToken) {
@@ -400,7 +402,7 @@ export class Frontend {
           });
         }
 
-        const authorizedSkillToken: string = res.locals.skillToken;
+        const authorizedSkillToken: string = res.locals.skillToken as string;
         const skillToken: string = frontend._middle.getSkillToken(req.body);
 
         if (authorizedSkillToken !== skillToken) {
@@ -426,10 +428,10 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("Login:");
 
-        const bridgeHostname = res.locals.bridgeHostname;
-        const email = res.locals.email;
-        const userId = res.locals.userId;
-        const skillToken = res.locals.skillToken;
+        const bridgeHostname: string = res.locals.bridgeHostname as string;
+        const email: string = res.locals.email as string;
+        const userId: string = res.locals.userId as string;
+        const skillToken: string = res.locals.skillToken as string;
 
         const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
         try {
@@ -463,11 +465,13 @@ export class Frontend {
         req: express.Request,
         res: express.Response,
       ): Promise<void> {
-        const shsRequest = req.body;
+        const shsRequest: object = req.body as object;
         Common.Debug.debug("Smart Home Skill Request:");
         Common.Debug.debugJSON(shsRequest);
 
-        const shsResponseWrapper = await frontend._middle.handler(shsRequest);
+        const shsResponseWrapper = await frontend._middle.handler(
+          shsRequest as any,
+        );
         const shsResponse = shsResponseWrapper.response;
         const statusCode = shsResponseWrapper.statusCode;
         Common.Debug.debug("Smart Home Skill Response:");

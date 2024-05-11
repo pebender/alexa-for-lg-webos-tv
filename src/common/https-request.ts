@@ -35,7 +35,7 @@ export async function request(
   requestOptions: RequestOptions,
   bearerToken: string,
   requestBody?: object,
-): Promise<any> {
+): Promise<object> {
   const content = JSON.stringify(requestBody);
   const options: RequestOptions = {
     hostname: requestOptions.hostname,
@@ -58,76 +58,88 @@ export async function request(
 
   let body: object;
   let data = "";
-  const response = new Promise((resolve, reject): void => {
-    const req = https.request(options, (res): void => {
-      res.setEncoding("utf8");
-      res.on("data", (chunk: string): void => {
-        data += chunk;
+  const response = new Promise(
+    (
+      resolve: (value: object) => void,
+      reject: (error: CommonError.AlexaForLGwebOSTVError) => void,
+    ): void => {
+      const req = https.request(options, (res): void => {
+        res.setEncoding("utf8");
+        res.on("data", (chunk: string): void => {
+          data += chunk;
+        });
+        res.on("end", (): void => {
+          if (!res.complete) {
+            reject(createHttpError("CONNECTION_INTERRUPTED"));
+          }
+
+          Debug.debug("HTTP Response");
+          Debug.debug(res.statusCode);
+          Debug.debugJSON(res.headers);
+          Debug.debugJSON(data);
+
+          const statusCode = res.statusCode;
+          const contentType = res.headers["content-type"];
+
+          if (typeof statusCode === "undefined") {
+            reject(createHttpError("STATUS_CODE_MISSING"));
+          }
+          switch (statusCode) {
+            case 400: {
+              reject(createHttpError("BAD_REQUEST"));
+              break;
+            }
+            case 401: {
+              reject(createHttpError("UNAUTHORIZED"));
+              break;
+            }
+            case 403: {
+              reject(createHttpError("FORBIDDEN"));
+              break;
+            }
+            case 500: {
+              reject(createHttpError("INTERNAL_SERVER_ERROR"));
+              break;
+            }
+            case 502: {
+              reject(createHttpError("BAD_GATEWAY"));
+              break;
+            }
+          }
+
+          if (typeof contentType === "undefined") {
+            reject(createHttpError("CONTENT_TYPE_MISSING"));
+          }
+
+          if (
+            !/^application\/json/.test((contentType as string).toLowerCase())
+          ) {
+            reject(createHttpError("CONTENT_TYPE_INCORRECT"));
+          }
+
+          try {
+            const body_unknown: unknown = JSON.parse(data);
+            if (typeof body_unknown !== "object" || body_unknown === null) {
+              reject(createHttpError("BODY_INVALID_FORMAT"));
+              return;
+            }
+            body = body_unknown;
+          } catch (cause) {
+            reject(createHttpError("BODY_INVALID_FORMAT"));
+          }
+          // Return the body.
+          resolve(body);
+        });
       });
-      res.on("end", (): void => {
-        if (!res.complete) {
-          reject(createHttpError("CONNECTION_INTERRUPTED"));
-        }
-
-        Debug.debug("HTTP Response");
-        Debug.debug(res.statusCode);
-        Debug.debugJSON(res.headers);
-        Debug.debugJSON(data);
-
-        const statusCode = res.statusCode;
-        const contentType = res.headers["content-type"];
-
-        if (typeof statusCode === "undefined") {
-          reject(createHttpError("STATUS_CODE_MISSING"));
-        }
-        switch (statusCode) {
-          case 400: {
-            reject(createHttpError("BAD_REQUEST"));
-            break;
-          }
-          case 401: {
-            reject(createHttpError("UNAUTHORIZED"));
-            break;
-          }
-          case 403: {
-            reject(createHttpError("FORBIDDEN"));
-            break;
-          }
-          case 500: {
-            reject(createHttpError("INTERNAL_SERVER_ERROR"));
-            break;
-          }
-          case 502: {
-            reject(createHttpError("BAD_GATEWAY"));
-            break;
-          }
-        }
-
-        if (typeof contentType === "undefined") {
-          reject(createHttpError("CONTENT_TYPE_MISSING"));
-        }
-
-        if (!/^application\/json/.test((contentType as string).toLowerCase())) {
-          reject(createHttpError("CONTENT_TYPE_INCORRECT"));
-        }
-
-        try {
-          body = JSON.parse(data);
-        } catch (cause) {
-          reject(createHttpError("BODY_INVALID_FORMAT"));
-        }
-        // Return the body.
-        resolve(body);
+      req.on("error", (): void => {
+        reject(createHttpError("UNKNOWN_ERROR"));
       });
-    });
-    req.on("error", (): void => {
-      reject(createHttpError("UNKNOWN_ERROR"));
-    });
-    if (requestOptions.method === "POST") {
-      req.write(content);
-    }
-    req.end();
-  });
+      if (requestOptions.method === "POST") {
+        req.write(content);
+      }
+      req.end();
+    },
+  );
 
   return await response;
 }

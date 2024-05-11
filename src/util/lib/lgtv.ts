@@ -142,7 +142,7 @@ async function lgtvRunCommand(backend: Backend) {
         return;
       }
       if (argv.length === 6) {
-        const payload = JSON.parse(argv[5]);
+        const payload = JSON.parse(argv[5]) as LGTV.RequestPayload;
         const lgtvRequest: LGTV.Request = {
           uri,
           payload,

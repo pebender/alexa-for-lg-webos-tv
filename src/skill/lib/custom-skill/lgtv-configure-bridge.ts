@@ -69,11 +69,15 @@ async function setBridgeCredentials(
 
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
-  const hostnameIndex = ASKRequestEnvelope.getSlotValue(
-    handlerInput.requestEnvelope,
-    "hostnameIndex",
-  ) as string;
-  const bridgeHostname = sessionAttributes.hostnames[hostnameIndex];
+  const hostnameIndex: number = Number(
+    ASKRequestEnvelope.getSlotValue(
+      handlerInput.requestEnvelope,
+      "hostnameIndex",
+    ) as string,
+  );
+  const bridgeHostname: string = sessionAttributes.hostnames[
+    hostnameIndex
+  ] as string;
 
   let credentials: {
     bridgeHostname: string | null;
