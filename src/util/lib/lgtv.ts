@@ -117,7 +117,7 @@ function lgtvUdnsCommand(backend: Backend) {
   }
 }
 
-async function lgtvRunCommand(backend: Backend) {
+function lgtvRunCommand(backend: Backend) {
   const argv: string[] = process.argv;
   if (argv.length === 5 || argv.length === 6) {
     const tvList = getSortedTVList(backend);
@@ -196,7 +196,7 @@ async function lgtvCommand() {
       lgtvUdnsCommand(backend);
       break;
     case "run":
-      await lgtvRunCommand(backend);
+      lgtvRunCommand(backend);
       break;
     default: {
       console.log("usage:");

@@ -29,7 +29,7 @@ export class BackendSearcher extends EventEmitter {
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static async build(): Promise<BackendSearcher> {
+  public static build(): BackendSearcher {
     const _ssdpNotify = new SsdpServer();
     const _ssdpResponse = new SsdpClient();
 
@@ -126,7 +126,7 @@ export class BackendSearcher extends EventEmitter {
         callback(null, null);
         return;
       }
-      fetch(headers.LOCATION)
+      void fetch(headers.LOCATION)
         .then((response: Response): Promise<Blob> => {
           if (response.status !== 200) {
             throw new Error("Could not fetch descriptionXML from LG webOS TV");
@@ -207,6 +207,9 @@ export class BackendSearcher extends EventEmitter {
               });
             },
           );
+        })
+        .catch((reason) => {
+          callback(reason, null);
         });
     }
 

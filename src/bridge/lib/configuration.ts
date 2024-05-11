@@ -51,9 +51,7 @@ export class Configuration {
     return configuration;
   }
 
-  public async authorizedUsers(): Promise<
-    { bridgeHostname: string; emails: string[] }[]
-  > {
+  public authorizedUsers(): { bridgeHostname: string; emails: string[] }[] {
     return this._configuration.authorizedUsers;
   }
 }

@@ -103,7 +103,7 @@ const SessionEndedRequestHandler = {
       "SessionEndedRequest"
     );
   },
-  async handle(handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
+  handle(handlerInput: ASKHandlerInput): ASKModel.Response {
     return handlerInput.responseBuilder.getResponse();
   },
 };

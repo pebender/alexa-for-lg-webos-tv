@@ -13,9 +13,7 @@ export class LoginTokenAuth {
     this._x509PublicCert = _x509PublicCert;
   }
 
-  public static async build(
-    configuration: Configuration,
-  ): Promise<LoginTokenAuth> {
+  public static build(configuration: Configuration): LoginTokenAuth {
     const _x509PublicCert = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile),
     );

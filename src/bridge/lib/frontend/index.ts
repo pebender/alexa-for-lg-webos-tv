@@ -388,39 +388,31 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): void {
-        async function asyncTestAuthorizationHandler(
-          req: express.Request,
-          res: express.Response,
-          next: express.NextFunction,
-        ): Promise<void> {
-          const testRequest: { skillToken?: string } = req.body as {
-            skillToken?: string;
-          };
+        const testRequest: { skillToken?: string } = req.body as {
+          skillToken?: string;
+        };
 
-          if (typeof testRequest.skillToken !== "string") {
-            ipBlacklistIncrement(req, res);
-            res.status(422).json({}).send();
-            return;
-          }
-
-          const authorizedSkillToken: string = res.locals.skillToken as string;
-          const skillToken: string = testRequest.skillToken;
-
-          if (authorizedSkillToken !== skillToken) {
-            ipBlacklistIncrement(req, res);
-            const wwwAuthenticate = "Bearer";
-            res
-              .setHeader("WWW-Authenticate", wwwAuthenticate)
-              .status(401)
-              .json({})
-              .send();
-            return;
-          }
-
-          next();
+        if (typeof testRequest.skillToken !== "string") {
+          ipBlacklistIncrement(req, res);
+          res.status(422).json({}).send();
+          return;
         }
 
-        void asyncTestAuthorizationHandler(req, res, next).catch(next);
+        const authorizedSkillToken: string = res.locals.skillToken as string;
+        const skillToken: string = testRequest.skillToken;
+
+        if (authorizedSkillToken !== skillToken) {
+          ipBlacklistIncrement(req, res);
+          const wwwAuthenticate = "Bearer";
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json({})
+            .send();
+          return;
+        }
+
+        next();
       }
 
       function serviceAuthorizationHandler(
@@ -428,43 +420,35 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): void {
-        async function asyncServiceAuthorizationHandler(
-          req: express.Request,
-          res: express.Response,
-          next: express.NextFunction,
-        ): Promise<void> {
-          function shsInvalidAuthorizationCredentialResponse(message: string) {
-            return new Common.SHS.Response({
-              namespace: "Alexa",
-              name: "ErrorResponse",
-              payload: {
-                type: "INVALID_AUTHORIZATION_CREDENTIAL",
-                message,
-              },
-            });
-          }
-
-          const authorizedSkillToken: string = res.locals.skillToken as string;
-          const skillToken: string = frontend._middle.getSkillToken(req.body);
-
-          if (authorizedSkillToken !== skillToken) {
-            ipBlacklistIncrement(req, res);
-            const wwwAuthenticate = "Bearer";
-            const body = shsInvalidAuthorizationCredentialResponse(
-              "Bridge connection failed due to invalid bearer token.",
-            );
-            res
-              .setHeader("WWW-Authenticate", wwwAuthenticate)
-              .status(401)
-              .json(body)
-              .send();
-            return;
-          }
-
-          next();
+        function shsInvalidAuthorizationCredentialResponse(message: string) {
+          return new Common.SHS.Response({
+            namespace: "Alexa",
+            name: "ErrorResponse",
+            payload: {
+              type: "INVALID_AUTHORIZATION_CREDENTIAL",
+              message,
+            },
+          });
         }
 
-        void asyncServiceAuthorizationHandler(req, res, next).catch(next);
+        const authorizedSkillToken: string = res.locals.skillToken as string;
+        const skillToken: string = frontend._middle.getSkillToken(req.body);
+
+        if (authorizedSkillToken !== skillToken) {
+          ipBlacklistIncrement(req, res);
+          const wwwAuthenticate = "Bearer";
+          const body = shsInvalidAuthorizationCredentialResponse(
+            "Bridge connection failed due to invalid bearer token.",
+          );
+          res
+            .setHeader("WWW-Authenticate", wwwAuthenticate)
+            .status(401)
+            .json(body)
+            .send();
+          return;
+        }
+
+        next();
       }
 
       function loginHandler(

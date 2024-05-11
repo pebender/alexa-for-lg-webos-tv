@@ -36,7 +36,6 @@ module.exports = {
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/only-throw-error": "off",
     "@typescript-eslint/prefer-promise-reject-errors": "off",
-    "@typescript-eslint/require-await": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
   },
