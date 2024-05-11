@@ -39,26 +39,24 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
     if (typeof lgtvResponse.channelList === "undefined") {
       return [];
     }
-    const channelList = lgtvResponse.channelList as any[];
+    const channelList = lgtvResponse.channelList as {
+      channelNumber?: string;
+      channelName?: string;
+      [key: string]: unknown;
+    }[];
     const channels: Channel[] = [];
-    channelList.forEach(
-      (channel: {
-        channelNumber?: string;
-        channelName?: string;
-        [key: string]: unknown;
-      }) => {
-        if (
-          typeof channel === "object" &&
-          typeof channel.channelNumber === "string" &&
-          typeof channel.channelName === "string"
-        ) {
-          channels.push({
-            channelNumber: channel.channelNumber,
-            channelName: channel.channelName,
-          });
-        }
-      },
-    );
+    channelList.forEach((channel) => {
+      if (
+        typeof channel === "object" &&
+        typeof channel.channelNumber === "string" &&
+        typeof channel.channelName === "string"
+      ) {
+        channels.push({
+          channelNumber: channel.channelNumber,
+          channelName: channel.channelName,
+        });
+      }
+    });
     return channels;
   } catch {
     return [];

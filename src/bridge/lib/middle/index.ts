@@ -43,12 +43,14 @@ export class Middle {
     return middle;
   }
 
-  public getSkillToken(rawRequest: any): string {
+  public getSkillToken(rawRequest: Common.SHS.Request): string {
     const shsRequest = new Common.SHS.Request(rawRequest);
     return shsRequest.getAccessToken();
   }
 
-  public async handler(rawRequest: any): Promise<Common.SHS.ResponseWrapper> {
+  public async handler(
+    rawRequest: Common.SHS.Request,
+  ): Promise<Common.SHS.ResponseWrapper> {
     const shsRequest = new Common.SHS.Request(rawRequest);
 
     let authorized: boolean = false;
@@ -56,7 +58,9 @@ export class Middle {
       authorized = await this._authorization.authorizeSkillToken(
         shsRequest.getAccessToken(),
       );
-    } catch (cause: any) {
+    } catch (c) {
+      const cause: Common.Error.AlexaForLGwebOSTVError =
+        c as Common.Error.AlexaForLGwebOSTVError;
       if (
         typeof cause.general === "string" &&
         cause.general === "authorization"

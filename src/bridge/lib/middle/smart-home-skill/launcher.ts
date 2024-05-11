@@ -131,8 +131,10 @@ async function launchTargetHandler(
       uri: "ssap://com.webos.applicationManager/listApps",
     };
     try {
-      const response = await backendControl.lgtvCommand(lgtvRequest);
-      const apps: any[] = (response as any).apps;
+      const response = (await backendControl.lgtvCommand(lgtvRequest)) as {
+        [key: string]: unknown;
+      };
+      const apps = response.apps as { id: string; [key: string]: unknown }[];
       const index = apps.findIndex((app) => app.id === requestedApp.id);
       if (index < 0) {
         return Promise.resolve(

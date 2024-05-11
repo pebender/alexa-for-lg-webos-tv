@@ -134,8 +134,10 @@ async function lgtvRunCommand(backend: Backend) {
         try {
           const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
           console.log(JSON.stringify(lgtvResponse, null, 2));
-        } catch (error: any) {
-          console.log(`error: ${error.message} (${error.name})`);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.log(`error: ${error.message} (${error.name})`);
+          }
         }
         return;
       }
@@ -149,8 +151,10 @@ async function lgtvRunCommand(backend: Backend) {
         try {
           const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
           console.log(JSON.stringify(lgtvResponse, null, 2));
-        } catch (error: any) {
-          console.log(`error: ${error.message} (${error.name})`);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.log(`error: ${error.message} (${error.name})`);
+          }
         }
       }
     });

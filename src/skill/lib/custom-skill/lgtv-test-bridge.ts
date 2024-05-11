@@ -16,7 +16,9 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
 
   try {
     await Link.testConnection(accessToken);
-  } catch (cause: any) {
+  } catch (c) {
+    const cause: Common.Error.AlexaForLGwebOSTVError =
+      c as Common.Error.AlexaForLGwebOSTVError;
     Common.Debug.debugErrorWithStack(cause);
     if (typeof cause.general === "string") {
       switch (cause.general) {
@@ -112,7 +114,7 @@ const TestBridgeIntentHandler = {
         .speak(speechOutput)
         .withShouldEndSession(true)
         .getResponse();
-    } catch (error: any) {
+    } catch (error) {
       const speechOutput = error as string;
       return handlerInput.responseBuilder
         .speak(speechOutput)

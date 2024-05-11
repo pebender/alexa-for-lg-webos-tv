@@ -22,7 +22,7 @@ const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 function createDatabaseError(
   message: string,
-  options?: { specific?: string; cause?: any },
+  options?: { specific?: string; cause?: unknown },
 ) {
   const databaseErrorOptions: Common.Error.AlexaForLGwebOSTVErrorOptions = {
     general: "database",

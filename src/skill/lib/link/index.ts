@@ -56,7 +56,9 @@ export async function getCredentials(
     let userId: string;
     try {
       userId = await Common.Profile.getUserId(skillToken);
-    } catch (cause: any) {
+    } catch (c) {
+      const cause: Common.Error.AlexaForLGwebOSTVError =
+        c as Common.Error.AlexaForLGwebOSTVError;
       if (
         typeof cause.general === "string" &&
         cause.general === "authorization"
@@ -126,7 +128,7 @@ export async function sendMessageUsingBridgeToken(
   path: string,
   skillToken: string,
   message: object,
-): Promise<any> {
+): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
   if (bridgeHostname === null || bridgeToken === null) {
     throw Common.Error.create("", {
@@ -145,14 +147,14 @@ export async function sendMessageUsingBridgeToken(
     headers: {},
   };
 
-  let response: any;
+  let response: object;
   try {
     response = await Common.HTTPSRequest.request(
       requestOptions,
       bridgeToken,
       message,
     );
-  } catch (error: any) {
+  } catch (error) {
     if (
       (error as Common.Error.AlexaForLGwebOSTVError).general === "http" &&
       (error as Common.Error.AlexaForLGwebOSTVError).specific === "UNAUTHORIZED"
@@ -203,7 +205,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
           return;
         })
-        .on("error", (cause: any): void => {
+        .on("error", (cause): void => {
           const error = Common.Error.create("", {
             general: "link",
             specific: "test_failed_tcp_connection",
@@ -226,7 +228,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
           return;
         })
-        .on("error", (cause: any): void => {
+        .on("error", (cause): void => {
           const error = Common.Error.create("", {
             general: "link",
             specific: "test_failed_tls_connection",
@@ -252,7 +254,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
           return;
         })
-        .on("error", (cause: any): void => {
+        .on("error", (cause): void => {
           const error = Common.Error.create("", {
             general: "link",
             specific: "test_failed_tls_certificate_validation",
@@ -275,7 +277,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
           return;
         })
-        .on("error", (cause: any): void => {
+        .on("error", (cause): void => {
           const error = Common.Error.create("", {
             general: "link",
             specific: "test_failed_tls_hostname_validation",
@@ -298,12 +300,8 @@ export async function testConnection(skillToken: string): Promise<void> {
         bridgeToken,
         request,
       );
-    } catch (cause: any) {
-      if (
-        typeof cause.general === "string" &&
-        cause.general === "http" &&
-        typeof cause.specific === "string"
-      ) {
+    } catch (cause) {
+      if (cause instanceof Common.Error.AlexaForLGwebOSTVError) {
         switch (cause.specific) {
           case "BAD_GATEWAY":
             throw Common.Error.create("", {

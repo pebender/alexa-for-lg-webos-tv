@@ -34,7 +34,7 @@ export class Frontend {
     _loginTokenAuth: LoginTokenAuth,
     _bridgeTokenAuth: BridgeTokenAuth,
     _middle: Middle,
-    _ipBlacklist: any,
+    _ipBlacklist: IPBlacklist,
     _ajv: Ajv,
     _schemaValidator: AjvTypes.ValidateFunction,
     _server: express.Express,
@@ -207,7 +207,7 @@ export class Frontend {
             await Common.Profile.getUserProfile(skillToken);
           userId = profile.user_id;
           email = profile.email;
-        } catch (e: any) {
+        } catch (e) {
           const error: Common.Error.AlexaForLGwebOSTVError =
             e as Common.Error.AlexaForLGwebOSTVError;
           if (

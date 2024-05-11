@@ -4,14 +4,13 @@ import Redis from "redis";
 import express from "express";
 
 declare module "@outofsync/express-ip-blacklist" {
-  type ClosureFn = (...params: any) => void;
   type IPBlacklistLookupFn = (req: express.Request) => string[];
   type IPBlacklistWhiteListFn = (req: express.Request) => string[] | boolean;
   type IPBlacklistOnBlacklistFn = (
     req: express.Request,
     res: express.Response,
-    next: ClosureFn,
-  ) => any;
+    next: express.NextFunction,
+  ) => void;
   type Cache = typeof ObjectKeyCache | typeof MemoryCache | typeof Redis;
 
   interface IPBlacklistOptions {
@@ -28,7 +27,7 @@ declare module "@outofsync/express-ip-blacklist" {
       namespace: string,
       config?: IPBlacklistOptions,
       cache?: Cache,
-      log?: any,
+      log?: unknown,
     );
 
     increment(

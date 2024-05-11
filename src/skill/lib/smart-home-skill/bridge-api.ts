@@ -109,7 +109,9 @@ export async function sendSkillDirective(
   const shsPath: string = Common.constants.bridge.path.service;
   try {
     return await sendHandler(shsPath, request, request);
-  } catch (error: any) {
+  } catch (e) {
+    const error: Common.Error.AlexaForLGwebOSTVError =
+      e as Common.Error.AlexaForLGwebOSTVError;
     Common.Debug.debugErrorWithStack(error);
     return mapErrorToAlexaResponse(request, error);
   }
