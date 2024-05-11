@@ -124,39 +124,47 @@ async function lgtvRunCommand(backend: Backend) {
     const tv = tvList[parseInt(argv[3])];
     console.log(`udn: ${tv.udn}`);
     const backendControl = backend.control(tv.udn);
-    backendControl.on("connect", async () => {
-      const uri = `ssap://${argv[4]}`;
-      if (argv.length === 5) {
-        const lgtvRequest: LGTV.Request = {
-          uri,
-        };
-        console.log(JSON.stringify(lgtvRequest, null, 2));
-        try {
-          const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
-          console.log(JSON.stringify(lgtvResponse, null, 2));
-        } catch (error) {
-          if (error instanceof Error) {
-            console.log(`error: ${error.message} (${error.name})`);
+    backendControl.on("connect", () => {
+      const asyncConnect = async () => {
+        const uri = `ssap://${argv[4]}`;
+        if (argv.length === 5) {
+          const lgtvRequest: LGTV.Request = {
+            uri,
+          };
+          console.log(JSON.stringify(lgtvRequest, null, 2));
+          try {
+            const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+            console.log(JSON.stringify(lgtvResponse, null, 2));
+          } catch (error) {
+            if (error instanceof Error) {
+              console.log(`error: ${error.message} (${error.name})`);
+            }
+          }
+          return;
+        }
+        if (argv.length === 6) {
+          const payload = JSON.parse(argv[5]) as LGTV.RequestPayload;
+          const lgtvRequest: LGTV.Request = {
+            uri,
+            payload,
+          };
+          console.log(JSON.stringify(lgtvRequest, null, 2));
+          try {
+            const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+            console.log(JSON.stringify(lgtvResponse, null, 2));
+          } catch (error) {
+            if (error instanceof Error) {
+              console.log(`error: ${error.message} (${error.name})`);
+            }
           }
         }
-        return;
-      }
-      if (argv.length === 6) {
-        const payload = JSON.parse(argv[5]) as LGTV.RequestPayload;
-        const lgtvRequest: LGTV.Request = {
-          uri,
-          payload,
-        };
-        console.log(JSON.stringify(lgtvRequest, null, 2));
-        try {
-          const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
-          console.log(JSON.stringify(lgtvResponse, null, 2));
-        } catch (error) {
-          if (error instanceof Error) {
-            console.log(`error: ${error.message} (${error.name})`);
-          }
+      };
+
+      asyncConnect().catch((error) => {
+        if (error instanceof Error) {
+          console.log(`error: ${error.message} (${error.name})`);
         }
-      }
+      });
     });
   } else {
     console.log("usage:");

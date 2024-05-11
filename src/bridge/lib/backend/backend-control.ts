@@ -7,6 +7,7 @@ import {
   Server as SsdpServer,
   SsdpHeaders,
 } from "node-ssdp";
+import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
 import LGTV from "lgtv2";
 import { TV } from "./tv";
@@ -183,42 +184,49 @@ export class BackendControl extends EventEmitter {
       let finished = false;
       const finishMutex = new Mutex();
       let finishUUID: string | null = null;
-      async function finish(poweredOn: boolean): Promise<void> {
-        const currentUUID = await finishMutex.runExclusive(
-          (): Promise<string | null> =>
-            new Promise<string | null>((resolve): void => {
-              if (finished) {
-                resolve(null);
-                return;
-              }
-              finishUUID = randomUUID();
 
-              if (wolTimeoutObject !== null) {
-                clearInterval(wolTimeoutObject);
-                wolTimeoutObject = null;
-              }
-              if (searchTimeoutObject !== null) {
-                clearInterval(searchTimeoutObject);
-                searchTimeoutObject = null;
-              }
-              if (monitorTimeoutObject !== null) {
-                clearInterval(monitorTimeoutObject);
-                monitorTimeoutObject = null;
-              }
-              if (finishTimeoutObject !== null) {
-                clearTimeout(finishTimeoutObject);
-                finishTimeoutObject = null;
-              }
-              resolve(finishUUID);
-            }),
-        );
-        if (finishUUID !== null && currentUUID === finishUUID) {
-          if (!finished) {
-            finishUUID = null;
-            finished = true;
-            resolve(poweredOn);
+      function finish(powerOn: boolean): void {
+        async function asyncFinish(poweredOn: boolean): Promise<void> {
+          const currentUUID = await finishMutex.runExclusive(
+            (): Promise<string | null> =>
+              new Promise<string | null>((resolve): void => {
+                if (finished) {
+                  resolve(null);
+                  return;
+                }
+                finishUUID = randomUUID();
+
+                if (wolTimeoutObject !== null) {
+                  clearInterval(wolTimeoutObject);
+                  wolTimeoutObject = null;
+                }
+                if (searchTimeoutObject !== null) {
+                  clearInterval(searchTimeoutObject);
+                  searchTimeoutObject = null;
+                }
+                if (monitorTimeoutObject !== null) {
+                  clearInterval(monitorTimeoutObject);
+                  monitorTimeoutObject = null;
+                }
+                if (finishTimeoutObject !== null) {
+                  clearTimeout(finishTimeoutObject);
+                  finishTimeoutObject = null;
+                }
+                resolve(finishUUID);
+              }),
+          );
+          if (finishUUID !== null && currentUUID === finishUUID) {
+            if (!finished) {
+              finishUUID = null;
+              finished = true;
+              resolve(poweredOn);
+            }
           }
         }
+
+        void asyncFinish(powerOn).catch((reason) => {
+          Common.Debug.debugErrorWithStack(reason);
+        });
       }
 
       finishTimeoutObject = setTimeout(finish, 7000, false);

@@ -27,7 +27,6 @@ module.exports = {
     "@typescript-eslint/no-dynamic-delete": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-floating-promises": "off",
-    "@typescript-eslint/no-misused-promises": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-redundant-type-constituents": "off",
     "@typescript-eslint/no-unnecessary-condition": "off",

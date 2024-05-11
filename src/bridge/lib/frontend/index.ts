@@ -129,6 +129,19 @@ export class Frontend {
         frontend._ipBlacklist.increment(req, res);
       }
 
+      function loginTokenAuthorizationHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): void {
+        const asyncLoginTokenAuthorizationHandler = expressjwt({
+          secret: frontend._loginTokenAuth.x509PublicCert(),
+          algorithms: ["RS256"],
+        });
+
+        void asyncLoginTokenAuthorizationHandler(req, res, next).catch(next);
+      }
+
       function jwtErrorHandler(
         err: any,
         req: express.Request,
@@ -157,182 +170,198 @@ export class Frontend {
         return;
       }
 
-      async function jwtPayloadHandler(
+      function jwtPayloadHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
-      ) {
-        Common.Debug.debug("jwtPayloadHandler: start");
-        const jwtPayload = (req as unknown as ExpressJwtRequest).auth;
+      ): void {
+        async function asyncJwtPayloadHandler(
+          req: express.Request,
+          res: express.Response,
+          next: express.NextFunction,
+        ): Promise<void> {
+          Common.Debug.debug("jwtPayloadHandler: start");
+          const jwtPayload = (req as unknown as ExpressJwtRequest).auth;
 
-        if (typeof jwtPayload === "undefined") {
-          ipBlacklistIncrement(req, res);
-          Common.Debug.debug("jwtPayloadHandler: error: no 'req.auth'.");
-          res.status(401).json({}).end();
-          return;
-        }
-
-        Common.Debug.debugJSON(jwtPayload);
-
-        try {
-          const authorized =
-            frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
-          if (!authorized) {
+          if (typeof jwtPayload === "undefined") {
             ipBlacklistIncrement(req, res);
-            Common.Debug.debug("jwtPayloadHandler: failed authorization");
-            res.status(401).json({});
+            Common.Debug.debug("jwtPayloadHandler: error: no 'req.auth'.");
+            res.status(401).json({}).end();
             return;
           }
-        } catch (error) {
-          res.status(500).json({});
-        }
 
-        if (typeof jwtPayload.sub !== "string") {
-          res.status(500).json({});
-          return;
-        }
-        const skillToken = jwtPayload.sub;
+          Common.Debug.debugJSON(jwtPayload);
 
-        if (typeof jwtPayload.aud !== "string") {
-          res.status(500).json({});
-          return;
-        }
-        const url = new URL(jwtPayload.aud);
-        const bridgeHostname = url.hostname;
+          try {
+            const authorized =
+              await frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
+            if (!authorized) {
+              ipBlacklistIncrement(req, res);
+              Common.Debug.debug("jwtPayloadHandler: failed authorization");
+              res.status(401).json({});
+              return;
+            }
+          } catch (error) {
+            res.status(500).json({});
+          }
 
-        let userId: string = "";
-        let email: string = "";
-        try {
-          const profile: { user_id: string; email: string } =
-            await Common.Profile.getUserProfile(skillToken);
-          userId = profile.user_id;
-          email = profile.email;
-        } catch (e) {
-          const error: Common.Error.AlexaForLGwebOSTVError =
-            e as Common.Error.AlexaForLGwebOSTVError;
-          if (
-            typeof error.general === "string" &&
-            error.general === "authorization"
-          ) {
-            const wwwAuthenticate = "Bearer";
-            res
-              .setHeader("WWW-Authenticate", wwwAuthenticate)
-              .status(401)
-              .json({})
-              .send();
+          if (typeof jwtPayload.sub !== "string") {
+            res.status(500).json({});
             return;
           }
-          res.status(500).json({}).send();
-          return;
+          const skillToken = jwtPayload.sub;
+
+          if (typeof jwtPayload.aud !== "string") {
+            res.status(500).json({});
+            return;
+          }
+          const url = new URL(jwtPayload.aud);
+          const bridgeHostname = url.hostname;
+
+          let userId: string = "";
+          let email: string = "";
+          try {
+            const profile: { user_id: string; email: string } =
+              await Common.Profile.getUserProfile(skillToken);
+            userId = profile.user_id;
+            email = profile.email;
+          } catch (e) {
+            const error: Common.Error.AlexaForLGwebOSTVError =
+              e as Common.Error.AlexaForLGwebOSTVError;
+            if (
+              typeof error.general === "string" &&
+              error.general === "authorization"
+            ) {
+              const wwwAuthenticate = "Bearer";
+              res
+                .setHeader("WWW-Authenticate", wwwAuthenticate)
+                .status(401)
+                .json({})
+                .send();
+              return;
+            }
+            res.status(500).json({}).send();
+            return;
+          }
+
+          res.locals.bridgeHostname = bridgeHostname;
+          res.locals.userId = userId;
+          res.locals.email = email;
+          res.locals.skillToken = skillToken;
+
+          next();
         }
 
-        res.locals.bridgeHostname = bridgeHostname;
-        res.locals.userId = userId;
-        res.locals.email = email;
-        res.locals.skillToken = skillToken;
-
-        next();
+        void asyncJwtPayloadHandler(req, res, next).catch(next);
       }
 
-      async function bridgeTokenAuthorizationHandler(
+      function bridgeTokenAuthorizationHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
-      ): Promise<void> {
-        Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
-        function shsInvalidAuthorizationCredentialResponse(message: string) {
-          return new Common.SHS.Response({
-            namespace: "Alexa",
-            name: "ErrorResponse",
-            payload: {
-              type: "INVALID_AUTHORIZATION_CREDENTIAL",
-              message,
-            },
-          });
-        }
+      ): void {
+        async function asyncBridgeTokenAuthorizationHandler(
+          req: express.Request,
+          res: express.Response,
+          next: express.NextFunction,
+        ): Promise<void> {
+          Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
+          function shsInvalidAuthorizationCredentialResponse(message: string) {
+            return new Common.SHS.Response({
+              namespace: "Alexa",
+              name: "ErrorResponse",
+              payload: {
+                type: "INVALID_AUTHORIZATION_CREDENTIAL",
+                message,
+              },
+            });
+          }
 
-        res.locals.bridgeHostname = null;
-        res.locals.userId = null;
-        res.locals.email = null;
-        res.locals.skillToken = null;
+          res.locals.bridgeHostname = null;
+          res.locals.userId = null;
+          res.locals.email = null;
+          res.locals.skillToken = null;
 
-        // Extract bridgeToken from "authorization" header. RFC-6750 allows
-        // for the Bearer token to be included in the "authorization" header, as
-        // part part of the URL or in the body. Since we put it in the header, we
-        // know that is were it will be. Per RFC-6750, failure to find the Bearer
-        // token results 401 response that includes a "WWW-Authenticate" header.
-        const wwwAuthenticate = "Bearer";
-        if (req.headers.authorization === "undefined") {
-          ipBlacklistIncrement(req, res);
-          const body = shsInvalidAuthorizationCredentialResponse(
-            'Bridge connection failed due to missing "authorization" header.',
-          );
-          Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
-          Common.Debug.debugJSON(body);
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json({});
-          return;
-        }
-        const authorization = (req.headers.authorization as string).split(
-          /\s+/,
-        );
-        if (authorization.length !== 2) {
-          ipBlacklistIncrement(req, res);
-          const body = shsInvalidAuthorizationCredentialResponse(
-            'Bridge connection failed due to malformed "authorization" header.',
-          );
-          Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
-          Common.Debug.debugJSON(body);
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json(body);
-          return;
-        }
-        if (authorization[0].toLowerCase() !== "bearer") {
-          ipBlacklistIncrement(req, res);
-          const body = shsInvalidAuthorizationCredentialResponse(
-            "Bridge connection failed due to incorrect authorization method.",
-          );
-          Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
-          Common.Debug.debugJSON(body);
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json(body);
-          return;
-        }
-        const bridgeToken = authorization[1];
-
-        try {
-          const record =
-            await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
-          if (record === null) {
+          // Extract bridgeToken from "authorization" header. RFC-6750 allows
+          // for the Bearer token to be included in the "authorization" header, as
+          // part part of the URL or in the body. Since we put it in the header, we
+          // know that is were it will be. Per RFC-6750, failure to find the Bearer
+          // token results 401 response that includes a "WWW-Authenticate" header.
+          const wwwAuthenticate = "Bearer";
+          if (req.headers.authorization === "undefined") {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
-              "Bridge connection failed due to invalid bearer token.",
+              'Bridge connection failed due to missing "authorization" header.',
             );
+            Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
             res
               .setHeader("WWW-Authenticate", wwwAuthenticate)
               .status(401)
-              .json(body)
-              .send();
+              .json({});
             return;
           }
-          res.locals.bridgeHostname = record.bridgeHostname;
-          res.locals.email = record.email;
-          res.locals.userId = record.userId;
-          res.locals.skillToken = record.skillToken;
-        } catch (error) {
-          Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
-          Common.Debug.debugError(error);
-          res.status(500).json({});
-          return;
+          const authorization = (req.headers.authorization as string).split(
+            /\s+/,
+          );
+          if (authorization.length !== 2) {
+            ipBlacklistIncrement(req, res);
+            const body = shsInvalidAuthorizationCredentialResponse(
+              'Bridge connection failed due to malformed "authorization" header.',
+            );
+            Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json(body);
+            return;
+          }
+          if (authorization[0].toLowerCase() !== "bearer") {
+            ipBlacklistIncrement(req, res);
+            const body = shsInvalidAuthorizationCredentialResponse(
+              "Bridge connection failed due to incorrect authorization method.",
+            );
+            Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json(body);
+            return;
+          }
+          const bridgeToken = authorization[1];
+
+          try {
+            const record =
+              await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
+            if (record === null) {
+              ipBlacklistIncrement(req, res);
+              const body = shsInvalidAuthorizationCredentialResponse(
+                "Bridge connection failed due to invalid bearer token.",
+              );
+              res
+                .setHeader("WWW-Authenticate", wwwAuthenticate)
+                .status(401)
+                .json(body)
+                .send();
+              return;
+            }
+            res.locals.bridgeHostname = record.bridgeHostname;
+            res.locals.email = record.email;
+            res.locals.userId = record.userId;
+            res.locals.skillToken = record.skillToken;
+          } catch (error) {
+            Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
+            Common.Debug.debugError(error);
+            res.status(500).json({});
+            return;
+          }
+          Common.Debug.debug("bridgeTokenAuthorizationHandler: success");
+          next();
         }
-        Common.Debug.debug("bridgeTokenAuthorizationHandler: success");
-        next();
+
+        void asyncBridgeTokenAuthorizationHandler(req, res, next).catch(next);
       }
 
       function requestTypeHandler(
@@ -354,155 +383,184 @@ export class Frontend {
         next();
       }
 
-      async function testAuthorizationHandler(
+      function testAuthorizationHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
-      ): Promise<void> {
-        const testRequest: { skillToken?: string } = req.body as {
-          skillToken?: string;
-        };
+      ): void {
+        async function asyncTestAuthorizationHandler(
+          req: express.Request,
+          res: express.Response,
+          next: express.NextFunction,
+        ): Promise<void> {
+          const testRequest: { skillToken?: string } = req.body as {
+            skillToken?: string;
+          };
 
-        if (typeof testRequest.skillToken !== "string") {
-          ipBlacklistIncrement(req, res);
-          res.status(422).json({}).send();
-          return;
+          if (typeof testRequest.skillToken !== "string") {
+            ipBlacklistIncrement(req, res);
+            res.status(422).json({}).send();
+            return;
+          }
+
+          const authorizedSkillToken: string = res.locals.skillToken as string;
+          const skillToken: string = testRequest.skillToken;
+
+          if (authorizedSkillToken !== skillToken) {
+            ipBlacklistIncrement(req, res);
+            const wwwAuthenticate = "Bearer";
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json({})
+              .send();
+            return;
+          }
+
+          next();
         }
 
-        const authorizedSkillToken: string = res.locals.skillToken as string;
-        const skillToken: string = testRequest.skillToken;
-
-        if (authorizedSkillToken !== skillToken) {
-          ipBlacklistIncrement(req, res);
-          const wwwAuthenticate = "Bearer";
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json({})
-            .send();
-          return;
-        }
-
-        next();
+        void asyncTestAuthorizationHandler(req, res, next).catch(next);
       }
 
-      async function serviceAuthorizationHandler(
+      function serviceAuthorizationHandler(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction,
-      ): Promise<void> {
-        function shsInvalidAuthorizationCredentialResponse(message: string) {
-          return new Common.SHS.Response({
-            namespace: "Alexa",
-            name: "ErrorResponse",
-            payload: {
-              type: "INVALID_AUTHORIZATION_CREDENTIAL",
-              message,
-            },
+      ): void {
+        async function asyncServiceAuthorizationHandler(
+          req: express.Request,
+          res: express.Response,
+          next: express.NextFunction,
+        ): Promise<void> {
+          function shsInvalidAuthorizationCredentialResponse(message: string) {
+            return new Common.SHS.Response({
+              namespace: "Alexa",
+              name: "ErrorResponse",
+              payload: {
+                type: "INVALID_AUTHORIZATION_CREDENTIAL",
+                message,
+              },
+            });
+          }
+
+          const authorizedSkillToken: string = res.locals.skillToken as string;
+          const skillToken: string = frontend._middle.getSkillToken(req.body);
+
+          if (authorizedSkillToken !== skillToken) {
+            ipBlacklistIncrement(req, res);
+            const wwwAuthenticate = "Bearer";
+            const body = shsInvalidAuthorizationCredentialResponse(
+              "Bridge connection failed due to invalid bearer token.",
+            );
+            res
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json(body)
+              .send();
+            return;
+          }
+
+          next();
+        }
+
+        void asyncServiceAuthorizationHandler(req, res, next).catch(next);
+      }
+
+      function loginHandler(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction,
+      ): void {
+        async function asyncLoginHandler(
+          req: express.Request,
+          res: express.Response,
+        ): Promise<void> {
+          Common.Debug.debug("Login:");
+
+          const bridgeHostname: string = res.locals.bridgeHostname as string;
+          const email: string = res.locals.email as string;
+          const userId: string = res.locals.userId as string;
+          const skillToken: string = res.locals.skillToken as string;
+
+          const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
+          try {
+            await frontend._bridgeTokenAuth.setBridgeToken(
+              bridgeToken,
+              bridgeHostname,
+              email,
+              userId,
+              skillToken,
+            );
+          } catch (error) {
+            res.status(500).json({});
+            return;
+          }
+
+          res.status(200).json({
+            token: bridgeToken,
           });
         }
 
-        const authorizedSkillToken: string = res.locals.skillToken as string;
-        const skillToken: string = frontend._middle.getSkillToken(req.body);
-
-        if (authorizedSkillToken !== skillToken) {
-          ipBlacklistIncrement(req, res);
-          const wwwAuthenticate = "Bearer";
-          const body = shsInvalidAuthorizationCredentialResponse(
-            "Bridge connection failed due to invalid bearer token.",
-          );
-          res
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json(body)
-            .send();
-          return;
-        }
-
-        next();
+        void asyncLoginHandler(req, res).catch(next);
       }
 
-      async function loginHandler(
-        req: express.Request,
-        res: express.Response,
-      ): Promise<void> {
-        Common.Debug.debug("Login:");
-
-        const bridgeHostname: string = res.locals.bridgeHostname as string;
-        const email: string = res.locals.email as string;
-        const userId: string = res.locals.userId as string;
-        const skillToken: string = res.locals.skillToken as string;
-
-        const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
-        try {
-          await frontend._bridgeTokenAuth.setBridgeToken(
-            bridgeToken,
-            bridgeHostname,
-            email,
-            userId,
-            skillToken,
-          );
-        } catch (error) {
-          res.status(500).json({});
-          return;
-        }
-
-        res.status(200).json({
-          token: bridgeToken,
-        });
-      }
-
-      async function testHandler(
-        req: express.Request,
-        res: express.Response,
-      ): Promise<void> {
+      function testHandler(req: express.Request, res: express.Response): void {
         Common.Debug.debug("Test:");
 
         res.status(200).json({});
       }
 
-      async function serviceHandler(
+      function serviceHandler(
         req: express.Request,
         res: express.Response,
-      ): Promise<void> {
-        const shsRequest: object = req.body as object;
-        Common.Debug.debug("Smart Home Skill Request:");
-        Common.Debug.debugJSON(shsRequest);
+        next: express.NextFunction,
+      ): void {
+        async function asyncServiceHandler(
+          req: express.Request,
+          res: express.Response,
+        ): Promise<void> {
+          const shsRequest: object = req.body as object;
+          Common.Debug.debug("Smart Home Skill Request:");
+          Common.Debug.debugJSON(shsRequest);
 
-        const shsResponseWrapper = await frontend._middle.handler(
-          shsRequest as any,
-        );
-        const shsResponse = shsResponseWrapper.response;
-        const statusCode = shsResponseWrapper.statusCode;
-        Common.Debug.debug("Smart Home Skill Response:");
-        Common.Debug.debug(`statusCode: ${statusCode}`);
-        Common.Debug.debugJSON(shsResponse);
-        if (typeof shsResponseWrapper.error !== "undefined") {
-          Common.Debug.debug("smart home skill error response");
-          Common.Debug.debugErrorWithStack(shsResponseWrapper.error);
-        }
-
-        // Check SHS Response against the SHS schema.
-        try {
-          const valid = await frontend._schemaValidator(shsResponse);
-          if (!valid) {
-            Common.Debug.debug(
-              "Smart Home Skill Response schema validation validation",
-            );
-            Common.Debug.debugJSON(frontend._schemaValidator.errors);
-          } else {
-            Common.Debug.debug(
-              "Smart Home Skill Response schema validation passed",
-            );
-          }
-        } catch (error) {
-          Common.Debug.debug(
-            "Smart Home Skill Response schema validation error:",
+          const shsResponseWrapper = await frontend._middle.handler(
+            shsRequest as any,
           );
-          Common.Debug.debugError(error);
+          const shsResponse = shsResponseWrapper.response;
+          const statusCode = shsResponseWrapper.statusCode;
+          Common.Debug.debug("Smart Home Skill Response:");
+          Common.Debug.debug(`statusCode: ${statusCode}`);
+          Common.Debug.debugJSON(shsResponse);
+          if (typeof shsResponseWrapper.error !== "undefined") {
+            Common.Debug.debug("smart home skill error response");
+            Common.Debug.debugErrorWithStack(shsResponseWrapper.error);
+          }
+
+          // Check SHS Response against the SHS schema.
+          try {
+            const valid = await frontend._schemaValidator(shsResponse);
+            if (!valid) {
+              Common.Debug.debug(
+                "Smart Home Skill Response schema validation validation",
+              );
+              Common.Debug.debugJSON(frontend._schemaValidator.errors);
+            } else {
+              Common.Debug.debug(
+                "Smart Home Skill Response schema validation passed",
+              );
+            }
+          } catch (error) {
+            Common.Debug.debug(
+              "Smart Home Skill Response schema validation error:",
+            );
+            Common.Debug.debugError(error);
+          }
+
+          res.status(statusCode).json(shsResponse);
         }
 
-        res.status(statusCode).json(shsResponse);
+        asyncServiceHandler(req, res).catch(next);
       }
 
       // Log request message
@@ -513,10 +571,7 @@ export class Frontend {
       // Handle login
       frontend._server.get(
         Common.constants.bridge.path.login,
-        expressjwt({
-          secret: frontend._loginTokenAuth.x509PublicCert(),
-          algorithms: ["RS256"],
-        }),
+        loginTokenAuthorizationHandler,
         jwtErrorHandler,
         jwtPayloadHandler,
         loginHandler,
