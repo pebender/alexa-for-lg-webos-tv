@@ -2,10 +2,34 @@ import * as HTTPSRequest from "./https-request";
 import * as CommonError from "./error";
 
 export type UserProfile = {
+  /** The user_id from the user's linked {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon} account profile. */
   userId: string;
+  /** The email from the user's linked {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon} account profile. */
   email: string;
 };
 
+/**
+ *
+ * This function retrieves the user profile specified by accessToken from the
+ * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}.
+ * If successful, it return the {@link UserProfile}. Otherwise, it throws a
+ * {@link CommonError.CommonError} with
+ * {@link CommonError.CommonErrorOptions.general | general}="authorization" for
+ * any authorization related failures and
+ * {@link CommonError.CommonErrorOptions.general | general}="http" for any
+ * others.
+ *
+ * @param accessToken - access token from a skill message.
+ * @returns - the profile returned by the
+ * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}
+ * profile server in response to accessToken.
+ *
+ * @throws - a {@link CommonError.CommonError} with
+ * {@link CommonError.CommonErrorOptions.general | general}="authorization" for
+ * any authorization related failures and
+ * {@link CommonError.CommonErrorOptions.general | general}="http" for any
+ * others.
+ */
 export async function getUserProfile(
   accessToken: string,
 ): Promise<UserProfile> {
@@ -48,6 +72,7 @@ export async function getUserProfile(
       default:
         throw cause;
     }
+    throw cause;
   }
 
   if (typeof (response as any).user_id === "undefined") {
@@ -67,14 +92,4 @@ export async function getUserProfile(
     email: (response as any).email,
   };
   return userProfile;
-}
-
-export async function getUserId(accessToken: string): Promise<string> {
-  const userProfile = await getUserProfile(accessToken);
-  return userProfile.userId;
-}
-
-export async function getUserEmail(accessToken: string): Promise<string> {
-  const userProfile = await getUserProfile(accessToken);
-  return userProfile.email;
 }

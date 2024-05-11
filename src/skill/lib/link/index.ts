@@ -55,7 +55,7 @@ export async function getCredentials(
 
     let userId: string;
     try {
-      userId = await Common.Profile.getUserId(skillToken);
+      userId = (await Common.Profile.getUserProfile(skillToken)).userId;
     } catch (c) {
       const cause: Common.Error.CommonError = c as Common.Error.CommonError;
       if (

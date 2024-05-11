@@ -121,14 +121,4 @@ export class SHSRequest {
       );
     }
   }
-
-  public async getUserId(): Promise<string> {
-    const userProfile = await this.getUserProfile();
-    return userProfile.userId;
-  }
-
-  public async getUserEmail(): Promise<string> {
-    const userProfile = await this.getUserProfile();
-    return userProfile.email;
-  }
 }

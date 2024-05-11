@@ -49,7 +49,7 @@ export class LoginTokenAuth {
 
     let email: string = "";
     try {
-      email = await Common.Profile.getUserEmail(skillToken);
+      email = (await Common.Profile.getUserProfile(skillToken)).email;
     } catch (error) {
       return false;
     }

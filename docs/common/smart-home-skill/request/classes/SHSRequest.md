@@ -82,26 +82,6 @@
 
 ***
 
-### getUserEmail()
-
-> **getUserEmail**(): `Promise`\<`string`\>
-
-#### Returns
-
-`Promise`\<`string`\>
-
-***
-
-### getUserId()
-
-> **getUserId**(): `Promise`\<`string`\>
-
-#### Returns
-
-`Promise`\<`string`\>
-
-***
-
 ### getUserProfile()
 
 > **getUserProfile**(): `Promise`\<[`UserProfile`](../../../profile/type-aliases/UserProfile.md)\>

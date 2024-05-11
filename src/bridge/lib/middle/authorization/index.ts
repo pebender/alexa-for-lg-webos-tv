@@ -24,7 +24,7 @@ export class Authorization {
   public async authorizeSkillToken(skillToken: string): Promise<boolean> {
     let record = await this._db.getRecord({ skillToken });
     if (record === null) {
-      const userId = await Common.Profile.getUserId(skillToken);
+      const userId = (await Common.Profile.getUserProfile(skillToken)).userId;
       await this._db.updateOrInsertRecord({ userId }, { skillToken, userId });
       record = await this._db.getRecord({ skillToken });
     }
