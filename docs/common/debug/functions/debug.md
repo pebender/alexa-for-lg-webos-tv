@@ -6,11 +6,11 @@
 
 # Function: debug()
 
-> **debug**(`message`?): `void`
+> **debug**(`message`): `void`
 
 ## Parameters
 
-• **message?**: `unknown`
+• **message**: `unknown`
 
 ## Returns
 
