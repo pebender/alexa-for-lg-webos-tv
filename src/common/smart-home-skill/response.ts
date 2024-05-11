@@ -262,10 +262,15 @@ export class SHSResponseWrapper {
     this.request = request;
     this.response = response;
     this.statusCode = statusCode || 200;
-    if (error instanceof CommonError.CommonError) {
-      this.error = error;
-    } else {
-      this.error = CommonError.create("", { general: "unknown", cause: error });
+    if (typeof error !== "undefined" && error !== null) {
+      if (error instanceof CommonError.CommonError) {
+        this.error = error;
+      } else {
+        this.error = CommonError.create("", {
+          general: "unknown",
+          cause: error,
+        });
+      }
     }
   }
 
