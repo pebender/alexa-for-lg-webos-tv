@@ -60,9 +60,10 @@ export class Bridge {
 
     try {
       await fs.mkdir(configurationDir, { recursive: true });
-    } catch (error) {
+    } catch (cause) {
+      const error = Common.Error.create("", { general: "unknown", cause });
       Common.Debug.debugErrorWithStack(error);
-      throw Error;
+      throw error;
     }
 
     const _configuration = await Configuration.build();

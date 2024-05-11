@@ -19,7 +19,7 @@ async function handlerWithErrors(
       case "Alexa.Discovery":
         return alexaDiscovery.handler(alexaRequest);
       default:
-        throw Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest,
         );
     }
