@@ -96,17 +96,8 @@ export class SHSRequest {
     if (typeof this.directive.payload?.grantee?.token !== "undefined") {
       return this.directive.payload.grantee.token;
     }
-    const name = "INVALID_DIRECTIVE";
-    const message = "Access Token not found";
-    const error = CommonError.create(message);
-    error.name = name;
-    Error.captureStackTrace(error);
-    throw SHSResponseWrapper.buildAlexaErrorResponse(
-      this,
-      name,
-      message,
-      200,
-      error,
+    throw CommonError.create(
+      "the SHS Directive has no access token. this should not happen.",
     );
   }
 
