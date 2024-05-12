@@ -50,35 +50,38 @@ declare class LGTV extends EventEmitter {
   public register(): void;
   public request(
     uri: string,
-    callback?: (error: Error, response: LGTV.Response) => void,
+    callback?: (error: Error | null, response?: LGTV.Response) => void,
   ): void;
 
   public request(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error, response: LGTV.Response) => void,
+    callback: (error: Error | null, response?: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
-    callback: (error: Error, response: LGTV.Response) => void,
+    callback: (error: Error | null, response?: LGTV.Response) => void,
   ): void;
 
   public subscribe(
     uri: string,
     payload: LGTV.RequestPayload,
-    callback: (error: Error, response: LGTV.Response) => void,
+    callback: (error: Error | null, response?: LGTV.Response) => void,
   ): void;
 
   public getSocket(
     url: string,
-    callback?: (error: Error, response: LGTV.Response) => void,
+    callback?: (error: Error | null, response?: LGTV.Response) => void,
   ): void;
 
   public connect(host: string): void;
   public disconnect(): void;
 
-  public on(event: "close" | "error", listener: (error: Error) => void): this;
+  public on(
+    event: "close" | "error",
+    listener: (error: Error | null) => void,
+  ): this;
   public on(event: "connect" | "prompt", listener: () => void): this;
   public on(event: "connecting", listener: (host: string) => void): this;
 

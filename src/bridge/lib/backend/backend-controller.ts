@@ -3,6 +3,7 @@ import { TV, UDN } from "./tv";
 import { EventEmitter } from "node:events";
 import { BackendControl } from "./backend-control";
 import { DatabaseRecord, DatabaseTable } from "../database";
+import LGTV from "lgtv2";
 
 export class BackendController extends EventEmitter {
   private readonly _db: DatabaseTable;
@@ -26,7 +27,7 @@ export class BackendController extends EventEmitter {
     function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
         if (typeof backendController._controls[tv.udn] === "undefined") {
-          backendController._controls[tv.udn] = await BackendControl.build(
+          backendController._controls[tv.udn] = BackendControl.build(
             backendController._db,
             tv,
           );
@@ -67,12 +68,18 @@ export class BackendController extends EventEmitter {
       "ssap://tv/getExternalInputList",
     ];
     uriList.forEach((uri) => {
-      this._controls[udn].on(uri, (error, response) => {
-        this.emit(uri, error, response, udn);
-      });
+      this._controls[udn].on(
+        uri,
+        (
+          error: Common.Error.CommonError | null,
+          response: LGTV.Request | null,
+        ) => {
+          this.emit(uri, error, response, udn);
+        },
+      );
     });
 
-    this._controls[udn].on("error", (error: Error): void => {
+    this._controls[udn].on("error", (error: Common.Error.CommonError): void => {
       this.emit("error", error, udn);
     });
   }
@@ -81,6 +88,7 @@ export class BackendController extends EventEmitter {
     if (typeof this._controls[udn] === "undefined") {
       throw Common.Error.create(
         `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
+        { general: "tv", specific: "tvUnknown" },
       );
     }
   }
@@ -113,7 +121,7 @@ export class BackendController extends EventEmitter {
         );
       }
       if (typeof this._controls[tv.udn] === "undefined") {
-        this._controls[tv.udn] = await BackendControl.build(this._db, tv);
+        this._controls[tv.udn] = BackendControl.build(this._db, tv);
         this.eventsAdd(tv.udn);
         await this._controls[tv.udn].start();
       }

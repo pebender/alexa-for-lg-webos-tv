@@ -90,10 +90,14 @@ export class BackendControl extends EventEmitter {
     // Added event handlers.
     backendControl._connection.on(
       "error",
-      (error: NodeJS.ErrnoException): void => {
+      (error: NodeJS.ErrnoException | null): void => {
         backendControl._connecting = false;
-        if (error && error.code !== "EHOSTUNREACH") {
-          backendControl.emit("error", error, backendControl._tv.udn);
+        if (error !== null && error.code !== "EHOSTUNREACH") {
+          const commonError = Common.Error.create("", {
+            general: "tv",
+            cause: error,
+          });
+          backendControl.emit("error", commonError);
         }
       },
     );
@@ -259,6 +263,20 @@ export class BackendControl extends EventEmitter {
     return this._poweredOn ? "ON" : "OFF";
   }
 
+  /**
+   * Sends a request to the TV and returns the response.
+   *
+   * @param lgtvRequest - The LGTV request to send to the TV.
+   * @returns The LGTV response from the TV.
+   *
+   * @throws
+   * a {@link Common.Error.CommonError | CommonError} with
+   *
+   * - general: "tv", specific: "connectionRequestError",
+   * - general: "tv", specific: "connectionResponseInvalidFormat",
+   * - general: "tv", specific: "connectionResponseError", or
+   * - general: "tv", specific: "lgtvApiViolation"
+   */
   public async lgtvCommand(lgtvRequest: LGTV.Request): Promise<LGTV.Response> {
     let lgtvResponse: LGTV.Response = {
       returnValue: false,
@@ -268,9 +286,23 @@ export class BackendControl extends EventEmitter {
         (resolve, reject): void => {
           this._connection.request(
             lgtvRequest.uri,
-            (error: Error, response: LGTV.Response): void => {
-              if (error) {
-                reject(error);
+            (error: Error | null, response?: LGTV.Response): void => {
+              if (error !== null) {
+                reject(
+                  Common.Error.create("TV connection request error", {
+                    general: "tv",
+                    specific: "connectionRequestError",
+                    cause: error,
+                  }),
+                );
+                return;
+              }
+              if (typeof response === "undefined") {
+                reject(
+                  Common.Error.create("LGTV API violation", {
+                    general: "tv",
+                  }),
+                );
                 return;
               }
               resolve(response);
@@ -283,9 +315,24 @@ export class BackendControl extends EventEmitter {
         this._connection.request(
           lgtvRequest.uri,
           lgtvRequest.payload as LGTV.RequestPayload,
-          (error: Error, response: LGTV.Response): void => {
-            if (error) {
-              reject(error);
+          (error: Error | null, response?: LGTV.Response): void => {
+            if (error !== null) {
+              reject(
+                Common.Error.create("TV connection request error", {
+                  general: "tv",
+                  specific: "connectionRequestError",
+                  cause: error,
+                }),
+              );
+              return;
+            }
+            if (typeof response === "undefined") {
+              reject(
+                Common.Error.create("LGTV API violation", {
+                  general: "tv",
+                  specific: "lgtvApiViolation",
+                }),
+              );
               return;
             }
             resolve(response);
@@ -294,88 +341,96 @@ export class BackendControl extends EventEmitter {
       });
     }
     if (typeof lgtvResponse.returnValue === "undefined") {
-      const error = Common.Error.create(
-        "'LGTVResponse' does not contain property 'returnValue'",
-      );
-      error.name = "NO_RETURN_VALUE";
-      Error.captureStackTrace(error);
-      throw error;
+      throw Common.Error.create("TV connection response missing return value", {
+        general: "tv",
+        specific: "connectionResponseInvalidFormat",
+      });
     }
     if (!lgtvResponse.returnValue) {
-      let error: Common.Error.CommonError;
+      let errorText: string = "unknown";
+      let errorCode: string = "unknown";
       if (
-        typeof lgtvResponse.errorText === "undefined" ||
-        typeof lgtvResponse.errorText === "object"
+        typeof lgtvResponse.errorText !== "undefined" &&
+        typeof lgtvResponse.errorText !== "object"
       ) {
-        error = Common.Error.create("unknown LGTV response error");
-      } else {
-        error = Common.Error.create(lgtvResponse.errorText.toString());
+        errorText = lgtvResponse.errorText.toString();
       }
-      switch (typeof lgtvResponse.errorCode) {
-        case "string":
-          error.name = lgtvResponse.errorCode;
-          break;
-        case "number":
-          error.name = lgtvResponse.errorCode.toString();
-          break;
+      if (
+        typeof lgtvResponse.errorCode !== "undefined" &&
+        typeof lgtvResponse.errorCode !== "object"
+      ) {
+        errorCode = lgtvResponse.errorCode.toString();
       }
-      Error.captureStackTrace(error);
-      throw error;
+      throw Common.Error.create(
+        `TV connection response returned the error: ${errorText} (${errorCode}`,
+        {
+          general: "tv",
+          specific: "connectionResponseError",
+        },
+      );
     }
     return lgtvResponse;
   }
 
-  private addSubscriptionEvents() {
-    {
-      const uri = "ssap://audio/getStatus";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
+  /**
+   * Adds subscriptions to TV state change events. State changes communicated
+   * from the TV are shared using an {@link EventEmitter | EventEmitter}
+   * emitting an event containing the subscription identifier, any error and any
+   * response. The error is a {@link Common.Error.CommonError | CommonError}
+   * with
+   *
+   * - general: "tv", specific "subscriptionError",
+   * - general: "tv", specific "lgtvApiViolation",
+   */
+  private addSubscriptionEvents(): void {
+    const subscribe = (
+      uri: string,
+      responseHandler?: (response: LGTV.Response) => void,
+    ): void => {
+      this._connection.subscribe(
+        uri,
+        (error: Error | null, response?: LGTV.Response) => {
+          if (error !== null) {
+            const commonError = Common.Error.create(
+              `TV error from subscription "${uri}"`,
+              {
+                general: "tv",
+                specific: "subscriptionError",
+                cause: error,
+              },
+            );
+            this.emit(uri, commonError, null);
+          } else {
+            if (typeof response === "undefined") {
+              const commonError = Common.Error.create("LGTV API violation", {
+                general: "tv",
+                specific: "lgtvApiViolation",
+              });
+              this.emit(uri, commonError, null);
+            } else {
+              this.emit(uri, null, response);
+              if (typeof responseHandler === "function") {
+                responseHandler(response);
+              }
+            }
+          }
+        },
+      );
+    };
 
-    {
-      const uri = "ssap://audio/getVolume";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
-    {
-      const uri = "ssap://com.webos.applicationManager/getForegroundAppInfo";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
+    subscribe("ssap://audio/getStatus");
+    subscribe("ssap://audio/getVolume");
+    subscribe(
+      "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      (response: LGTV.Response): void => {
         if (response.appId === "com.webos.app.livetv") {
-          const u: string = "ssap://tv/getCurrentChannel";
-          this._connection.subscribe(u, (e, r) => this.emit(u, e, r));
+          subscribe("ssap://tv/getCurrentChannel");
         }
-      });
-    }
-
-    {
-      const uri = "ssap://com.webos.applicationManager/listApps";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
-
-    {
-      const uri = "ssap://com.webos.applicationManager/listLaunchPoints";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
-
-    {
-      const uri = "ssap://tv/getChannelList";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
-
-    {
-      const uri = "ssap://tv/getExternalInputList";
-      this._connection.subscribe(uri, (error, response) => {
-        this.emit(uri, error, response);
-      });
-    }
+      },
+    );
+    subscribe("ssap://com.webos.applicationManager/listApps");
+    subscribe("ssap://com.webos.applicationManager/listLaunchPoints");
+    subscribe("ssap://tv/getChannelList");
+    subscribe("ssap://tv/getExternalInputList");
   }
 }

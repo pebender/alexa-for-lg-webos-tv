@@ -94,6 +94,15 @@
 
 > `private` **addSubscriptionEvents**(): `void`
 
+Adds subscriptions to TV state change events. State changes communicated
+from the TV are shared using an EventEmitter | EventEmitter
+emitting an event containing the subscription identifier, any error and any
+response. The error is a [CommonError](../../../../../common/error/classes/CommonError.md)
+with
+
+- general: "tv", specific "subscriptionError",
+- general: "tv", specific "lgtvApiViolation",
+
 #### Returns
 
 `void`
@@ -114,13 +123,28 @@
 
 > **lgtvCommand**(`lgtvRequest`): `Promise`\<[`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)\>
 
+Sends a request to the TV and returns the response.
+
 #### Parameters
 
 • **lgtvRequest**: [`Request`](../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
 
+The LGTV request to send to the TV.
+
 #### Returns
 
 `Promise`\<[`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)\>
+
+The LGTV response from the TV.
+
+#### Throws
+
+a [CommonError](../../../../../common/error/classes/CommonError.md) with
+
+- general: "tv", specific: "connectionRequestError",
+- general: "tv", specific: "connectionResponseInvalidFormat",
+- general: "tv", specific: "connectionResponseError", or
+- general: "tv", specific: "lgtvApiViolation"
 
 ***
 

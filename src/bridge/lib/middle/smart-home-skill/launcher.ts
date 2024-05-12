@@ -70,26 +70,24 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.Context.Property | null>[] {
   if (backendControl.getPowerState() === "OFF") {
     return [];
   }
 
-  async function value(): Promise<{ identifier: string; name: string } | null> {
+  async function value(): Promise<{ identifier: string; name: string }> {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
     };
-    let input: LGTV.Response;
-    try {
-      input = await backendControl.lgtvCommand(lgtvRequest);
-    } catch {
-      return null;
-    }
+    const input: LGTV.Response = await backendControl.lgtvCommand(lgtvRequest);
     if (
       typeof input.appId !== "string" ||
       typeof lgtvToAlexa[input.appId] === "undefined"
     ) {
-      return null;
+      throw Common.Error.create("TV response was invalid", {
+        general: "tv",
+        specific: "responseInvalid",
+      });
     }
     return lgtvToAlexa[input.appId];
   }
@@ -124,7 +122,7 @@ async function launchTargetHandler(
   };
   try {
     await backendControl.lgtvCommand(lgtvRequest);
-  } catch {
+  } catch (launchError) {
     // Check whether or not the application failed to launch because the
     // application does not exist (is not installed).
     const lgtvRequest: LGTV.Request = {
@@ -137,25 +135,19 @@ async function launchTargetHandler(
       const apps = response.apps as { id: string; [key: string]: unknown }[];
       const index = apps.findIndex((app) => app.id === requestedApp.id);
       if (index < 0) {
-        return Promise.resolve(
-          Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
-            alexaRequest,
-          ),
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+          alexaRequest,
         );
       }
-    } catch (error) {
-      return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
-          alexaRequest,
-          200,
-          error,
-        ),
+    } catch (listAppsError) {
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        alexaRequest,
+        200,
+        listAppsError,
       );
     }
   }
-  return Promise.resolve(
-    Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest),
-  );
+  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
 }
 
 function handler(

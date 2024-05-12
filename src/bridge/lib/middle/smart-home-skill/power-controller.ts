@@ -15,9 +15,9 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
-  function value(): "ON" | "OFF" {
-    return backendControl.getPowerState();
+): Promise<Common.SHS.Context.Property | null>[] {
+  function value(): Promise<string> {
+    return Promise.resolve(backendControl.getPowerState() as string);
   }
 
   const powerStateState = Common.SHS.Response.buildContextProperty({
@@ -28,11 +28,11 @@ function states(
   return [powerStateState];
 }
 
-async function turnOffHandler(
+function turnOffHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
-  const poweredOff = await backendControl.turnOff();
+): Common.SHS.ResponseWrapper {
+  const poweredOff = backendControl.turnOff();
   if (!poweredOff) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -60,7 +60,7 @@ function handler(
 ): Promise<Common.SHS.ResponseWrapper> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff":
-      return turnOffHandler(alexaRequest, backendControl);
+      return Promise.resolve(turnOffHandler(alexaRequest, backendControl));
     case "TurnOn":
       return turnOnHandler(alexaRequest, backendControl);
     default:

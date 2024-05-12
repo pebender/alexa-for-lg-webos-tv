@@ -82,7 +82,7 @@
 
 ### buildContextProperty()
 
-> `static` **buildContextProperty**(`opts`): `Promise`\<[`Property`](../namespaces/SHSContext/interfaces/Property.md)\>
+> `static` **buildContextProperty**(`opts`): `Promise`\<`null` \| [`Property`](../namespaces/SHSContext/interfaces/Property.md)\>
 
 #### Parameters
 
@@ -98,7 +98,7 @@
 
 #### Returns
 
-`Promise`\<[`Property`](../namespaces/SHSContext/interfaces/Property.md)\>
+`Promise`\<`null` \| [`Property`](../namespaces/SHSContext/interfaces/Property.md)\>
 
 ***
 

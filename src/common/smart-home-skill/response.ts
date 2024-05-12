@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import * as CommonError from "../error";
 import { copyElement } from "./copy";
 import { SHSDirective, SHSRequest } from "./request";
+import { Debug } from "..";
 
 export namespace SHSEvent {
   export namespace Header {
@@ -212,17 +213,22 @@ export class SHSResponse {
     name: string;
     instance?: string;
     value: () => boolean | number | string | [] | object;
-  }): Promise<SHSContext.Property> {
-    const startTime = new Date();
-    const value = await opts.value();
-    const endTime = new Date();
-    return {
-      namespace: opts.namespace,
-      name: opts.name,
-      value,
-      timeOfSample: endTime.toISOString(),
-      uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
-    };
+  }): Promise<SHSContext.Property | null> {
+    try {
+      const startTime = new Date();
+      const value = await opts.value();
+      const endTime = new Date();
+      return {
+        namespace: opts.namespace,
+        name: opts.name,
+        value,
+        timeOfSample: endTime.toISOString(),
+        uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
+      };
+    } catch (error) {
+      Debug.debugErrorWithStack(error);
+      return null;
+    }
   }
 
   public static buildPayloadEndpointCapability(opts: {

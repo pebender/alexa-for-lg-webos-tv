@@ -51,7 +51,7 @@ export class BackendSearcher extends EventEmitter {
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-      callback: (error: Error | null, tv: TV | null) => void,
+      callback: (error: Common.Error.CommonError | null, tv: TV | null) => void,
     ): void {
       if (typeof headers.USN === "undefined") {
         callback(null, null);
@@ -131,7 +131,8 @@ export class BackendSearcher extends EventEmitter {
         .then((response: Response): Promise<Blob> => {
           if (response.status !== 200) {
             throw Common.Error.create(
-              "Could not fetch descriptionXML from LG webOS TV",
+              "Could not fetch descriptionXML from the TV",
+              { general: "tv", specific: "descriptionXmlFetchError" },
             );
           }
           return response.blob();
@@ -140,7 +141,8 @@ export class BackendSearcher extends EventEmitter {
           const mimetype: string[] = blob.type.split(";");
           if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
             throw Common.Error.create(
-              "Could not fetch descriptionXML from LG webOS TV",
+              "Could not fetch descriptionXML from the TV",
+              { general: "tv", specific: "descriptionXmlFetchError" },
             );
           }
           return blob.text();
@@ -149,8 +151,16 @@ export class BackendSearcher extends EventEmitter {
           xml2js(
             descriptionXml,
             (error: Error | null, description: UPnPDevice): void => {
-              if (error) {
-                callback(error, null);
+              if (error !== null) {
+                const commonError = Common.Error.create(
+                  "Could not fetch descriptionXML from the TV",
+                  {
+                    general: "tv",
+                    specific: "descriptionXmlFetchError",
+                    cause: error,
+                  },
+                );
+                callback(commonError, null);
                 return;
               }
               if (!description) {
@@ -202,7 +212,15 @@ export class BackendSearcher extends EventEmitter {
               //
               arp.getMAC(tv.ip, (isError: boolean, result: string): void => {
                 if (isError) {
-                  callback(Error(result), null);
+                  const error = Common.Error.create(
+                    "Could not get TV's MAC address",
+                    {
+                      general: "tv",
+                      specific: "macAddressError",
+                      cause: result,
+                    },
+                  );
+                  callback(error, null);
                   return;
                 }
                 tv.mac = result;
@@ -214,13 +232,14 @@ export class BackendSearcher extends EventEmitter {
           );
         })
         .catch((reason: unknown) => {
-          if (reason instanceof Error) {
+          if (reason instanceof Common.Error.CommonError) {
             callback(reason, null);
           } else {
-            callback(
-              Common.Error.create("", { general: "unknown", cause: reason }),
-              null,
-            );
+            const error = Common.Error.create("", {
+              general: "tv",
+              cause: reason,
+            });
+            callback(error, null);
           }
         });
     }
@@ -246,23 +265,58 @@ export class BackendSearcher extends EventEmitter {
 
   public async start(): Promise<void> {
     // Start listening from multicast notifications from the TVs.
-    await this._ssdpNotify.start();
+    try {
+      await this._ssdpNotify.start();
+    } catch (error) {
+      throw Common.Error.create("", { general: "unknown", cause: error });
+    }
 
     // Periodically search for TVs.
     const periodicSearch = (): void => {
       // Search every 1800s as that is the UPnP recommended time.
-      void this._ssdpResponse.search(
+      const search = this._ssdpResponse.search(
         "urn:lge-com:service:webos-second-screen:1",
       );
+      if (search instanceof Promise) {
+        search.catch((reason: unknown) => {
+          const error: Common.Error.CommonError = Common.Error.create(
+            "TV search error",
+            { general: "tv", specific: "searchError", cause: reason },
+          );
+          Common.Debug.debugErrorWithStack(error);
+        });
+      }
       setTimeout(periodicSearch, 1800000);
     };
     periodicSearch();
 
     // Do one immediate search.
-    void this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+    const search = this._ssdpResponse.search(
+      "urn:lge-com:service:webos-second-screen:1",
+    );
+    if (search instanceof Promise) {
+      search.catch((reason: unknown) => {
+        const error: Common.Error.CommonError = Common.Error.create(
+          "TV search error",
+          { general: "tv", specific: "searchError", cause: reason },
+        );
+        Common.Debug.debugErrorWithStack(error);
+      });
+    }
   }
 
   public now(): void {
-    void this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+    const search = this._ssdpResponse.search(
+      "urn:lge-com:service:webos-second-screen:1",
+    );
+    if (search instanceof Promise) {
+      search.catch((reason: unknown) => {
+        const error: Common.Error.CommonError = Common.Error.create(
+          "TV search error",
+          { general: "tv", specific: "searchError", cause: reason },
+        );
+        Common.Debug.debugErrorWithStack(error);
+      });
+    }
   }
 }

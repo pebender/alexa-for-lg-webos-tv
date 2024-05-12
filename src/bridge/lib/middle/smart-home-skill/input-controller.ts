@@ -237,12 +237,15 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
-  async function value(): Promise<string | null> {
+): Promise<Common.SHS.Context.Property | null>[] {
+  async function value(): Promise<string> {
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
-    async function getInput(): Promise<string | null> {
+    async function getInput(): Promise<string> {
       if (backendControl.getPowerState() === "OFF") {
-        return null;
+        throw Common.Error.create("TV is off", {
+          general: "tv",
+          specific: "off",
+        });
       }
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
@@ -252,19 +255,22 @@ function states(
           lgtvRequest,
         )) as LGTV.ResponseForegroundAppInfo;
       if (typeof lgtvResponse.appId === "undefined") {
-        throw Common.Error.create("invalid LGTVResponse message");
+        throw Common.Error.create("TV response was invalid", {
+          general: "tv",
+          specific: "responseInvalid",
+        });
       }
       return lgtvResponse.appId;
     }
     const appId = await getInput();
-    if (appId === null) {
-      return null;
-    }
     const alexaInput = Object.keys(alexaToLGTV).find(
       (item) => alexaToLGTV[item].appId === appId,
     );
     if (typeof alexaInput === "undefined") {
-      return null;
+      throw Common.Error.create("TV input was unknown", {
+        general: "tv",
+        specific: "responseInvalid",
+      });
     }
     return alexaInput;
   }
@@ -306,7 +312,7 @@ async function selectInputHandler(
   }
 
   const alexaToLGTV = await getAlexaToLGTV(backendControl);
-  const alexaInput = await getInput();
+  const alexaInput = getInput();
   let lgtvId: string | null;
   if (typeof alexaToLGTV[alexaInput] === "undefined") {
     lgtvId = null;

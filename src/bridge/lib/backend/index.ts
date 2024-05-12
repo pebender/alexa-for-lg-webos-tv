@@ -7,12 +7,13 @@
 //
 
 import { EventEmitter } from "node:events";
+import LGTV from "lgtv2";
 import * as Common from "../../../common";
+import { Configuration } from "../configuration";
 import { TV, UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
-import { Configuration } from "../configuration";
 
 export { BackendControl } from "./backend-control";
 
@@ -34,13 +35,16 @@ export class Backend extends EventEmitter {
 
   public static async build(configuration: Configuration) {
     const _controller = await BackendController.build();
-    const _searcher = await BackendSearcher.build();
+    const _searcher = BackendSearcher.build();
 
     const backend = new Backend(configuration, _controller, _searcher);
 
-    backend._controller.on("error", (error: Error, id: string): void => {
-      backend.emit("error", error, `BackendController.${id}`);
-    });
+    backend._controller.on(
+      "error",
+      (id: string, error: Common.Error.CommonError): void => {
+        backend.emit("error", error, `BackendController.${id}`);
+      },
+    );
 
     const uriList: string[] = [
       "ssap://audio/getStatus",
@@ -53,12 +57,19 @@ export class Backend extends EventEmitter {
       "ssap://tv/getExternalInputList",
     ];
     uriList.forEach((uri) => {
-      backend._controller.on(uri, (error, response, udn) => {
-        backend.emit(uri, error, response, udn);
-      });
+      backend._controller.on(
+        uri,
+        (
+          error: Common.Error.CommonError | null,
+          response: LGTV.Response | null,
+          udn: string,
+        ) => {
+          backend.emit(uri, error, response, udn);
+        },
+      );
     });
 
-    backend._searcher.on("error", (error): void => {
+    backend._searcher.on("error", (error: Common.Error.CommonError): void => {
       backend.emit("error", error, "BackendSearcher");
     });
     backend._searcher.on("found", (tv: TV) => {

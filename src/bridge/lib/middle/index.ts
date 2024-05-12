@@ -74,7 +74,11 @@ export class Middle {
       ) {
         authorized = false;
       } else {
-        throw cause;
+        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+          shsRequest,
+          200,
+          c,
+        );
       }
     }
     if (!authorized) {
@@ -85,6 +89,14 @@ export class Middle {
       );
     }
 
-    return await SHS.handler(shsRequest, this._authorization, this._backend);
+    try {
+      return await SHS.handler(shsRequest, this._authorization, this._backend);
+    } catch (error) {
+      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        shsRequest,
+        200,
+        error,
+      );
+    }
   }
 }

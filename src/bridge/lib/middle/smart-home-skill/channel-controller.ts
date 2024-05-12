@@ -226,7 +226,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.Context.Property | null>[] {
   if (backendControl.getPowerState() === "OFF") {
     return [];
   }
@@ -235,16 +235,13 @@ function states(
     number?: string;
     callSign?: string;
     affiliateCallSign?: string;
-  } | null> {
+  }> {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://tv/getCurrentChannel",
     };
-    let lgtvResponse;
-    try {
-      lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
-    } catch (error) {
-      return null;
-    }
+    const lgtvResponse: LGTV.Response =
+      await backendControl.lgtvCommand(lgtvRequest);
+
     const channel: {
       number?: string;
       callSign?: string;

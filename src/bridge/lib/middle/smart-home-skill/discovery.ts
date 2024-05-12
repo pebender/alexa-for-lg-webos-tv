@@ -87,9 +87,9 @@ async function handler(
     return alexaResponse;
   }
 
-  const backendControls = await backend.controls();
+  const backendControls = backend.controls();
   const endpoints = await buildEndpoints(backendControls);
-  const response = await buildResponse(endpoints);
+  const response = buildResponse(endpoints);
   return new Common.SHS.ResponseWrapper(alexaRequest, response);
 }
 

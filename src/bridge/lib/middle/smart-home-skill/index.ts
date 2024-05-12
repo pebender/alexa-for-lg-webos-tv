@@ -47,7 +47,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.Context.Property | null>[] {
   return [
     ...alexa.states(backendControl),
     ...alexaPowerController.states(backendControl),
@@ -65,12 +65,7 @@ async function addStates(
 ): Promise<Common.SHS.ResponseWrapper> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
-      if (
-        typeof state === "undefined" ||
-        state === null ||
-        typeof state.value === "undefined" ||
-        state.value === null
-      ) {
+      if (state === null) {
         return;
       }
       alexaResponseWrapper.addContextProperty(state);
@@ -90,7 +85,7 @@ async function handler(
 
   switch (alexaRequest.directive.header.namespace) {
     case "Alexa.Authorization":
-      return await alexaAuthorization.handler(alexaRequest, backend);
+      return alexaAuthorization.handler(alexaRequest, backend);
     case "Alexa.Discovery":
       return await alexaDiscovery.handler(alexaRequest, backend);
     default: {
