@@ -208,4 +208,4 @@ async function lgtvCommand() {
   }
 }
 
-lgtvCommand();
+void lgtvCommand();

@@ -251,16 +251,18 @@ export class BackendSearcher extends EventEmitter {
     // Periodically search for TVs.
     const periodicSearch = (): void => {
       // Search every 1800s as that is the UPnP recommended time.
-      this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+      void this._ssdpResponse.search(
+        "urn:lge-com:service:webos-second-screen:1",
+      );
       setTimeout(periodicSearch, 1800000);
     };
     periodicSearch();
 
     // Do one immediate search.
-    this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+    void this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
   }
 
   public now(): void {
-    this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
+    void this._ssdpResponse.search("urn:lge-com:service:webos-second-screen:1");
   }
 }

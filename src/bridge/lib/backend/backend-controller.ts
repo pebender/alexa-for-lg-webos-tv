@@ -31,7 +31,7 @@ export class BackendController extends EventEmitter {
             tv,
           );
           backendController.eventsAdd(tv.udn);
-          backendController._controls[tv.udn].start();
+          await backendController._controls[tv.udn].start();
         }
       }
 
@@ -51,7 +51,7 @@ export class BackendController extends EventEmitter {
 
   public start(): void {
     Object.keys(this._controls).forEach((udn) => {
-      this._controls[udn].start();
+      this._controls[udn].start().catch(Common.Debug.debugError);
     });
   }
 
@@ -115,7 +115,7 @@ export class BackendController extends EventEmitter {
       if (typeof this._controls[tv.udn] === "undefined") {
         this._controls[tv.udn] = await BackendControl.build(this._db, tv);
         this.eventsAdd(tv.udn);
-        this._controls[tv.udn].start();
+        await this._controls[tv.udn].start();
       }
     } catch (error) {
       this.emit("error", error, tv.udn);

@@ -7,6 +7,7 @@
 //
 
 import { EventEmitter } from "node:events";
+import * as Common from "../../../common";
 import { TV, UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
@@ -60,8 +61,8 @@ export class Backend extends EventEmitter {
     backend._searcher.on("error", (error): void => {
       backend.emit("error", error, "BackendSearcher");
     });
-    backend._searcher.on("found", (tv: TV): void => {
-      backend._controller.tvUpsert(tv);
+    backend._searcher.on("found", (tv: TV) => {
+      void backend._controller.tvUpsert(tv).catch(Common.Debug.debugError);
     });
 
     return backend;

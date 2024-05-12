@@ -39,7 +39,7 @@ export class DatabaseTable {
     const db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
 
     try {
-      db.loadDatabaseAsync();
+      await db.loadDatabaseAsync();
     } catch (cause) {
       throw Common.Error.create("", { general: "database", cause });
     }

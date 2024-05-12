@@ -138,8 +138,8 @@ export class BackendControl extends EventEmitter {
     return backendControl;
   }
 
-  public start() {
-    this._ssdpNotify.start();
+  public async start() {
+    await this._ssdpNotify.start();
   }
 
   public get tv(): TV {
@@ -247,7 +247,7 @@ export class BackendControl extends EventEmitter {
       });
       searchTimeoutObject = startInterval(251, (): void => {
         if (this._ssdpResponse !== null) {
-          this._ssdpResponse.search(
+          void this._ssdpResponse.search(
             "urn:lge-com:service:webos-second-screen:1",
           );
         }
