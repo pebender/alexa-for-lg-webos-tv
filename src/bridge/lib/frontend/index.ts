@@ -442,7 +442,9 @@ export class Frontend {
         }
 
         const authorizedSkillToken: string = res.locals.skillToken as string;
-        const skillToken: string = frontend._middle.getSkillToken(req.body);
+        const skillToken: string = frontend._middle.getSkillToken(
+          req.body as object,
+        );
 
         if (authorizedSkillToken !== skillToken) {
           ipBlacklistIncrement(req, res);

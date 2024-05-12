@@ -29,7 +29,6 @@ module.exports = {
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-redundant-type-constituents": "off",
     "@typescript-eslint/no-unnecessary-condition": "off",
-    "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/only-throw-error": "off",
     "@typescript-eslint/restrict-template-expressions": "off",

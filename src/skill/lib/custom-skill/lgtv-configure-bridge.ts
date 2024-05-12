@@ -26,7 +26,7 @@ async function createHostnamesSimpleCardContent(
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
   try {
     sessionAttributes.hostnames = await Link.getHostnames(
-      sessionAttributes.ipAddress,
+      sessionAttributes.ipAddress as string,
     );
   } catch (cause) {
     Common.Debug.debug(

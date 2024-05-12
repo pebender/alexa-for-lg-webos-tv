@@ -1,8 +1,9 @@
+import LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { Authorization } from "./authorization";
-import { Backend } from "../backend";
-import * as SHS from "./smart-home-skill";
 import { Configuration } from "../configuration";
+import { Backend } from "../backend";
+import { Authorization } from "./authorization";
+import * as SHS from "./smart-home-skill";
 
 export class Middle {
   private readonly _authorization: Authorization;
@@ -28,23 +29,30 @@ export class Middle {
       "ssap://tv/getExternalInputList",
     ];
     uriList.forEach((uri) => {
-      middle._backend.on(uri, (error, response, udn) => {
-        SHS.callback(
-          uri,
-          error,
-          response,
-          udn,
-          middle._authorization,
-          middle._backend,
-        );
-      });
+      middle._backend.on(
+        uri,
+        (
+          error: Common.Error.CommonError,
+          response: LGTV.Response,
+          udn: string,
+        ) => {
+          SHS.callback(
+            uri,
+            error,
+            response,
+            udn,
+            middle._authorization,
+            middle._backend,
+          );
+        },
+      );
     });
 
     return middle;
   }
 
-  public getSkillToken(rawRequest: Common.SHS.Request): string {
-    const shsRequest = new Common.SHS.Request(rawRequest);
+  public getSkillToken(rawRequest: object): string {
+    const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
     return shsRequest.getAccessToken();
   }
 
