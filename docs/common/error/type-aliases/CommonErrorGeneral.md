@@ -6,4 +6,4 @@
 
 # Type alias: CommonErrorGeneral
 
-> **CommonErrorGeneral**: `"unknown"` \| `"authorization"` \| `"database"` \| `"http"` \| `"link"`
+> **CommonErrorGeneral**: `"unknown"` \| `"authorization"` \| `"database"` \| `"http"` \| `"link"` \| `"tv"`

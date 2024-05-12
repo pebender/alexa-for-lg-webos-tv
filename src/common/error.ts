@@ -3,7 +3,8 @@ export type CommonErrorGeneral =
   | "authorization"
   | "database"
   | "http"
-  | "link";
+  | "link"
+  | "tv";
 
 export type CommonErrorLocation =
   | "skill"
