@@ -43,7 +43,7 @@ async function createHostnamesSimpleCardContent(
   Common.Debug.debug(
     `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`,
   );
-  const hostnames: string[] = sessionAttributes.hostnames;
+  const hostnames: string[] = sessionAttributes.hostnames as string[];
   const hostnameCount = hostnames.length;
   let cardContent: string = "";
   let index: number = 0;
@@ -73,7 +73,7 @@ async function setBridgeCredentials(
 
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
-  const hostnames: string[] = sessionAttributes.hostnames;
+  const hostnames: string[] = sessionAttributes.hostnames as string[];
   const hostnameIndex: number = Number(
     ASKRequestEnvelope.getSlotValue(
       handlerInput.requestEnvelope,
@@ -310,7 +310,7 @@ const ConfigureBridgeIntentHandler = {
           .getResponse();
       }
 
-      const hostnames: string[] = sessionAttributes.hostnames;
+      const hostnames: string[] = sessionAttributes.hostnames as string[];
       const hostnameIndex: number = Number(hostnameIndexString);
       const hostnameCount: number = Number(hostnames);
       if (
