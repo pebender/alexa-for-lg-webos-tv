@@ -54,11 +54,7 @@ export class LoginTokenAuth {
       return false;
     }
 
-    const authorized = await authorizeUser(
-      this._configuration,
-      hostname,
-      email,
-    );
+    const authorized = authorizeUser(this._configuration, hostname, email);
     if (!authorized) {
       return false;
     }

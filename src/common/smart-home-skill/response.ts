@@ -212,7 +212,7 @@ export class SHSResponse {
     namespace: SHSContext.Property.Namespace;
     name: string;
     instance?: string;
-    value: () => boolean | number | string | [] | object;
+    value: () => Promise<boolean | number | string | [] | object>;
   }): Promise<SHSContext.Property | null> {
     try {
       const startTime = new Date();

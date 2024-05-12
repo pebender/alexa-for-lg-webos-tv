@@ -49,7 +49,7 @@ export class Frontend {
   }
 
   public static async build(configuration: Configuration, middle: Middle) {
-    const _loginToken = await LoginTokenAuth.build(configuration);
+    const _loginToken = LoginTokenAuth.build(configuration);
     const _bridgeToken = await BridgeTokenAuth.build(configuration);
 
     // The blacklist is due to auth failures so blacklist quickly.
@@ -535,7 +535,7 @@ export class Frontend {
 
           // Check SHS Response against the SHS schema.
           try {
-            const valid = await frontend._schemaValidator(shsResponse);
+            const valid = frontend._schemaValidator(shsResponse);
             if (!valid) {
               Common.Debug.debug(
                 "Smart Home Skill Response schema validation validation",

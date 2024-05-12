@@ -1,11 +1,11 @@
 import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 
-export async function authorizeUser(
+export function authorizeUser(
   configuration: Configuration,
   bridgeHostname: string | null,
   email: string | null,
-): Promise<boolean> {
+): boolean {
   Common.Debug.debug("authorizeUser");
   Common.Debug.debugJSON({ bridgeHostname, email });
   if (bridgeHostname === null) {
@@ -18,7 +18,7 @@ export async function authorizeUser(
   const authorizedBridgeHostnamesAndEmails: {
     bridgeHostname: string;
     emails: string[];
-  }[] = await configuration.authorizedUsers();
+  }[] = configuration.authorizedUsers();
   const authorizedBridgeHostnameAndEmails:
     | { bridgeHostname: string; emails: string[] }
     | undefined = authorizedBridgeHostnamesAndEmails.find(

@@ -101,7 +101,7 @@ export class BridgeTokenAuth {
       return null;
     }
 
-    const authorized = await authorizeUser(
+    const authorized = authorizeUser(
       this._configuration,
       record.bridgeHostname,
       record.email,
