@@ -1,6 +1,7 @@
 export type UDN = string;
 export type IPv4 = string;
 export type IPv6 = string;
+// eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
 export type IP = IPv4 | IPv6;
 export type MAC = string;
 

@@ -22,7 +22,6 @@ module.exports = {
     "no-redeclare": "off",
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
-    "@typescript-eslint/no-duplicate-type-constituents": "off",
     "@typescript-eslint/no-dynamic-delete": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-redundant-type-constituents": "off",
