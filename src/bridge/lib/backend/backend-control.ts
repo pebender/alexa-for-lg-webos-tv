@@ -250,11 +250,9 @@ export class BackendControl extends EventEmitter {
         wol.wake(this._tv.mac);
       });
       searchTimeoutObject = startInterval(251, (): void => {
-        if (this._ssdpResponse !== null) {
-          void this._ssdpResponse.search(
-            "urn:lge-com:service:webos-second-screen:1",
-          );
-        }
+        void this._ssdpResponse.search(
+          "urn:lge-com:service:webos-second-screen:1",
+        );
       });
     });
   }
@@ -281,7 +279,7 @@ export class BackendControl extends EventEmitter {
     let lgtvResponse: LGTV.Response = {
       returnValue: false,
     };
-    if (lgtvRequest.payload === null) {
+    if (typeof lgtvRequest.payload === "undefined") {
       lgtvResponse = await new Promise<LGTV.Response>(
         (resolve, reject): void => {
           this._connection.request(

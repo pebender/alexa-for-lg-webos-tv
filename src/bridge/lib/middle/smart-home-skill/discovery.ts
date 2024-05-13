@@ -58,9 +58,6 @@ async function handler(
       capabilities: [],
     };
     capabilities.forEach((capability): void => {
-      if (typeof capability === "undefined" || capability === null) {
-        return;
-      }
       endpoint.capabilities.push(capability);
     });
     return endpoint;
@@ -80,9 +77,7 @@ async function handler(
       name: "Discover.Response",
     });
     endpoints.forEach((endpoint: Common.SHS.Event.Payload.Endpoint): void => {
-      if (endpoint !== null) {
-        alexaResponse.addPayloadEndpoint(endpoint);
-      }
+      alexaResponse.addPayloadEndpoint(endpoint);
     });
     return alexaResponse;
   }

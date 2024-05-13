@@ -138,7 +138,7 @@ export class SHSResponse {
     };
 
     const response = {
-      event: (copyElement(optsA.event) as SHSEvent) || {
+      event: (copyElement(optsA.event) as SHSEvent | undefined) || {
         header: {
           namespace: optsB.namespace,
           name: optsB.name,
@@ -154,7 +154,8 @@ export class SHSResponse {
             token: optsB.token,
           },
         },
-        payload: (copyElement(optsB.payload) as SHSEvent.Payload) || {},
+        payload:
+          (copyElement(optsB.payload) as SHSEvent.Payload | undefined) || {},
       },
       context: optsA.context,
     };
@@ -325,7 +326,7 @@ export class SHSResponseWrapper {
     error?: unknown,
   ) {
     if (error instanceof CommonError.CommonError) {
-      const errorName = `${error.general || "unknown"}.${error.specific || "unknown"}`;
+      const errorName = `${error.general}.${error.specific || "unknown"}`;
       const errorMessage = error.message || "unknown";
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;

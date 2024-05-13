@@ -6,7 +6,7 @@
 
 # Function: authorizeUser()
 
-> **authorizeUser**(`configuration`, `bridgeHostname`, `email`): `Promise`\<`boolean`\>
+> **authorizeUser**(`configuration`, `bridgeHostname`, `email`): `boolean`
 
 ## Parameters
 
@@ -18,4 +18,4 @@
 
 ## Returns
 
-`Promise`\<`boolean`\>
+`boolean`

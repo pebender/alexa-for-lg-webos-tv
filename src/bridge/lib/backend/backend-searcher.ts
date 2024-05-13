@@ -150,7 +150,7 @@ export class BackendSearcher extends EventEmitter {
         .then((descriptionXml: string): void => {
           xml2js(
             descriptionXml,
-            (error: Error | null, description: UPnPDevice): void => {
+            (error: Error | null, description?: UPnPDevice | null): void => {
               if (error !== null) {
                 const commonError = Common.Error.create(
                   "Could not fetch descriptionXML from the TV",
@@ -163,7 +163,7 @@ export class BackendSearcher extends EventEmitter {
                 callback(commonError, null);
                 return;
               }
-              if (!description) {
+              if (typeof description === "undefined" || description === null) {
                 callback(null, null);
                 return;
               }

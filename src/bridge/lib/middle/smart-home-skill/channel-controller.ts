@@ -293,7 +293,7 @@ async function skipChannelsHandler(
     10,
   );
   const currentChannelIndex = channels.findIndex(
-    (channel) => channel.channelNumber === currentChannel?.channelNumber,
+    (channel) => channel.channelNumber === currentChannel.channelNumber,
   );
   const newChannelIndex =
     (currentChannelIndex +

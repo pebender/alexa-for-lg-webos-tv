@@ -161,8 +161,8 @@ async function handler(
 
 function callback(
   uri: string,
-  error: Error,
-  response: LGTV.Response,
+  error: Error | null,
+  response: LGTV.Response | null,
   udn: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   authorization: DirectiveAuthorization,

@@ -12,9 +12,9 @@
 
 • **uri**: `string`
 
-• **error**: `Error`
+• **error**: `null` \| `Error`
 
-• **response**: [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+• **response**: `null` \| [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
 
 • **udn**: `string`
 

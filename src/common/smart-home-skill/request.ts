@@ -90,10 +90,10 @@ export class SHSRequest {
     if (typeof this.directive.endpoint?.scope?.token !== "undefined") {
       return this.directive.endpoint.scope.token;
     }
-    if (typeof this.directive.payload?.scope?.token !== "undefined") {
+    if (typeof this.directive.payload.scope?.token !== "undefined") {
       return this.directive.payload.scope.token;
     }
-    if (typeof this.directive.payload?.grantee?.token !== "undefined") {
+    if (typeof this.directive.payload.grantee?.token !== "undefined") {
       return this.directive.payload.grantee.token;
     }
     throw CommonError.create(
