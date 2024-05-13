@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import * as CommonError from "../error";
 import { copyElement } from "./copy";
 

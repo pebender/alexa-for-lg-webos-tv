@@ -22,7 +22,6 @@ module.exports = {
     "no-redeclare": "off",
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
-    "@typescript-eslint/no-namespace": "off",
   },
   overrides: [
     {
