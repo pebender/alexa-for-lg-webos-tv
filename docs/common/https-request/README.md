@@ -8,9 +8,9 @@
 
 ## Index
 
-### Type Aliases
+### Interfaces
 
-- [RequestOptions](type-aliases/RequestOptions.md)
+- [RequestOptions](interfaces/RequestOptions.md)
 
 ### Functions
 

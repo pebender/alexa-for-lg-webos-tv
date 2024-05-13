@@ -4,13 +4,13 @@ import { DatabaseTable } from "../../database";
 import { Configuration } from "../../configuration";
 import { authorizeUser } from "../auth";
 
-export type BridgeTokenAuthRecord = {
+export interface BridgeTokenAuthRecord {
   bridgeToken: string;
   bridgeHostname: string;
   email: string;
   userId: string;
   skillToken: string;
-};
+}
 
 export type BridgeTokenAuthField =
   | "bridgeToken"

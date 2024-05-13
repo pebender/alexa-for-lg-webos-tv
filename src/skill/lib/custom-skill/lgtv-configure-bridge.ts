@@ -9,19 +9,19 @@ async function createHostnamesSimpleCardContent(
 ): Promise<string> {
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
-  const ipAddressA: number = Number(
+  const ipAddressA = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressA"),
   );
-  const ipAddressB: number = Number(
+  const ipAddressB = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressB"),
   );
-  const ipAddressC: number = Number(
+  const ipAddressC = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressC"),
   );
-  const ipAddressD: number = Number(
+  const ipAddressD = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressD"),
   );
-  const ipAddress: string = `${ipAddressA.toString()}.${ipAddressB.toString()}.${ipAddressC.toString()}.${ipAddressD.toString()}`;
+  const ipAddress = `${ipAddressA.toString()}.${ipAddressB.toString()}.${ipAddressC.toString()}.${ipAddressD.toString()}`;
   sessionAttributes.ipAddress = ipAddress;
   Reflect.deleteProperty(sessionAttributes, "hostnames");
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
@@ -45,9 +45,9 @@ async function createHostnamesSimpleCardContent(
   Common.Debug.debug(
     `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${hostnames.toString()}`,
   );
-  const hostnameCount: number = Number(hostnames.length);
-  let cardContent: string = "";
-  let index: number = 0;
+  const hostnameCount = Number(hostnames.length);
+  let cardContent = "";
+  let index = 0;
   while (index < hostnameCount) {
     cardContent += `${index.toString()}: ${hostnameCount.toString()}\n`;
     index += 1;
@@ -75,7 +75,7 @@ async function setBridgeCredentials(
   const sessionAttributes =
     handlerInput.attributesManager.getSessionAttributes();
   const hostnames: string[] = sessionAttributes.hostnames as string[];
-  const hostnameIndex: number = Number(
+  const hostnameIndex = Number(
     ASKRequestEnvelope.getSlotValue(
       handlerInput.requestEnvelope,
       "hostnameIndex",
@@ -162,11 +162,11 @@ const ConfigureBridgeIntentHandler = {
       `(dirty) address: ${ipAddressAString}.${ipAddressBString}.${ipAddressCString}.${ipAddressDString}, hostnameIndex: ${hostnameIndexString}`,
     );
 
-    const ipAddressA: number = Number(ipAddressAString);
-    const ipAddressB: number = Number(ipAddressBString);
-    const ipAddressC: number = Number(ipAddressCString);
-    const ipAddressD: number = Number(ipAddressDString);
-    const hostnameIndex: number = Number(hostnameIndexString);
+    const ipAddressA = Number(ipAddressAString);
+    const ipAddressB = Number(ipAddressBString);
+    const ipAddressC = Number(ipAddressCString);
+    const ipAddressD = Number(ipAddressDString);
+    const hostnameIndex = Number(hostnameIndexString);
     Common.Debug.debug(
       `(clean) address: ${ipAddressA.toString()}.${ipAddressB.toString()}.${ipAddressC.toString()}.${ipAddressD.toString()}, hostnameIndex: ${hostnameIndex.toString()}`,
     );
@@ -330,8 +330,8 @@ const ConfigureBridgeIntentHandler = {
         }
 
         const hostnames: string[] = sessionAttributes.hostnames as string[];
-        const hostnameIndex: number = Number(hostnameIndexString);
-        const hostnameCount: number = Number(hostnames);
+        const hostnameIndex = Number(hostnameIndexString);
+        const hostnameCount = Number(hostnames);
         if (
           !Number.isInteger(hostnameIndex) ||
           hostnameIndex >= hostnameCount + 2 ||
@@ -361,7 +361,7 @@ const ConfigureBridgeIntentHandler = {
             .getResponse();
         }
         if (intentRequest.intent.confirmationStatus !== "CONFIRMED") {
-          const hostnameIndex: number = Number(
+          const hostnameIndex = Number(
             ASKRequestEnvelope.getSlotValue(
               handlerInput.requestEnvelope,
               "hostnameIndex",

@@ -173,8 +173,7 @@ export class BackendSearcher extends EventEmitter {
               // check anyway.
               //
               if (
-                typeof description.root === "undefined" ||
-                typeof description.root.device === "undefined" ||
+                typeof description.root?.device === "undefined" ||
                 description.root.device.length !== 1 ||
                 typeof description.root.device[0].manufacturer ===
                   "undefined" ||

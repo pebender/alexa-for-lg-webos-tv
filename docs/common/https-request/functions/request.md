@@ -19,7 +19,7 @@ received. Otherwise, this function throws a [CommonError.CommonError](../../erro
 
 ## Parameters
 
-• **requestOptions**: [`RequestOptions`](../type-aliases/RequestOptions.md)
+• **requestOptions**: [`RequestOptions`](../interfaces/RequestOptions.md)
 
 basic HTTP options.
 

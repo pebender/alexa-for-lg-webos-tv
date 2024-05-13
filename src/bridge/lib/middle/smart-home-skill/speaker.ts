@@ -164,7 +164,7 @@ async function adjustVolumeHandler(
     return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
   }
 
-  let lgtvVolume: number = -1;
+  let lgtvVolume: number;
   try {
     lgtvVolume = await getVolume();
   } catch (error) {

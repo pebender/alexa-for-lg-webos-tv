@@ -309,10 +309,11 @@ export class BackendControl extends EventEmitter {
         },
       );
     } else {
+      const payload = lgtvRequest.payload;
       lgtvResponse = await new Promise((resolve, reject): void => {
         this._connection.request(
           lgtvRequest.uri,
-          lgtvRequest.payload as LGTV.RequestPayload,
+          payload,
           (error: Error | null, response?: LGTV.Response): void => {
             if (error !== null) {
               reject(
@@ -345,8 +346,8 @@ export class BackendControl extends EventEmitter {
       });
     }
     if (!lgtvResponse.returnValue) {
-      let errorText: string = "unknown";
-      let errorCode: string = "unknown";
+      let errorText = "unknown";
+      let errorCode = "unknown";
       if (
         typeof lgtvResponse.errorText !== "undefined" &&
         typeof lgtvResponse.errorText !== "object"

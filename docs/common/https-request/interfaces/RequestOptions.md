@@ -4,11 +4,9 @@
 
 [alexa-for-lg-webos-tv](../../../modules.md) / [common/https-request](../README.md) / RequestOptions
 
-# Type alias: RequestOptions
+# Interface: RequestOptions
 
-> **RequestOptions**: `object`
-
-## Type declaration
+## Properties
 
 ### headers
 
@@ -18,13 +16,19 @@
 
  \[`x`: `string`\]: `string`
 
+***
+
 ### hostname
 
 > **hostname**: `string`
 
+***
+
 ### path
 
 > **path**: `string`
+
+***
 
 ### port
 

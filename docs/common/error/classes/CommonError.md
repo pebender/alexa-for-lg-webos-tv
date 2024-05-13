@@ -24,7 +24,7 @@
 
 • **message**: `string`
 
-• **options?**: [`CommonErrorOptions`](../type-aliases/CommonErrorOptions.md)
+• **options?**: [`CommonErrorOptions`](../interfaces/CommonErrorOptions.md)
 
 #### Returns
 

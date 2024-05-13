@@ -2,10 +2,10 @@ import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
 import LGTV from "lgtv2";
 
-type Channel = {
+interface Channel {
   channelNumber: string;
   channelName: string;
-};
+}
 
 async function getChannel(
   backendControl: BackendControl,
@@ -181,7 +181,9 @@ async function activateLiveTv(
     };
     try {
       await backendControl.lgtvCommand(lgtvRequest);
-    } catch {}
+    } catch (error) {
+      Common.Debug.debugError(error);
+    }
   }
 }
 

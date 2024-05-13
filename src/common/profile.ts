@@ -1,12 +1,12 @@
 import * as HTTPSRequest from "./https-request";
 import * as CommonError from "./error";
 
-export type UserProfile = {
+export interface UserProfile {
   /** The user_id from the user's linked {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon} account profile. */
   userId: string;
   /** The email from the user's linked {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon} account profile. */
   email: string;
-};
+}
 
 /**
  *

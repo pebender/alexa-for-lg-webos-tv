@@ -88,16 +88,16 @@ const lgtvExternalInputRenameList: { [key: string]: string } = {
   "AV 3": "VIDEO 3",
 };
 
-type ExternalInput = {
+interface ExternalInput {
   id: string;
   label: string;
   appId: string;
   device: LGTV.ResponseExternalInputListDevice;
-};
+}
 
-type ExternalInputMap = {
+interface ExternalInputMap {
   [input: string]: ExternalInput;
-};
+}
 
 async function getAlexaToLGTV(
   backendControl: BackendControl,

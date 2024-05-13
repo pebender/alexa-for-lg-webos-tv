@@ -8,10 +8,13 @@
 
 ## Index
 
+### Interfaces
+
+- [Record](interfaces/Record.md)
+
 ### Type Aliases
 
 - [Field](type-aliases/Field.md)
-- [Record](type-aliases/Record.md)
 
 ### Functions
 

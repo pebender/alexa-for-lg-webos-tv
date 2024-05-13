@@ -12,12 +12,10 @@ import { Backend, BackendControl } from "../../backend";
 import { Authorization as DirectiveAuthorization } from "../authorization";
 import LGTV from "lgtv2";
 
-interface HandlerFunction {
-  (
-    alexaRequest: Common.SHS.Request,
-    backendControl: BackendControl,
-  ): Promise<Common.SHS.ResponseWrapper>;
-}
+type HandlerFunction = (
+  alexaRequest: Common.SHS.Request,
+  backendControl: BackendControl,
+) => Promise<Common.SHS.ResponseWrapper>;
 
 const handlers: {
   [x: string]: HandlerFunction;

@@ -13,13 +13,19 @@ import { BackendControl } from "../../backend";
 //
 import launchMap from "./launcher.json";
 
-type LaunchMapItem = {
+interface LaunchMapItem {
   alexa: { name: string; identifier: string };
   lgtv: { title: string; id: string };
-};
-type LaunchMap = { map: LaunchMapItem[] };
-type AlexaToLGTV = { [alexaIdentifier: string]: { id: string; title: string } };
-type LGTVToAlexa = { [lgtvId: string]: { identifier: string; name: string } };
+}
+interface LaunchMap {
+  map: LaunchMapItem[];
+}
+interface AlexaToLGTV {
+  [alexaIdentifier: string]: { id: string; title: string };
+}
+interface LGTVToAlexa {
+  [lgtvId: string]: { identifier: string; name: string };
+}
 
 // Convert "launcher.json" into a collection of LG webOS TV application ids and
 // titles indexed by Alexa.Launcher launch target identifiers.

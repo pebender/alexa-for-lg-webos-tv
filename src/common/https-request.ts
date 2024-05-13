@@ -2,12 +2,12 @@ import * as https from "node:https";
 import * as Debug from "./debug";
 import * as CommonError from "./error";
 
-export type RequestOptions = {
+export interface RequestOptions {
   hostname: string;
   port: number;
   path: string;
   headers: { [x: string]: string };
-};
+}
 
 type ResponseErrorNames =
   | "CONNECTION_INTERRUPTED"
@@ -25,9 +25,10 @@ type ResponseErrorNames =
 
 function createHttpError(
   specific: ResponseErrorNames,
+  cause?: unknown,
 ): CommonError.CommonError {
   const general = "http";
-  return CommonError.create("", { general, specific });
+  return CommonError.create("", { general, specific, cause });
 }
 
 /**
@@ -73,6 +74,7 @@ export async function request(
 
   Object.assign(options.headers, requestOptions.headers);
   options.headers.authorization = `Bearer ${bearerToken}`;
+  // eslint-disable-next-line @typescript-eslint/dot-notation
   options.headers["Accept"] = "application/json";
   if (options.method === "POST") {
     options.headers["content-type"] = "application/json";
@@ -136,12 +138,22 @@ export async function request(
 
           if (typeof contentType === "undefined") {
             reject(createHttpError("CONTENT_TYPE_MISSING"));
+            return;
           }
 
           if (
-            !/^application\/json/.test((contentType as string).toLowerCase())
+            contentType
+              .split(/\s*;\s*/)[0]
+              .trim()
+              .toLowerCase() !== "application/json"
           ) {
-            reject(createHttpError("CONTENT_TYPE_INCORRECT"));
+            reject(
+              createHttpError("CONTENT_TYPE_INCORRECT", {
+                contentType,
+                contentTypeParsed: contentType.split(/\w*;\w*/).toString(),
+              }),
+            );
+            return;
           }
 
           try {
@@ -153,9 +165,11 @@ export async function request(
             body = body_unknown;
           } catch (cause) {
             reject(createHttpError("BODY_INVALID_FORMAT"));
+            return;
           }
           // Return the body.
           resolve(body);
+          return;
         });
       });
       req.on("error", (): void => {

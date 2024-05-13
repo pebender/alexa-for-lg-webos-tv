@@ -19,13 +19,13 @@ export type CommonErrorLocation =
   | "bridge_service_user_db"
   | "bridge_service_auth_db";
 
-export type CommonErrorOptions = {
+export interface CommonErrorOptions {
   general: CommonErrorGeneral;
   specific?: string;
   sender?: CommonErrorLocation;
   receiver?: CommonErrorLocation;
   cause?: unknown;
-};
+}
 
 export class CommonError extends Error implements NodeJS.ErrnoException {
   public readonly code: string;

@@ -61,7 +61,7 @@ export class Middle {
   ): Promise<Common.SHS.ResponseWrapper> {
     const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
 
-    let authorized: boolean = false;
+    let authorized = false;
     try {
       authorized = await this._authorization.authorizeSkillToken(
         shsRequest.getAccessToken(),

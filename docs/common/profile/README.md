@@ -8,9 +8,9 @@
 
 ## Index
 
-### Type Aliases
+### Interfaces
 
-- [UserProfile](type-aliases/UserProfile.md)
+- [UserProfile](interfaces/UserProfile.md)
 
 ### Functions
 

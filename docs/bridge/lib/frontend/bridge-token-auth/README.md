@@ -12,7 +12,10 @@
 
 - [BridgeTokenAuth](classes/BridgeTokenAuth.md)
 
+### Interfaces
+
+- [BridgeTokenAuthRecord](interfaces/BridgeTokenAuthRecord.md)
+
 ### Type Aliases
 
 - [BridgeTokenAuthField](type-aliases/BridgeTokenAuthField.md)
-- [BridgeTokenAuthRecord](type-aliases/BridgeTokenAuthRecord.md)

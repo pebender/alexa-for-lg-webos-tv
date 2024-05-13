@@ -33,16 +33,8 @@ export async function getCredentials(
     updateBridgeToken?: boolean;
   },
 ): Promise<{ bridgeHostname: string | null; bridgeToken: string | null }> {
-  const bridgeHostname: string | undefined =
-    typeof options === "undefined" ||
-    typeof options.bridgeHostname === "undefined"
-      ? undefined
-      : options.bridgeHostname;
-  let updateBridgeToken: boolean =
-    typeof options === "undefined" ||
-    typeof options.updateBridgeToken === "undefined"
-      ? false
-      : options.updateBridgeToken;
+  const bridgeHostname: string | null = options?.bridgeHostname ?? null;
+  let updateBridgeToken: boolean = options?.updateBridgeToken ?? false;
 
   let record: Database.Record | null;
   record = await Database.getRecordUsingSkillToken(skillToken, {

@@ -7,12 +7,12 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import * as Common from "../../../common";
 
-export type Record = {
+export interface Record {
   userId: string | null;
   skillToken: string | null;
   bridgeHostname: string | null;
   bridgeToken: string | null;
-};
+}
 
 export type Field = "userId" | "skillToken" | "bridgeHostname" | "bridgeToken";
 
@@ -40,19 +40,9 @@ async function getRecords(
     requiredFields?: Field[];
   },
 ): Promise<Record[]> {
-  const required: boolean =
-    typeof options === "undefined" || typeof options.required === "undefined"
-      ? false
-      : options.required;
-  const unique: boolean =
-    typeof options === "undefined" || typeof options.unique === "undefined"
-      ? false
-      : options.unique;
-  const requiredFields =
-    typeof options === "undefined" ||
-    typeof options.requiredFields === "undefined"
-      ? []
-      : options.requiredFields;
+  const required = options?.required ?? false;
+  const unique = options?.unique ?? false;
+  const requiredFields = options?.requiredFields ?? [];
 
   const records: Record[] = [];
   let data;
@@ -62,17 +52,13 @@ async function getRecords(
     throw createDatabaseError("", { cause });
   }
 
-  if (
-    typeof data === "undefined" ||
-    typeof data.Count === "undefined" ||
-    typeof data.Items === "undefined"
-  ) {
+  if (typeof data.Count === "undefined" || typeof data.Items === "undefined") {
     throw createDatabaseError("");
   }
-  if (typeof required !== "undefined" && required && data.Count === 0) {
+  if (required && data.Count === 0) {
     throw createDatabaseError("", { specific: "not_found" });
   }
-  if (typeof unique !== "undefined" && unique && data.Count > 1) {
+  if (unique && data.Count > 1) {
     throw createDatabaseError("", { specific: "not_unique" });
   }
 

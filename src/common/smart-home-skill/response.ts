@@ -139,7 +139,7 @@ export class SHSResponse {
     };
 
     const response = {
-      event: (copyElement(optsA.event) as SHSEvent | undefined) || {
+      event: (copyElement(optsA.event) as SHSEvent | undefined) ?? {
         header: {
           namespace: optsB.namespace,
           name: optsB.name,
@@ -156,16 +156,15 @@ export class SHSResponse {
           },
         },
         payload:
-          (copyElement(optsB.payload) as SHSEvent.Payload | undefined) || {},
+          (copyElement(optsB.payload) as SHSEvent.Payload | undefined) ?? {},
       },
       context: optsA.context,
     };
 
     if (
       typeof response.event.endpoint !== "undefined" &&
-      typeof response.event.endpoint.scope !== "undefined" &&
-      typeof response.event.endpoint.scope.type === "undefined" &&
-      typeof response.event.endpoint.scope.token === "undefined"
+      typeof response.event.endpoint.scope?.type === "undefined" &&
+      typeof response.event.endpoint.scope?.token === "undefined"
     ) {
       Reflect.deleteProperty(response.event.endpoint, "scope");
     }
@@ -269,7 +268,7 @@ export class SHSResponseWrapper {
   ) {
     this.request = request;
     this.response = response;
-    this.statusCode = statusCode || 200;
+    this.statusCode = statusCode ?? 200;
     if (typeof error !== "undefined" && error !== null) {
       if (error instanceof CommonError.CommonError) {
         this.error = error;
@@ -327,7 +326,7 @@ export class SHSResponseWrapper {
     error?: unknown,
   ) {
     if (error instanceof CommonError.CommonError) {
-      const errorName = `${error.general}.${error.specific || "unknown"}`;
+      const errorName = `${error.general}.${error.specific ?? "unknown"}`;
       const errorMessage = error.message || "unknown";
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
@@ -391,7 +390,7 @@ export class SHSResponseWrapper {
     return SHSResponseWrapper.buildAlexaErrorResponse(
       request,
       type,
-      message || "",
+      message ?? "",
     );
   }
 
@@ -431,7 +430,7 @@ export class SHSResponseWrapper {
       request,
       type,
       message,
-      statusCode || 200,
+      statusCode ?? 200,
       error,
     );
   }

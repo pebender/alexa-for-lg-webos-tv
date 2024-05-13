@@ -4,24 +4,28 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / Record
 
-# Type alias: Record
+# Interface: Record
 
-> **Record**: `object`
-
-## Type declaration
+## Properties
 
 ### bridgeHostname
 
-> **bridgeHostname**: `string` \| `null`
+> **bridgeHostname**: `null` \| `string`
+
+***
 
 ### bridgeToken
 
-> **bridgeToken**: `string` \| `null`
+> **bridgeToken**: `null` \| `string`
+
+***
 
 ### skillToken
 
-> **skillToken**: `string` \| `null`
+> **skillToken**: `null` \| `string`
+
+***
 
 ### userId
 
-> **userId**: `string` \| `null`
+> **userId**: `null` \| `string`

@@ -6,7 +6,7 @@
 
 # Function: getRecordUsingUserId()
 
-> **getRecordUsingUserId**(`userId`, `options`?): `Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
+> **getRecordUsingUserId**(`userId`, `options`?): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
 
 ## Parameters
 
@@ -20,4 +20,4 @@
 
 ## Returns
 
-`Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
+`Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>

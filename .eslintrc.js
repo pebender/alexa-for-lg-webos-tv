@@ -5,7 +5,9 @@ module.exports = {
     es2023: true,
   },
   extends: [
+    "eslint:recommended",
     "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
     "prettier",
   ],
   parser: "@typescript-eslint/parser",
@@ -19,16 +21,8 @@ module.exports = {
     "prettier",
   ],
   rules: {
-    "no-redeclare": "off",
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
+    "@typescript-eslint/consistent-indexed-object-style": "off",
   },
-  overrides: [
-    {
-      files: ["*.ts"],
-      rules: {
-        "no-undef": "off",
-      },
-    },
-  ],
 };

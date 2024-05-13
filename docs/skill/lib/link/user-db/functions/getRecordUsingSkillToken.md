@@ -6,7 +6,7 @@
 
 # Function: getRecordUsingSkillToken()
 
-> **getRecordUsingSkillToken**(`skillToken`, `options`?): `Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
+> **getRecordUsingSkillToken**(`skillToken`, `options`?): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
 
 ## Parameters
 
@@ -20,4 +20,4 @@
 
 ## Returns
 
-`Promise`\<[`Record`](../type-aliases/Record.md) \| `null`\>
+`Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>

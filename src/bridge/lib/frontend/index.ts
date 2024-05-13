@@ -222,8 +222,8 @@ export class Frontend {
           const url = new URL(jwtPayload.aud);
           const bridgeHostname = url.hostname;
 
-          let userId: string = "";
-          let email: string = "";
+          let userId: string;
+          let email: string;
           try {
             const userProfile: Common.Profile.UserProfile =
               await Common.Profile.getUserProfile(skillToken);
@@ -307,9 +307,8 @@ export class Frontend {
               .json({});
             return;
           }
-          const authorization = (req.headers.authorization as string).split(
-            /\s+/,
-          );
+          const authorization =
+            req.headers.authorization?.split(/\s+/).map((x) => x.trim()) ?? [];
           if (authorization.length !== 2) {
             ipBlacklistIncrement(req, res);
             const body = shsInvalidAuthorizationCredentialResponse(
@@ -385,7 +384,12 @@ export class Frontend {
           res.status(400).json({});
           return;
         }
-        if (!/^application\/json/.test(contentType.toLowerCase())) {
+        if (
+          contentType
+            .split(/\s*;\s*/)[0]
+            .trim()
+            .toLowerCase() !== "application/json"
+        ) {
           ipBlacklistIncrement(req, res);
           res.status(415).json({});
           return;

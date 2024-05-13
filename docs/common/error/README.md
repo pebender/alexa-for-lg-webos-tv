@@ -12,11 +12,14 @@
 
 - [CommonError](classes/CommonError.md)
 
+### Interfaces
+
+- [CommonErrorOptions](interfaces/CommonErrorOptions.md)
+
 ### Type Aliases
 
 - [CommonErrorGeneral](type-aliases/CommonErrorGeneral.md)
 - [CommonErrorLocation](type-aliases/CommonErrorLocation.md)
-- [CommonErrorOptions](type-aliases/CommonErrorOptions.md)
 
 ### Functions
 
