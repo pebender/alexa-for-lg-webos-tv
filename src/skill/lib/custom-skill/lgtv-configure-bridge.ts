@@ -21,7 +21,8 @@ async function createHostnamesSimpleCardContent(
   const ipAddressD: number = Number(
     ASKRequestEnvelope.getSlotValue(handlerInput.requestEnvelope, "ipAddressD"),
   );
-  sessionAttributes.ipAddress = `${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}`;
+  const ipAddress: string = `${ipAddressA.toString()}.${ipAddressB.toString()}.${ipAddressC.toString()}.${ipAddressD.toString()}`;
+  sessionAttributes.ipAddress = ipAddress;
   Reflect.deleteProperty(sessionAttributes, "hostnames");
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
   try {
@@ -30,7 +31,7 @@ async function createHostnamesSimpleCardContent(
     );
   } catch (cause) {
     Common.Debug.debug(
-      `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${sessionAttributes.ipAddress}'.`,
+      `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${ipAddress}'.`,
     );
     const error = Common.Error.create(
       "I had a problem connecting to the bridge's I.P.  address.",
@@ -40,20 +41,20 @@ async function createHostnamesSimpleCardContent(
     throw error;
   }
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-  Common.Debug.debug(
-    `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${sessionAttributes.hostnames}`,
-  );
   const hostnames: string[] = sessionAttributes.hostnames as string[];
-  const hostnameCount = hostnames.length;
+  Common.Debug.debug(
+    `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${hostnames.toString()}`,
+  );
+  const hostnameCount: number = Number(hostnames.length);
   let cardContent: string = "";
   let index: number = 0;
   while (index < hostnameCount) {
-    cardContent += `${index}: ${hostnameCount}\n`;
+    cardContent += `${index.toString()}: ${hostnameCount.toString()}\n`;
     index += 1;
   }
-  cardContent += `\n${index}: My bridge is not in the list of hostnames.`;
+  cardContent += `\n${index.toString()}: My bridge is not in the list of hostnames.`;
   index += 1;
-  cardContent += `\n${index}: My IP address is not '${sessionAttributes.ipAddress}'.`;
+  cardContent += `\n${index.toString()}: My IP address is not '${ipAddress}'.`;
   Common.Debug.debug(
     `LGTV_ConfigureBridgeIntent: bridge FQDN prompt: ${cardContent}`,
   );
@@ -167,7 +168,7 @@ const ConfigureBridgeIntentHandler = {
     const ipAddressD: number = Number(ipAddressDString);
     const hostnameIndex: number = Number(hostnameIndexString);
     Common.Debug.debug(
-      `(clean) address: ${ipAddressA}.${ipAddressB}.${ipAddressC}.${ipAddressD}, hostnameIndex: ${hostnameIndex}`,
+      `(clean) address: ${ipAddressA.toString()}.${ipAddressB.toString()}.${ipAddressC.toString()}.${ipAddressD.toString()}, hostnameIndex: ${hostnameIndex.toString()}`,
     );
 
     switch (dialogState) {

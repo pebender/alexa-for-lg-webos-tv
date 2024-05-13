@@ -526,7 +526,7 @@ export class Frontend {
           const shsResponse = shsResponseWrapper.response;
           const statusCode = shsResponseWrapper.statusCode;
           Common.Debug.debug("Smart Home Skill Response:");
-          Common.Debug.debug(`statusCode: ${statusCode}`);
+          Common.Debug.debug(`statusCode: ${statusCode.toString()}`);
           Common.Debug.debugJSON(shsResponse);
           if (typeof shsResponseWrapper.error !== "undefined") {
             Common.Debug.debug("smart home skill error response");
