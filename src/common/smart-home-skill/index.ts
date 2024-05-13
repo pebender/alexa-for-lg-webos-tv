@@ -1,10 +1,15 @@
 import schema from "./alexa_smart_home_message_schema.json";
 export { schema };
 
-export { SHSRequest as Request, SHSDirective as Directive } from "./request";
+export { Namespace, Header, Endpoint } from "./common";
+export { Request, Directive, DirectivePayload } from "./request";
 export {
-  SHSResponseWrapper as ResponseWrapper,
-  SHSResponse as Response,
-  SHSEvent as Event,
-  SHSContext as Context,
+  Response,
+  Event,
+  EventPayload,
+  EventPayloadEndpoint,
+  EventPayloadEndpointCapability,
+  Context,
+  ContextProperty,
 } from "./response";
+export { ResponseWrapper } from "./response-wrapper";

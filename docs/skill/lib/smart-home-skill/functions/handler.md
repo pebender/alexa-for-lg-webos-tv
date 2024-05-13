@@ -6,14 +6,14 @@
 
 # Function: handler()
 
-> **handler**(`event`, `context`): `Promise`\<[`SHSResponse`](../../../../common/smart-home-skill/response/classes/SHSResponse.md)\>
+> **handler**(`event`, `context`): `Promise`\<[`Response`](../../../../common/smart-home-skill/response/classes/Response.md)\>
 
 ## Parameters
 
-• **event**: [`SHSRequest`](../../../../common/smart-home-skill/request/classes/SHSRequest.md)
+• **event**: [`Request`](../../../../common/smart-home-skill/request/classes/Request.md)
 
 • **context**: `Context`
 
 ## Returns
 
-`Promise`\<[`SHSResponse`](../../../../common/smart-home-skill/response/classes/SHSResponse.md)\>
+`Promise`\<[`Response`](../../../../common/smart-home-skill/response/classes/Response.md)\>

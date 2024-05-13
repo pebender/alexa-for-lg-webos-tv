@@ -16,34 +16,82 @@
 
 ### Context
 
-Renames and re-exports [SHSContext](response/interfaces/SHSContext.md)
+Re-exports [Context](response/interfaces/Context.md)
+
+***
+
+### ContextProperty
+
+Re-exports [ContextProperty](response/interfaces/ContextProperty.md)
 
 ***
 
 ### Directive
 
-Renames and re-exports [SHSDirective](request/interfaces/SHSDirective.md)
+Re-exports [Directive](request/interfaces/Directive.md)
+
+***
+
+### DirectivePayload
+
+Re-exports [DirectivePayload](request/interfaces/DirectivePayload.md)
+
+***
+
+### Endpoint
+
+Re-exports [Endpoint](common/interfaces/Endpoint.md)
 
 ***
 
 ### Event
 
-Renames and re-exports [SHSEvent](response/interfaces/SHSEvent.md)
+Re-exports [Event](response/interfaces/Event.md)
+
+***
+
+### EventPayload
+
+Re-exports [EventPayload](response/interfaces/EventPayload.md)
+
+***
+
+### EventPayloadEndpoint
+
+Re-exports [EventPayloadEndpoint](response/interfaces/EventPayloadEndpoint.md)
+
+***
+
+### EventPayloadEndpointCapability
+
+Re-exports [EventPayloadEndpointCapability](response/interfaces/EventPayloadEndpointCapability.md)
+
+***
+
+### Header
+
+Re-exports [Header](common/interfaces/Header.md)
+
+***
+
+### Namespace
+
+Re-exports [Namespace](common/type-aliases/Namespace.md)
 
 ***
 
 ### Request
 
-Renames and re-exports [SHSRequest](request/classes/SHSRequest.md)
+Re-exports [Request](request/classes/Request.md)
 
 ***
 
 ### Response
 
-Renames and re-exports [SHSResponse](response/classes/SHSResponse.md)
+Re-exports [Response](response/classes/Response.md)
 
 ***
 
 ### ResponseWrapper
 
-Renames and re-exports [SHSResponseWrapper](response/classes/SHSResponseWrapper.md)
+Re-exports [ResponseWrapper](response-wrapper/classes/ResponseWrapper.md)

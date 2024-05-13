@@ -8,17 +8,21 @@
 
 ## Index
 
-### Namespaces
-
-- [SHSContext](namespaces/SHSContext/README.md)
-- [SHSEvent](namespaces/SHSEvent/README.md)
-
 ### Classes
 
-- [SHSResponse](classes/SHSResponse.md)
-- [SHSResponseWrapper](classes/SHSResponseWrapper.md)
+- [Response](classes/Response.md)
 
 ### Interfaces
 
-- [SHSContext](interfaces/SHSContext.md)
-- [SHSEvent](interfaces/SHSEvent.md)
+- [Context](interfaces/Context.md)
+- [ContextProperty](interfaces/ContextProperty.md)
+- [Event](interfaces/Event.md)
+- [EventPayload](interfaces/EventPayload.md)
+- [EventPayloadEndpoint](interfaces/EventPayloadEndpoint.md)
+- [EventPayloadEndpointCapability](interfaces/EventPayloadEndpointCapability.md)
+
+## References
+
+### default
+
+Renames and re-exports [Response](classes/Response.md)

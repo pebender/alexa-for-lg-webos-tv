@@ -6,12 +6,12 @@
 
 # Function: sendSkillDirective()
 
-> **sendSkillDirective**(`request`): `Promise`\<[`SHSResponseWrapper`](../../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+> **sendSkillDirective**(`request`): `Promise`\<[`ResponseWrapper`](../../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)\>
 
 ## Parameters
 
-• **request**: [`SHSRequest`](../../../../../common/smart-home-skill/request/classes/SHSRequest.md)
+• **request**: [`Request`](../../../../../common/smart-home-skill/request/classes/Request.md)
 
 ## Returns
 
-`Promise`\<[`SHSResponseWrapper`](../../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+`Promise`\<[`ResponseWrapper`](../../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)\>

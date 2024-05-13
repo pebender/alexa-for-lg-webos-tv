@@ -4,14 +4,14 @@ import { Backend } from "../../backend";
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [];
 }
 
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.ContextProperty>[] {
   return [];
 }
 

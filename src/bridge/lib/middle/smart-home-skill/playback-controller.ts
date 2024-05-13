@@ -5,7 +5,7 @@ import LGTV from "lgtv2";
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [
     Promise.resolve({
       type: "AlexaInterface",
@@ -19,7 +19,7 @@ function capabilities(
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.ContextProperty>[] {
   return [];
 }
 

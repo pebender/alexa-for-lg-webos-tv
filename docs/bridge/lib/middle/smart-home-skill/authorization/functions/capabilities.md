@@ -6,7 +6,7 @@
 
 # Function: capabilities()
 
-> **capabilities**(`backend`): `Promise`\<[`Capability`](../../../../../../common/smart-home-skill/response/namespaces/SHSEvent/namespaces/Payload/namespaces/Endpoint/interfaces/Capability.md)\>[]
+> **capabilities**(`backend`): `Promise`\<[`EventPayloadEndpointCapability`](../../../../../../common/smart-home-skill/response/interfaces/EventPayloadEndpointCapability.md)\>[]
 
 ## Parameters
 
@@ -14,4 +14,4 @@
 
 ## Returns
 
-`Promise`\<[`Capability`](../../../../../../common/smart-home-skill/response/namespaces/SHSEvent/namespaces/Payload/namespaces/Endpoint/interfaces/Capability.md)\>[]
+`Promise`\<[`EventPayloadEndpointCapability`](../../../../../../common/smart-home-skill/response/interfaces/EventPayloadEndpointCapability.md)\>[]

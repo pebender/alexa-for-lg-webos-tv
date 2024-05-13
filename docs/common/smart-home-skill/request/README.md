@@ -8,14 +8,17 @@
 
 ## Index
 
-### Namespaces
-
-- [SHSDirective](namespaces/SHSDirective/README.md)
-
 ### Classes
 
-- [SHSRequest](classes/SHSRequest.md)
+- [Request](classes/Request.md)
 
 ### Interfaces
 
-- [SHSDirective](interfaces/SHSDirective.md)
+- [Directive](interfaces/Directive.md)
+- [DirectivePayload](interfaces/DirectivePayload.md)
+
+## References
+
+### default
+
+Renames and re-exports [Request](classes/Request.md)

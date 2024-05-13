@@ -4,7 +4,7 @@ import { BackendControl } from "../../backend";
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa",
@@ -15,7 +15,7 @@ function capabilities(
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property>[] {
+): Promise<Common.SHS.ContextProperty>[] {
   return [];
 }
 

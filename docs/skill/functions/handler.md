@@ -6,14 +6,14 @@
 
 # Function: handler()
 
-> **handler**(`request`, `context`): `Promise`\<`ASKModel.ResponseEnvelope` \| [`SHSResponse`](../../common/smart-home-skill/response/classes/SHSResponse.md)\>
+> **handler**(`request`, `context`): `Promise`\<`ASKModel.ResponseEnvelope` \| [`Response`](../../common/smart-home-skill/response/classes/Response.md)\>
 
 ## Parameters
 
-• **request**: [`SHSRequest`](../../common/smart-home-skill/request/classes/SHSRequest.md) \| `RequestEnvelope`
+• **request**: [`Request`](../../common/smart-home-skill/request/classes/Request.md) \| `RequestEnvelope`
 
 • **context**: `Context` \| `Context`
 
 ## Returns
 
-`Promise`\<`ASKModel.ResponseEnvelope` \| [`SHSResponse`](../../common/smart-home-skill/response/classes/SHSResponse.md)\>
+`Promise`\<`ASKModel.ResponseEnvelope` \| [`Response`](../../common/smart-home-skill/response/classes/Response.md)\>

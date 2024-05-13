@@ -39,8 +39,8 @@ async function handler(
   //
   async function buildEndpoint(
     backendControl: BackendControl,
-  ): Promise<Common.SHS.Event.Payload.Endpoint> {
-    let capabilities: Common.SHS.Event.Payload.Endpoint.Capability[] = [];
+  ): Promise<Common.SHS.EventPayloadEndpoint> {
+    let capabilities: Common.SHS.EventPayloadEndpointCapability[] = [];
     try {
       // Determine capabilities in parallel.
       capabilities = await Promise.all(
@@ -49,7 +49,7 @@ async function handler(
     } catch (error) {
       capabilities = [];
     }
-    const endpoint: Common.SHS.Event.Payload.Endpoint = {
+    const endpoint: Common.SHS.EventPayloadEndpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
       description: constants.application.name.pretty,
@@ -65,18 +65,18 @@ async function handler(
 
   function buildEndpoints(
     backendControls: BackendControl[],
-  ): Promise<Common.SHS.Event.Payload.Endpoint[]> {
+  ): Promise<Common.SHS.EventPayloadEndpoint[]> {
     return Promise.all(backendControls.map(buildEndpoint));
   }
 
   function buildResponse(
-    endpoints: Common.SHS.Event.Payload.Endpoint[],
+    endpoints: Common.SHS.EventPayloadEndpoint[],
   ): Common.SHS.Response {
     const alexaResponse = new Common.SHS.Response({
       namespace: "Alexa.Discovery",
       name: "Discover.Response",
     });
-    endpoints.forEach((endpoint: Common.SHS.Event.Payload.Endpoint): void => {
+    endpoints.forEach((endpoint: Common.SHS.EventPayloadEndpoint): void => {
       alexaResponse.addPayloadEndpoint(endpoint);
     });
     return alexaResponse;

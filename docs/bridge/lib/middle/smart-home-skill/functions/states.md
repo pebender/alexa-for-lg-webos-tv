@@ -6,7 +6,7 @@
 
 # Function: states()
 
-> **states**(`backendControl`): `Promise`\<[`Property`](../../../../../common/smart-home-skill/response/namespaces/SHSContext/interfaces/Property.md) \| `null`\>[]
+> **states**(`backendControl`): `Promise`\<[`ContextProperty`](../../../../../common/smart-home-skill/response/interfaces/ContextProperty.md) \| `null`\>[]
 
 ## Parameters
 
@@ -14,4 +14,4 @@
 
 ## Returns
 
-`Promise`\<[`Property`](../../../../../common/smart-home-skill/response/namespaces/SHSContext/interfaces/Property.md) \| `null`\>[]
+`Promise`\<[`ContextProperty`](../../../../../common/smart-home-skill/response/interfaces/ContextProperty.md) \| `null`\>[]

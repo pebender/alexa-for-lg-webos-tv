@@ -1,145 +1,114 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import { randomUUID } from "crypto";
-import * as CommonError from "../error";
+import * as Common from "../../common";
 import { copyElement } from "./copy";
-import { SHSDirective, SHSRequest } from "./request";
-import { Debug } from "..";
+import { Namespace, Header, Endpoint } from "./common";
 
-export namespace SHSEvent {
-  export namespace Header {
-    export type Namespace = SHSDirective.Header.Namespace;
-  }
-  export interface Header {
-    namespace: Header.Namespace;
-    name: string;
-    instance?: string;
-    messageId: string;
-    correlationToken?: string;
-    payloadVersion: "3";
-    [x: string]: string | undefined;
-  }
-  export interface Endpoint {
-    endpointId: string;
-    scope?: {
-      type: "BearerToken";
-      token: string;
-      [x: string]: string;
-    };
-    cookie?: { [x: string]: string };
-    [x: string]: string | object | undefined;
-  }
-  export namespace Payload {
-    export namespace Endpoint {
-      export namespace Capability {}
-      export interface Capability {
-        type: string;
-        interface: string;
-        version: string;
-        properties?: {
-          supported: {
-            name: string;
-          }[];
-          proactivelyReported: boolean;
-          retrievable: boolean;
-        };
-        // 'supportedOperations' for 'Alexa.PlaybackController'
-        supportedOperations?: string[];
-        // 'instance', capabilityResources' and 'configuration' for 'Alexa.RangeController'
-        instance?: string;
-        configuration?: object;
-        capabilityResources?: {
-          friendlyNames: {
-            "@type": "text";
-            value: {
-              text: string;
-              locale: "en-US";
-            };
-          }[];
-        };
-        [x: string]: string | object | undefined;
-      }
-    }
-    export interface Endpoint {
-      description: string;
-      displayCategories: string[];
-      endpointId: string;
-      friendlyName: string;
-      manufacturerName: string;
-      cookie?: {
-        [x: string]: string;
+export interface EventPayloadEndpointCapability {
+  type: string;
+  interface: string;
+  version: string;
+  properties?: {
+    supported: {
+      name: string;
+    }[];
+    proactivelyReported: boolean;
+    retrievable: boolean;
+  };
+  // 'supportedOperations' for 'Alexa.PlaybackController'
+  supportedOperations?: string[];
+  // 'instance', capabilityResources' and 'configuration' for 'Alexa.RangeController'
+  instance?: string;
+  configuration?: object;
+  capabilityResources?: {
+    friendlyNames: {
+      "@type": "text";
+      value: {
+        text: string;
+        locale: "en-US";
       };
-      capabilities: Endpoint.Capability[];
-      [x: string]: string | object | undefined;
-    }
-  }
-  export interface Payload {
-    endpoints?: Payload.Endpoint[];
-    type?: string;
-    message?: string;
-    [x: string]: string | object | undefined;
-  }
+    }[];
+  };
+  [x: string]: string | object | undefined;
 }
-export interface SHSEvent {
-  header: SHSEvent.Header;
-  endpoint?: SHSEvent.Endpoint;
-  payload: SHSEvent.Payload;
+
+export interface EventPayloadEndpoint {
+  description: string;
+  displayCategories: string[];
+  endpointId: string;
+  friendlyName: string;
+  manufacturerName: string;
+  cookie?: {
+    [x: string]: string;
+  };
+  capabilities: EventPayloadEndpointCapability[];
+  [x: string]: string | object | undefined;
+}
+
+export interface EventPayload {
+  endpoints?: EventPayloadEndpoint[];
+  type?: string;
+  message?: string;
+  [x: string]: string | object | undefined;
+}
+
+export interface Event {
+  header: Header;
+  endpoint?: Endpoint;
+  payload: EventPayload;
   [x: string]: object | undefined;
 }
-export namespace SHSContext {
-  export namespace Property {
-    export type Namespace = SHSEvent.Header.Namespace;
-  }
-  export interface Property {
-    namespace: Property.Namespace;
-    name: string;
-    instance?: string;
-    value: boolean | number | string | object;
-    timeOfSample: string;
-    uncertaintyInMilliseconds: number;
-    [x: string]: boolean | number | string | [] | object | undefined;
-  }
-}
-export interface SHSContext {
-  properties?: SHSContext.Property[];
-  [x: string]: SHSContext.Property[] | undefined;
+
+export interface ContextProperty {
+  namespace: Namespace;
+  name: string;
+  instance?: string;
+  value: boolean | number | string | object;
+  timeOfSample: string;
+  uncertaintyInMilliseconds: number;
+  [x: string]: boolean | number | string | [] | object | undefined;
 }
 
-export class SHSResponse {
-  public event: SHSEvent;
-  public context?: SHSContext;
+export interface Context {
+  properties?: ContextProperty[];
+  [x: string]: ContextProperty[] | undefined;
+}
+
+export class Response {
+  public event: Event;
+  public context?: Context;
   [x: string]: object | undefined;
   public constructor(
     opts:
       | {
-          event: SHSEvent;
-          context?: SHSContext;
+          event: Event;
+          context?: Context;
         }
       | {
-          namespace: SHSEvent.Header.Namespace;
+          namespace: Namespace;
           name: string;
           instance?: string;
           correlationToken?: string;
           endpointId?: string;
           token?: string;
-          payload?: SHSEvent.Payload;
+          payload?: EventPayload;
         },
   ) {
     const optsA = opts as {
-      event: SHSEvent;
-      context?: SHSContext;
+      event: Event;
+      context?: Context;
     };
     const optsB = opts as {
-      namespace: SHSEvent.Header.Namespace;
+      namespace: Namespace;
       name: string;
       instance?: string;
       correlationToken?: string;
       endpointId?: string;
       token?: string;
-      payload?: SHSEvent.Payload;
+      payload?: EventPayload;
     };
 
     const response = {
-      event: (copyElement(optsA.event) as SHSEvent | undefined) ?? {
+      event: (copyElement(optsA.event) as Event | undefined) ?? {
         header: {
           namespace: optsB.namespace,
           name: optsB.name,
@@ -155,8 +124,7 @@ export class SHSResponse {
             token: optsB.token,
           },
         },
-        payload:
-          (copyElement(optsB.payload) as SHSEvent.Payload | undefined) ?? {},
+        payload: (copyElement(optsB.payload) as EventPayload | undefined) ?? {},
       },
       context: optsA.context,
     };
@@ -176,9 +144,9 @@ export class SHSResponse {
       Reflect.deleteProperty(response.event, "endpoint");
     }
 
-    this.event = copyElement(response.event) as SHSEvent;
+    this.event = copyElement(response.event) as Event;
     if (typeof response.context !== "undefined") {
-      this.response = copyElement(response.context) as SHSContext;
+      this.response = copyElement(response.context) as Context;
     }
   }
 
@@ -187,10 +155,10 @@ export class SHSResponse {
       this.endpoint = {};
     }
 
-    (this.endpoint as SHSEvent.Endpoint).endpointId = endpointId;
+    (this.endpoint as Endpoint).endpointId = endpointId;
   }
 
-  public addContextProperty(contextProperty: SHSContext.Property): void {
+  public addContextProperty(contextProperty: ContextProperty): void {
     if (typeof this.context === "undefined") {
       this.context = {};
     }
@@ -201,7 +169,7 @@ export class SHSResponse {
     this.context.properties.push(contextProperty);
   }
 
-  public addPayloadEndpoint(payloadEndpoint: SHSEvent.Payload.Endpoint): void {
+  public addPayloadEndpoint(payloadEndpoint: EventPayloadEndpoint): void {
     if (typeof this.event.payload.endpoints === "undefined") {
       this.event.payload.endpoints = [];
     }
@@ -210,11 +178,11 @@ export class SHSResponse {
   }
 
   public static async buildContextProperty(opts: {
-    namespace: SHSContext.Property.Namespace;
+    namespace: Namespace;
     name: string;
     instance?: string;
     value: () => Promise<boolean | number | string | [] | object>;
-  }): Promise<SHSContext.Property | null> {
+  }): Promise<ContextProperty | null> {
     try {
       const startTime = new Date();
       const value = await opts.value();
@@ -227,16 +195,16 @@ export class SHSResponse {
         uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
       };
     } catch (error) {
-      Debug.debugError(error);
+      Common.Debug.debugError(error);
       return null;
     }
   }
 
   public static buildPayloadEndpointCapability(opts: {
-    namespace: SHSEvent.Header.Namespace;
+    namespace: Namespace;
     propertyNames?: string[];
-  }): Promise<SHSEvent.Payload.Endpoint.Capability> {
-    const capability: SHSEvent.Payload.Endpoint.Capability = {
+  }): Promise<EventPayloadEndpointCapability> {
+    const capability: EventPayloadEndpointCapability = {
       type: "AlexaInterface",
       interface: opts.namespace,
       version: "3",
@@ -254,184 +222,4 @@ export class SHSResponse {
   }
 }
 
-export class SHSResponseWrapper {
-  public readonly request: SHSRequest;
-  public readonly response: SHSResponse;
-  public readonly statusCode: number;
-  public readonly error?: CommonError.CommonError;
-
-  public constructor(
-    request: SHSRequest,
-    response: SHSResponse,
-    statusCode?: number,
-    error?: unknown,
-  ) {
-    this.request = request;
-    this.response = response;
-    this.statusCode = statusCode ?? 200;
-    if (typeof error !== "undefined" && error !== null) {
-      if (error instanceof CommonError.CommonError) {
-        this.error = error;
-      } else {
-        this.error = CommonError.create("", {
-          general: "unknown",
-          cause: error,
-        });
-      }
-    }
-  }
-
-  public addContextProperty(contextProperty: SHSContext.Property): void {
-    this.response.addContextProperty(contextProperty);
-  }
-
-  public addPayloadEndpoint(payloadEndpoint: SHSEvent.Payload.Endpoint): void {
-    this.response.addPayloadEndpoint(payloadEndpoint);
-  }
-
-  public static buildAlexaResponse(request: SHSRequest) {
-    const response = new SHSResponse({
-      namespace: "Alexa",
-      name: "Response",
-      correlationToken: request.getCorrelationToken(),
-      endpointId: request.getEndpointId(),
-      payload: {},
-    });
-    return new SHSResponseWrapper(request, response);
-  }
-
-  public static buildAlexaErrorResponse(
-    request: SHSRequest,
-    type: string,
-    message: string,
-    statusCode?: number,
-    error?: unknown,
-  ) {
-    const response = new SHSResponse({
-      namespace: "Alexa",
-      name: "ErrorResponse",
-      correlationToken: request.getCorrelationToken(),
-      endpointId: request.getEndpointId(),
-      payload: {
-        type,
-        message,
-      },
-    });
-    return new SHSResponseWrapper(request, response, statusCode, error);
-  }
-
-  public static buildAlexaErrorResponseForInternalError(
-    request: SHSRequest,
-    statusCode?: number,
-    error?: unknown,
-  ) {
-    if (error instanceof CommonError.CommonError) {
-      const errorName = `${error.general}.${error.specific ?? "unknown"}`;
-      const errorMessage = error.message || "unknown";
-      const type = "INTERNAL_ERROR";
-      const message = `error: ${errorMessage} (${errorName})`;
-      return SHSResponseWrapper.buildAlexaErrorResponse(
-        request,
-        type,
-        message,
-        statusCode,
-        error,
-      );
-    } else if (error instanceof Error) {
-      const errorName = error.name || "unknown";
-      const errorMessage = error.message || "unknown";
-      const type = "INTERNAL_ERROR";
-      const message = `error: ${errorMessage} (${errorName})`;
-      return SHSResponseWrapper.buildAlexaErrorResponse(
-        request,
-        type,
-        message,
-        statusCode,
-        error,
-      );
-    } else {
-      return SHSResponseWrapper.buildAlexaErrorResponse(
-        request,
-        "unknown",
-        "unknown",
-        statusCode,
-        error,
-      );
-    }
-  }
-
-  public static buildAlexaErrorResponseForInvalidDirectiveName(
-    request: SHSRequest,
-  ) {
-    const type = "INVALID_DIRECTIVE";
-    const message = `unknown 'name' '${request.directive.header.name}' in namespace '${request.directive.header.namespace}'.`;
-    return SHSResponseWrapper.buildAlexaErrorResponse(request, type, message);
-  }
-
-  public static buildAlexaErrorResponseForInvalidDirectiveNamespace(
-    request: SHSRequest,
-  ) {
-    const type = "INVALID_DIRECTIVE";
-    const message = `unknown namespace '${request.directive.header.namespace}'.`;
-    return SHSResponseWrapper.buildAlexaErrorResponse(request, type, message);
-  }
-
-  public static buildAlexaErrorResponseForInvalidValue(request: SHSRequest) {
-    const type = "INVALID_VALUE";
-    const message = "";
-    return SHSResponseWrapper.buildAlexaErrorResponse(request, type, message);
-  }
-
-  public static buildAlexaErrorResponseNotSupportedInCurrentMode(
-    request: SHSRequest,
-    message?: string,
-  ) {
-    const type = "  NOT_SUPPORTED_IN_CURRENT_MODE";
-    return SHSResponseWrapper.buildAlexaErrorResponse(
-      request,
-      type,
-      message ?? "",
-    );
-  }
-
-  public static buildAlexaErrorResponseForValueOutOfRange(
-    request: SHSRequest,
-    validRange?: { minimumValue: unknown; maximumValue: unknown },
-  ) {
-    const type = "VALUE_OUT_OF_RANGE";
-    const message = "";
-    const responseWrapper = SHSResponseWrapper.buildAlexaErrorResponse(
-      request,
-      type,
-      message,
-    );
-    if (typeof validRange !== "undefined") {
-      responseWrapper.response.event.payload.validRange = validRange;
-    }
-    return responseWrapper;
-  }
-
-  public static buildAlexaErrorResponseForPowerOff(request: SHSRequest) {
-    const type = "ENDPOINT_UNREACHABLE";
-    const message = "The TV's power is off.";
-    return SHSResponseWrapper.buildAlexaErrorResponse(request, type, message);
-  }
-
-  public static buildAlexaErrorResponseAddError(
-    request: SHSRequest,
-    type: string,
-    message: string,
-    statusCode?: number,
-  ) {
-    const error = CommonError.create(message);
-    error.name = type;
-    Error.captureStackTrace(error);
-    return SHSResponseWrapper.buildAlexaErrorResponse(
-      request,
-      type,
-      message,
-      statusCode ?? 200,
-      error,
-    );
-  }
-}
+export default Response;

@@ -217,7 +217,7 @@ async function setChannel(
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.ChannelController",
@@ -228,7 +228,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property | null>[] {
+): Promise<Common.SHS.ContextProperty | null>[] {
   if (backendControl.getPowerState() === "OFF") {
     return [];
   }

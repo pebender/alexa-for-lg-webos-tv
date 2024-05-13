@@ -5,7 +5,7 @@ import LGTV from "lgtv2";
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.Speaker",
@@ -16,8 +16,8 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property | null>[] {
-  function getVolumeState(): Promise<Common.SHS.Context.Property | null> {
+): Promise<Common.SHS.ContextProperty | null>[] {
+  function getVolumeState(): Promise<Common.SHS.ContextProperty | null> {
     async function value(): Promise<number> {
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://audio/getVolume",
@@ -41,7 +41,7 @@ function states(
     return volumeState;
   }
 
-  function getMutedState(): Promise<Common.SHS.Context.Property | null> {
+  function getMutedState(): Promise<Common.SHS.ContextProperty | null> {
     async function value(): Promise<boolean> {
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://audio/getVolume",

@@ -31,7 +31,7 @@ const handlers: {
 
 function capabilities(
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   return [
     ...alexa.capabilities(backendControl),
     ...alexaPowerController.capabilities(backendControl),
@@ -45,7 +45,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property | null>[] {
+): Promise<Common.SHS.ContextProperty | null>[] {
   return [
     ...alexa.states(backendControl),
     ...alexaPowerController.states(backendControl),
@@ -66,7 +66,7 @@ async function addStates(
       if (state === null) {
         return;
       }
-      alexaResponseWrapper.addContextProperty(state);
+      alexaResponseWrapper.response.addContextProperty(state);
     });
     return alexaResponseWrapper;
   } catch (error) {

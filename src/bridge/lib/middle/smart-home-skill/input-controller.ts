@@ -193,10 +193,10 @@ async function getAlexaToLGTV(
 
 function capabilities(
   backendControl: BackendControl,
-): Promise<Common.SHS.Event.Payload.Endpoint.Capability>[] {
+): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
   async function getInputCapability(
     backendControl: BackendControl,
-  ): Promise<Common.SHS.Event.Payload.Endpoint.Capability> {
+  ): Promise<Common.SHS.EventPayloadEndpointCapability> {
     const inputs: { name: string; friendlyNames: string[] }[] = [];
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     Object.keys(alexaToLGTV).forEach((alexaInput) => {
@@ -239,7 +239,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.Context.Property | null>[] {
+): Promise<Common.SHS.ContextProperty | null>[] {
   async function value(): Promise<string> {
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     async function getInput(): Promise<string> {

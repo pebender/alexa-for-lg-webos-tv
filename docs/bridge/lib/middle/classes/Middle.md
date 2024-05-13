@@ -52,7 +52,7 @@
 
 ### handler()
 
-> **handler**(`rawRequest`): `Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+> **handler**(`rawRequest`): `Promise`\<[`ResponseWrapper`](../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)\>
 
 #### Parameters
 
@@ -60,7 +60,7 @@
 
 #### Returns
 
-`Promise`\<[`SHSResponseWrapper`](../../../../common/smart-home-skill/response/classes/SHSResponseWrapper.md)\>
+`Promise`\<[`ResponseWrapper`](../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)\>
 
 ***
 
