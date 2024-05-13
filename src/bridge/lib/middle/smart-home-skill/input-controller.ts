@@ -168,10 +168,12 @@ async function getAlexaToLGTV(
   Object.keys(alexaInputMap).forEach((key) => {
     const id = alexaInputMap[key].id;
     if (typeof externalInputIdlMap[id] !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete externalInputIdlMap[id];
     }
     const idRenamed = lgtvExternalInputRenameList[id];
     if (typeof externalInputIdlMap[idRenamed] !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete externalInputIdlMap[idRenamed];
     }
   });
