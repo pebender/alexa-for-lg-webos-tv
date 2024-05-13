@@ -12,5 +12,4 @@
 
 - [debug](functions/debug.md)
 - [debugError](functions/debugError.md)
-- [debugErrorWithStack](functions/debugErrorWithStack.md)
 - [debugJSON](functions/debugJSON.md)

@@ -62,7 +62,7 @@ export class Bridge {
       await fs.mkdir(configurationDir, { recursive: true });
     } catch (cause) {
       const error = Common.Error.create("", { general: "unknown", cause });
-      Common.Debug.debugErrorWithStack(error);
+      Common.Debug.debugError(error);
       throw error;
     }
 
@@ -78,7 +78,7 @@ export class Bridge {
     const _backend = await Backend.build(_configuration);
     _backend.on("error", (error: Error, id: string): void => {
       Common.Debug.debug(id);
-      Common.Debug.debugErrorWithStack(error);
+      Common.Debug.debugError(error);
     });
     const _middle = await Middle.build(_configuration, _backend);
     const _frontend = await Frontend.build(_configuration, _middle);
@@ -104,6 +104,10 @@ export class Bridge {
  * A convenience function to build and start the Bridge.
  */
 export async function startBridge(): Promise<void> {
-  const bridge = await Bridge.build();
-  await bridge.start();
+  try {
+    const bridge = await Bridge.build();
+    await bridge.start();
+  } catch (error) {
+    Common.Debug.debugError(error);
+  }
 }

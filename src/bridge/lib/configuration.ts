@@ -26,7 +26,7 @@ export class Configuration {
       const error = Common.Error.create(
         `configuration file '${cfgFile}' is missing 'authorizedUsers'.`,
       );
-      Common.Debug.debugErrorWithStack(error);
+      Common.Debug.debugError(error);
       throw error;
     }
     cfg.authorizedUsers.forEach((authorizedUser, index) => {
@@ -34,14 +34,14 @@ export class Configuration {
         const error = Common.Error.create(
           `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].hostname'.`,
         );
-        Common.Debug.debugErrorWithStack(error);
+        Common.Debug.debugError(error);
         throw error;
       }
       if (typeof authorizedUser.emails === "undefined") {
         const error = Common.Error.create(
           `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].emails'.`,
         );
-        Common.Debug.debugErrorWithStack(error);
+        Common.Debug.debugError(error);
         throw error;
       }
     });

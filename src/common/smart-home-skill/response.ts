@@ -227,7 +227,7 @@ export class SHSResponse {
         uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
       };
     } catch (error) {
-      Debug.debugErrorWithStack(error);
+      Debug.debugError(error);
       return null;
     }
   }

@@ -35,7 +35,7 @@ async function handler(
   const alexaRequest = new Common.SHS.Request(event);
 
   Common.Debug.debug("smart home skill request message");
-  Common.Debug.debug(JSON.stringify(alexaRequest, null, 2));
+  Common.Debug.debugJSON(alexaRequest);
 
   let alexaResponseWrapper: Common.SHS.ResponseWrapper;
   try {
@@ -52,11 +52,11 @@ async function handler(
         );
     }
     Common.Debug.debug("smart home skill response message");
-    Common.Debug.debug(JSON.stringify(alexaResponseWrapper.response, null, 2));
+    Common.Debug.debugJSON(alexaResponseWrapper.response);
 
     if (typeof alexaResponseWrapper.error !== "undefined") {
       Common.Debug.debug("smart home skill error response");
-      Common.Debug.debugErrorWithStack(alexaResponseWrapper.error);
+      Common.Debug.debugError(alexaResponseWrapper.error);
     }
     Common.Debug.debug("smart home skill request message");
   }

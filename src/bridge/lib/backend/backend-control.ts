@@ -236,7 +236,7 @@ export class BackendControl extends EventEmitter {
           }
         }
 
-        void asyncFinish(powerOn).catch(Common.Debug.debugErrorWithStack);
+        void asyncFinish(powerOn).catch(Common.Debug.debugError);
       }
 
       finishTimeoutObject = setTimeout(finish, 7000, false);

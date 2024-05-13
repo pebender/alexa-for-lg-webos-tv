@@ -79,13 +79,3 @@
 #### Returns
 
 `undefined` \| `string`
-
-***
-
-### getUserProfile()
-
-> **getUserProfile**(): `Promise`\<[`UserProfile`](../../../profile/type-aliases/UserProfile.md)\>
-
-#### Returns
-
-`Promise`\<[`UserProfile`](../../../profile/type-aliases/UserProfile.md)\>

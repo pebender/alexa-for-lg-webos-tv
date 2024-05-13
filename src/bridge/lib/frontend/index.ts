@@ -530,7 +530,7 @@ export class Frontend {
           Common.Debug.debugJSON(shsResponse);
           if (typeof shsResponseWrapper.error !== "undefined") {
             Common.Debug.debug("smart home skill error response");
-            Common.Debug.debugErrorWithStack(shsResponseWrapper.error);
+            Common.Debug.debugError(shsResponseWrapper.error);
           }
 
           // Check SHS Response against the SHS schema.

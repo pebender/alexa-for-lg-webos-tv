@@ -18,7 +18,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     await Link.testConnection(accessToken);
   } catch (c) {
     const cause: Common.Error.CommonError = c as Common.Error.CommonError;
-    Common.Debug.debugErrorWithStack(cause);
+    Common.Debug.debugError(cause);
     if (typeof cause.general === "string") {
       switch (cause.general) {
         case "authorization": {

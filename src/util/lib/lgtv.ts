@@ -13,7 +13,7 @@ export async function getBackend(): Promise<Backend> {
     await fs.mkdir(configurationDir, { recursive: true });
   } catch (cause) {
     const error = Common.Error.create("", { general: "unknown", cause });
-    Common.Debug.debugErrorWithStack(error);
+    Common.Debug.debugError(error);
     throw error;
   }
 
@@ -29,7 +29,7 @@ export async function getBackend(): Promise<Backend> {
   const backend = await Backend.build(configuration);
   backend.on("error", (error: Error, id: string): void => {
     Common.Debug.debug(id);
-    Common.Debug.debugErrorWithStack(error);
+    Common.Debug.debugError(error);
   });
   await backend.start();
 

@@ -111,7 +111,7 @@ export async function sendSkillDirective(
     return await sendHandler(shsPath, request, request);
   } catch (e) {
     const error: Common.Error.CommonError = e as Common.Error.CommonError;
-    Common.Debug.debugErrorWithStack(error);
+    Common.Debug.debugError(error);
     return mapErrorToAlexaResponse(request, error);
   }
 }

@@ -242,7 +242,7 @@ export async function setBridgeHostname(
       new UpdateCommand(bridgeHostnameUpdateParams),
     );
   } catch (cause) {
-    Common.Debug.debugErrorWithStack(cause);
+    Common.Debug.debugError(cause);
     throw createDatabaseError("", { cause });
   }
 }
@@ -268,7 +268,7 @@ export async function setBridgeCredentials(
       new UpdateCommand(bridgeCredentialsUpdateParams),
     );
   } catch (cause) {
-    Common.Debug.debugErrorWithStack(cause);
+    Common.Debug.debugError(cause);
     throw createDatabaseError("", { cause });
   }
 }
@@ -289,7 +289,7 @@ export async function setSkillToken(
       new UpdateCommand(skillTokenUpdateParams),
     );
   } catch (cause) {
-    Common.Debug.debugErrorWithStack(cause);
+    Common.Debug.debugError(cause);
     throw createDatabaseError("", { cause });
   }
 }

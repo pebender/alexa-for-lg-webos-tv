@@ -37,7 +37,7 @@ const HelpIntentHandler = {
       .speak(speechOutput)
       .reprompt(speechOutput)
       .getResponse();
-    Common.Debug.debug(JSON.stringify(response));
+    Common.Debug.debugJSON(response);
     return response;
   },
 };

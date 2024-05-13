@@ -283,7 +283,7 @@ export class BackendSearcher extends EventEmitter {
             "TV search error",
             { general: "tv", specific: "searchError", cause: reason },
           );
-          Common.Debug.debugErrorWithStack(error);
+          Common.Debug.debugError(error);
         });
       }
       setTimeout(periodicSearch, 1800000);
@@ -300,7 +300,7 @@ export class BackendSearcher extends EventEmitter {
           "TV search error",
           { general: "tv", specific: "searchError", cause: reason },
         );
-        Common.Debug.debugErrorWithStack(error);
+        Common.Debug.debugError(error);
       });
     }
   }
@@ -315,7 +315,7 @@ export class BackendSearcher extends EventEmitter {
           "TV search error",
           { general: "tv", specific: "searchError", cause: reason },
         );
-        Common.Debug.debugErrorWithStack(error);
+        Common.Debug.debugError(error);
       });
     }
   }
