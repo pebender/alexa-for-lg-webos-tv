@@ -11,6 +11,7 @@ declare module "@outofsync/express-ip-blacklist" {
     res: express.Response,
     next: express.NextFunction,
   ) => void;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   type Cache = typeof ObjectKeyCache | typeof MemoryCache | typeof Redis;
 
   interface IPBlacklistOptions {
