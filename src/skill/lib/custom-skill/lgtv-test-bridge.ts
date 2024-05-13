@@ -11,7 +11,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     const speechOutput =
       "There appears to have been a problem with account linking. " +
       "Relink your account and reconfigure your bridge.";
-    throw speechOutput;
+    return speechOutput;
   }
 
   try {
@@ -25,13 +25,13 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
           const speechOutput =
             "There appears to have been a problem with account linking. " +
             "Relink your account and reconfigure your bridge.";
-          throw speechOutput;
+          return speechOutput;
         }
         case "database": {
           const speechOutput =
             "There was a problem access the database. " +
             "Test your bridge again.";
-          throw speechOutput;
+          return speechOutput;
         }
         case "link": {
           if (typeof cause.specific === "string") {
@@ -39,47 +39,47 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
               case "bridge_hostname_not_found": {
                 const speechOutput =
                   "Your bridge hostname has not been configured.";
-                throw speechOutput;
+                return speechOutput;
               }
               case "bridge_token_not_found": {
                 const speechOutput = "Your bridge token has not been acquired.";
-                throw speechOutput;
+                return speechOutput;
               }
               case "test_failed_tcp_connection": {
                 const speechOutput =
                   `Could not connect to {hostname} on port {port}. ` +
                   "Be sure the port is forwarded to your reverse proxy and your reverse proxy is properly configured";
-                throw speechOutput;
+                return speechOutput;
               }
               case "test_failed_tls_connection": {
                 const speechOutput =
                   `Could not securely connect to {hostname} on port {port}. ` +
                   "Be sure your reverse proxy is properly configured";
-                throw speechOutput;
+                return speechOutput;
               }
               case "test_failed_tls_certificate_validation": {
                 const speechOutput =
                   "Could not authenticate your TLS certificate against any trusted certificate authorities. " +
                   "Be sure your TLS certificate has been signed by a trusted certificate authority.";
-                throw speechOutput;
+                return speechOutput;
               }
               case "test_failed_tls_hostname_validation": {
                 const speechOutput =
                   `Your TLS certificate is not for {hostname}. ` +
                   "Either replace your TLS certificate or reconfigure your bridge.";
-                throw speechOutput;
+                return speechOutput;
               }
               case "link_failed_http": {
                 const speechOutput =
                   "Could not connect to your bridge. " +
                   "Be sure your reverse proxy is forwarding requests to your bridge, and be sure your bridge is running.";
-                throw speechOutput;
+                return speechOutput;
               }
               case "link_failed_authorization": {
                 const speechOutput =
                   "Could not authenticate with your bridge. " +
                   `Be sure your bridge allows your bridge hostname and user email to connect. " + After that, reconfigure your bridge.`;
-                throw speechOutput;
+                return speechOutput;
               }
             }
           }
@@ -90,7 +90,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     const speechOutput =
       "There was a problem connecting to your bridge. " +
       `Be sure your proxy and bridge are configured correctly.`;
-    throw speechOutput;
+    return speechOutput;
   }
   const speechOutput = "Congratulations, your bridge is configured correctly.";
   return speechOutput;
@@ -107,19 +107,11 @@ const TestBridgeIntentHandler = {
   },
   async handle(handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
     Common.Debug.debugJSON(handlerInput.requestEnvelope);
-    try {
-      const speechOutput = await test(handlerInput);
-      return handlerInput.responseBuilder
-        .speak(speechOutput)
-        .withShouldEndSession(true)
-        .getResponse();
-    } catch (error) {
-      const speechOutput = error as string;
-      return handlerInput.responseBuilder
-        .speak(speechOutput)
-        .withShouldEndSession(true)
-        .getResponse();
-    }
+    const speechOutput = await test(handlerInput);
+    return handlerInput.responseBuilder
+      .speak(speechOutput)
+      .withShouldEndSession(true)
+      .getResponse();
   },
 };
 

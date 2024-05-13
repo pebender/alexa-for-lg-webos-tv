@@ -1,7 +1,5 @@
 import * as CommonError from "../error";
-import * as Profile from "../profile";
 import { copyElement } from "./copy";
-import { SHSResponseWrapper } from "./response";
 
 export namespace SHSDirective {
   export namespace Header {
@@ -99,18 +97,5 @@ export class SHSRequest {
     throw CommonError.create(
       "the SHS Directive has no access token. this should not happen.",
     );
-  }
-
-  public async getUserProfile(): Promise<Profile.UserProfile> {
-    const accessToken = this.getAccessToken();
-    try {
-      return await Profile.getUserProfile(accessToken);
-    } catch (error) {
-      throw SHSResponseWrapper.buildAlexaErrorResponseForInternalError(
-        this,
-        200,
-        error,
-      );
-    }
   }
 }

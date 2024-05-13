@@ -24,7 +24,6 @@ module.exports = {
     "prettier/prettier": ["error"],
     "@typescript-eslint/no-dynamic-delete": "off",
     "@typescript-eslint/no-namespace": "off",
-    "@typescript-eslint/only-throw-error": "off",
   },
   overrides: [
     {
