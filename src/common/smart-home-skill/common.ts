@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 export type Namespace =
   | "Alexa"
   | "Alexa.Authorization"

@@ -224,8 +224,6 @@ export class BackendSearcher extends EventEmitter {
                 }
                 tv.mac = result;
                 callback(null, tv as TV);
-                // eslint-disable-next-line no-useless-return
-                return;
               });
             },
           );
