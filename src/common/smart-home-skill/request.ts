@@ -63,9 +63,9 @@ export class Request {
     if (typeof this.directive.payload.grantee?.token !== "undefined") {
       return this.directive.payload.grantee.token;
     }
-    throw CommonError.create(
-      "the SHS Directive has no access token. this should not happen.",
-    );
+    throw CommonError.create({
+      message: "the SHS Directive has no access token. this should not happen.",
+    });
   }
 }
 

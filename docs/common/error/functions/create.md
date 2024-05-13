@@ -6,11 +6,9 @@
 
 # Function: create()
 
-> **create**(`message`, `options`?): [`CommonError`](../classes/CommonError.md)
+> **create**(`options`?): [`CommonError`](../classes/CommonError.md)
 
 ## Parameters
-
-• **message**: `string`
 
 • **options?**: [`CommonErrorOptions`](../interfaces/CommonErrorOptions.md)
 

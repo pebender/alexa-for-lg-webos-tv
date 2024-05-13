@@ -14,21 +14,15 @@
 
 ***
 
-### general
+### general?
 
-> **general**: [`CommonErrorGeneral`](../type-aliases/CommonErrorGeneral.md)
-
-***
-
-### receiver?
-
-> `optional` **receiver**: [`CommonErrorLocation`](../type-aliases/CommonErrorLocation.md)
+> `optional` **general**: [`CommonErrorGeneral`](../type-aliases/CommonErrorGeneral.md)
 
 ***
 
-### sender?
+### message?
 
-> `optional` **sender**: [`CommonErrorLocation`](../type-aliases/CommonErrorLocation.md)
+> `optional` **message**: `string`
 
 ***
 

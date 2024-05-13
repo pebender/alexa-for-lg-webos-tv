@@ -58,23 +58,21 @@ export async function getUserProfile(
         case "http":
           switch (specific) {
             case "BAD_REQUEST":
-              throw CommonError.create(
-                "there was an authentication error while retrieving your profile",
-                {
-                  general: "authorization",
-                  specific: "invalid_token",
-                  cause,
-                },
-              );
+              throw CommonError.create({
+                message:
+                  "there was an authentication error while retrieving your profile",
+                general: "authorization",
+                specific: "invalid_token",
+                cause,
+              });
             case "UNAUTHORIZED":
-              throw CommonError.create(
-                "there was an authorization error while retrieving your profile",
-                {
-                  general: "authorization",
-                  specific: "invalid_scope",
-                  cause,
-                },
-              );
+              throw CommonError.create({
+                message:
+                  "there was an authorization error while retrieving your profile",
+                general: "authorization",
+                specific: "invalid_scope",
+                cause,
+              });
             default:
               throw cause;
           }
@@ -86,13 +84,15 @@ export async function getUserProfile(
   }
 
   if (typeof response.user_id !== "string") {
-    throw CommonError.create("there was no 'user_id' field in your profile", {
+    throw CommonError.create({
+      message: "there was no 'user_id' field in your profile",
       general: "authorization",
       specific: "missing_user_id",
     });
   }
   if (typeof response.email !== "string") {
-    throw CommonError.create("there was no 'email' field in your profile", {
+    throw CommonError.create({
+      message: "there was no 'email' field in your profile",
       general: "authorization",
       specific: "missing_email",
     });

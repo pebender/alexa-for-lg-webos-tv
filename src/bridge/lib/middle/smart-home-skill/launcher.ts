@@ -90,9 +90,11 @@ function states(
       typeof input.appId !== "string" ||
       typeof lgtvToAlexa[input.appId] === "undefined"
     ) {
-      throw Common.Error.create("TV response was invalid", {
+      throw Common.Error.create({
+        message: "TV response was invalid",
         general: "tv",
         specific: "responseInvalid",
+        cause: { lgtvResponse: input, lgtvToAlexa },
       });
     }
     return lgtvToAlexa[input.appId];

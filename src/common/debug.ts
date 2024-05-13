@@ -24,10 +24,11 @@ export function debugError(error: unknown) {
     if (error instanceof CommonError.CommonError) {
       commonError = error;
     } else {
-      commonError = CommonError.create(
-        "debugError: 'error' was not of type 'CommonError'",
-        { general: "unknown", cause: error },
-      );
+      commonError = CommonError.create({
+        message: "debugError: 'error' was not of type 'CommonError'",
+        general: "unknown",
+        cause: error,
+      });
     }
     console.debug("error:" + "\n" + util.inspect(commonError));
   }

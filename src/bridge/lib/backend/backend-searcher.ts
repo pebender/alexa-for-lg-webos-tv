@@ -130,20 +130,22 @@ export class BackendSearcher extends EventEmitter {
       void fetch(headers.LOCATION)
         .then((response: Response): Promise<Blob> => {
           if (response.status !== 200) {
-            throw Common.Error.create(
-              "Could not fetch descriptionXML from the TV",
-              { general: "tv", specific: "descriptionXmlFetchError" },
-            );
+            throw Common.Error.create({
+              message: "Could not fetch descriptionXML from the TV",
+              general: "tv",
+              specific: "descriptionXmlFetchError",
+            });
           }
           return response.blob();
         })
         .then((blob: Blob) => {
           const mimetype: string[] = blob.type.split(";");
           if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
-            throw Common.Error.create(
-              "Could not fetch descriptionXML from the TV",
-              { general: "tv", specific: "descriptionXmlFetchError" },
-            );
+            throw Common.Error.create({
+              message: "Could not fetch descriptionXML from the TV",
+              general: "tv",
+              specific: "descriptionXmlFetchError",
+            });
           }
           return blob.text();
         })
@@ -152,14 +154,12 @@ export class BackendSearcher extends EventEmitter {
             descriptionXml,
             (error: Error | null, description?: UPnPDevice | null): void => {
               if (error !== null) {
-                const commonError = Common.Error.create(
-                  "Could not fetch descriptionXML from the TV",
-                  {
-                    general: "tv",
-                    specific: "descriptionXmlFetchError",
-                    cause: error,
-                  },
-                );
+                const commonError = Common.Error.create({
+                  message: "Could not fetch descriptionXML from the TV",
+                  general: "tv",
+                  specific: "descriptionXmlFetchError",
+                  cause: error,
+                });
                 callback(commonError, null);
                 return;
               }
@@ -211,14 +211,12 @@ export class BackendSearcher extends EventEmitter {
               //
               arp.getMAC(tv.ip, (isError: boolean, result: string): void => {
                 if (isError) {
-                  const error = Common.Error.create(
-                    "Could not get TV's MAC address",
-                    {
-                      general: "tv",
-                      specific: "macAddressError",
-                      cause: result,
-                    },
-                  );
+                  const error = Common.Error.create({
+                    message: "Could not get TV's MAC address",
+                    general: "tv",
+                    specific: "macAddressError",
+                    cause: result,
+                  });
                   callback(error, null);
                   return;
                 }
@@ -232,7 +230,7 @@ export class BackendSearcher extends EventEmitter {
           if (reason instanceof Common.Error.CommonError) {
             callback(reason, null);
           } else {
-            const error = Common.Error.create("", {
+            const error = Common.Error.create({
               general: "tv",
               cause: reason,
             });
@@ -265,7 +263,7 @@ export class BackendSearcher extends EventEmitter {
     try {
       await this._ssdpNotify.start();
     } catch (error) {
-      throw Common.Error.create("", { general: "unknown", cause: error });
+      throw Common.Error.create({ general: "unknown", cause: error });
     }
 
     // Periodically search for TVs.
@@ -276,10 +274,12 @@ export class BackendSearcher extends EventEmitter {
       );
       if (search instanceof Promise) {
         search.catch((reason: unknown) => {
-          const error: Common.Error.CommonError = Common.Error.create(
-            "TV search error",
-            { general: "tv", specific: "searchError", cause: reason },
-          );
+          const error: Common.Error.CommonError = Common.Error.create({
+            message: "TV search error",
+            general: "tv",
+            specific: "searchError",
+            cause: reason,
+          });
           Common.Debug.debugError(error);
         });
       }
@@ -293,10 +293,12 @@ export class BackendSearcher extends EventEmitter {
     );
     if (search instanceof Promise) {
       search.catch((reason: unknown) => {
-        const error: Common.Error.CommonError = Common.Error.create(
-          "TV search error",
-          { general: "tv", specific: "searchError", cause: reason },
-        );
+        const error: Common.Error.CommonError = Common.Error.create({
+          message: "TV search error",
+          general: "tv",
+          specific: "searchError",
+          cause: reason,
+        });
         Common.Debug.debugError(error);
       });
     }
@@ -308,10 +310,12 @@ export class BackendSearcher extends EventEmitter {
     );
     if (search instanceof Promise) {
       search.catch((reason: unknown) => {
-        const error: Common.Error.CommonError = Common.Error.create(
-          "TV search error",
-          { general: "tv", specific: "searchError", cause: reason },
-        );
+        const error: Common.Error.CommonError = Common.Error.create({
+          message: "TV search error",
+          general: "tv",
+          specific: "searchError",
+          cause: reason,
+        });
         Common.Debug.debugError(error);
       });
     }

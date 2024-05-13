@@ -19,7 +19,6 @@
 ### Type Aliases
 
 - [CommonErrorGeneral](type-aliases/CommonErrorGeneral.md)
-- [CommonErrorLocation](type-aliases/CommonErrorLocation.md)
 
 ### Functions
 

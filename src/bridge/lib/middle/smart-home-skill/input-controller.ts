@@ -244,7 +244,8 @@ function states(
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     async function getInput(): Promise<string> {
       if (backendControl.getPowerState() === "OFF") {
-        throw Common.Error.create("TV is off", {
+        throw Common.Error.create({
+          message: "TV is off",
           general: "tv",
           specific: "off",
         });
@@ -257,9 +258,11 @@ function states(
           lgtvRequest,
         )) as LGTV.ResponseForegroundAppInfo;
       if (typeof lgtvResponse.appId === "undefined") {
-        throw Common.Error.create("TV response was invalid", {
+        throw Common.Error.create({
+          message: "TV response was invalid",
           general: "tv",
           specific: "responseInvalid",
+          cause: { lgtvResponse },
         });
       }
       return lgtvResponse.appId;
@@ -269,9 +272,11 @@ function states(
       (item) => alexaToLGTV[item].appId === appId,
     );
     if (typeof alexaInput === "undefined") {
-      throw Common.Error.create("TV input was unknown", {
+      throw Common.Error.create({
+        message: "TV input was unknown",
         general: "tv",
         specific: "responseInvalid",
+        cause: { appId, alexaToLGTV },
       });
     }
     return alexaInput;

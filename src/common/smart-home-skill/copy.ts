@@ -41,7 +41,7 @@ export function copyElement(original: copyElementType): copyElementType {
     return copy;
   }
 
-  throw CommonError.create(
-    "'original' contains an object that cannot be copied.",
-  );
+  throw CommonError.create({
+    message: "'original' contains an object that cannot be copied.",
+  });
 }

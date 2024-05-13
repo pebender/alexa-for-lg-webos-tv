@@ -20,16 +20,16 @@ const dynamoDBClient = new DynamoDBClient();
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
-function createDatabaseError(
-  message: string,
-  options?: { specific?: string; cause?: unknown },
-) {
+function createDatabaseError(options?: {
+  message?: string;
+  specific?: string;
+  cause?: unknown;
+}) {
   const databaseErrorOptions: Common.Error.CommonErrorOptions = {
     general: "database",
-    receiver: "skill_user_db",
   };
   Object.assign(databaseErrorOptions, options);
-  return Common.Error.create(message, databaseErrorOptions);
+  return Common.Error.create(databaseErrorOptions);
 }
 
 async function getRecords(
@@ -49,17 +49,17 @@ async function getRecords(
   try {
     data = await dynamoDBDocumentClient.send(queryCommand);
   } catch (cause) {
-    throw createDatabaseError("", { cause });
+    throw createDatabaseError({ cause });
   }
 
   if (typeof data.Count === "undefined" || typeof data.Items === "undefined") {
-    throw createDatabaseError("");
+    throw createDatabaseError();
   }
   if (required && data.Count === 0) {
-    throw createDatabaseError("", { specific: "not_found" });
+    throw createDatabaseError({ specific: "not_found" });
   }
   if (unique && data.Count > 1) {
-    throw createDatabaseError("", { specific: "not_unique" });
+    throw createDatabaseError({ specific: "not_unique" });
   }
 
   data.Items.forEach((item) => {
@@ -72,7 +72,7 @@ async function getRecords(
 
     requiredFields.forEach((requiredField: string) => {
       if (!Object.hasOwn(item, requiredField)) {
-        throw createDatabaseError("", {
+        throw createDatabaseError({
           specific: `missing_field+${requiredField}`,
         });
       }
@@ -82,20 +82,20 @@ async function getRecords(
       if (typeof item.userId === "string") {
         record.userId = item.userId === "" ? null : item.userId;
       } else {
-        throw createDatabaseError(
-          `invalid type. field 'userId' should be type 'string' but was type '${typeof item.userId}'`,
-          { specific: "invalid_field+userId" },
-        );
+        throw createDatabaseError({
+          message: `invalid type. field 'userId' should be type 'string' but was type '${typeof item.userId}'`,
+          specific: "invalid_field+userId",
+        });
       }
     }
     if (typeof item.skillToken !== "undefined") {
       if (typeof item.skillToken === "string") {
         record.skillToken = item.skillToken === "" ? null : item.skillToken;
       } else {
-        throw createDatabaseError(
-          `invalid type. field 'skillToken' should be type 'string' but was type '${typeof item.skillToken}'`,
-          { specific: "invalid_field+skillToken" },
-        );
+        throw createDatabaseError({
+          message: `invalid type. field 'skillToken' should be type 'string' but was type '${typeof item.skillToken}'`,
+          specific: "invalid_field+skillToken",
+        });
       }
     }
     if (typeof item.bridgeHostname !== "undefined") {
@@ -103,20 +103,20 @@ async function getRecords(
         record.bridgeHostname =
           item.bridgeHostname === "" ? null : item.bridgeHostname;
       } else {
-        throw createDatabaseError(
-          `invalid type. field 'bridgeHostname' should be type 'string' but was type '${typeof item.bridgeHostname}'`,
-          { specific: "invalid_field+bridgeHostname" },
-        );
+        throw createDatabaseError({
+          message: `invalid type. field 'bridgeHostname' should be type 'string' but was type '${typeof item.bridgeHostname}'`,
+          specific: "invalid_field+bridgeHostname",
+        });
       }
     }
     if (typeof item.bridgeToken !== "undefined") {
       if (typeof item.bridgeToken === "string") {
         record.bridgeToken = item.bridgeToken === "" ? null : item.bridgeToken;
       } else {
-        throw createDatabaseError(
-          `invalid type. field 'bridgeToken' should be type 'string' but was type '${typeof item.bridgeToken}'`,
-          { specific: "invalid_field+bridgeToken" },
-        );
+        throw createDatabaseError({
+          message: `invalid type. field 'bridgeToken' should be type 'string' but was type '${typeof item.bridgeToken}'`,
+          specific: "invalid_field+bridgeToken",
+        });
       }
     }
 
@@ -229,7 +229,7 @@ export async function setBridgeHostname(
     );
   } catch (cause) {
     Common.Debug.debugError(cause);
-    throw createDatabaseError("", { cause });
+    throw createDatabaseError({ cause });
   }
 }
 
@@ -255,7 +255,7 @@ export async function setBridgeCredentials(
     );
   } catch (cause) {
     Common.Debug.debugError(cause);
-    throw createDatabaseError("", { cause });
+    throw createDatabaseError({ cause });
   }
 }
 
@@ -276,6 +276,6 @@ export async function setSkillToken(
     );
   } catch (cause) {
     Common.Debug.debugError(cause);
-    throw createDatabaseError("", { cause });
+    throw createDatabaseError({ cause });
   }
 }

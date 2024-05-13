@@ -41,14 +41,14 @@ export class DatabaseTable {
     try {
       await db.loadDatabaseAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
 
     function index(fieldName: string): Promise<void> {
       return db
         .ensureIndexAsync({ fieldName, unique: true })
         .catch((cause: unknown) => {
-          throw Common.Error.create("", { general: "database", cause });
+          throw Common.Error.create({ general: "database", cause });
         });
     }
     await Promise.all(indexes.map(index));
@@ -66,7 +66,7 @@ export class DatabaseTable {
       await this._db.removeAsync(query, { multi: true });
       await this._db.compactDatafileAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -75,7 +75,7 @@ export class DatabaseTable {
       await this._db.removeAsync(query, { multi: true });
       await this._db.compactDatafileAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -83,7 +83,7 @@ export class DatabaseTable {
     try {
       return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -91,7 +91,7 @@ export class DatabaseTable {
     try {
       return await this._db.findAsync<DatabaseRecord>(query).execAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -100,7 +100,7 @@ export class DatabaseTable {
       await this._db.insertAsync(record);
       await this._db.compactDatafileAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -112,7 +112,7 @@ export class DatabaseTable {
       await this._db.updateAsync(query, update, {});
       await this._db.compactDatafileAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 
@@ -124,7 +124,7 @@ export class DatabaseTable {
       await this._db.updateAsync(query, update, { upsert: true });
       await this._db.compactDatafileAsync();
     } catch (cause) {
-      throw Common.Error.create("", { general: "database", cause });
+      throw Common.Error.create({ general: "database", cause });
     }
   }
 }

@@ -33,10 +33,11 @@ async function createHostnamesSimpleCardContent(
     Common.Debug.debug(
       `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${ipAddress}'.`,
     );
-    const error = Common.Error.create(
-      "I had a problem connecting to the bridge's I.P.  address.",
-      { general: "link", cause },
-    );
+    const error = Common.Error.create({
+      message: "I had a problem connecting to the bridge's I.P.  address.",
+      general: "link",
+      cause,
+    });
     Common.Debug.debugError(error);
     throw error;
   }
@@ -67,9 +68,10 @@ async function setBridgeCredentials(
   const accessToken =
     handlerInput.requestEnvelope.context.System.user.accessToken;
   if (typeof accessToken === "undefined") {
-    throw Common.Error.create(
-      "There was a problem with account linking. Please re-link the skill and try again.",
-    );
+    throw Common.Error.create({
+      message:
+        "There was a problem with account linking. Please re-link the skill and try again.",
+    });
   }
 
   const sessionAttributes =
@@ -92,18 +94,21 @@ async function setBridgeCredentials(
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
   } catch (cause) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
-    const error = Common.Error.create(
-      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
-      { general: "link", cause },
-    );
+    const error = Common.Error.create({
+      message:
+        "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
+      general: "link",
+      cause,
+    });
     Common.Debug.debugError(error);
     throw error;
   }
   if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");
-    throw Common.Error.create(
-      "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
-    );
+    throw Common.Error.create({
+      message:
+        "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
+    });
   }
 }
 

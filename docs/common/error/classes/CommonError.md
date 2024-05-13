@@ -18,11 +18,9 @@
 
 ### new CommonError()
 
-> **new CommonError**(`message`, `options`?): [`CommonError`](CommonError.md)
+> **new CommonError**(`options`?): [`CommonError`](CommonError.md)
 
 #### Parameters
-
-• **message**: `string`
 
 • **options?**: [`CommonErrorOptions`](../interfaces/CommonErrorOptions.md)
 
@@ -49,18 +47,6 @@
 ### general
 
 > `readonly` **general**: [`CommonErrorGeneral`](../type-aliases/CommonErrorGeneral.md)
-
-***
-
-### receiver?
-
-> `optional` `readonly` **receiver**: [`CommonErrorLocation`](../type-aliases/CommonErrorLocation.md)
-
-***
-
-### sender?
-
-> `optional` `readonly` **sender**: [`CommonErrorLocation`](../type-aliases/CommonErrorLocation.md)
 
 ***
 

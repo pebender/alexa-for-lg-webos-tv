@@ -28,10 +28,10 @@ function create(
         if (typeof encoded !== "undefined") {
           resolve(encoded);
         } else {
-          throw Common.Error.create("", { general: "unknown" });
+          throw Common.Error.create({ general: "unknown" });
         }
       } else {
-        reject(Common.Error.create("", { general: "unknown", cause: err }));
+        reject(Common.Error.create({ general: "unknown", cause: err }));
       }
     });
   });
@@ -60,7 +60,7 @@ export async function getBridgeToken(
     typeof response.token === "undefined" ||
     typeof response.token !== "string"
   ) {
-    throw Common.Error.create("", { general: "unknown" });
+    throw Common.Error.create({ general: "unknown" });
   }
 
   return response.token;

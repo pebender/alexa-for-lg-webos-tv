@@ -21,7 +21,7 @@ export class ResponseWrapper {
       if (error instanceof CommonError.CommonError) {
         this.error = error;
       } else {
-        this.error = CommonError.create("", {
+        this.error = CommonError.create({
           general: "unknown",
           cause: error,
         });
@@ -163,7 +163,7 @@ export class ResponseWrapper {
     message: string,
     statusCode?: number,
   ) {
-    const error = CommonError.create(message);
+    const error = CommonError.create({ message });
     error.name = type;
     Error.captureStackTrace(error);
     return ResponseWrapper.buildAlexaErrorResponse(

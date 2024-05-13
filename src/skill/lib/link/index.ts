@@ -56,7 +56,7 @@ export async function getCredentials(
       ) {
         throw cause;
       }
-      throw Common.Error.create("", {
+      throw Common.Error.create({
         general: "link",
         specific: "skill_user_profile",
         cause,
@@ -68,13 +68,11 @@ export async function getCredentials(
     });
   }
   if (record.userId === null) {
-    throw Common.Error.create(
-      `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
-      {
-        general: "database",
-        specific: "field_value_not_found+userId",
-      },
-    );
+    throw Common.Error.create({
+      message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
+      general: "database",
+      specific: "field_value_not_found+userId",
+    });
   }
   if (typeof bridgeHostname === "string") {
     await Database.setBridgeHostname(record.userId, bridgeHostname);
@@ -82,13 +80,11 @@ export async function getCredentials(
       requiredFields: ["userId"],
     });
     if (record.userId === null) {
-      throw Common.Error.create(
-        `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
-        {
-          general: "database",
-          specific: "field_value_not_found+userId",
-        },
-      );
+      throw Common.Error.create({
+        message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
+        general: "database",
+        specific: "field_value_not_found+userId",
+      });
     }
   }
   if (
@@ -122,11 +118,9 @@ export async function sendMessageUsingBridgeToken(
 ): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
   if (bridgeHostname === null || bridgeToken === null) {
-    throw Common.Error.create("", {
+    throw Common.Error.create({
       general: "authorization",
       specific: "bridgeHostname_or_bridgeToken_not_found",
-      receiver: "skill_user_db",
-      sender: "skill",
     });
   }
 
@@ -154,11 +148,9 @@ export async function sendMessageUsingBridgeToken(
         updateBridgeToken: true,
       });
       if (bridgeHostname === null || bridgeToken === null) {
-        throw Common.Error.create("", {
+        throw Common.Error.create({
           general: "authorization",
           specific: "bridgeHostname_or_bridgeToken_not_found",
-          receiver: "skill_user_db",
-          sender: "skill",
         });
       }
 
@@ -195,7 +187,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           return;
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create("", {
+          const error = Common.Error.create({
             general: "link",
             specific: "test_failed_tcp_connection",
             cause,
@@ -218,7 +210,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           return;
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create("", {
+          const error = Common.Error.create({
             general: "link",
             specific: "test_failed_tls_connection",
             cause,
@@ -244,7 +236,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           return;
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create("", {
+          const error = Common.Error.create({
             general: "link",
             specific: "test_failed_tls_certificate_validation",
             cause,
@@ -267,7 +259,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           return;
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create("", {
+          const error = Common.Error.create({
             general: "link",
             specific: "test_failed_tls_hostname_validation",
             cause,
@@ -293,13 +285,13 @@ export async function testConnection(skillToken: string): Promise<void> {
       if (cause instanceof Common.Error.CommonError) {
         switch (cause.specific) {
           case "BAD_GATEWAY":
-            throw Common.Error.create("", {
+            throw Common.Error.create({
               general: "link",
               specific: "link_failed_http",
               cause,
             });
           case "INVALID_AUTHORIZATION_CREDENTIAL":
-            throw Common.Error.create("", {
+            throw Common.Error.create({
               general: "link",
               specific: "link_failed_authorization",
               cause,
@@ -315,19 +307,15 @@ export async function testConnection(skillToken: string): Promise<void> {
     bridgeToken: string | null;
   } = await getCredentials(skillToken);
   if (bridgeCredentials.bridgeHostname === null) {
-    throw Common.Error.create("", {
+    throw Common.Error.create({
       general: "link",
       specific: "bridge_hostname_not_found",
-      receiver: "bridge_link",
-      sender: "skill_link",
     });
   }
   if (bridgeCredentials.bridgeToken === null) {
-    throw Common.Error.create("", {
+    throw Common.Error.create({
       general: "link",
       specific: "bridge_token_not_found",
-      receiver: "bridge_link",
-      sender: "skill_link",
     });
   }
 
