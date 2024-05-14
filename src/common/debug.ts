@@ -29,7 +29,9 @@ export function debugError(error: unknown) {
         cause: error,
       });
     }
-    console.debug("error:" + "\n" + util.inspect(commonError));
+    console.debug(
+      "error util.inspect:" + "\n" + util.inspect(commonError, { depth: 8 }),
+    );
   }
 }
 
