@@ -1,7 +1,9 @@
 import { randomUUID } from "crypto";
-import * as Common from "../../common";
+import * as CommonError from "../error";
+import * as CommonDebug from "../debug";
 import { copyElement } from "./copy";
 import { Namespace, Header, Endpoint } from "./common";
+import { Request } from "./request";
 
 export interface EventPayloadEndpointCapability {
   type: string;
@@ -195,7 +197,7 @@ export class Response {
         uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
       };
     } catch (error) {
-      Common.Debug.debugError(error);
+      CommonDebug.debugError(error);
       return null;
     }
   }
@@ -219,6 +221,116 @@ export class Response {
       };
     }
     return Promise.resolve(capability);
+  }
+
+  public static buildAlexaResponse(request: Request): Response {
+    return new Response({
+      namespace: "Alexa",
+      name: "Response",
+      correlationToken: request.getCorrelationToken(),
+      endpointId: request.getEndpointId(),
+      payload: {},
+    });
+  }
+
+  public static buildAlexaErrorResponse(
+    request: Request,
+    type: string,
+    message?: string,
+    error?: unknown,
+  ): Response {
+    const response = new Response({
+      namespace: "Alexa",
+      name: "ErrorResponse",
+      correlationToken: request.getCorrelationToken(),
+      endpointId: request.getEndpointId(),
+      payload: {
+        type,
+        message: message ?? "",
+      },
+    });
+    CommonDebug.debug("Response.buildAlexaErrorResponse");
+    CommonDebug.debugJSON({ request, response, error });
+    return response;
+  }
+
+  public static buildAlexaErrorResponseForInternalError(
+    request: Request,
+    error: unknown,
+  ) {
+    if (error instanceof CommonError.CommonError) {
+      const errorName = `${error.general}.${error.specific ?? "unknown"}`;
+      const errorMessage = error.message || "unknown";
+      const type = "INTERNAL_ERROR";
+      const message = `error: ${errorMessage} (${errorName})`;
+      return this.buildAlexaErrorResponse(request, type, message, error);
+    } else if (error instanceof Error) {
+      const errorName = error.name || "unknown";
+      const errorMessage = error.message || "unknown";
+      const type = "INTERNAL_ERROR";
+      const message = `error: ${errorMessage} (${errorName})`;
+      return this.buildAlexaErrorResponse(request, type, message, error);
+    } else {
+      return this.buildAlexaErrorResponse(request, "unknown", "unknown", error);
+    }
+  }
+
+  public static buildAlexaErrorResponseForInvalidDirectiveName(
+    request: Request,
+  ) {
+    const type = "INVALID_DIRECTIVE";
+    const message = `unknown 'name' '${request.directive.header.name}' in namespace '${request.directive.header.namespace}'.`;
+    return this.buildAlexaErrorResponse(request, type, message);
+  }
+
+  public static buildAlexaErrorResponseForInvalidDirectiveNamespace(
+    request: Request,
+  ) {
+    const type = "INVALID_DIRECTIVE";
+    const message = `unknown namespace '${request.directive.header.namespace}'.`;
+    return this.buildAlexaErrorResponse(request, type, message);
+  }
+
+  public static buildAlexaErrorResponseForInvalidValue(request: Request) {
+    const type = "INVALID_VALUE";
+    return this.buildAlexaErrorResponse(request, type);
+  }
+
+  public static buildAlexaErrorResponseNotSupportedInCurrentMode(
+    request: Request,
+    message?: string,
+  ) {
+    const type = "NOT_SUPPORTED_IN_CURRENT_MODE";
+    return this.buildAlexaErrorResponse(request, type, message);
+  }
+
+  public static buildAlexaErrorResponseForValueOutOfRange(
+    request: Request,
+    validRange?: { minimumValue: unknown; maximumValue: unknown },
+  ) {
+    const type = "VALUE_OUT_OF_RANGE";
+    const response = this.buildAlexaErrorResponse(request, type);
+    if (typeof validRange !== "undefined") {
+      response.event.payload.validRange = validRange;
+    }
+    return response;
+  }
+
+  public static buildAlexaErrorResponseForPowerOff(request: Request) {
+    const type = "ENDPOINT_UNREACHABLE";
+    const message = "The TV's power is off.";
+    return this.buildAlexaErrorResponse(request, type, message);
+  }
+
+  public static buildAlexaErrorResponseAddError(
+    request: Request,
+    type: string,
+    message: string,
+  ) {
+    const error = CommonError.create({ message });
+    error.name = type;
+    Error.captureStackTrace(error);
+    return this.buildAlexaErrorResponse(request, type, message);
   }
 }
 
