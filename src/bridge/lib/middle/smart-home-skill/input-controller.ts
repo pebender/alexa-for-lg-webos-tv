@@ -293,7 +293,7 @@ function states(
 async function selectInputHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   function getInput(): string {
     if (typeof alexaRequest.directive.payload.input !== "string") {
       return "";
@@ -303,9 +303,9 @@ async function selectInputHandler(
 
   async function setExternalInput(
     input: string | null,
-  ): Promise<Common.SHS.ResponseWrapper> {
+  ): Promise<Common.SHS.Response> {
     if (input === null) {
-      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+      return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
         alexaRequest,
       );
     }
@@ -315,7 +315,7 @@ async function selectInputHandler(
       payload: { inputId: input },
     };
     await backendControl.lgtvCommand(lgtvRequest);
-    return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+    return Common.SHS.Response.buildAlexaResponse(alexaRequest);
   }
 
   const alexaToLGTV = await getAlexaToLGTV(backendControl);
@@ -332,12 +332,10 @@ async function selectInputHandler(
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
     return Promise.resolve(
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
-        alexaRequest,
-      ),
+      Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -345,7 +343,7 @@ function handler(
       return selectInputHandler(alexaRequest, backendControl);
     default:
       return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+        Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );

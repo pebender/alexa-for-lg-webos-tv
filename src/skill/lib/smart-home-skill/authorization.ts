@@ -2,9 +2,9 @@ import * as Common from "../../../common";
 
 function handler(
   alexaRequest: Common.SHS.Request,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   return Promise.resolve(
-    Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+    Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
       alexaRequest,
     ),
   );

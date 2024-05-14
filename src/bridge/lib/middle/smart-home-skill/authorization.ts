@@ -19,8 +19,8 @@ function handler(
   alexaRequest: Common.SHS.Request,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-): Common.SHS.ResponseWrapper {
-  return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+): Common.SHS.Response {
+  return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
     alexaRequest,
   );
 }

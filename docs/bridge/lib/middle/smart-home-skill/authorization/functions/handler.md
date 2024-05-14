@@ -6,7 +6,7 @@
 
 # Function: handler()
 
-> **handler**(`alexaRequest`, `backend`): [`ResponseWrapper`](../../../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)
+> **handler**(`alexaRequest`, `backend`): [`Response`](../../../../../../common/smart-home-skill/response/classes/Response.md)
 
 ## Parameters
 
@@ -16,4 +16,4 @@
 
 ## Returns
 
-[`ResponseWrapper`](../../../../../../common/smart-home-skill/response-wrapper/classes/ResponseWrapper.md)
+[`Response`](../../../../../../common/smart-home-skill/response/classes/Response.md)

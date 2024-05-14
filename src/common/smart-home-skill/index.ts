@@ -12,4 +12,3 @@ export {
   Context,
   ContextProperty,
 } from "./response";
-export { ResponseWrapper } from "./response-wrapper";

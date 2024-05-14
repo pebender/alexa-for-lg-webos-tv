@@ -191,9 +191,9 @@ async function setChannel(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
   channelNumber: string | null,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (channelNumber === null) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+    return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
       alexaRequest,
     );
   }
@@ -204,13 +204,13 @@ async function setChannel(
   try {
     await backendControl.lgtvCommand(lgtvRequest);
   } catch (error) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
       error,
     );
   }
 
-  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+  return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
 function capabilities(
@@ -271,11 +271,11 @@ function states(
 async function skipChannelsHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   await activateLiveTv(alexaRequest, backendControl);
   const currentChannel = await getChannel(backendControl);
   if (currentChannel === null) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseNotSupportedInCurrentMode(
+    return Common.SHS.Response.buildAlexaErrorResponseNotSupportedInCurrentMode(
       alexaRequest,
       `${backendControl.tv.name} (${backendControl.tv.udn}) is not currently watching a TV channel.`,
     );
@@ -283,9 +283,10 @@ async function skipChannelsHandler(
   let channels: Channel[];
   try {
     channels = await getChannels(backendControl);
-  } catch {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+  } catch (error) {
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
   const channelNumbers = getChannelNumbers(channels);
@@ -304,9 +305,10 @@ async function skipChannelsHandler(
   const newChannel = channelNumbers[newChannelIndex];
   try {
     return await setChannel(alexaRequest, backendControl, newChannel);
-  } catch {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+  } catch (error) {
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
 }
@@ -314,13 +316,14 @@ async function skipChannelsHandler(
 async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   let channels: Channel[];
   try {
     channels = await getChannels(backendControl);
-  } catch {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+  } catch (error) {
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
   const channelNumberToNumber = getChannelNumberToNumberMap(channels);
@@ -366,16 +369,17 @@ async function changeChannelHandler(
 
   const channelNumber = getChannelNumber();
   if (channelNumber === null) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+    return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
       alexaRequest,
     );
   }
   await activateLiveTv(alexaRequest, backendControl);
   try {
     return await setChannel(alexaRequest, backendControl, channelNumber);
-  } catch {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+  } catch (error) {
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
 }
@@ -383,12 +387,10 @@ async function changeChannelHandler(
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
     return Promise.resolve(
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
-        alexaRequest,
-      ),
+      Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -398,7 +400,7 @@ function handler(
       return skipChannelsHandler(alexaRequest, backendControl);
     default:
       return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+        Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );

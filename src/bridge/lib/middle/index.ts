@@ -56,9 +56,7 @@ export class Middle {
     return shsRequest.getAccessToken();
   }
 
-  public async handler(
-    rawRequest: object,
-  ): Promise<Common.SHS.ResponseWrapper> {
+  public async handler(rawRequest: object): Promise<Common.SHS.Response> {
     const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
 
     let authorized = false;
@@ -74,14 +72,14 @@ export class Middle {
       ) {
         authorized = false;
       } else {
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+        return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
           shsRequest,
           c,
         );
       }
     }
     if (!authorized) {
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+      Common.SHS.Response.buildAlexaErrorResponse(
         shsRequest,
         "INVALID_AUTHORIZATION_CREDENTIAL",
         "",
@@ -91,7 +89,7 @@ export class Middle {
     try {
       return await SHS.handler(shsRequest, this._authorization, this._backend);
     } catch (error) {
-      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
         shsRequest,
         error,
       );

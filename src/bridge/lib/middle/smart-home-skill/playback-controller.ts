@@ -27,29 +27,28 @@ async function genericHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
   lgtvRequestURI: string,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI,
   };
   try {
     await backendControl.lgtvCommand(lgtvRequest);
-  } catch {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+  } catch (error) {
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
-  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+  return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
     return Promise.resolve(
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
-        alexaRequest,
-      ),
+      Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -85,7 +84,7 @@ function handler(
       );
     default:
       return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+        Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );

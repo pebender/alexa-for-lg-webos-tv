@@ -8,7 +8,7 @@ async function handlerWithErrors(
   alexaRequest: Common.SHS.Request,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   context: AWSLambda.Context,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (typeof alexaRequest.directive.endpoint?.endpointId === "undefined") {
     switch (alexaRequest.directive.header.namespace) {
       case "Alexa.Authorization":
@@ -16,7 +16,7 @@ async function handlerWithErrors(
       case "Alexa.Discovery":
         return alexaDiscovery.handler(alexaRequest);
       default:
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+        return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest,
         );
     }
@@ -34,30 +34,24 @@ async function handler(
   Common.Debug.debug("smart home skill request message");
   Common.Debug.debugJSON(alexaRequest);
 
-  let alexaResponseWrapper: Common.SHS.ResponseWrapper;
+  let alexaResponse: Common.SHS.Response;
   try {
-    alexaResponseWrapper = await handlerWithErrors(alexaRequest, context);
+    alexaResponse = await handlerWithErrors(alexaRequest, context);
   } catch (error) {
-    if (error instanceof Common.SHS.ResponseWrapper) {
-      alexaResponseWrapper = error;
+    if (error instanceof Common.SHS.Response) {
+      alexaResponse = error;
     } else {
-      alexaResponseWrapper =
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      alexaResponse =
+        Common.SHS.Response.buildAlexaErrorResponseForInternalError(
           alexaRequest,
           error,
         );
     }
     Common.Debug.debug("smart home skill response message");
-    Common.Debug.debugJSON(alexaResponseWrapper.response);
-
-    if (typeof alexaResponseWrapper.error !== "undefined") {
-      Common.Debug.debug("smart home skill error response");
-      Common.Debug.debugError(alexaResponseWrapper.error);
-    }
-    Common.Debug.debug("smart home skill request message");
+    Common.Debug.debugJSON(alexaResponse);
   }
 
-  return alexaResponseWrapper.response;
+  return alexaResponse;
 }
 
 export { handler };

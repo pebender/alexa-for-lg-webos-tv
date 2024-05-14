@@ -31,33 +31,43 @@ function states(
 function turnOffHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Common.SHS.ResponseWrapper {
+): Common.SHS.Response {
   const poweredOff = backendControl.turnOff();
   if (!poweredOff) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+    const error = Common.Error.create({
+      message: "TV power off failed.",
+      general: "tv",
+    });
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
-  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+  return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
 async function turnOnHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   const poweredOn = await backendControl.turnOn();
   if (!poweredOn) {
-    return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+    const error = Common.Error.create({
+      message: "TV power on failed.",
+      general: "tv",
+    });
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
+      error,
     );
   }
-  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+  return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff":
       return Promise.resolve(turnOffHandler(alexaRequest, backendControl));
@@ -65,7 +75,7 @@ function handler(
       return turnOnHandler(alexaRequest, backendControl);
     default:
       return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+        Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );

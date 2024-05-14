@@ -526,14 +526,9 @@ export class Frontend {
           Common.Debug.debug("Smart Home Skill Request:");
           Common.Debug.debugJSON(shsRequest);
 
-          const shsResponseWrapper = await frontend._middle.handler(shsRequest);
-          const shsResponse = shsResponseWrapper.response;
+          const shsResponse = await frontend._middle.handler(shsRequest);
           Common.Debug.debug("Smart Home Skill Response:");
           Common.Debug.debugJSON(shsResponse);
-          if (typeof shsResponseWrapper.error !== "undefined") {
-            Common.Debug.debug("smart home skill error response");
-            Common.Debug.debugError(shsResponseWrapper.error);
-          }
 
           // Check SHS Response against the SHS schema.
           try {

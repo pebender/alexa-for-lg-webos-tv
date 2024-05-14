@@ -46,7 +46,6 @@
 - [common/smart-home-skill/copy](common/smart-home-skill/copy/README.md)
 - [common/smart-home-skill/request](common/smart-home-skill/request/README.md)
 - [common/smart-home-skill/response](common/smart-home-skill/response/README.md)
-- [common/smart-home-skill/response-wrapper](common/smart-home-skill/response-wrapper/README.md)
 - [skill](skill/README.md)
 - [skill/lib/custom-skill](skill/lib/custom-skill/README.md)
 - [skill/lib/custom-skill/lgtv-configure-bridge](skill/lib/custom-skill/lgtv-configure-bridge/README.md)

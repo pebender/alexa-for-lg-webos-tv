@@ -111,16 +111,14 @@ function states(
 async function launchTargetHandler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
     typeof alexaToLGTV[alexaRequest.directive.payload.identifier] ===
       "undefined"
   ) {
     return Promise.resolve(
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
-        alexaRequest,
-      ),
+      Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(alexaRequest),
     );
   }
   const requestedApp = alexaToLGTV[alexaRequest.directive.payload.identifier];
@@ -143,29 +141,27 @@ async function launchTargetHandler(
       const apps = response.apps as { id: string; [key: string]: unknown }[];
       const index = apps.findIndex((app) => app.id === requestedApp.id);
       if (index < 0) {
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidValue(
+        return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
           alexaRequest,
         );
       }
     } catch (listAppsError) {
-      return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+      return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
         alexaRequest,
         listAppsError,
       );
     }
   }
-  return Common.SHS.ResponseWrapper.buildAlexaResponse(alexaRequest);
+  return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
 function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
     return Promise.resolve(
-      Common.SHS.ResponseWrapper.buildAlexaErrorResponseForPowerOff(
-        alexaRequest,
-      ),
+      Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
@@ -173,7 +169,7 @@ function handler(
       return launchTargetHandler(alexaRequest, backendControl);
     default:
       return Promise.resolve(
-        Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveName(
+        Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );

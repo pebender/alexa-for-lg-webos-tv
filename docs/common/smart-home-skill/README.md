@@ -89,9 +89,3 @@ Re-exports [Request](request/classes/Request.md)
 ### Response
 
 Re-exports [Response](response/classes/Response.md)
-
-***
-
-### ResponseWrapper
-
-Re-exports [ResponseWrapper](response-wrapper/classes/ResponseWrapper.md)

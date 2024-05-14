@@ -80,6 +80,166 @@
 
 ***
 
+### buildAlexaErrorResponse()
+
+> `static` **buildAlexaErrorResponse**(`request`, `type`, `message`?, `error`?): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+• **type**: `string`
+
+• **message?**: `string`
+
+• **error?**: `unknown`
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseAddError()
+
+> `static` **buildAlexaErrorResponseAddError**(`request`, `type`, `message`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+• **type**: `string`
+
+• **message**: `string`
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForInternalError()
+
+> `static` **buildAlexaErrorResponseForInternalError**(`request`, `error`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+• **error**: `unknown`
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForInvalidDirectiveName()
+
+> `static` **buildAlexaErrorResponseForInvalidDirectiveName**(`request`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForInvalidDirectiveNamespace()
+
+> `static` **buildAlexaErrorResponseForInvalidDirectiveNamespace**(`request`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForInvalidValue()
+
+> `static` **buildAlexaErrorResponseForInvalidValue**(`request`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForPowerOff()
+
+> `static` **buildAlexaErrorResponseForPowerOff**(`request`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseForValueOutOfRange()
+
+> `static` **buildAlexaErrorResponseForValueOutOfRange**(`request`, `validRange`?): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+• **validRange?**
+
+• **validRange.maximumValue?**: `unknown`
+
+• **validRange.minimumValue?**: `unknown`
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaErrorResponseNotSupportedInCurrentMode()
+
+> `static` **buildAlexaErrorResponseNotSupportedInCurrentMode**(`request`, `message`?): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+• **message?**: `string`
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
+### buildAlexaResponse()
+
+> `static` **buildAlexaResponse**(`request`): [`Response`](Response.md)
+
+#### Parameters
+
+• **request**: [`Request`](../../request/classes/Request.md)
+
+#### Returns
+
+[`Response`](Response.md)
+
+***
+
 ### buildContextProperty()
 
 > `static` **buildContextProperty**(`opts`): `Promise`\<`null` \| [`ContextProperty`](../interfaces/ContextProperty.md)\>

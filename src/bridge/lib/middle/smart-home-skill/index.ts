@@ -15,7 +15,7 @@ import LGTV from "lgtv2";
 type HandlerFunction = (
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
-) => Promise<Common.SHS.ResponseWrapper>;
+) => Promise<Common.SHS.Response>;
 
 const handlers: {
   [x: string]: HandlerFunction;
@@ -58,19 +58,19 @@ function states(
 }
 
 async function addStates(
-  alexaResponseWrapper: Common.SHS.ResponseWrapper,
+  alexaResponse: Common.SHS.Response,
   backendControl: BackendControl,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   try {
     (await Promise.all(states(backendControl))).forEach((state): void => {
       if (state === null) {
         return;
       }
-      alexaResponseWrapper.response.addContextProperty(state);
+      alexaResponse.addContextProperty(state);
     });
-    return alexaResponseWrapper;
+    return alexaResponse;
   } catch (error) {
-    return alexaResponseWrapper;
+    return alexaResponse;
   }
 }
 
@@ -78,7 +78,7 @@ async function handler(
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
   backend: Backend,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   const alexaRequest = new Common.SHS.Request(event);
 
   switch (alexaRequest.directive.header.namespace) {
@@ -89,7 +89,7 @@ async function handler(
     default: {
       const udn = alexaRequest.getEndpointId();
       if (typeof udn === "undefined") {
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+        return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
           "",
@@ -98,7 +98,7 @@ async function handler(
 
       const backendControl = backend.control(udn);
       if (typeof backendControl === "undefined") {
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponse(
+        return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
           "",
@@ -106,25 +106,22 @@ async function handler(
       }
 
       if (!(alexaRequest.directive.header.namespace in handlers)) {
-        return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInvalidDirectiveNamespace(
+        return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest,
         );
       }
 
       const controllerHandler =
         handlers[alexaRequest.directive.header.namespace];
-      let handlerResponseWrapper: Common.SHS.ResponseWrapper;
+      let handlerResponse: Common.SHS.Response;
       try {
-        handlerResponseWrapper = await controllerHandler(
-          alexaRequest,
-          backendControl,
-        );
+        handlerResponse = await controllerHandler(alexaRequest, backendControl);
       } catch (error) {
-        if (error instanceof Common.SHS.ResponseWrapper) {
-          handlerResponseWrapper = error;
+        if (error instanceof Common.SHS.Response) {
+          handlerResponse = error;
         } else {
-          handlerResponseWrapper =
-            Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+          handlerResponse =
+            Common.SHS.Response.buildAlexaErrorResponseForInternalError(
               alexaRequest,
               error,
             );
@@ -132,25 +129,25 @@ async function handler(
       }
       if (
         !(
-          handlerResponseWrapper.response.event.header.namespace === "Alexa" &&
-          handlerResponseWrapper.response.event.header.name === "ErrorResponse"
+          handlerResponse.event.header.namespace === "Alexa" &&
+          handlerResponse.event.header.name === "ErrorResponse"
         )
       ) {
         try {
-          return await addStates(handlerResponseWrapper, backendControl);
+          return await addStates(handlerResponse, backendControl);
         } catch (error) {
-          if (error instanceof Common.SHS.ResponseWrapper) {
-            handlerResponseWrapper = error;
+          if (error instanceof Common.SHS.Response) {
+            handlerResponse = error;
           } else {
-            handlerResponseWrapper =
-              Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
+            handlerResponse =
+              Common.SHS.Response.buildAlexaErrorResponseForInternalError(
                 alexaRequest,
                 error,
               );
           }
         }
       }
-      return handlerResponseWrapper;
+      return handlerResponse;
     }
   }
 }

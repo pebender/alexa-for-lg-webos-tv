@@ -6,7 +6,7 @@ import { constants } from "../../../../common/constants";
 async function handler(
   alexaRequest: Common.SHS.Request,
   backend: Backend,
-): Promise<Common.SHS.ResponseWrapper> {
+): Promise<Common.SHS.Response> {
   //
   // This looks strange at first. However, once it is explained, this
   // convolution of promises and async/awaits should make sense. The goal is
@@ -85,7 +85,7 @@ async function handler(
   const backendControls = backend.controls();
   const endpoints = await buildEndpoints(backendControls);
   const response = buildResponse(endpoints);
-  return new Common.SHS.ResponseWrapper(alexaRequest, response);
+  return response;
 }
 
 export { handler };
