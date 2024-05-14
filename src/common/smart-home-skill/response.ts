@@ -250,7 +250,7 @@ export class Response {
       },
     });
     CommonDebug.debug("Response.buildAlexaErrorResponse");
-    CommonDebug.debugJSON({ request, response, error });
+    CommonDebug.debugError(error);
     return response;
   }
 
