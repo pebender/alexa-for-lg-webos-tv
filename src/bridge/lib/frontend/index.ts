@@ -6,9 +6,6 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
-import Ajv from "ajv/dist/2019";
-import * as AjvTypes from "ajv";
-import ajvFormats from "ajv-formats";
 import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
 import IPBlacklist from "@outofsync/express-ip-blacklist";
@@ -24,8 +21,6 @@ export class Frontend {
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _middle: Middle;
   private readonly _ipBlacklist: IPBlacklist;
-  private readonly _ajv: Ajv;
-  private readonly _schemaValidator: AjvTypes.ValidateFunction;
   private readonly _server: express.Express;
   /**
    * The constructor is private. To instantiate a Frontend, use {@link Frontend.build}().
@@ -35,16 +30,12 @@ export class Frontend {
     _bridgeTokenAuth: BridgeTokenAuth,
     _middle: Middle,
     _ipBlacklist: IPBlacklist,
-    _ajv: Ajv,
-    _schemaValidator: AjvTypes.ValidateFunction,
     _server: express.Express,
   ) {
     this._loginTokenAuth = _loginTokenAuth;
     this._bridgeTokenAuth = _bridgeTokenAuth;
     this._middle = _middle;
     this._ipBlacklist = _ipBlacklist;
-    this._ajv = _ajv;
-    this._schemaValidator = _schemaValidator;
     this._server = _server;
   }
 
@@ -57,34 +48,6 @@ export class Frontend {
     // in sending a profile request to Amazon.
     const _ipBlacklist = new IPBlacklist("blacklist", { count: 5 });
 
-    // 'strictTypes: false' suppresses the warning:
-    //   strict mode: missing type "object" for keyword "additionalProperties"
-    const _ajv = new Ajv({
-      strictTypes: false,
-      discriminator: true,
-    });
-    // ajv-formats does not support the following formats defined in draft-2019-09
-    //   'idn-email', 'idn-hostname', 'iri', 'iri-reference'
-    ajvFormats(_ajv, [
-      "date-time",
-      "date",
-      "time",
-      "duration",
-      "email",
-      "hostname",
-      "ipv4",
-      "ipv6",
-      "uri",
-      "uri-reference",
-      "uri-template",
-      "uuid",
-      "json-pointer",
-      "relative-json-pointer",
-      "int32",
-      "double",
-      "regex",
-    ]);
-    const _schemaValidator = _ajv.compile(Common.SHS.schema);
     const _server = express();
 
     const frontend = new Frontend(
@@ -92,8 +55,6 @@ export class Frontend {
       _bridgeToken,
       middle,
       _ipBlacklist,
-      _ajv,
-      _schemaValidator,
       _server,
     );
 
@@ -272,15 +233,11 @@ export class Frontend {
           next: express.NextFunction,
         ): Promise<void> {
           Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
-          function shsInvalidAuthorizationCredentialResponse(message: string) {
-            return new Common.SHS.Response({
-              namespace: "Alexa",
-              name: "ErrorResponse",
-              payload: {
-                type: "INVALID_AUTHORIZATION_CREDENTIAL",
-                message,
-              },
-            });
+          function invalidAuthorizationCredentialResponse(message: string) {
+            return {
+              error: "INVALID_AUTHORIZATION_CREDENTIAL",
+              error_description: message,
+            };
           }
 
           res.locals.bridgeHostname = null;
@@ -296,7 +253,7 @@ export class Frontend {
           const wwwAuthenticate = "Bearer";
           if (req.headers.authorization === "undefined") {
             ipBlacklistIncrement(req, res);
-            const body = shsInvalidAuthorizationCredentialResponse(
+            const body = invalidAuthorizationCredentialResponse(
               'Bridge connection failed due to missing "authorization" header.',
             );
             Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
@@ -311,7 +268,7 @@ export class Frontend {
             req.headers.authorization?.split(/\s+/).map((x) => x.trim()) ?? [];
           if (authorization.length !== 2) {
             ipBlacklistIncrement(req, res);
-            const body = shsInvalidAuthorizationCredentialResponse(
+            const body = invalidAuthorizationCredentialResponse(
               'Bridge connection failed due to malformed "authorization" header.',
             );
             Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
@@ -324,7 +281,7 @@ export class Frontend {
           }
           if (authorization[0].toLowerCase() !== "bearer") {
             ipBlacklistIncrement(req, res);
-            const body = shsInvalidAuthorizationCredentialResponse(
+            const body = invalidAuthorizationCredentialResponse(
               "Bridge connection failed due to incorrect authorization method.",
             );
             Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
@@ -342,7 +299,7 @@ export class Frontend {
               await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
             if (record === null) {
               ipBlacklistIncrement(req, res);
-              const body = shsInvalidAuthorizationCredentialResponse(
+              const body = invalidAuthorizationCredentialResponse(
                 "Bridge connection failed due to invalid bearer token.",
               );
               res
@@ -434,15 +391,11 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): void {
-        function shsInvalidAuthorizationCredentialResponse(message: string) {
-          return new Common.SHS.Response({
-            namespace: "Alexa",
-            name: "ErrorResponse",
-            payload: {
-              type: "INVALID_AUTHORIZATION_CREDENTIAL",
-              message,
-            },
-          });
+        function invalidAuthorizationCredentialResponse(message: string) {
+          return {
+            error: "INVALID_AUTHORIZATION_CREDENTIAL",
+            error_description: message,
+          };
         }
 
         const authorizedSkillToken: string = res.locals.skillToken as string;
@@ -453,7 +406,7 @@ export class Frontend {
         if (authorizedSkillToken !== skillToken) {
           ipBlacklistIncrement(req, res);
           const wwwAuthenticate = "Bearer";
-          const body = shsInvalidAuthorizationCredentialResponse(
+          const body = invalidAuthorizationCredentialResponse(
             "Bridge connection failed due to invalid bearer token.",
           );
           res
@@ -522,35 +475,17 @@ export class Frontend {
           req: express.Request,
           res: express.Response,
         ): Promise<void> {
-          const shsRequest = req.body as { [key: string]: unknown };
-          Common.Debug.debug("Smart Home Skill Request:");
-          Common.Debug.debugJSON(shsRequest);
+          const serviceRequest = req.body as { [key: string]: unknown };
+          Common.Debug.debug("Service Request:");
+          Common.Debug.debugJSON(serviceRequest);
 
-          const shsResponse = await frontend._middle.handler(shsRequest);
-          Common.Debug.debug("Smart Home Skill Response:");
-          Common.Debug.debugJSON(shsResponse);
+          const serviceResponse =
+            await frontend._middle.handler(serviceRequest);
 
-          // Check SHS Response against the SHS schema.
-          try {
-            const valid = frontend._schemaValidator(shsResponse);
-            if (!valid) {
-              Common.Debug.debug(
-                "Smart Home Skill Response schema validation validation",
-              );
-              Common.Debug.debugJSON(frontend._schemaValidator.errors);
-            } else {
-              Common.Debug.debug(
-                "Smart Home Skill Response schema validation passed",
-              );
-            }
-          } catch (error) {
-            Common.Debug.debug(
-              "Smart Home Skill Response schema validation error:",
-            );
-            Common.Debug.debugError(error);
-          }
+          Common.Debug.debug("Service Response:");
+          Common.Debug.debugJSON(serviceResponse);
 
-          res.status(200).json(shsResponse);
+          res.status(200).json(serviceResponse);
         }
 
         asyncServiceHandler(req, res).catch((error: unknown) => {

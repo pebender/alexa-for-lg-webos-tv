@@ -10,7 +10,7 @@
 
 ### new Frontend()
 
-> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_ipBlacklist`, `_ajv`, `_schemaValidator`, `_server`): [`Frontend`](Frontend.md)
+> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_ipBlacklist`, `_server`): [`Frontend`](Frontend.md)
 
 The constructor is private. To instantiate a Frontend, use [Frontend.build](Frontend.md#build)().
 
@@ -24,10 +24,6 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 • **\_ipBlacklist**: [`default`](../../../types/@outofsync/express-ip-blacklist/classes/default.md)
 
-• **\_ajv**: `Ajv2019`
-
-• **\_schemaValidator**: `ValidateFunction`\<`unknown`\>
-
 • **\_server**: `Express`
 
 #### Returns
@@ -35,12 +31,6 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 [`Frontend`](Frontend.md)
 
 ## Properties
-
-### \_ajv
-
-> `private` `readonly` **\_ajv**: `Ajv2019`
-
-***
 
 ### \_bridgeTokenAuth
 
@@ -63,12 +53,6 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 ### \_middle
 
 > `private` `readonly` **\_middle**: [`Middle`](../../middle/classes/Middle.md)
-
-***
-
-### \_schemaValidator
-
-> `private` `readonly` **\_schemaValidator**: `ValidateFunction`\<`unknown`\>
 
 ***
 

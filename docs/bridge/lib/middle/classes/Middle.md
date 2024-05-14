@@ -10,7 +10,7 @@
 
 ### new Middle()
 
-> `private` **new Middle**(`_authorization`, `_backend`): [`Middle`](Middle.md)
+> `private` **new Middle**(`_authorization`, `_backend`, `_ajv`, `_responseSchemaValidator`): [`Middle`](Middle.md)
 
 #### Parameters
 
@@ -18,11 +18,21 @@
 
 • **\_backend**: [`Backend`](../../backend/classes/Backend.md)
 
+• **\_ajv**: `Ajv2019`
+
+• **\_responseSchemaValidator**: `ValidateFunction`\<`unknown`\>
+
 #### Returns
 
 [`Middle`](Middle.md)
 
 ## Properties
+
+### \_ajv
+
+> `private` `readonly` **\_ajv**: `Ajv2019`
+
+***
 
 ### \_authorization
 
@@ -33,6 +43,12 @@
 ### \_backend
 
 > `private` `readonly` **\_backend**: [`Backend`](../../backend/classes/Backend.md)
+
+***
+
+### \_responseSchemaValidator
+
+> `private` `readonly` **\_responseSchemaValidator**: `ValidateFunction`\<`unknown`\>
 
 ## Methods
 
