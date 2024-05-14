@@ -262,8 +262,8 @@ export class BackendSearcher extends EventEmitter {
     // Start listening from multicast notifications from the TVs.
     try {
       await this._ssdpNotify.start();
-    } catch (error) {
-      throw Common.Error.create({ general: "unknown", cause: error });
+    } catch (cause) {
+      throw Common.Error.create({ cause });
     }
 
     // Periodically search for TVs.

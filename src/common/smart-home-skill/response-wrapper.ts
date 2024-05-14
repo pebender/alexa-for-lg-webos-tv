@@ -21,10 +21,7 @@ export class ResponseWrapper {
       if (error instanceof CommonError.CommonError) {
         this.error = error;
       } else {
-        this.error = CommonError.create({
-          general: "unknown",
-          cause: error,
-        });
+        this.error = CommonError.create({ cause: error });
       }
     }
   }

@@ -26,7 +26,6 @@ export function debugError(error: unknown) {
     } else {
       commonError = CommonError.create({
         message: "debugError: 'error' was not of type 'CommonError'",
-        general: "unknown",
         cause: error,
       });
     }
