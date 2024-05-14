@@ -85,19 +85,25 @@ function states(
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
     };
-    const input: LGTV.Response = await backendControl.lgtvCommand(lgtvRequest);
-    if (
-      typeof input.appId !== "string" ||
-      typeof lgtvToAlexa[input.appId] === "undefined"
-    ) {
+    const lgtvResponse: LGTV.Response =
+      await backendControl.lgtvCommand(lgtvRequest);
+    if (typeof lgtvResponse.appId !== "string") {
       throw Common.Error.create({
         message: "TV response was invalid",
         general: "tv",
         specific: "responseInvalid",
-        cause: { lgtvResponse: input, lgtvToAlexa },
+        cause: { lgtvRequest, lgtvResponse },
       });
     }
-    return lgtvToAlexa[input.appId];
+    if (typeof lgtvToAlexa[lgtvResponse.appId] === "undefined") {
+      throw Common.Error.create({
+        message: `TV unknown foreground application '${lgtvResponse.appId}'`,
+        general: "tv",
+        specific: "responseValueUnknown",
+        cause: { lgtvRequest, lgtvResponse },
+      });
+    }
+    return lgtvToAlexa[lgtvResponse.appId];
   }
 
   const targetState = Common.SHS.Response.buildContextProperty({

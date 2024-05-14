@@ -237,26 +237,54 @@ function states(
     callSign?: string;
     affiliateCallSign?: string;
   }> {
-    const lgtvRequest: LGTV.Request = {
-      uri: "ssap://tv/getCurrentChannel",
-    };
-    const lgtvResponse: LGTV.Response =
-      await backendControl.lgtvCommand(lgtvRequest);
+    /* Check that TV has live TV in the foreground */
+    {
+      const lgtvRequest: LGTV.Request = {
+        uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      };
+      const lgtvResponse: LGTV.Response =
+        await backendControl.lgtvCommand(lgtvRequest);
+      if (typeof lgtvResponse.appId !== "string") {
+        throw Common.Error.create({
+          message: "TV response was invalid",
+          general: "tv",
+          specific: "responseInvalid",
+          cause: { lgtvRequest, lgtvResponse },
+        });
+      }
+      if (lgtvResponse.appId !== "com.webos.app.livetv") {
+        throw Common.Error.create({
+          message: "TV channel requested when TV was not tuned to a channel",
+          general: "tv",
+          specific: "requestInvalidInCurrentState",
+          cause: { lgtvRequest, lgtvResponse },
+        });
+      }
+    }
 
-    const channel: {
-      number?: string;
-      callSign?: string;
-      affiliateCallSign?: string;
-    } = {};
-    if (typeof lgtvResponse.channelNumber !== "undefined") {
-      channel.number = lgtvResponse.channelNumber as string;
+    /* Get the current channel */
+    {
+      const lgtvRequest: LGTV.Request = {
+        uri: "ssap://tv/getCurrentChannel",
+      };
+      const lgtvResponse: LGTV.Response =
+        await backendControl.lgtvCommand(lgtvRequest);
+
+      const channel: {
+        number?: string;
+        callSign?: string;
+        affiliateCallSign?: string;
+      } = {};
+      if (typeof lgtvResponse.channelNumber !== "undefined") {
+        channel.number = lgtvResponse.channelNumber as string;
+      }
+      if (typeof lgtvResponse.channelName !== "undefined") {
+        channel.affiliateCallSign = (
+          lgtvResponse.channelName as string
+        ).toUpperCase();
+      }
+      return channel;
     }
-    if (typeof lgtvResponse.channelName !== "undefined") {
-      channel.affiliateCallSign = (
-        lgtvResponse.channelName as string
-      ).toUpperCase();
-    }
-    return channel;
   }
 
   const channelState = Common.SHS.Response.buildContextProperty({
