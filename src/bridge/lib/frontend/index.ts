@@ -528,9 +528,7 @@ export class Frontend {
 
           const shsResponseWrapper = await frontend._middle.handler(shsRequest);
           const shsResponse = shsResponseWrapper.response;
-          const statusCode = shsResponseWrapper.statusCode;
           Common.Debug.debug("Smart Home Skill Response:");
-          Common.Debug.debug(`statusCode: ${statusCode.toString()}`);
           Common.Debug.debugJSON(shsResponse);
           if (typeof shsResponseWrapper.error !== "undefined") {
             Common.Debug.debug("smart home skill error response");
@@ -557,7 +555,7 @@ export class Frontend {
             Common.Debug.debugError(error);
           }
 
-          res.status(statusCode).json(shsResponse);
+          res.status(200).json(shsResponse);
         }
 
         asyncServiceHandler(req, res).catch((error: unknown) => {

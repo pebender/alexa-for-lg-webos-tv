@@ -44,7 +44,6 @@ async function handler(
       alexaResponseWrapper =
         Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
           alexaRequest,
-          200,
           error,
         );
     }

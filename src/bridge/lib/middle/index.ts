@@ -76,7 +76,6 @@ export class Middle {
       } else {
         return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
           shsRequest,
-          200,
           c,
         );
       }
@@ -94,7 +93,6 @@ export class Middle {
     } catch (error) {
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         shsRequest,
-        200,
         error,
       );
     }

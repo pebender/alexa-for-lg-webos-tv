@@ -206,7 +206,6 @@ async function setChannel(
   } catch (error) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
-      200,
       error,
     );
   }

@@ -126,7 +126,6 @@ async function handler(
           handlerResponseWrapper =
             Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
               alexaRequest,
-              200,
               error,
             );
         }
@@ -146,7 +145,6 @@ async function handler(
             handlerResponseWrapper =
               Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
                 alexaRequest,
-                200,
                 error,
               );
           }

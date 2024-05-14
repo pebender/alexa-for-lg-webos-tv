@@ -150,7 +150,6 @@ async function launchTargetHandler(
     } catch (listAppsError) {
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         alexaRequest,
-        200,
         listAppsError,
       );
     }

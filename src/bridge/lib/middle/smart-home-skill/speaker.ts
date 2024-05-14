@@ -102,7 +102,6 @@ async function setVolumeHandler(
   } catch (error) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
-      200,
       error,
     );
   }
@@ -160,7 +159,6 @@ async function adjustVolumeHandler(
     } catch (error) {
       return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
         alexaRequest,
-        200,
         error,
       );
     }
@@ -173,7 +171,6 @@ async function adjustVolumeHandler(
   } catch (error) {
     return Common.SHS.ResponseWrapper.buildAlexaErrorResponseForInternalError(
       alexaRequest,
-      200,
       error,
     );
   }

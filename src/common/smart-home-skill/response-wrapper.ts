@@ -5,18 +5,11 @@ import { Response } from "./response";
 export class ResponseWrapper {
   public readonly request: Request;
   public readonly response: Response;
-  public readonly statusCode: number;
   public readonly error?: CommonError.CommonError;
 
-  public constructor(
-    request: Request,
-    response: Response,
-    statusCode?: number,
-    error?: unknown,
-  ) {
+  public constructor(request: Request, response: Response, error?: unknown) {
     this.request = request;
     this.response = response;
-    this.statusCode = statusCode ?? 200;
     if (typeof error !== "undefined" && error !== null) {
       if (error instanceof CommonError.CommonError) {
         this.error = error;
@@ -41,7 +34,6 @@ export class ResponseWrapper {
     request: Request,
     type: string,
     message: string,
-    statusCode?: number,
     error?: unknown,
   ) {
     const response = new Response({
@@ -54,12 +46,11 @@ export class ResponseWrapper {
         message,
       },
     });
-    return new ResponseWrapper(request, response, statusCode, error);
+    return new ResponseWrapper(request, response, error);
   }
 
   public static buildAlexaErrorResponseForInternalError(
     request: Request,
-    statusCode?: number,
     error?: unknown,
   ) {
     if (error instanceof CommonError.CommonError) {
@@ -71,7 +62,6 @@ export class ResponseWrapper {
         request,
         type,
         message,
-        statusCode,
         error,
       );
     } else if (error instanceof Error) {
@@ -83,7 +73,6 @@ export class ResponseWrapper {
         request,
         type,
         message,
-        statusCode,
         error,
       );
     } else {
@@ -91,7 +80,6 @@ export class ResponseWrapper {
         request,
         "unknown",
         "unknown",
-        statusCode,
         error,
       );
     }
@@ -158,7 +146,6 @@ export class ResponseWrapper {
     request: Request,
     type: string,
     message: string,
-    statusCode?: number,
   ) {
     const error = CommonError.create({ message });
     error.name = type;
@@ -167,7 +154,6 @@ export class ResponseWrapper {
       request,
       type,
       message,
-      statusCode ?? 200,
       error,
     );
   }

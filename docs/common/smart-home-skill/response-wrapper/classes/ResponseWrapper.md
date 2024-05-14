@@ -10,15 +10,13 @@
 
 ### new ResponseWrapper()
 
-> **new ResponseWrapper**(`request`, `response`, `statusCode`?, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
+> **new ResponseWrapper**(`request`, `response`, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
 
 #### Parameters
 
 • **request**: [`Request`](../../request/classes/Request.md)
 
 • **response**: [`Response`](../../response/classes/Response.md)
-
-• **statusCode?**: `number`
 
 • **error?**: `unknown`
 
@@ -44,17 +42,11 @@
 
 > `readonly` **response**: [`Response`](../../response/classes/Response.md)
 
-***
-
-### statusCode
-
-> `readonly` **statusCode**: `number`
-
 ## Methods
 
 ### buildAlexaErrorResponse()
 
-> `static` **buildAlexaErrorResponse**(`request`, `type`, `message`, `statusCode`?, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
+> `static` **buildAlexaErrorResponse**(`request`, `type`, `message`, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
 
 #### Parameters
 
@@ -63,8 +55,6 @@
 • **type**: `string`
 
 • **message**: `string`
-
-• **statusCode?**: `number`
 
 • **error?**: `unknown`
 
@@ -76,7 +66,7 @@
 
 ### buildAlexaErrorResponseAddError()
 
-> `static` **buildAlexaErrorResponseAddError**(`request`, `type`, `message`, `statusCode`?): [`ResponseWrapper`](ResponseWrapper.md)
+> `static` **buildAlexaErrorResponseAddError**(`request`, `type`, `message`): [`ResponseWrapper`](ResponseWrapper.md)
 
 #### Parameters
 
@@ -86,8 +76,6 @@
 
 • **message**: `string`
 
-• **statusCode?**: `number`
-
 #### Returns
 
 [`ResponseWrapper`](ResponseWrapper.md)
@@ -96,13 +84,11 @@
 
 ### buildAlexaErrorResponseForInternalError()
 
-> `static` **buildAlexaErrorResponseForInternalError**(`request`, `statusCode`?, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
+> `static` **buildAlexaErrorResponseForInternalError**(`request`, `error`?): [`ResponseWrapper`](ResponseWrapper.md)
 
 #### Parameters
 
 • **request**: [`Request`](../../request/classes/Request.md)
-
-• **statusCode?**: `number`
 
 • **error?**: `unknown`
 
