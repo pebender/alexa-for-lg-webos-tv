@@ -1,4 +1,7 @@
+import LGTV from "lgtv2";
 import * as Common from "../../../../common";
+import { Backend, BackendControl } from "../../backend";
+import { Authorization as DirectiveAuthorization } from "../authorization";
 import * as alexa from "./alexa";
 import * as alexaAuthorization from "./authorization";
 import * as alexaChannelController from "./channel-controller";
@@ -8,9 +11,6 @@ import * as alexaLauncher from "./launcher";
 import * as alexaPlaybackController from "./playback-controller";
 import * as alexaPowerController from "./power-controller";
 import * as alexaSpeaker from "./speaker";
-import { Backend, BackendControl } from "../../backend";
-import { Authorization as DirectiveAuthorization } from "../authorization";
-import LGTV from "lgtv2";
 
 type HandlerFunction = (
   alexaRequest: Common.SHS.Request,
@@ -85,7 +85,7 @@ async function handler(
     case "Alexa.Authorization":
       return alexaAuthorization.handler(alexaRequest, backend);
     case "Alexa.Discovery":
-      return await alexaDiscovery.handler(alexaRequest, backend);
+      return alexaDiscovery.handler(alexaRequest, backend);
     default: {
       const udn = alexaRequest.getEndpointId();
       if (typeof udn === "undefined") {

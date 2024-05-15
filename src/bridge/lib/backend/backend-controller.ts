@@ -1,9 +1,9 @@
-import * as Common from "../../../common";
-import { TV, UDN } from "./tv";
 import { EventEmitter } from "node:events";
-import { BackendControl } from "./backend-control";
-import { DatabaseRecord, DatabaseTable } from "../database";
 import LGTV from "lgtv2";
+import * as Common from "../../../common";
+import { DatabaseRecord, DatabaseTable } from "../database";
+import { TV, UDN } from "./tv";
+import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
   private readonly _db: DatabaseTable;

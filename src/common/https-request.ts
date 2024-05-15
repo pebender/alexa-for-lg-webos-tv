@@ -182,5 +182,5 @@ export async function request(
     },
   );
 
-  return await response;
+  return response;
 }

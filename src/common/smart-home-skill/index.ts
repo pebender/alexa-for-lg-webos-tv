@@ -1,4 +1,5 @@
 import schema from "./alexa_smart_home_message_schema.json";
+
 export { schema };
 
 export { Namespace, Header, Endpoint } from "./common";

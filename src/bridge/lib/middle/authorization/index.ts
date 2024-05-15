@@ -1,6 +1,7 @@
 import { DatabaseTable } from "../../database";
 import * as Common from "../../../../common";
 import { Configuration } from "../../configuration";
+
 export class Authorization {
   private readonly _configuration: Configuration;
   private readonly _db: DatabaseTable;

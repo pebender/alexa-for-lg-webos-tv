@@ -6,10 +6,10 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
+import { URL } from "node:url";
 import express from "express";
 import { expressjwt, ExpressJwtRequest } from "express-jwt";
 import IPBlacklist from "@outofsync/express-ip-blacklist";
-import { URL } from "node:url";
 import * as Common from "../../../common";
 import { Configuration } from "../configuration";
 import { Middle } from "../middle";

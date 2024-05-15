@@ -1,6 +1,6 @@
+import LGTV from "lgtv2";
 import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
-import LGTV from "lgtv2";
 
 interface Channel {
   channelNumber: string;

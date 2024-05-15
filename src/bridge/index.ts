@@ -1,10 +1,10 @@
+import * as fs from "fs/promises";
+import persistPath from "persist-path";
 import * as Common from "../common";
 import { Backend } from "./lib/backend";
 import { Configuration } from "./lib/configuration";
 import { Frontend } from "./lib/frontend";
 import { Middle } from "./lib/middle";
-import * as fs from "fs/promises";
-import persistPath from "persist-path";
 
 /**
  * A class to build and start a bridge.

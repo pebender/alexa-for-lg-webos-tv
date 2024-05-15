@@ -4,7 +4,7 @@ import * as Bridge from "./bridge-api";
 async function handler(
   alexaRequest: Common.SHS.Request,
 ): Promise<Common.SHS.Response> {
-  return await Bridge.sendSkillDirective(alexaRequest);
+  return Bridge.sendSkillDirective(alexaRequest);
 }
 
 export { handler };

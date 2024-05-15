@@ -1,15 +1,15 @@
+import { EventEmitter } from "node:events";
 import { randomUUID } from "crypto";
 import { Mutex } from "async-mutex";
 import * as wol from "wake_on_lan";
-import { EventEmitter } from "node:events";
 import {
   Client as SsdpClient,
   Server as SsdpServer,
   SsdpHeaders,
 } from "node-ssdp";
+import LGTV from "lgtv2";
 import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
-import LGTV from "lgtv2";
 import { TV } from "./tv";
 
 export class BackendControl extends EventEmitter {

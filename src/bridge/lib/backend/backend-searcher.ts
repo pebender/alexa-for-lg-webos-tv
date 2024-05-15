@@ -1,14 +1,14 @@
 import * as dgram from "node:dgram";
-import { IP, MAC, TV, UDN } from "./tv";
-import * as Common from "../../../common";
+import { EventEmitter } from "node:events";
 import * as arp from "node-arp";
 import {
   Client as SsdpClient,
   Server as SsdpServer,
   SsdpHeaders,
 } from "node-ssdp";
-import { EventEmitter } from "node:events";
 import { parseString as xml2js } from "xml2js";
+import * as Common from "../../../common";
+import { IP, MAC, TV, UDN } from "./tv";
 
 export interface UPnPDevice {
   root?: {

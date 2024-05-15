@@ -21,7 +21,7 @@ async function handlerWithErrors(
         );
     }
   } else {
-    return await Bridge.sendSkillDirective(alexaRequest);
+    return Bridge.sendSkillDirective(alexaRequest);
   }
 }
 

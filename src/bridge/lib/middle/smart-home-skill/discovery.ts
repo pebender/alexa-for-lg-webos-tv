@@ -1,7 +1,6 @@
 import * as Common from "../../../../common";
 import { Backend, BackendControl } from "../../backend";
 import { capabilities as alexaSmartHomeCapabilities } from "./index";
-import { constants } from "../../../../common/constants";
 
 async function handler(
   alexaRequest: Common.SHS.Request,
@@ -52,8 +51,8 @@ async function handler(
     const endpoint: Common.SHS.EventPayloadEndpoint = {
       endpointId: backendControl.tv.udn,
       friendlyName: backendControl.tv.name,
-      description: constants.application.name.pretty,
-      manufacturerName: constants.application.vendor,
+      description: Common.constants.application.name.pretty,
+      manufacturerName: Common.constants.application.vendor,
       displayCategories: ["TV"],
       capabilities: [],
     };

@@ -1,6 +1,6 @@
+import LGTV from "lgtv2";
 import * as Common from "../../../../common";
 import { BackendControl } from "../../backend";
-import LGTV from "lgtv2";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

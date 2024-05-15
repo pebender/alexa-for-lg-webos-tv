@@ -1,7 +1,7 @@
-import * as Common from "../../../../common";
 import * as fs from "fs";
 import * as path from "path";
 import * as jwt from "jsonwebtoken";
+import * as Common from "../../../../common";
 
 const x509PrivateKey = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),

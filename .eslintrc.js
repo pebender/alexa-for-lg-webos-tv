@@ -17,12 +17,16 @@ module.exports = {
   },
   plugins: [
     "@typescript-eslint/eslint-plugin",
+    "eslint-plugin-import",
     "eslint-plugin-tsdoc",
     "prettier",
   ],
   rules: {
+    "import/newline-after-import": ["error"],
+    "import/order": ["error"],
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
     "@typescript-eslint/consistent-indexed-object-style": "off",
+    "@typescript-eslint/return-await": ["error"],
   },
 };
