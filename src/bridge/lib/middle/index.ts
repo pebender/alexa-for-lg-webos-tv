@@ -145,32 +145,40 @@ export class Middle {
       );
     }
 
-    // Check SHS Response against the SHS schema.
-    try {
-      const valid = this._responseSchemaValidator(shsResponse);
-      if (!valid) {
-        const error = Common.Error.create({
-          message: "Smart Home Skill Response schema validation failed",
-          cause: {
-            response: shsResponse,
-            errors: this._responseSchemaValidator.errors,
-          },
-        });
+    /*
+     * Check SHS Response against the SHS schema but skill ones for which the
+     * validation schema is broken.
+     */
+    const namespace = shsResponse.event.header.namespace;
+    const name = shsResponse.event.header.name;
+    if (!(namespace === "Alexa.Discovery" && name === "Discover.Response")) {
+      try {
+        const valid = this._responseSchemaValidator(shsResponse);
+        if (!valid) {
+          const error = Common.Error.create({
+            message: "Smart Home Skill Response schema validation failed",
+            cause: {
+              response: shsResponse,
+              errors: this._responseSchemaValidator.errors,
+            },
+          });
+          shsResponse =
+            Common.SHS.Response.buildAlexaErrorResponseForInternalError(
+              shsRequest,
+              error,
+            );
+        } else {
+          Common.Debug.debug(
+            "Smart Home Skill Response schema validation passed",
+          );
+        }
+      } catch (error) {
         shsResponse =
           Common.SHS.Response.buildAlexaErrorResponseForInternalError(
             shsRequest,
             error,
           );
-      } else {
-        Common.Debug.debug(
-          "Smart Home Skill Response schema validation passed",
-        );
       }
-    } catch (error) {
-      shsResponse = Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-        shsRequest,
-        error,
-      );
     }
 
     return shsResponse;
