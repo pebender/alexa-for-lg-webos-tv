@@ -24,15 +24,15 @@ async function create(
 
   return await new Promise<string>((resolve, reject) => {
     jwt.sign(payload, x509PrivateKey, options, function (err, encoded) {
-      if (err === null) {
-        if (encoded !== undefined) {
-          resolve(encoded);
-        } else {
-          throw Common.Error.create();
-        }
-      } else {
+      if (err !== null) {
         reject(Common.Error.create({ cause: err }));
       }
+
+      if (encoded === undefined) {
+        throw Common.Error.create({ message: "function API violation" });
+      }
+
+      resolve(encoded);
     });
   });
 }

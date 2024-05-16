@@ -97,10 +97,10 @@ function lgtvCmdsCommand(
 
   console.log("known commands:");
   for (const cmd of Object.keys(cmds).sort()) {
-    if (cmds[cmd] !== null) {
-      console.log(`  command='${cmd}, payload='${JSON.stringify(cmds[cmd])}`);
-    } else {
+    if (cmds[cmd] === null) {
       console.log(`  command='${cmd}`);
+    } else {
+      console.log(`  command='${cmd}, payload='${JSON.stringify(cmds[cmd])}`);
     }
   }
   console.log('"???" means the payload is unknown.');

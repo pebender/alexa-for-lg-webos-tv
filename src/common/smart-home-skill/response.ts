@@ -249,13 +249,13 @@ export class Response {
   ): Response {
     if (error instanceof CommonError.CommonError) {
       const errorName = `${error.general}.${error.specific ?? "unknown"}`;
-      const errorMessage = error.message !== "" ? error.message : "unknown";
+      const errorMessage = error.message === "" ? "unknown" : error.message;
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
       return this.buildAlexaErrorResponse(request, type, message, error);
     } else if (error instanceof Error) {
-      const errorName = error.name !== "" ? error.name : "unknown";
-      const errorMessage = error.message !== "" ? error.message : "unknown";
+      const errorName = error.name === "" ? "unknown" : error.name;
+      const errorMessage = error.message === "" ? "unknown" : error.message;
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
       return this.buildAlexaErrorResponse(request, type, message, error);

@@ -36,7 +36,6 @@ module.exports = {
     "unicorn/consistent-function-scoping": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-lonely-if": "off",
-    "unicorn/no-negated-condition": "off",
     "unicorn/no-null": "off",
     "unicorn/numeric-separators-style": "off",
     "unicorn/prefer-event-target": "off",

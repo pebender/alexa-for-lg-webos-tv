@@ -398,20 +398,23 @@ export class BackendControl extends EventEmitter {
               cause: error,
             });
             this.emit(uri, commonError, null);
-          } else {
-            if (response === undefined) {
-              const commonError = Common.Error.create({
-                message: "LGTV API violation",
-                general: "tv",
-                specific: "lgtvApiViolation",
-              });
-              this.emit(uri, commonError, null);
-            } else {
-              this.emit(uri, null, response);
-              if (typeof responseHandler === "function") {
-                responseHandler(response);
-              }
-            }
+            return;
+          }
+
+          if (response === undefined) {
+            const commonError = Common.Error.create({
+              message: "LGTV API violation",
+              general: "tv",
+              specific: "lgtvApiViolation",
+            });
+            this.emit(uri, commonError, null);
+            return;
+          }
+
+          this.emit(uri, null, response);
+
+          if (typeof responseHandler === "function") {
+            responseHandler(response);
           }
         },
       );

@@ -163,11 +163,13 @@ function callback(
   backend: Backend,
 ): void {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);
+
   if (error !== null) {
     Common.Debug.debugError(error);
-  } else {
-    Common.Debug.debugJSON(response);
+    return;
   }
+
+  Common.Debug.debugJSON(response);
 }
 
 export { capabilities, states, handler, callback };

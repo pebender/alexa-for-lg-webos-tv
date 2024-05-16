@@ -156,8 +156,8 @@ export class Middle {
     const name = shsResponse.event.header.name;
     if (!(namespace === "Alexa.Discovery" && name === "Discover.Response")) {
       try {
-        const valid = this._responseSchemaValidator(shsResponse);
-        if (!valid) {
+        const invalid = !this._responseSchemaValidator(shsResponse);
+        if (invalid) {
           const error = Common.Error.create({
             message: "Smart Home Skill Response schema validation failed",
             cause: {
@@ -170,10 +170,6 @@ export class Middle {
               shsRequest,
               error,
             );
-        } else {
-          Common.Debug.debug(
-            "Smart Home Skill Response schema validation passed",
-          );
         }
       } catch (error) {
         shsResponse =
