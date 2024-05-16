@@ -322,14 +322,14 @@ async function skipChannelsHandler(
   const currentChannelIndex = channels.findIndex(
     (channel) => channel.channelNumber === currentChannel.channelNumber,
   );
-  const newChannelIndex =
+  const targetChannelIndex =
     (currentChannelIndex +
       (channelCount % channelNumbers.length) +
       channelNumbers.length) %
     channelNumbers.length;
-  const newChannel = channelNumbers[newChannelIndex];
+  const targetChannel = channelNumbers[targetChannelIndex];
   try {
-    return await setChannel(alexaRequest, backendControl, newChannel);
+    return await setChannel(alexaRequest, backendControl, targetChannel);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,

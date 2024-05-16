@@ -11,7 +11,7 @@ module.exports = {
     "eslint-config-standard",
     "eslint-config-love",
     "eslint-config-prettier",
-    "plugin:unicorn/recommended",
+    "plugin:unicorn/all",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -36,10 +36,11 @@ module.exports = {
     "unicorn/prefer-module": "off",
     // lgtv2 and node-ssdp modules uses EventEmitter.
     "unicorn/prefer-event-target": "off",
+    // Not compatible with TypeScript.
+    "unicorn/prefer-json-parse-buffer": "off",
     // Using CommonJS not ESM. Not supported by CommonJS.
     "unicorn/prefer-top-level-await": "off",
 
-    // "unicorn/catch-error-name": ["error", {"ignore": ["cause"]}],
     "unicorn/no-null": "off",
     "unicorn/prevent-abbreviations": "off",
   },

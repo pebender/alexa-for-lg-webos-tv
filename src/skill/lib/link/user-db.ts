@@ -130,13 +130,13 @@ export async function getRecordUsingSkillToken(
   skillToken: string,
   options?: { required?: boolean; requiredFields?: Field[] },
 ): Promise<Record | null> {
-  const newOptions: {
+  const getRecordsOptions: {
     required?: boolean;
     unique?: boolean;
     requiredFields?: Field[];
   } = {};
-  Object.assign(newOptions, options);
-  newOptions.unique = true;
+  Object.assign(getRecordsOptions, options);
+  getRecordsOptions.unique = true;
 
   const queryCommandInput: QueryCommandInput = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -146,7 +146,7 @@ export async function getRecordUsingSkillToken(
     ExpressionAttributeValues: { ":skillToken_value": skillToken },
   };
   const queryCommand: QueryCommand = new QueryCommand(queryCommandInput);
-  const records: Record[] = await getRecords(queryCommand, newOptions);
+  const records: Record[] = await getRecords(queryCommand, getRecordsOptions);
   return records.length === 0 ? null : records[0];
 }
 
@@ -154,13 +154,13 @@ export async function getRecordUsingUserId(
   userId: string,
   options?: { required?: boolean; requiredFields?: Field[] },
 ): Promise<Record | null> {
-  const newOptions: {
+  const getRecordsOptions: {
     required?: boolean;
     unique?: boolean;
     requiredFields?: Field[];
   } = {};
-  Object.assign(newOptions, options);
-  newOptions.unique = true;
+  Object.assign(getRecordsOptions, options);
+  getRecordsOptions.unique = true;
 
   const queryCommandInput: QueryCommandInput = {
     TableName: Common.constants.aws.dynamoDB.tableName,
@@ -169,7 +169,7 @@ export async function getRecordUsingUserId(
     ExpressionAttributeValues: { ":userId_value": userId },
   };
   const queryCommand: QueryCommand = new QueryCommand(queryCommandInput);
-  const records: Record[] = await getRecords(queryCommand, newOptions);
+  const records: Record[] = await getRecords(queryCommand, getRecordsOptions);
   return records.length === 0 ? null : records[0];
 }
 
@@ -177,15 +177,15 @@ export async function getRequiredRecordUsingSkillToken(
   skillToken: string,
   options?: { requiredFields?: Field[] },
 ): Promise<Record> {
-  const newOptions: {
+  const getRecordUsingSkillTokenOptions: {
     required?: boolean;
     requiredFields?: Field[];
   } = {};
-  Object.assign(newOptions, options);
-  newOptions.required = true;
+  Object.assign(getRecordUsingSkillTokenOptions, options);
+  getRecordUsingSkillTokenOptions.required = true;
   return await (getRecordUsingSkillToken(
     skillToken,
-    newOptions,
+    getRecordUsingSkillTokenOptions,
   ) as Promise<Record>);
 }
 
@@ -193,13 +193,16 @@ export async function getRequiredRecordUsingUserId(
   userId: string,
   options?: { requiredFields?: Field[] },
 ): Promise<Record> {
-  const newOptions: {
+  const getRecordUsingUserIdOptions: {
     required?: boolean;
     requiredFields?: Field[];
   } = {};
-  Object.assign(newOptions, options);
-  newOptions.required = true;
-  return await (getRecordUsingUserId(userId, newOptions) as Promise<Record>);
+  Object.assign(getRecordUsingUserIdOptions, options);
+  getRecordUsingUserIdOptions.required = true;
+  return await (getRecordUsingUserId(
+    userId,
+    getRecordUsingUserIdOptions,
+  ) as Promise<Record>);
 }
 
 export async function setBridgeHostname(

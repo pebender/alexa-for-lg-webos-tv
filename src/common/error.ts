@@ -23,13 +23,13 @@ export class CommonError extends Error implements NodeJS.ErrnoException {
     const message = options?.message ?? general;
     const cause = options?.cause;
     super(message, { cause });
+    this.name = "CommonError";
     this.general = general;
     this.code = this.general;
     if (options?.specific !== undefined) {
       this.specific = options.specific;
       this.code = `${this.code}.${this.specific}`;
     }
-    this.name = this.code;
     Error.captureStackTrace(this);
   }
 }
