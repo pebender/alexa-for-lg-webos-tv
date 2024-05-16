@@ -91,7 +91,7 @@ function states(
         cause: { lgtvRequest, lgtvResponse },
       });
     }
-    if (typeof lgtvToAlexa[lgtvResponse.appId] === "undefined") {
+    if (lgtvToAlexa[lgtvResponse.appId] === undefined) {
       throw Common.Error.create({
         message: `TV unknown foreground application '${lgtvResponse.appId}'`,
         general: "tv",
@@ -116,8 +116,7 @@ async function launchTargetHandler(
 ): Promise<Common.SHS.Response> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
-    typeof alexaToLGTV[alexaRequest.directive.payload.identifier] ===
-      "undefined"
+    alexaToLGTV[alexaRequest.directive.payload.identifier] === undefined
   ) {
     return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(alexaRequest),

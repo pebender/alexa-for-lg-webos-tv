@@ -25,7 +25,7 @@ async function create(
   return await new Promise<string>((resolve, reject) => {
     jwt.sign(payload, x509PrivateKey, options, function (err, encoded) {
       if (err === null) {
-        if (typeof encoded !== "undefined") {
+        if (encoded !== undefined) {
           resolve(encoded);
         } else {
           throw Common.Error.create();
@@ -56,10 +56,7 @@ export async function getBridgeToken(
       [key: string]: unknown;
     };
 
-  if (
-    typeof response.token === "undefined" ||
-    typeof response.token !== "string"
-  ) {
+  if (response.token === undefined || typeof response.token !== "string") {
     throw Common.Error.create();
   }
 

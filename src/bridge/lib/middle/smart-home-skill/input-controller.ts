@@ -129,13 +129,13 @@ async function getAlexaToLGTV(
   const externalInputLabelMap: ExternalInputMap = {};
   // Create an external input map using the label as the key.
   externalInputList.forEach((input) => {
-    if (typeof externalInputLabelMap[input.label] === "undefined") {
+    if (externalInputLabelMap[input.label] === undefined) {
       externalInputLabelMap[input.label] = input;
     }
   });
   //
   alexaInputList.forEach((input) => {
-    if (typeof externalInputLabelMap[input] !== "undefined") {
+    if (externalInputLabelMap[input] !== undefined) {
       alexaInputMap[input] = externalInputLabelMap[input];
     }
   });
@@ -147,7 +147,7 @@ async function getAlexaToLGTV(
   const externalInputIdlMap: ExternalInputMap = {};
   // Create an external input map using the id as the key.
   externalInputList.forEach((input) => {
-    if (typeof externalInputIdlMap[input.id] === "undefined") {
+    if (externalInputIdlMap[input.id] === undefined) {
       externalInputIdlMap[input.id] = input;
     }
   });
@@ -155,8 +155,8 @@ async function getAlexaToLGTV(
   externalInputList.forEach((input) => {
     const idRenamed = lgtvExternalInputRenameList[input.id];
     if (
-      typeof idRenamed !== "undefined" &&
-      typeof externalInputIdlMap[idRenamed] === "undefined"
+      idRenamed !== undefined &&
+      externalInputIdlMap[idRenamed] === undefined
     ) {
       externalInputIdlMap[idRenamed] = input;
     }
@@ -165,12 +165,12 @@ async function getAlexaToLGTV(
   // Delete from external input map any that were already in the Alexa map using their label.
   Object.keys(alexaInputMap).forEach((key) => {
     const id = alexaInputMap[key].id;
-    if (typeof externalInputIdlMap[id] !== "undefined") {
+    if (externalInputIdlMap[id] !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete externalInputIdlMap[id];
     }
     const idRenamed = lgtvExternalInputRenameList[id];
-    if (typeof externalInputIdlMap[idRenamed] !== "undefined") {
+    if (externalInputIdlMap[idRenamed] !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete externalInputIdlMap[idRenamed];
     }
@@ -179,8 +179,8 @@ async function getAlexaToLGTV(
   //
   alexaInputList.forEach((input) => {
     if (
-      typeof alexaInputMap[input] === "undefined" &&
-      typeof externalInputIdlMap[input] !== "undefined"
+      alexaInputMap[input] === undefined &&
+      externalInputIdlMap[input] !== undefined
     ) {
       alexaInputMap[input] = externalInputIdlMap[input];
     }
@@ -255,7 +255,7 @@ function states(
         (await backendControl.lgtvCommand(
           lgtvRequest,
         )) as LGTV.ResponseForegroundAppInfo;
-      if (typeof lgtvResponse.appId === "undefined") {
+      if (lgtvResponse.appId === undefined) {
         throw Common.Error.create({
           message: "TV response was invalid",
           general: "tv",
@@ -269,7 +269,7 @@ function states(
     const alexaInput = Object.keys(alexaToLGTV).find(
       (item) => alexaToLGTV[item].appId === appId,
     );
-    if (typeof alexaInput === "undefined") {
+    if (alexaInput === undefined) {
       throw Common.Error.create({
         message: "TV input was unknown",
         general: "tv",
@@ -319,7 +319,7 @@ async function selectInputHandler(
   const alexaToLGTV = await getAlexaToLGTV(backendControl);
   const alexaInput = getInput();
   let lgtvId: string | null;
-  if (typeof alexaToLGTV[alexaInput] === "undefined") {
+  if (alexaToLGTV[alexaInput] === undefined) {
     lgtvId = null;
   } else {
     lgtvId = alexaToLGTV[alexaInput].device.id;

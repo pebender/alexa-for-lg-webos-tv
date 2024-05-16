@@ -22,7 +22,7 @@ export class Configuration {
     const cfg = JSON.parse(raw) as {
       authorizedUsers: Array<{ bridgeHostname: string; emails: string[] }>;
     };
-    if (typeof cfg.authorizedUsers === "undefined") {
+    if (cfg.authorizedUsers === undefined) {
       const error = Common.Error.create({
         message: `configuration file '${cfgFile}' is missing 'authorizedUsers'.`,
       });
@@ -30,14 +30,14 @@ export class Configuration {
       throw error;
     }
     cfg.authorizedUsers.forEach((authorizedUser, index) => {
-      if (typeof authorizedUser.bridgeHostname === "undefined") {
+      if (authorizedUser.bridgeHostname === undefined) {
         const error = Common.Error.create({
           message: `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].hostname'.`,
         });
         Common.Debug.debugError(error);
         throw error;
       }
-      if (typeof authorizedUser.emails === "undefined") {
+      if (authorizedUser.emails === undefined) {
         const error = Common.Error.create({
           message: `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].emails'.`,
         });

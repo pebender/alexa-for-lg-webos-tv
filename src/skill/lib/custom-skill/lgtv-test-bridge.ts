@@ -7,7 +7,7 @@ import * as Link from "../link";
 async function test(handlerInput: ASKHandlerInput): Promise<string> {
   const accessToken =
     handlerInput.requestEnvelope.context.System.user.accessToken;
-  if (typeof accessToken === "undefined") {
+  if (accessToken === undefined) {
     const speechOutput =
       "There appears to have been a problem with account linking. " +
       "Relink your account and reconfigure your bridge.";

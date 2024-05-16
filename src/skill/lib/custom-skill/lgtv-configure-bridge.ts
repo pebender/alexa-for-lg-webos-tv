@@ -67,7 +67,7 @@ async function setBridgeCredentials(
 ): Promise<void> {
   const accessToken =
     handlerInput.requestEnvelope.context.System.user.accessToken;
-  if (typeof accessToken === "undefined") {
+  if (accessToken === undefined) {
     throw Common.Error.create({
       message:
         "There was a problem with account linking. Please re-link the skill and try again.",
@@ -185,10 +185,10 @@ const ConfigureBridgeIntentHandler = {
         handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
         if (
-          typeof ipAddressAString === "undefined" &&
-          typeof ipAddressBString === "undefined" &&
-          typeof ipAddressCString === "undefined" &&
-          typeof ipAddressDString === "undefined"
+          ipAddressAString === undefined &&
+          ipAddressBString === undefined &&
+          ipAddressCString === undefined &&
+          ipAddressDString === undefined
         ) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
@@ -197,14 +197,14 @@ const ConfigureBridgeIntentHandler = {
 
         // Some but not all I.P. address octets have been filled.
         if (
-          (typeof ipAddressAString !== "undefined" ||
-            typeof ipAddressBString !== "undefined" ||
-            typeof ipAddressCString !== "undefined" ||
-            typeof ipAddressDString !== "undefined") &&
-          (typeof ipAddressAString === "undefined" ||
-            typeof ipAddressBString === "undefined" ||
-            typeof ipAddressCString === "undefined" ||
-            typeof ipAddressDString === "undefined")
+          (ipAddressAString !== undefined ||
+            ipAddressBString !== undefined ||
+            ipAddressCString !== undefined ||
+            ipAddressDString !== undefined) &&
+          (ipAddressAString === undefined ||
+            ipAddressBString === undefined ||
+            ipAddressCString === undefined ||
+            ipAddressDString === undefined)
         ) {
           const cardTitle = "Missing IPv4 Address Octet(s)";
           const cardContent =
@@ -276,27 +276,27 @@ const ConfigureBridgeIntentHandler = {
           .getResponse();
       }
       case "IN_PROGRESS": {
-        if (typeof ipAddressAString === "undefined") {
+        if (ipAddressAString === undefined) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
             .getResponse();
         }
-        if (typeof ipAddressBString === "undefined") {
+        if (ipAddressBString === undefined) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
             .getResponse();
         }
-        if (typeof ipAddressCString === "undefined") {
+        if (ipAddressCString === undefined) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
             .getResponse();
         }
-        if (typeof ipAddressDString === "undefined") {
+        if (ipAddressDString === undefined) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
             .getResponse();
         }
-        if (typeof ipAddressValidString === "undefined") {
+        if (ipAddressValidString === undefined) {
           return handlerInput.responseBuilder
             .addDelegateDirective()
             .getResponse();
@@ -309,7 +309,7 @@ const ConfigureBridgeIntentHandler = {
             .getResponse();
         }
 
-        if (typeof hostnameIndexString === "undefined") {
+        if (hostnameIndexString === undefined) {
           let cardContent;
           try {
             cardContent = await createHostnamesSimpleCardContent(handlerInput);

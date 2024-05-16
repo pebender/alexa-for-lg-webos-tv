@@ -26,7 +26,7 @@ export class BackendController extends EventEmitter {
 
     async function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
-        if (typeof backendController._controls[tv.udn] === "undefined") {
+        if (backendController._controls[tv.udn] === undefined) {
           backendController._controls[tv.udn] = BackendControl.build(
             backendController._db,
             tv,
@@ -85,7 +85,7 @@ export class BackendController extends EventEmitter {
   }
 
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
-    if (typeof this._controls[udn] === "undefined") {
+    if (this._controls[udn] === undefined) {
       throw Common.Error.create({
         message: `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
         general: "tv",
@@ -121,7 +121,7 @@ export class BackendController extends EventEmitter {
           },
         );
       }
-      if (typeof this._controls[tv.udn] === "undefined") {
+      if (this._controls[tv.udn] === undefined) {
         this._controls[tv.udn] = BackendControl.build(this._db, tv);
         this.eventsAdd(tv.udn);
         await this._controls[tv.udn].start();

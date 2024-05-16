@@ -52,7 +52,7 @@ async function getRecords(
     throw createDatabaseError({ cause });
   }
 
-  if (typeof data.Count === "undefined" || typeof data.Items === "undefined") {
+  if (data.Count === undefined || data.Items === undefined) {
     throw createDatabaseError();
   }
   if (required && data.Count === 0) {
@@ -78,7 +78,7 @@ async function getRecords(
       }
     });
 
-    if (typeof item.userId !== "undefined") {
+    if (item.userId !== undefined) {
       if (typeof item.userId === "string") {
         record.userId = item.userId === "" ? null : item.userId;
       } else {
@@ -88,7 +88,7 @@ async function getRecords(
         });
       }
     }
-    if (typeof item.skillToken !== "undefined") {
+    if (item.skillToken !== undefined) {
       if (typeof item.skillToken === "string") {
         record.skillToken = item.skillToken === "" ? null : item.skillToken;
       } else {
@@ -98,7 +98,7 @@ async function getRecords(
         });
       }
     }
-    if (typeof item.bridgeHostname !== "undefined") {
+    if (item.bridgeHostname !== undefined) {
       if (typeof item.bridgeHostname === "string") {
         record.bridgeHostname =
           item.bridgeHostname === "" ? null : item.bridgeHostname;
@@ -109,7 +109,7 @@ async function getRecords(
         });
       }
     }
-    if (typeof item.bridgeToken !== "undefined") {
+    if (item.bridgeToken !== undefined) {
       if (typeof item.bridgeToken === "string") {
         record.bridgeToken = item.bridgeToken === "" ? null : item.bridgeToken;
       } else {

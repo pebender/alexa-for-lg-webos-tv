@@ -129,31 +129,31 @@ export class Response {
     };
 
     if (
-      typeof response.event.endpoint !== "undefined" &&
-      typeof response.event.endpoint.scope?.type === "undefined" &&
-      typeof response.event.endpoint.scope?.token === "undefined"
+      response.event.endpoint !== undefined &&
+      response.event.endpoint.scope?.type === undefined &&
+      response.event.endpoint.scope?.token === undefined
     ) {
       Reflect.deleteProperty(response.event.endpoint, "scope");
     }
     if (
-      typeof response.event.endpoint !== "undefined" &&
-      typeof response.event.endpoint.endpointId === "undefined" &&
-      typeof response.event.endpoint.scope === "undefined"
+      response.event.endpoint !== undefined &&
+      response.event.endpoint.endpointId === undefined &&
+      response.event.endpoint.scope === undefined
     ) {
       Reflect.deleteProperty(response.event, "endpoint");
     }
 
     this.event = copyElement(response.event) as Event;
-    if (typeof response.context !== "undefined") {
+    if (response.context !== undefined) {
       this.context = copyElement(response.context) as Context;
     }
   }
 
   public addContextProperty(contextProperty: ContextProperty): void {
-    if (typeof this.context === "undefined") {
+    if (this.context === undefined) {
       this.context = {};
     }
-    if (typeof this.context.properties === "undefined") {
+    if (this.context.properties === undefined) {
       this.context.properties = [];
     }
 
@@ -161,7 +161,7 @@ export class Response {
   }
 
   public addPayloadEndpoint(payloadEndpoint: EventPayloadEndpoint): void {
-    if (typeof this.event.payload.endpoints === "undefined") {
+    if (this.event.payload.endpoints === undefined) {
       this.event.payload.endpoints = [];
     }
 
@@ -200,7 +200,7 @@ export class Response {
       interface: opts.namespace,
       version: "3",
     };
-    if (typeof opts.propertyNames !== "undefined") {
+    if (opts.propertyNames !== undefined) {
       capability.properties = {
         supported: opts.propertyNames.map((name: string): { name: string } => ({
           name,
@@ -301,7 +301,7 @@ export class Response {
   ): Response {
     const type = "VALUE_OUT_OF_RANGE";
     const response = this.buildAlexaErrorResponse(request, type);
-    if (typeof validRange !== "undefined") {
+    if (validRange !== undefined) {
       response.event.payload.validRange = validRange;
     }
     return response;

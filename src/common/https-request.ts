@@ -56,8 +56,7 @@ export async function request(
   bearerToken: string,
   requestBody?: object,
 ): Promise<object> {
-  const content =
-    typeof requestBody === "undefined" ? "" : JSON.stringify(requestBody);
+  const content = requestBody === undefined ? "" : JSON.stringify(requestBody);
   const options: {
     hostname: string;
     port: number;
@@ -68,7 +67,7 @@ export async function request(
     hostname: requestOptions.hostname,
     port: requestOptions.port,
     path: requestOptions.path,
-    method: typeof requestBody === "undefined" ? "GET" : "POST",
+    method: requestBody === undefined ? "GET" : "POST",
     headers: {},
   };
 
@@ -110,7 +109,7 @@ export async function request(
           const statusCode = res.statusCode;
           const contentType = res.headers["content-type"];
 
-          if (typeof statusCode === "undefined") {
+          if (statusCode === undefined) {
             reject(createHttpError("STATUS_CODE_MISSING"));
           }
           switch (statusCode) {
@@ -136,7 +135,7 @@ export async function request(
             }
           }
 
-          if (typeof contentType === "undefined") {
+          if (contentType === undefined) {
             reject(createHttpError("CONTENT_TYPE_MISSING"));
             return;
           }

@@ -28,13 +28,13 @@ export class LoginTokenAuth {
   }
 
   public async authorizeJwTPayload(jwtPayload: JwtPayload): Promise<boolean> {
-    if (typeof jwtPayload.iss === "undefined") {
+    if (jwtPayload.iss === undefined) {
       return false;
     }
-    if (typeof jwtPayload.sub === "undefined") {
+    if (jwtPayload.sub === undefined) {
       return false;
     }
-    if (typeof jwtPayload.aud === "undefined") {
+    if (jwtPayload.aud === undefined) {
       return false;
     }
 

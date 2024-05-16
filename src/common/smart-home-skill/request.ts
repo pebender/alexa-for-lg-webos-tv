@@ -53,13 +53,13 @@ export class Request {
   }
 
   public getAccessToken(): string {
-    if (typeof this.directive.endpoint?.scope?.token !== "undefined") {
+    if (this.directive.endpoint?.scope?.token !== undefined) {
       return this.directive.endpoint.scope.token;
     }
-    if (typeof this.directive.payload.scope?.token !== "undefined") {
+    if (this.directive.payload.scope?.token !== undefined) {
       return this.directive.payload.scope.token;
     }
-    if (typeof this.directive.payload.grantee?.token !== "undefined") {
+    if (this.directive.payload.grantee?.token !== undefined) {
       return this.directive.payload.grantee.token;
     }
     throw CommonError.create({

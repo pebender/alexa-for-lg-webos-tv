@@ -151,7 +151,7 @@ export class Frontend {
           Common.Debug.debug("jwtPayloadHandler: start");
           const jwtPayload = (req as unknown as ExpressJwtRequest).auth;
 
-          if (typeof jwtPayload === "undefined") {
+          if (jwtPayload === undefined) {
             ipBlacklistIncrement(req, res);
             Common.Debug.debug("jwtPayloadHandler: error: no 'req.auth'.");
             res.status(401).json({}).end();
@@ -341,7 +341,7 @@ export class Frontend {
         next: express.NextFunction,
       ): void {
         const contentType = req.headers["content-type"];
-        if (typeof contentType === "undefined") {
+        if (contentType === undefined) {
           ipBlacklistIncrement(req, res);
           res.status(400).json({});
           return;

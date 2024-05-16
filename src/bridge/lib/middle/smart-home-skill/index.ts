@@ -86,7 +86,7 @@ async function handler(
       return await alexaDiscovery.handler(alexaRequest, backend);
     default: {
       const udn = alexaRequest.getEndpointId();
-      if (typeof udn === "undefined") {
+      if (udn === undefined) {
         return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
@@ -95,7 +95,7 @@ async function handler(
       }
 
       const backendControl = backend.control(udn);
-      if (typeof backendControl === "undefined") {
+      if (backendControl === undefined) {
         return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",

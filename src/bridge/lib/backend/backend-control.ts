@@ -275,7 +275,7 @@ export class BackendControl extends EventEmitter {
     let lgtvResponse: LGTV.Response = {
       returnValue: false,
     };
-    if (typeof lgtvRequest.payload === "undefined") {
+    if (lgtvRequest.payload === undefined) {
       lgtvResponse = await new Promise<LGTV.Response>(
         (resolve, reject): void => {
           this._connection.request(
@@ -292,7 +292,7 @@ export class BackendControl extends EventEmitter {
                 );
                 return;
               }
-              if (typeof response === "undefined") {
+              if (response === undefined) {
                 reject(
                   Common.Error.create({
                     message: "LGTV API violation",
@@ -324,7 +324,7 @@ export class BackendControl extends EventEmitter {
               );
               return;
             }
-            if (typeof response === "undefined") {
+            if (response === undefined) {
               reject(
                 Common.Error.create({
                   message: "LGTV API violation",
@@ -339,7 +339,7 @@ export class BackendControl extends EventEmitter {
         );
       });
     }
-    if (typeof lgtvResponse.returnValue === "undefined") {
+    if (lgtvResponse.returnValue === undefined) {
       throw Common.Error.create({
         message: "TV connection response missing return value",
         general: "tv",
@@ -351,13 +351,13 @@ export class BackendControl extends EventEmitter {
       let errorText = "unknown";
       let errorCode = "unknown";
       if (
-        typeof lgtvResponse.errorText !== "undefined" &&
+        lgtvResponse.errorText !== undefined &&
         typeof lgtvResponse.errorText !== "object"
       ) {
         errorText = lgtvResponse.errorText.toString();
       }
       if (
-        typeof lgtvResponse.errorCode !== "undefined" &&
+        lgtvResponse.errorCode !== undefined &&
         typeof lgtvResponse.errorCode !== "object"
       ) {
         errorCode = lgtvResponse.errorCode.toString();
@@ -399,7 +399,7 @@ export class BackendControl extends EventEmitter {
             });
             this.emit(uri, commonError, null);
           } else {
-            if (typeof response === "undefined") {
+            if (response === undefined) {
               const commonError = Common.Error.create({
                 message: "LGTV API violation",
                 general: "tv",

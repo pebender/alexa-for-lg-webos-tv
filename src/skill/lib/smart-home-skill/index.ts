@@ -9,7 +9,7 @@ async function handlerWithErrors(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   context: AWSLambda.Context,
 ): Promise<Common.SHS.Response> {
-  if (typeof alexaRequest.directive.endpoint?.endpointId === "undefined") {
+  if (alexaRequest.directive.endpoint?.endpointId === undefined) {
     switch (alexaRequest.directive.header.namespace) {
       case "Alexa.Authorization":
         return await alexaAuthorization.handler(alexaRequest);

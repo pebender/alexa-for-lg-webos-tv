@@ -3,7 +3,7 @@ import * as CommonError from "./error";
 
 export function debug(message: unknown): void {
   if (
-    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV !== undefined &&
     process.env.NODE_ENV === "development"
   ) {
     if (typeof message !== "string" && typeof message !== "number") {
@@ -17,7 +17,7 @@ export function debug(message: unknown): void {
 
 export function debugError(error: unknown): void {
   if (
-    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV !== undefined &&
     process.env.NODE_ENV === "development"
   ) {
     let commonError: CommonError.CommonError;
@@ -37,7 +37,7 @@ export function debugError(error: unknown): void {
 
 export function debugJSON(message: unknown): void {
   if (
-    typeof process.env.NODE_ENV !== "undefined" &&
+    process.env.NODE_ENV !== undefined &&
     process.env.NODE_ENV === "development"
   ) {
     console.debug(JSON.stringify(message, null, 2));

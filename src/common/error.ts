@@ -25,7 +25,7 @@ export class CommonError extends Error implements NodeJS.ErrnoException {
     super(message, { cause });
     this.general = general;
     this.code = this.general;
-    if (typeof options?.specific !== "undefined") {
+    if (options?.specific !== undefined) {
       this.specific = options.specific;
       this.code = `${this.code}.${this.specific}`;
     }

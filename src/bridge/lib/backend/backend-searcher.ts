@@ -53,7 +53,7 @@ export class BackendSearcher extends EventEmitter {
       rinfo: dgram.RemoteInfo,
       callback: (error: Common.Error.CommonError | null, tv: TV | null) => void,
     ): void {
-      if (typeof headers.USN === "undefined") {
+      if (headers.USN === undefined) {
         callback(null, null);
         return;
       }
@@ -68,12 +68,12 @@ export class BackendSearcher extends EventEmitter {
         "advertise-bye": "NT",
         response: "ST",
       };
-      if (typeof messageTypeMap[messageName] === "undefined") {
+      if (messageTypeMap[messageName] === undefined) {
         callback(null, null);
         return;
       }
       // Make sure it is the webOS second screen service.
-      if (typeof headers[messageTypeMap[messageName]] === "undefined") {
+      if (headers[messageTypeMap[messageName]] === undefined) {
         callback(null, null);
         return;
       }
@@ -87,14 +87,14 @@ export class BackendSearcher extends EventEmitter {
       // Make sure that if it is a advertise (NT) message then it is "ssdp:alive".
       if (
         messageTypeMap[messageName] === "NT" &&
-        (typeof headers.NTS === "undefined" || headers.NTS !== "ssdp:alive")
+        (headers.NTS === undefined || headers.NTS !== "ssdp:alive")
       ) {
         callback(null, null);
         return;
       }
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (
-        typeof headers.SERVER === "undefined" ||
+        headers.SERVER === undefined ||
         (headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i) ===
           null
       ) {
@@ -102,7 +102,7 @@ export class BackendSearcher extends EventEmitter {
         return;
       }
       // Get the IP address associated with the TV.
-      if (typeof rinfo.address === "undefined") {
+      if (rinfo.address === undefined) {
         callback(null, null);
         return;
       }
@@ -124,7 +124,7 @@ export class BackendSearcher extends EventEmitter {
       // LG Electronics webOS TV as well as to obtain the TV's friendly name
       // and Unique Device Name (UDN).
       //
-      if (typeof headers.LOCATION === "undefined") {
+      if (headers.LOCATION === undefined) {
         callback(null, null);
         return;
       }
@@ -164,7 +164,7 @@ export class BackendSearcher extends EventEmitter {
                 callback(commonError, null);
                 return;
               }
-              if (typeof description === "undefined" || description === null) {
+              if (description === undefined || description === null) {
                 callback(null, null);
                 return;
               }
@@ -174,15 +174,13 @@ export class BackendSearcher extends EventEmitter {
               // check anyway.
               //
               if (
-                typeof description.root?.device === "undefined" ||
+                description.root?.device === undefined ||
                 description.root.device.length !== 1 ||
-                typeof description.root.device[0].manufacturer ===
-                  "undefined" ||
+                description.root.device[0].manufacturer === undefined ||
                 description.root.device[0].manufacturer.length !== 1 ||
-                typeof description.root.device[0].friendlyName ===
-                  "undefined" ||
+                description.root.device[0].friendlyName === undefined ||
                 description.root.device[0].friendlyName.length !== 1 ||
-                typeof description.root.device[0].UDN === "undefined" ||
+                description.root.device[0].UDN === undefined ||
                 description.root.device[0].UDN.length !== 1
               ) {
                 callback(null, null);

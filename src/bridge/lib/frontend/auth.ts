@@ -25,7 +25,7 @@ export function authorizeUser(
     (authorizedBridgeHostnameAndEmails) =>
       bridgeHostname === authorizedBridgeHostnameAndEmails.bridgeHostname,
   );
-  if (typeof authorizedBridgeHostnameAndEmails === "undefined") {
+  if (authorizedBridgeHostnameAndEmails === undefined) {
     Common.Debug.debug(`bridgeHostname="${bridgeHostname}" not found`);
     return false;
   }
@@ -33,7 +33,7 @@ export function authorizeUser(
   const authorizedEmail = authorizedEmails.find(
     (authorizedEmail) => email === authorizedEmail,
   );
-  if (typeof authorizedEmail === "undefined") {
+  if (authorizedEmail === undefined) {
     Common.Debug.debug(
       `email="${email}" in bridgeHostname="${bridgeHostname}" not found`,
     );

@@ -119,7 +119,7 @@ async function adjustVolumeHandler(
     const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(
       lgtvRequest,
     )) as LGTV.ResponseVolume;
-    if (typeof lgtvResponse.volume === "undefined") {
+    if (lgtvResponse.volume === undefined) {
       throw Common.Error.create({
         message: "the T.V. did not return it's volume",
         general: "tv",
@@ -127,7 +127,7 @@ async function adjustVolumeHandler(
       });
     }
     let volume = lgtvResponse.volume;
-    if (typeof alexaRequest.directive.payload.volume !== "undefined") {
+    if (alexaRequest.directive.payload.volume !== undefined) {
       if (alexaRequest.directive.payload.volumeDefault === true) {
         if ((alexaRequest.directive.payload.volume as number) < 0) {
           volume -= 3;

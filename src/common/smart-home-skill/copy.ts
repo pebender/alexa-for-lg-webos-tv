@@ -10,7 +10,7 @@ export type copyElementType =
 
 export function copyElement(original: copyElementType): copyElementType {
   if (
-    typeof original === "undefined" ||
+    original === undefined ||
     original === null ||
     typeof original !== "object"
   ) {
@@ -21,7 +21,7 @@ export function copyElement(original: copyElementType): copyElementType {
     const originalArray = original as copyElementType[];
     const copy: copyElementType[] = [];
     originalArray.forEach((item): void => {
-      if (typeof item !== "undefined") {
+      if (item !== undefined) {
         copy.push(copyElement(item));
       }
     });
@@ -32,7 +32,7 @@ export function copyElement(original: copyElementType): copyElementType {
     const originalObject = original as Record<string, copyElementType>;
     const copy: Record<string, copyElementType> = {};
     Object.keys(originalObject).forEach((property): void => {
-      if (typeof originalObject[property] !== "undefined") {
+      if (originalObject[property] !== undefined) {
         copy[property] = copyElement(originalObject[property]);
       }
     });

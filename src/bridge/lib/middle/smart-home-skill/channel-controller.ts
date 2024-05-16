@@ -16,8 +16,8 @@ async function getChannel(
     });
     const channel = lgtvResponse;
     if (
-      typeof channel.channelNumber !== "undefined" &&
-      typeof channel.channelName !== "undefined"
+      channel.channelNumber !== undefined &&
+      channel.channelName !== undefined
     ) {
       return {
         channelNumber: channel.channelNumber as string,
@@ -36,7 +36,7 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
     const lgtvResponse = await backendControl.lgtvCommand({
       uri: "ssap://tv/getChannelList",
     });
-    if (typeof lgtvResponse.channelList === "undefined") {
+    if (lgtvResponse.channelList === undefined) {
       return [];
     }
     const channelList = lgtvResponse.channelList as Array<{
@@ -117,7 +117,7 @@ function getChannelNumberToNumberMap(
     channelNumberToNumber[channelNumber] = channelNumber;
     if (channelNumber.endsWith("-1")) {
       const altChannelName = channelNumber.replace(/-1$/, "");
-      if (typeof channelNumberToNumber[altChannelName] === "undefined") {
+      if (channelNumberToNumber[altChannelName] === undefined) {
         channelNumberToNumber[altChannelName] = channelNumber;
       }
     }
@@ -140,19 +140,19 @@ function getChannelNameToNumberMap(
     channelNameToNumber[channelName] = channelNumber;
     if (channelName.endsWith("-DT")) {
       const altChannelName = channelName.replace(/-DT$/, "");
-      if (typeof channelNameToNumber[altChannelName] === "undefined") {
+      if (channelNameToNumber[altChannelName] === undefined) {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
     if (channelName.endsWith("-HD")) {
       const altChannelName = channelName.replace(/-HD$/, "");
-      if (typeof channelNameToNumber[altChannelName] === "undefined") {
+      if (channelNameToNumber[altChannelName] === undefined) {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
     if (channelName.endsWith("HD")) {
       const altChannelName = channelName.replace(/HD$/, "");
-      if (typeof channelNameToNumber[altChannelName] === "undefined") {
+      if (channelNameToNumber[altChannelName] === undefined) {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
@@ -275,10 +275,10 @@ function states(
         callSign?: string;
         affiliateCallSign?: string;
       } = {};
-      if (typeof lgtvResponse.channelNumber !== "undefined") {
+      if (lgtvResponse.channelNumber !== undefined) {
         channel.number = lgtvResponse.channelNumber as string;
       }
-      if (typeof lgtvResponse.channelName !== "undefined") {
+      if (lgtvResponse.channelName !== undefined) {
         channel.affiliateCallSign = (
           lgtvResponse.channelName as string
         ).toUpperCase();
@@ -358,7 +358,7 @@ async function changeChannelHandler(
   const channelNameToNumber = getChannelNameToNumberMap(channels);
 
   function getChannelNumber(): string | null {
-    if (typeof alexaRequest.directive.payload !== "undefined") {
+    if (alexaRequest.directive.payload !== undefined) {
       const payload: {
         channel?: {
           number?: string;
@@ -373,21 +373,20 @@ async function changeChannelHandler(
         [x: string]: boolean | number | string | object | undefined;
       } = alexaRequest.directive.payload;
       if (
-        typeof payload.channel?.number !== "undefined" &&
-        typeof channelNumberToNumber[payload.channel.number] !== "undefined"
+        payload.channel?.number !== undefined &&
+        channelNumberToNumber[payload.channel.number] !== undefined
       ) {
         return channelNumberToNumber[payload.channel.number];
       }
       if (
-        typeof payload.channel?.affiliateCallSign !== "undefined" &&
-        typeof channelNameToNumber[payload.channel.affiliateCallSign] !==
-          "undefined"
+        payload.channel?.affiliateCallSign !== undefined &&
+        channelNameToNumber[payload.channel.affiliateCallSign] !== undefined
       ) {
         return channelNameToNumber[payload.channel.affiliateCallSign];
       }
       if (
-        typeof payload.channel?.callSign !== "undefined" &&
-        typeof channelNameToNumber[payload.channel.callSign] !== "undefined"
+        payload.channel?.callSign !== undefined &&
+        channelNameToNumber[payload.channel.callSign] !== undefined
       ) {
         return channelNameToNumber[payload.channel.callSign];
       }
