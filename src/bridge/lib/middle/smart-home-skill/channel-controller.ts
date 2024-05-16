@@ -71,8 +71,8 @@ function getChannelNumbers(channels: Channel[]): string[] {
   channelNumbers.sort((a: string, b: string) => {
     const x = a.split("-", 2);
     const y = b.split("-", 2);
-    const x0 = parseInt(x[0], 10);
-    const y0 = parseInt(y[0], 10);
+    const x0 = Number.parseInt(x[0], 10);
+    const y0 = Number.parseInt(y[0], 10);
     if (x0 > y0) {
       return 1;
     }
@@ -83,8 +83,8 @@ function getChannelNumbers(channels: Channel[]): string[] {
       return 0;
     }
     if (x.length === 2 && y.length === 2) {
-      const x1 = parseInt(x[1], 10);
-      const y1 = parseInt(y[1], 10);
+      const x1 = Number.parseInt(x[1], 10);
+      const y1 = Number.parseInt(y[1], 10);
       if (x1 > y1) {
         return 1;
       }
@@ -318,7 +318,7 @@ async function skipChannelsHandler(
     );
   }
   const channelNumbers = getChannelNumbers(channels);
-  const channelCount = parseInt(
+  const channelCount = Number.parseInt(
     alexaRequest.directive.payload.channelCount as string,
     10,
   );

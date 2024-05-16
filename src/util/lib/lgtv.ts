@@ -120,7 +120,7 @@ function lgtvRunCommand(backend: Backend): void {
   const argv: string[] = process.argv;
   if (argv.length === 5 || argv.length === 6) {
     const tvList = getSortedTVList(backend);
-    const tv = tvList[parseInt(argv[3])];
+    const tv = tvList[Number.parseInt(argv[3])];
     console.log(`udn: ${tv.udn}`);
     const backendControl = backend.control(tv.udn);
     backendControl.on("connect", () => {
