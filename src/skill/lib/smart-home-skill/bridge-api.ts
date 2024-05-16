@@ -19,75 +19,87 @@ function mapErrorToAlexaResponse(
   error: Common.Error.CommonError,
 ): Common.SHS.Response {
   switch (error.general) {
-    case "http":
+    case "http": {
       switch (error.specific) {
-        case "CONNECTION_INTERRUPTED":
+        case "CONNECTION_INTERRUPTED": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Bridge connect interrupted.",
           );
-        case "STATUS_CODE_MISSING":
+        }
+        case "STATUS_CODE_MISSING": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Bridge response included no HTTP status code.",
           );
-        case "INVALID_AUTHORIZATION_CREDENTIAL":
+        }
+        case "INVALID_AUTHORIZATION_CREDENTIAL": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INVALID_AUTHORIZATION_CREDENTIAL",
             "Failed to retrieve user profile.",
           );
-        case "INTERNAL_ERROR":
+        }
+        case "INTERNAL_ERROR": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Failed to retrieve user profile.",
           );
-        case "CONTENT_TYPE_MISSING":
+        }
+        case "CONTENT_TYPE_MISSING": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Bridge response did not return HTTP header 'content-type'.",
           );
-        case "CONTENT_TYPE_INCORRECT":
+        }
+        case "CONTENT_TYPE_INCORRECT": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             `Bridge response HTTP header 'content-type' was not 'application/json'.`,
           );
-        case "BODY_MISSING":
+        }
+        case "BODY_MISSING": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Bridge did not return a body.",
           );
-        case "BODY_INVALID_FORMAT":
+        }
+        case "BODY_INVALID_FORMAT": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "Bridge returned a malformed body.",
           );
-        case "UNKNOWN_ERROR":
+        }
+        case "UNKNOWN_ERROR": {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "error: unknown.",
           );
-        default:
+        }
+        default: {
           return Common.SHS.Response.buildAlexaErrorResponse(
             alexaRequest,
             "INTERNAL_ERROR",
             "error: unknown.",
           );
+        }
       }
-    default:
+    }
+    default: {
       return Common.SHS.Response.buildAlexaErrorResponse(
         alexaRequest,
         "INTERNAL_ERROR",
         "error: unknown.",
       );
+    }
   }
 }
 

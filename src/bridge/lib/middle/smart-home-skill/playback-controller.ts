@@ -52,42 +52,48 @@ async function handler(
     );
   }
   switch (alexaRequest.directive.header.name) {
-    case "Play":
+    case "Play": {
       return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/play",
       );
-    case "Pause":
+    }
+    case "Pause": {
       return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/pause",
       );
-    case "Stop":
+    }
+    case "Stop": {
       return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/stop",
       );
-    case "Rewind":
+    }
+    case "Rewind": {
       return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/rewind",
       );
-    case "FastForward":
+    }
+    case "FastForward": {
       return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/fastForward",
       );
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

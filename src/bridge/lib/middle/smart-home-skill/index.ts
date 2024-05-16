@@ -80,10 +80,12 @@ async function handler(
   const alexaRequest = new Common.SHS.Request(event);
 
   switch (alexaRequest.directive.header.namespace) {
-    case "Alexa.Authorization":
+    case "Alexa.Authorization": {
       return alexaAuthorization.handler(alexaRequest, backend);
-    case "Alexa.Discovery":
+    }
+    case "Alexa.Discovery": {
       return await alexaDiscovery.handler(alexaRequest, backend);
+    }
     default: {
       const udn = alexaRequest.getEndpointId();
       if (udn === undefined) {

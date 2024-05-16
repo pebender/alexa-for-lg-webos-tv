@@ -169,14 +169,16 @@ async function handler(
     );
   }
   switch (alexaRequest.directive.header.name) {
-    case "LaunchTarget":
+    case "LaunchTarget": {
       return await launchTargetHandler(alexaRequest, backendControl);
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

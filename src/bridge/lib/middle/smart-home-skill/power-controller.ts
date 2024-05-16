@@ -69,18 +69,21 @@ async function handler(
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   switch (alexaRequest.directive.header.name) {
-    case "TurnOff":
+    case "TurnOff": {
       return await Promise.resolve(
         turnOffHandler(alexaRequest, backendControl),
       );
-    case "TurnOn":
+    }
+    case "TurnOn": {
       return await turnOnHandler(alexaRequest, backendControl);
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

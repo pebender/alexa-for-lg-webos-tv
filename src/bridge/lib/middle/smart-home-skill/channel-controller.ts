@@ -421,16 +421,19 @@ async function handler(
     );
   }
   switch (alexaRequest.directive.header.name) {
-    case "ChangeChannel":
+    case "ChangeChannel": {
       return await changeChannelHandler(alexaRequest, backendControl);
-    case "SkipChannels":
+    }
+    case "SkipChannels": {
       return await skipChannelsHandler(alexaRequest, backendControl);
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

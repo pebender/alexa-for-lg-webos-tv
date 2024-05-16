@@ -190,15 +190,18 @@ async function lgtvCommand(): Promise<void> {
   }
 
   switch (argv[2]) {
-    case "cmds":
+    case "cmds": {
       lgtvCmdsCommand(backend);
       break;
-    case "udns":
+    }
+    case "udns": {
       lgtvUdnsCommand(backend);
       break;
-    case "run":
+    }
+    case "run": {
       lgtvRunCommand(backend);
       break;
+    }
     default: {
       console.log("usage:");
       console.log("  lgtv cmds|udns|run [..]");

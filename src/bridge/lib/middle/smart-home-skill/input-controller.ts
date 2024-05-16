@@ -337,14 +337,16 @@ async function handler(
     );
   }
   switch (alexaRequest.directive.header.name) {
-    case "SelectInput":
+    case "SelectInput": {
       return await selectInputHandler(alexaRequest, backendControl);
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

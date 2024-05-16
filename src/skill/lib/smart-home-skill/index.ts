@@ -11,14 +11,17 @@ async function handlerWithErrors(
 ): Promise<Common.SHS.Response> {
   if (alexaRequest.directive.endpoint?.endpointId === undefined) {
     switch (alexaRequest.directive.header.namespace) {
-      case "Alexa.Authorization":
+      case "Alexa.Authorization": {
         return await alexaAuthorization.handler(alexaRequest);
-      case "Alexa.Discovery":
+      }
+      case "Alexa.Discovery": {
         return await alexaDiscovery.handler(alexaRequest);
-      default:
+      }
+      default: {
         return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest,
         );
+      }
     }
   } else {
     return await Bridge.sendSkillDirective(alexaRequest);

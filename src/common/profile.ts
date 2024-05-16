@@ -55,9 +55,9 @@ export async function getUserProfile(
       const general = cause.general;
       const specific = cause.specific;
       switch (general) {
-        case "http":
+        case "http": {
           switch (specific) {
-            case "BAD_REQUEST":
+            case "BAD_REQUEST": {
               throw CommonError.create({
                 message:
                   "there was an authentication error while retrieving your profile",
@@ -65,7 +65,8 @@ export async function getUserProfile(
                 specific: "invalid_token",
                 cause,
               });
-            case "UNAUTHORIZED":
+            }
+            case "UNAUTHORIZED": {
               throw CommonError.create({
                 message:
                   "there was an authorization error while retrieving your profile",
@@ -73,11 +74,15 @@ export async function getUserProfile(
                 specific: "invalid_scope",
                 cause,
               });
-            default:
+            }
+            default: {
               throw cause;
+            }
           }
-        default:
+        }
+        default: {
           throw cause;
+        }
       }
     }
     throw cause;

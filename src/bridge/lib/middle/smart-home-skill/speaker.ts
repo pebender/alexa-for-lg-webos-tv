@@ -202,18 +202,22 @@ async function handler(
     );
   }
   switch (alexaRequest.directive.header.name) {
-    case "SetVolume":
+    case "SetVolume": {
       return await setVolumeHandler(alexaRequest, backendControl);
-    case "AdjustVolume":
+    }
+    case "AdjustVolume": {
       return await adjustVolumeHandler(alexaRequest, backendControl);
-    case "SetMute":
+    }
+    case "SetMute": {
       return await setMuteHandler(alexaRequest, backendControl);
-    default:
+    }
+    default: {
       return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),
       );
+    }
   }
 }
 

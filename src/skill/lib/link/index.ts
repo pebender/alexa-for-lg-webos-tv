@@ -277,18 +277,20 @@ export async function testConnection(skillToken: string): Promise<void> {
     } catch (cause) {
       if (cause instanceof Common.Error.CommonError) {
         switch (cause.specific) {
-          case "BAD_GATEWAY":
+          case "BAD_GATEWAY": {
             throw Common.Error.create({
               general: "link",
               specific: "link_failed_http",
               cause,
             });
-          case "INVALID_AUTHORIZATION_CREDENTIAL":
+          }
+          case "INVALID_AUTHORIZATION_CREDENTIAL": {
             throw Common.Error.create({
               general: "link",
               specific: "link_failed_authorization",
               cause,
             });
+          }
         }
       }
       throw cause;
