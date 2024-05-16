@@ -110,8 +110,8 @@ async function getAlexaToLGTV(
   });
   const devices = (lgtvResponse as LGTV.ResponseExternalInputList).devices;
   for (const device of devices) {
-    const id = device.id.toUpperCase().replace(/_/g, " ");
-    const label = device.label.toUpperCase().replace(/_/g, " ");
+    const id = device.id.toUpperCase().replaceAll("_", " ");
+    const label = device.label.toUpperCase().replaceAll("_", " ");
     const appId = device.appId;
     externalInputList.push({
       id,
@@ -203,16 +203,16 @@ function capabilities(
       if (alexaInput === alexaToLGTV[alexaInput].label) {
         if (
           alexaInput !== alexaToLGTV[alexaInput].id &&
-          alexaInput.replace(/ /g, "") !==
-            alexaToLGTV[alexaInput].id.replace(/ /g, "")
+          alexaInput.replaceAll(" ", "") !==
+            alexaToLGTV[alexaInput].id.replaceAll(" ", "")
         ) {
           friendlyNames.push(alexaToLGTV[alexaInput].id);
         }
       } else {
         if (
           alexaInput !== alexaToLGTV[alexaInput].label &&
-          alexaInput.replace(/ /g, "") !==
-            alexaToLGTV[alexaInput].label.replace(/ /g, "")
+          alexaInput.replaceAll(" ", "") !==
+            alexaToLGTV[alexaInput].label.replaceAll(" ", "")
         ) {
           friendlyNames.push(alexaToLGTV[alexaInput].label);
         }

@@ -11,7 +11,7 @@ module.exports = {
     "eslint-config-standard",
     "eslint-config-love",
     "eslint-config-prettier",
-//    "plugin:unicorn/recommended",
+    //"plugin:unicorn/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -38,6 +38,7 @@ module.exports = {
     "unicorn/no-typeof-undefined": ["error"],
     "unicorn/prefer-node-protocol": ["error"],
     "unicorn/prefer-number-properties": ["error"],
+    "unicorn/prefer-string-replace-all": ["error"],
     "unicorn/switch-case-braces": ["error"],
     "@typescript-eslint/return-await": ["error"],
   },
