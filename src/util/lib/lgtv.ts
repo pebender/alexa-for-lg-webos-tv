@@ -7,10 +7,12 @@ import type { TV } from "../../bridge/lib/backend/tv";
 import { Backend } from "../../bridge/lib/backend";
 
 export async function getBackend(): Promise<Backend> {
-  const configurationDir = persistPath(Common.constants.application.name.safe);
+  const configurationDirectory = persistPath(
+    Common.constants.application.name.safe,
+  );
 
   try {
-    await fs.mkdir(configurationDir, { recursive: true });
+    await fs.mkdir(configurationDirectory, { recursive: true });
   } catch (error) {
     const commonError = Common.Error.create({ cause: error });
     Common.Debug.debugError(commonError);
@@ -111,8 +113,8 @@ function lgtvCmdsCommand(
 
 function lgtvUdnsCommand(backend: Backend): void {
   const tvList = getSortedTVList(backend);
-  for (const [i, element] of tvList.entries()) {
-    console.log(`${i.toString()}: ${element.udn}: ${element.name}`);
+  for (const [index, element] of tvList.entries()) {
+    console.log(`${index.toString()}: ${element.udn}: ${element.name}`);
   }
 }
 

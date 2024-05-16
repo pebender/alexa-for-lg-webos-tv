@@ -42,6 +42,5 @@ module.exports = {
     "unicorn/prefer-top-level-await": "off",
 
     "unicorn/no-null": "off",
-    "unicorn/prevent-abbreviations": "off",
   },
 };

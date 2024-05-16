@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / Record
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-database](../README.md) / Record
 
 # Interface: Record
 

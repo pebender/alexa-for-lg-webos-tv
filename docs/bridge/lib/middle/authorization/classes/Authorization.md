@@ -10,13 +10,13 @@
 
 ### new Authorization()
 
-> `private` **new Authorization**(`_configuration`, `_db`): [`Authorization`](Authorization.md)
+> `private` **new Authorization**(`_configuration`, `_database`): [`Authorization`](Authorization.md)
 
 #### Parameters
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
-• **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 #### Returns
 
@@ -30,9 +30,9 @@
 
 ***
 
-### \_db
+### \_database
 
-> `private` `readonly` **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 ## Methods
 

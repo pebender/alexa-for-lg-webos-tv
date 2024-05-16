@@ -23,9 +23,9 @@ async function create(
   };
 
   return await new Promise<string>((resolve, reject) => {
-    jwt.sign(payload, x509PrivateKey, options, function (err, encoded) {
-      if (err !== null) {
-        reject(Common.Error.create({ cause: err }));
+    jwt.sign(payload, x509PrivateKey, options, function (error, encoded) {
+      if (error !== null) {
+        reject(Common.Error.create({ cause: error }));
       }
 
       if (encoded === undefined) {

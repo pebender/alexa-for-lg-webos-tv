@@ -91,23 +91,23 @@ export async function request(
       resolve: (value: object) => void,
       reject: (error: CommonError.CommonError) => void,
     ): void => {
-      const req = https.request(options, (res): void => {
-        res.setEncoding("utf8");
-        res.on("data", (chunk: string): void => {
+      const request = https.request(options, (response): void => {
+        response.setEncoding("utf8");
+        response.on("data", (chunk: string): void => {
           data += chunk;
         });
-        res.on("end", (): void => {
-          if (!res.complete) {
+        response.on("end", (): void => {
+          if (!response.complete) {
             reject(createHttpError("CONNECTION_INTERRUPTED"));
           }
 
           Debug.debug("HTTP Response");
-          Debug.debug(res.statusCode);
-          Debug.debugJSON(res.headers);
+          Debug.debug(response.statusCode);
+          Debug.debugJSON(response.headers);
           Debug.debugJSON(data);
 
-          const statusCode = res.statusCode;
-          const contentType = res.headers["content-type"];
+          const statusCode = response.statusCode;
+          const contentType = response.headers["content-type"];
 
           if (statusCode === undefined) {
             reject(createHttpError("STATUS_CODE_MISSING"));
@@ -171,13 +171,13 @@ export async function request(
           resolve(body);
         });
       });
-      req.on("error", (): void => {
+      request.on("error", (): void => {
         reject(createHttpError("UNKNOWN_ERROR"));
       });
       if (options.method === "POST") {
-        req.write(content);
+        request.write(content);
       }
-      req.end();
+      request.end();
     },
   );
 

@@ -18,11 +18,11 @@ export type DatabaseRecord = Record<
 export class DatabaseTable {
   private readonly _indexes: string[];
   private readonly _key: string;
-  private readonly _db: Datastore;
-  private constructor(indexes: string[], key: string, db: Datastore) {
+  private readonly _database: Datastore;
+  private constructor(indexes: string[], key: string, database: Datastore) {
     this._indexes = indexes;
     this._key = key;
-    this._db = db;
+    this._database = database;
   }
 
   public static async build(
@@ -30,7 +30,7 @@ export class DatabaseTable {
     indexes: string[],
     key: string,
   ): Promise<DatabaseTable> {
-    const configurationDir = persistPath(
+    const configurationDirectory = persistPath(
       Common.constants.application.name.safe,
     );
 
@@ -39,18 +39,22 @@ export class DatabaseTable {
     // occurs once at startup and because the database is needed before the LG
     // webOS TV bridge can run.
     //
-    const db = new Datastore({ filename: `${configurationDir}/${name}.nedb` });
+    const database = new Datastore({
+      filename: `${configurationDirectory}/${name}.nedb`,
+    });
 
     try {
-      await db.loadDatabaseAsync();
+      await database.loadDatabaseAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
 
     async function index(fieldName: string): Promise<void> {
-      await db.ensureIndexAsync({ fieldName, unique: true }).catch((error) => {
-        throw Common.Error.create({ general: "database", cause: error });
-      });
+      await database
+        .ensureIndexAsync({ fieldName, unique: true })
+        .catch((error) => {
+          throw Common.Error.create({ general: "database", cause: error });
+        });
     }
     await Promise.all(
       indexes.map(async (fieldName: string) => {
@@ -58,7 +62,7 @@ export class DatabaseTable {
       }),
     );
 
-    return new DatabaseTable(indexes, key, db);
+    return new DatabaseTable(indexes, key, database);
   }
 
   public async clean(): Promise<void> {
@@ -68,8 +72,8 @@ export class DatabaseTable {
     query2[this._key] = null;
     const query: DatabaseQuery = { $or: [query1, query2] };
     try {
-      await this._db.removeAsync(query, { multi: true });
-      await this._db.compactDatafileAsync();
+      await this._database.removeAsync(query, { multi: true });
+      await this._database.compactDatafileAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -77,8 +81,8 @@ export class DatabaseTable {
 
   public async deleteRecord(query: DatabaseQuery): Promise<void> {
     try {
-      await this._db.removeAsync(query, { multi: true });
-      await this._db.compactDatafileAsync();
+      await this._database.removeAsync(query, { multi: true });
+      await this._database.compactDatafileAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -86,7 +90,9 @@ export class DatabaseTable {
 
   public async getRecord(query: DatabaseQuery): Promise<DatabaseRecord | null> {
     try {
-      return await this._db.findOneAsync<DatabaseRecord>(query).execAsync();
+      return await this._database
+        .findOneAsync<DatabaseRecord>(query)
+        .execAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -94,7 +100,7 @@ export class DatabaseTable {
 
   public async getRecords(query: DatabaseQuery): Promise<DatabaseRecord[]> {
     try {
-      return await this._db.findAsync<DatabaseRecord>(query).execAsync();
+      return await this._database.findAsync<DatabaseRecord>(query).execAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -102,8 +108,8 @@ export class DatabaseTable {
 
   public async insertRecord(record: DatabaseRecord): Promise<void> {
     try {
-      await this._db.insertAsync(record);
-      await this._db.compactDatafileAsync();
+      await this._database.insertAsync(record);
+      await this._database.compactDatafileAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -114,8 +120,8 @@ export class DatabaseTable {
     update: DatabaseUpdate,
   ): Promise<void> {
     try {
-      await this._db.updateAsync(query, update, {});
-      await this._db.compactDatafileAsync();
+      await this._database.updateAsync(query, update, {});
+      await this._database.compactDatafileAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }
@@ -126,8 +132,8 @@ export class DatabaseTable {
     update: DatabaseUpdate,
   ): Promise<void> {
     try {
-      await this._db.updateAsync(query, update, { upsert: true });
-      await this._db.compactDatafileAsync();
+      await this._database.updateAsync(query, update, { upsert: true });
+      await this._database.compactDatafileAsync();
     } catch (error) {
       throw Common.Error.create({ general: "database", cause: error });
     }

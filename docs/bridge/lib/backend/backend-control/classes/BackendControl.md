@@ -14,11 +14,11 @@
 
 ### new BackendControl()
 
-> `private` **new BackendControl**(`_db`, `_tv`, `_connection`, `_ssdpNotify`, `_ssdpResponse`): [`BackendControl`](BackendControl.md)
+> `private` **new BackendControl**(`_database`, `_tv`, `_connection`, `_ssdpNotify`, `_ssdpResponse`): [`BackendControl`](BackendControl.md)
 
 #### Parameters
 
-• **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 • **\_tv**: [`TV`](../../tv/interfaces/TV.md)
 
@@ -50,9 +50,9 @@
 
 ***
 
-### \_db
+### \_database
 
-> `private` `readonly` **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 ***
 
@@ -180,11 +180,11 @@ a [CommonError](../../../../../common/error/classes/CommonError.md) with
 
 ### build()
 
-> `static` **build**(`db`, `tv`): [`BackendControl`](BackendControl.md)
+> `static` **build**(`database`, `tv`): [`BackendControl`](BackendControl.md)
 
 #### Parameters
 
-• **db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 • **tv**: [`TV`](../../tv/interfaces/TV.md)
 

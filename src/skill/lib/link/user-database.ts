@@ -209,7 +209,7 @@ export async function setBridgeHostname(
   userId: string,
   bridgeHostname: string,
 ): Promise<void> {
-  const bridgeHostnameUpdateParams = {
+  const bridgeHostnameUpdateParameters = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { userId },
     UpdateExpression:
@@ -220,10 +220,10 @@ export async function setBridgeHostname(
     },
   };
   Common.Debug.debug("bridgeHostnameUpdateParams");
-  Common.Debug.debugJSON(bridgeHostnameUpdateParams);
+  Common.Debug.debugJSON(bridgeHostnameUpdateParameters);
   try {
     await dynamoDBDocumentClient.send(
-      new UpdateCommand(bridgeHostnameUpdateParams),
+      new UpdateCommand(bridgeHostnameUpdateParameters),
     );
   } catch (error) {
     Common.Debug.debugError(error);
@@ -235,7 +235,7 @@ export async function setBridgeCredentials(
   userId: string,
   bridgeCredentials: { bridgeHostname: string; bridgeToken: string },
 ): Promise<void> {
-  const bridgeCredentialsUpdateParams = {
+  const bridgeCredentialsUpdateParameters = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { userId },
     UpdateExpression:
@@ -246,10 +246,10 @@ export async function setBridgeCredentials(
     },
   };
   Common.Debug.debug("bridgeCredentialsUpdateParams");
-  Common.Debug.debugJSON(bridgeCredentialsUpdateParams);
+  Common.Debug.debugJSON(bridgeCredentialsUpdateParameters);
   try {
     await dynamoDBDocumentClient.send(
-      new UpdateCommand(bridgeCredentialsUpdateParams),
+      new UpdateCommand(bridgeCredentialsUpdateParameters),
     );
   } catch (error) {
     Common.Debug.debugError(error);
@@ -261,7 +261,7 @@ export async function setSkillToken(
   userId: string,
   skillToken: string,
 ): Promise<void> {
-  const skillTokenUpdateParams = {
+  const skillTokenUpdateParameters = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { userId },
     UpdateExpression: "set skillToken = :newSkillToken",
@@ -270,7 +270,7 @@ export async function setSkillToken(
 
   try {
     await dynamoDBDocumentClient.send(
-      new UpdateCommand(skillTokenUpdateParams),
+      new UpdateCommand(skillTokenUpdateParameters),
     );
   } catch (error) {
     Common.Debug.debugError(error);

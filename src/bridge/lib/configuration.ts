@@ -14,39 +14,46 @@ export class Configuration {
   }
 
   public static async build(): Promise<Configuration> {
-    const cfgDir = persistPath(Common.constants.application.name.safe);
+    const configurationDirectory = persistPath(
+      Common.constants.application.name.safe,
+    );
     // Should check whether or not file exists and is readable.
-    const cfgFile = `${cfgDir}/config.json`;
-    const raw: string = await fs.readFile(cfgFile, { encoding: "utf8" });
+    const configurationFile = `${configurationDirectory}/config.json`;
+    const configurationData: string = await fs.readFile(configurationFile, {
+      encoding: "utf8",
+    });
 
-    const cfg = JSON.parse(raw) as {
+    const configurationJson = JSON.parse(configurationData) as {
       authorizedUsers: Array<{ bridgeHostname: string; emails: string[] }>;
     };
-    if (cfg.authorizedUsers === undefined) {
+    if (configurationJson.authorizedUsers === undefined) {
       const error = Common.Error.create({
-        message: `configuration file '${cfgFile}' is missing 'authorizedUsers'.`,
+        message: `configuration file '${configurationFile}' is missing 'authorizedUsers'.`,
       });
       Common.Debug.debugError(error);
       throw error;
     }
-    for (const [index, authorizedUser] of cfg.authorizedUsers.entries()) {
+    for (const [
+      index,
+      authorizedUser,
+    ] of configurationJson.authorizedUsers.entries()) {
       if (authorizedUser.bridgeHostname === undefined) {
         const error = Common.Error.create({
-          message: `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].hostname'.`,
+          message: `configuration file '${configurationFile}' is missing 'authorizedUsers[${index.toString()}].hostname'.`,
         });
         Common.Debug.debugError(error);
         throw error;
       }
       if (authorizedUser.emails === undefined) {
         const error = Common.Error.create({
-          message: `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].emails'.`,
+          message: `configuration file '${configurationFile}' is missing 'authorizedUsers[${index.toString()}].emails'.`,
         });
         Common.Debug.debugError(error);
         throw error;
       }
     }
 
-    const configuration = new Configuration(cfg);
+    const configuration = new Configuration(configurationJson);
 
     return configuration;
   }

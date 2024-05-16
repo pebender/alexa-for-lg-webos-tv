@@ -14,11 +14,11 @@
 
 ### new BackendController()
 
-> `private` **new BackendController**(`_db`, `_controls`): [`BackendController`](BackendController.md)
+> `private` **new BackendController**(`_database`, `_controls`): [`BackendController`](BackendController.md)
 
 #### Parameters
 
-• **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 • **\_controls**: `Record`\<`string`, [`BackendControl`](../../backend-control/classes/BackendControl.md)\>
 
@@ -38,9 +38,9 @@
 
 ***
 
-### \_db
+### \_database
 
-> `private` `readonly` **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 ## Methods
 

@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / setBridgeCredentials
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-database](../README.md) / setBridgeCredentials
 
 # Function: setBridgeCredentials()
 

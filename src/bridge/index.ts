@@ -54,12 +54,12 @@ export class Bridge {
    * @returns the Bridge built
    */
   public static async build(): Promise<Bridge> {
-    const configurationDir = persistPath(
+    const configurationDirectory = persistPath(
       Common.constants.application.name.safe,
     );
 
     try {
-      await fs.mkdir(configurationDir, { recursive: true });
+      await fs.mkdir(configurationDirectory, { recursive: true });
     } catch (error) {
       const commonError: Common.Error.CommonError = Common.Error.create({
         cause: error,

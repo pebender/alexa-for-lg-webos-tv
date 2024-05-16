@@ -10,7 +10,7 @@
 
 ### new DatabaseTable()
 
-> `private` **new DatabaseTable**(`indexes`, `key`, `db`): [`DatabaseTable`](DatabaseTable.md)
+> `private` **new DatabaseTable**(`indexes`, `key`, `database`): [`DatabaseTable`](DatabaseTable.md)
 
 #### Parameters
 
@@ -18,7 +18,7 @@
 
 • **key**: `string`
 
-• **db**: `Nedb`\<`Record`\<`string`, `any`\>\>
+• **database**: `Nedb`\<`Record`\<`string`, `any`\>\>
 
 #### Returns
 
@@ -26,9 +26,9 @@
 
 ## Properties
 
-### \_db
+### \_database
 
-> `private` `readonly` **\_db**: `Nedb`\<`Record`\<`string`, `any`\>\>
+> `private` `readonly` **\_database**: `Nedb`\<`Record`\<`string`, `any`\>\>
 
 ***
 

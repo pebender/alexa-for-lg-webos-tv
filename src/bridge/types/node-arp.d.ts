@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 declare module "node-arp" {
   export function getMAC(
     ipaddress: string,

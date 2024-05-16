@@ -10,13 +10,13 @@
 
 ### new BridgeTokenAuth()
 
-> `private` **new BridgeTokenAuth**(`_configuration`, `_db`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
+> `private` **new BridgeTokenAuth**(`_configuration`, `_database`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
 
 #### Parameters
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
-• **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 #### Returns
 
@@ -30,9 +30,9 @@
 
 ***
 
-### \_db
+### \_database
 
-> `private` `readonly` **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
 ## Methods
 

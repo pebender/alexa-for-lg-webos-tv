@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / getRequiredRecordUsingUserId
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-database](../README.md) / getRequiredRecordUsingUserId
 
 # Function: getRequiredRecordUsingUserId()
 

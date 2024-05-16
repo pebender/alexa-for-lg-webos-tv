@@ -77,7 +77,7 @@ export class Response {
   public event: Event;
   public context?: Context;
   public constructor(
-    opts:
+    options:
       | {
           event: Event;
           context?: Context;
@@ -92,11 +92,11 @@ export class Response {
           payload?: EventPayload;
         },
   ) {
-    const optsA = opts as {
+    const optionsA = options as {
       event: Event;
       context?: Context;
     };
-    const optsB = opts as {
+    const optionsB = options as {
       namespace: Namespace;
       name: string;
       instance?: string;
@@ -107,25 +107,27 @@ export class Response {
     };
 
     const response = {
-      event: (copyElement(optsA.event) as Event | undefined) ?? {
+      event: (copyElement(optionsA.event) as Event | undefined) ?? {
         header: {
-          namespace: optsB.namespace,
-          name: optsB.name,
-          instance: optsB.instance,
+          namespace: optionsB.namespace,
+          name: optionsB.name,
+          instance: optionsB.instance,
           messageId: randomUUID(),
-          correlationToken: optsB.correlationToken,
+          correlationToken: optionsB.correlationToken,
           payloadVersion: "3",
         },
         endpoint: {
-          endpointId: optsB.endpointId,
+          endpointId: optionsB.endpointId,
           scope: {
-            type: typeof optsB.token === "string" ? "BearerToken" : undefined,
-            token: optsB.token,
+            type:
+              typeof optionsB.token === "string" ? "BearerToken" : undefined,
+            token: optionsB.token,
           },
         },
-        payload: (copyElement(optsB.payload) as EventPayload | undefined) ?? {},
+        payload:
+          (copyElement(optionsB.payload) as EventPayload | undefined) ?? {},
       },
-      context: optsA.context,
+      context: optionsA.context,
     };
 
     if (
@@ -168,7 +170,7 @@ export class Response {
     this.event.payload.endpoints.push(payloadEndpoint);
   }
 
-  public static async buildContextProperty(opts: {
+  public static async buildContextProperty(options: {
     namespace: Namespace;
     name: string;
     instance?: string;
@@ -176,11 +178,11 @@ export class Response {
   }): Promise<ContextProperty | null> {
     try {
       const startTime = new Date();
-      const value = await opts.value();
+      const value = await options.value();
       const endTime = new Date();
       return {
-        namespace: opts.namespace,
-        name: opts.name,
+        namespace: options.namespace,
+        name: options.name,
         value,
         timeOfSample: endTime.toISOString(),
         uncertaintyInMilliseconds: endTime.getTime() - startTime.getTime(),
@@ -191,20 +193,22 @@ export class Response {
     }
   }
 
-  public static async buildPayloadEndpointCapability(opts: {
+  public static async buildPayloadEndpointCapability(options: {
     namespace: Namespace;
     propertyNames?: string[];
   }): Promise<EventPayloadEndpointCapability> {
     const capability: EventPayloadEndpointCapability = {
       type: "AlexaInterface",
-      interface: opts.namespace,
+      interface: options.namespace,
       version: "3",
     };
-    if (opts.propertyNames !== undefined) {
+    if (options.propertyNames !== undefined) {
       capability.properties = {
-        supported: opts.propertyNames.map((name: string): { name: string } => ({
-          name,
-        })),
+        supported: options.propertyNames.map(
+          (name: string): { name: string } => ({
+            name,
+          }),
+        ),
         proactivelyReported: false,
         retrievable: true,
       };

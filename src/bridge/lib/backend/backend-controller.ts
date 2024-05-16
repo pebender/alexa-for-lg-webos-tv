@@ -6,29 +6,29 @@ import type { TV, UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
-  private readonly _db: DatabaseTable;
+  private readonly _database: DatabaseTable;
   private readonly _controls: Record<string, BackendControl>;
   private constructor(
-    _db: DatabaseTable,
+    _database: DatabaseTable,
     _controls: Record<string, BackendControl>,
   ) {
     super();
 
-    this._db = _db;
+    this._database = _database;
     this._controls = _controls;
   }
 
   public static async build(): Promise<BackendController> {
-    const _db = await DatabaseTable.build("backend", ["udn"], "udn");
+    const _database = await DatabaseTable.build("backend", ["udn"], "udn");
     const _controls = {};
 
-    const backendController = new BackendController(_db, _controls);
+    const backendController = new BackendController(_database, _controls);
 
     async function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
         if (backendController._controls[tv.udn] === undefined) {
           backendController._controls[tv.udn] = BackendControl.build(
-            backendController._db,
+            backendController._database,
             tv,
           );
           backendController.eventsAdd(tv.udn);
@@ -44,7 +44,7 @@ export class BackendController extends EventEmitter {
       await Promise.all(tvInitializers);
     }
 
-    const records = await backendController._db.getRecords({});
+    const records = await backendController._database.getRecords({});
     await tvsInitialize(records);
 
     return backendController;
@@ -96,7 +96,7 @@ export class BackendController extends EventEmitter {
 
   public async tvUpsert(tv: TV): Promise<void> {
     try {
-      const record = await this._db.getRecord({
+      const record = await this._database.getRecord({
         $and: [
           { udn: tv.udn },
           { name: tv.name },
@@ -109,7 +109,7 @@ export class BackendController extends EventEmitter {
         if (Reflect.has(this._controls, tv.udn)) {
           Reflect.deleteProperty(this._controls, tv.udn);
         }
-        await this._db.updateOrInsertRecord(
+        await this._database.updateOrInsertRecord(
           { udn: tv.udn },
           {
             udn: tv.udn,
@@ -122,7 +122,7 @@ export class BackendController extends EventEmitter {
         );
       }
       if (this._controls[tv.udn] === undefined) {
-        this._controls[tv.udn] = BackendControl.build(this._db, tv);
+        this._controls[tv.udn] = BackendControl.build(this._database, tv);
         this.eventsAdd(tv.udn);
         await this._controls[tv.udn].start();
       }

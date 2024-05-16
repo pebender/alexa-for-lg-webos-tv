@@ -10,11 +10,11 @@
 
 ### new Response()
 
-> **new Response**(`opts`): [`Response`](Response.md)
+> **new Response**(`options`): [`Response`](Response.md)
 
 #### Parameters
 
-• **opts**: `object` \| `object`
+• **options**: `object` \| `object`
 
 #### Returns
 
@@ -224,19 +224,19 @@
 
 ### buildContextProperty()
 
-> `static` **buildContextProperty**(`opts`): `Promise`\<`null` \| [`ContextProperty`](../interfaces/ContextProperty.md)\>
+> `static` **buildContextProperty**(`options`): `Promise`\<`null` \| [`ContextProperty`](../interfaces/ContextProperty.md)\>
 
 #### Parameters
 
-• **opts**
+• **options**
 
-• **opts.instance?**: `string`
+• **options.instance?**: `string`
 
-• **opts.name**: `string`
+• **options.name**: `string`
 
-• **opts.namespace**: [`Namespace`](../../common/type-aliases/Namespace.md)
+• **options.namespace**: [`Namespace`](../../common/type-aliases/Namespace.md)
 
-• **opts.value**
+• **options.value**
 
 #### Returns
 
@@ -246,15 +246,15 @@
 
 ### buildPayloadEndpointCapability()
 
-> `static` **buildPayloadEndpointCapability**(`opts`): `Promise`\<[`EventPayloadEndpointCapability`](../interfaces/EventPayloadEndpointCapability.md)\>
+> `static` **buildPayloadEndpointCapability**(`options`): `Promise`\<[`EventPayloadEndpointCapability`](../interfaces/EventPayloadEndpointCapability.md)\>
 
 #### Parameters
 
-• **opts**
+• **options**
 
-• **opts.namespace**: [`Namespace`](../../common/type-aliases/Namespace.md)
+• **options.namespace**: [`Namespace`](../../common/type-aliases/Namespace.md)
 
-• **opts.propertyNames?**: `string`[]
+• **options.propertyNames?**: `string`[]
 
 #### Returns
 

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 import type ObjectKeyCache from "@outofsync/object-key-cache";
 import type MemoryCache from "@outofsync/memory-cache";
 import type Redis from "redis";

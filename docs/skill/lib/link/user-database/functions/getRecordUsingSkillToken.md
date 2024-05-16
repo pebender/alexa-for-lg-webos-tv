@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-db](../README.md) / getRecordUsingSkillToken
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/user-database](../README.md) / getRecordUsingSkillToken
 
 # Function: getRecordUsingSkillToken()
 

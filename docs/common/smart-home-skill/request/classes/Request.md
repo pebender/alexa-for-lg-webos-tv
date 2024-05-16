@@ -10,31 +10,31 @@
 
 ### new Request()
 
-> **new Request**(`opts`): [`Request`](Request.md)
+> **new Request**(`options`): [`Request`](Request.md)
 
 #### Parameters
 
-• **opts**
+• **options**
 
-• **opts.directive**
+• **options.directive**
 
-• **opts.directive.endpoint?**: `object`
+• **options.directive.endpoint?**: `object`
 
-• **opts.directive.header**
+• **options.directive.header**
 
-• **opts.directive.header.correlationToken?**: `string`
+• **options.directive.header.correlationToken?**: `string`
 
-• **opts.directive.header.instance?**: `string`
+• **options.directive.header.instance?**: `string`
 
-• **opts.directive.header.messageId?**: `string`
+• **options.directive.header.messageId?**: `string`
 
-• **opts.directive.header.name?**: `string`
+• **options.directive.header.name?**: `string`
 
-• **opts.directive.header.namespace?**: [`Namespace`](../../common/type-aliases/Namespace.md)
+• **options.directive.header.namespace?**: [`Namespace`](../../common/type-aliases/Namespace.md)
 
-• **opts.directive.header.payloadVersion?**: `"3"`
+• **options.directive.header.payloadVersion?**: `"3"`
 
-• **opts.directive.payload**: [`DirectivePayload`](../interfaces/DirectivePayload.md)
+• **options.directive.payload**: [`DirectivePayload`](../interfaces/DirectivePayload.md)
 
 #### Returns
 

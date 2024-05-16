@@ -15,13 +15,13 @@ import type { TV } from "./tv";
 export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;
   private _connecting: boolean;
-  private readonly _db: DatabaseTable;
+  private readonly _database: DatabaseTable;
   private readonly _tv: TV;
   private readonly _connection: LGTV;
   private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
   private constructor(
-    _db: DatabaseTable,
+    _database: DatabaseTable,
     _tv: TV,
     _connection: LGTV,
     _ssdpNotify: SsdpServer,
@@ -31,14 +31,14 @@ export class BackendControl extends EventEmitter {
 
     this._poweredOn = false;
     this._connecting = false;
-    this._db = _db;
+    this._database = _database;
     this._tv = _tv;
     this._connection = _connection;
     this._ssdpNotify = _ssdpNotify;
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static build(db: DatabaseTable, tv: TV): BackendControl {
+  public static build(database: DatabaseTable, tv: TV): BackendControl {
     const _tv: TV = {
       udn: tv.udn,
       name: tv.name,
@@ -50,7 +50,8 @@ export class BackendControl extends EventEmitter {
     const clientKey = typeof tv.key === "string" ? tv.key : "";
 
     function saveKey(key: string, callback: (error: Error) => void): void {
-      db.updateRecord({ udn: _tv.udn }, { $set: { key } })
+      database
+        .updateRecord({ udn: _tv.udn }, { $set: { key } })
         .then(() => {
           _tv.key = key;
           _connection.clientKey = key;
@@ -76,7 +77,7 @@ export class BackendControl extends EventEmitter {
     const _ssdpResponse = new SsdpClient();
 
     const backendControl = new BackendControl(
-      db,
+      database,
       _tv,
       _connection,
       _ssdpNotify,

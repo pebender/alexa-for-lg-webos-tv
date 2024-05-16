@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 /*
  * This @types/node-ssdp 4.0.4 but patched to
  * - expose rinfo on the Client event interface, and

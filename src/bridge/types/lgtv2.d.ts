@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 /* eslint-disable no-dupe-class-members */
 
 // Type definitions for lgtv2 1.4.1

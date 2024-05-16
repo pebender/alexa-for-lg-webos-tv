@@ -2,9 +2,9 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../modules.md) / skill/lib/link/user-db
+[alexa-for-lg-webos-tv](../../../../modules.md) / skill/lib/link/user-database
 
-# skill/lib/link/user-db
+# skill/lib/link/user-database
 
 ## Index
 

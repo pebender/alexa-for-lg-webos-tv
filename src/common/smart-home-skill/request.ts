@@ -27,7 +27,7 @@ export interface Directive {
 
 export class Request {
   public directive: Directive;
-  public constructor(opts: {
+  public constructor(options: {
     directive: {
       header: {
         namespace?: Namespace;
@@ -41,7 +41,7 @@ export class Request {
       payload: DirectivePayload;
     };
   }) {
-    this.directive = copyElement(opts.directive) as Directive;
+    this.directive = copyElement(options.directive) as Directive;
   }
 
   public getCorrelationToken(): string | undefined {

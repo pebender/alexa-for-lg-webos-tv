@@ -21,22 +21,22 @@ export type BridgeTokenAuthField =
 
 export class BridgeTokenAuth {
   private readonly _configuration: Configuration;
-  private readonly _db: DatabaseTable;
-  private constructor(_configuration: Configuration, _db: DatabaseTable) {
+  private readonly _database: DatabaseTable;
+  private constructor(_configuration: Configuration, _database: DatabaseTable) {
     this._configuration = _configuration;
-    this._db = _db;
+    this._database = _database;
   }
 
   public static async build(
     configuration: Configuration,
   ): Promise<BridgeTokenAuth> {
-    const _db = await DatabaseTable.build(
+    const _database = await DatabaseTable.build(
       "frontend",
       ["bridgeToken", "bridgeHostname", "email", "userId", "skillToken"],
       "bridgeToken",
     );
 
-    const bridgeTokenAuth = new BridgeTokenAuth(configuration, _db);
+    const bridgeTokenAuth = new BridgeTokenAuth(configuration, _database);
 
     return bridgeTokenAuth;
   }
@@ -55,7 +55,7 @@ export class BridgeTokenAuth {
     const record = { bridgeToken, bridgeHostname, email, userId, skillToken };
     Common.Debug.debug("setBridgeToken");
     Common.Debug.debugJSON(record);
-    await this._db.updateOrInsertRecord(
+    await this._database.updateOrInsertRecord(
       { $and: [{ bridgeHostname }, { email }] },
       record,
     );
@@ -65,7 +65,7 @@ export class BridgeTokenAuth {
     bridgeToken: string,
   ): Promise<BridgeTokenAuthRecord | null> {
     // get bridgeToken record.
-    const record = await this._db.getRecord({ bridgeToken });
+    const record = await this._database.getRecord({ bridgeToken });
     if (record === null) {
       return null;
     }
@@ -80,7 +80,7 @@ export class BridgeTokenAuth {
       typeof record.userId !== "string" ||
       typeof record.skillToken !== "string"
     ) {
-      await this._db.deleteRecord({ bridgeToken });
+      await this._database.deleteRecord({ bridgeToken });
       return null;
     }
 
@@ -107,7 +107,7 @@ export class BridgeTokenAuth {
       record.email,
     );
     if (!authorized) {
-      await this._db.deleteRecord({ bridgeToken });
+      await this._database.deleteRecord({ bridgeToken });
       return null;
     }
 
