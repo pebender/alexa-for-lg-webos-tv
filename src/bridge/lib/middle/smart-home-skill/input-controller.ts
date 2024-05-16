@@ -318,12 +318,10 @@ async function selectInputHandler(
 
   const alexaToLGTV = await getAlexaToLGTV(backendControl);
   const alexaInput = getInput();
-  let lgtvId: string | null;
-  if (alexaToLGTV[alexaInput] === undefined) {
-    lgtvId = null;
-  } else {
-    lgtvId = alexaToLGTV[alexaInput].device.id;
-  }
+  const lgtvId: string | null =
+    alexaToLGTV[alexaInput] === undefined
+      ? null
+      : alexaToLGTV[alexaInput].device.id;
   return await setExternalInput(lgtvId);
 }
 
