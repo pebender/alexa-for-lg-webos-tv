@@ -40,7 +40,6 @@ module.exports = {
     "unicorn/numeric-separators-style": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
-    "unicorn/prefer-optional-catch-binding": "off",
     "unicorn/prefer-ternary": "off",
     "unicorn/prefer-top-level-await": "off",
     "unicorn/prevent-abbreviations": "off",

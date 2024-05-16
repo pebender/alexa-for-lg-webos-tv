@@ -27,6 +27,7 @@ async function getChannel(
       return null;
     }
   } catch (error) {
+    Common.Debug.debugError(error);
     return null;
   }
 }
@@ -171,7 +172,7 @@ async function activateLiveTv(
   try {
     const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
     isLiveTv = lgtvResponse.appId === "com.webos.app.livetv";
-  } catch (error) {
+  } catch {
     isLiveTv = false;
   }
   if (!isLiveTv) {

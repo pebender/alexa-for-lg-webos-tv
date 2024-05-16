@@ -155,6 +155,10 @@ async function launchTargetHandler(
         listAppsError,
       );
     }
+    return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
+      alexaRequest,
+      launchError,
+    );
   }
   return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }

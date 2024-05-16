@@ -170,6 +170,7 @@ export class Frontend {
               return;
             }
           } catch (error) {
+            Common.Debug.debugError(error);
             res.status(500).json({});
           }
 
@@ -453,6 +454,7 @@ export class Frontend {
               skillToken,
             );
           } catch (error) {
+            Common.Debug.debugError(error);
             res.status(500).json({});
             return;
           }

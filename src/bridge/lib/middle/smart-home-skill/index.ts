@@ -68,6 +68,7 @@ async function addStates(
     }
     return alexaResponse;
   } catch (error) {
+    Common.Debug.debugError(error);
     return alexaResponse;
   }
 }

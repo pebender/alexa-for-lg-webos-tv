@@ -162,7 +162,8 @@ export async function request(
               return;
             }
             body = bodyUnknown;
-          } catch (cause) {
+          } catch (error) {
+            Debug.debugError(error);
             reject(createHttpError("BODY_INVALID_FORMAT"));
             return;
           }

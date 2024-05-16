@@ -46,6 +46,7 @@ async function handler(
         alexaSmartHomeCapabilities(backendControl),
       );
     } catch (error) {
+      Common.Debug.debugError(error);
       capabilities = [];
     }
     const endpoint: Common.SHS.EventPayloadEndpoint = {
