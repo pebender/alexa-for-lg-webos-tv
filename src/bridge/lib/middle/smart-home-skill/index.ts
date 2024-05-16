@@ -118,15 +118,13 @@ async function handler(
       try {
         handlerResponse = await controllerHandler(alexaRequest, backendControl);
       } catch (error) {
-        if (error instanceof Common.SHS.Response) {
-          handlerResponse = error;
-        } else {
-          handlerResponse =
-            Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-              alexaRequest,
-              error,
-            );
-        }
+        handlerResponse =
+          error instanceof Common.SHS.Response
+            ? error
+            : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
+                alexaRequest,
+                error,
+              );
       }
       if (
         !(
@@ -137,15 +135,13 @@ async function handler(
         try {
           return await addStates(handlerResponse, backendControl);
         } catch (error) {
-          if (error instanceof Common.SHS.Response) {
-            handlerResponse = error;
-          } else {
-            handlerResponse =
-              Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-                alexaRequest,
-                error,
-              );
-          }
+          handlerResponse =
+            error instanceof Common.SHS.Response
+              ? error
+              : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
+                  alexaRequest,
+                  error,
+                );
         }
       }
       return handlerResponse;

@@ -15,17 +15,13 @@ async function getChannel(
       uri: "ssap://tv/getCurrentChannel",
     });
     const channel = lgtvResponse;
-    if (
-      channel.channelNumber !== undefined &&
+    return channel.channelNumber !== undefined &&
       channel.channelName !== undefined
-    ) {
-      return {
-        channelNumber: channel.channelNumber as string,
-        channelName: channel.channelName as string,
-      };
-    } else {
-      return null;
-    }
+      ? {
+          channelNumber: channel.channelNumber as string,
+          channelName: channel.channelName as string,
+        }
+      : null;
   } catch (error) {
     Common.Debug.debugError(error);
     return null;

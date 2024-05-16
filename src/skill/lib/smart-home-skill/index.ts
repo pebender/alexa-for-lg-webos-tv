@@ -41,18 +41,17 @@ async function handler(
   try {
     alexaResponse = await handlerWithErrors(alexaRequest, context);
   } catch (error) {
-    if (error instanceof Common.SHS.Response) {
-      alexaResponse = error;
-    } else {
-      alexaResponse =
-        Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-          alexaRequest,
-          error,
-        );
-    }
-    Common.Debug.debug("smart home skill response message");
-    Common.Debug.debugJSON(alexaResponse);
+    alexaResponse =
+      error instanceof Common.SHS.Response
+        ? error
+        : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
+            alexaRequest,
+            error,
+          );
   }
+
+  Common.Debug.debug("smart home skill response message");
+  Common.Debug.debugJSON(alexaResponse);
 
   return alexaResponse;
 }

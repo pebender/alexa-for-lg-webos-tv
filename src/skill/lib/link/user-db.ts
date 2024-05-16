@@ -147,11 +147,7 @@ export async function getRecordUsingSkillToken(
   };
   const queryCommand: QueryCommand = new QueryCommand(queryCommandInput);
   const records: Record[] = await getRecords(queryCommand, newOptions);
-  if (records.length === 0) {
-    return null;
-  } else {
-    return records[0];
-  }
+  return records.length === 0 ? null : records[0];
 }
 
 export async function getRecordUsingUserId(
@@ -174,11 +170,7 @@ export async function getRecordUsingUserId(
   };
   const queryCommand: QueryCommand = new QueryCommand(queryCommandInput);
   const records: Record[] = await getRecords(queryCommand, newOptions);
-  if (records.length === 0) {
-    return null;
-  } else {
-    return records[0];
-  }
+  return records.length === 0 ? null : records[0];
 }
 
 export async function getRequiredRecordUsingSkillToken(

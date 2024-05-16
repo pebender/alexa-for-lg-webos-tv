@@ -20,15 +20,13 @@ export function debugError(error: unknown): void {
     process.env.NODE_ENV !== undefined &&
     process.env.NODE_ENV === "development"
   ) {
-    let commonError: CommonError.CommonError;
-    if (error instanceof CommonError.CommonError) {
-      commonError = error;
-    } else {
-      commonError = CommonError.create({
-        message: "debugError: 'error' was not of type 'CommonError'",
-        cause: error,
-      });
-    }
+    const commonError: CommonError.CommonError =
+      error instanceof CommonError.CommonError
+        ? error
+        : CommonError.create({
+            message: "debugError: 'error' was not of type 'CommonError'",
+            cause: error,
+          });
     console.debug(
       "error util.inspect:" + "\n" + inspect(commonError, { depth: 8 }),
     );
