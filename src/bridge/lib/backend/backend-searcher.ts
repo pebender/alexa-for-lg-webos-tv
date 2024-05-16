@@ -95,7 +95,7 @@ export class BackendSearcher extends EventEmitter {
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (
         headers.SERVER === undefined ||
-        (headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i) ===
+        (headers.SERVER as string).match(/^webos\/[\d.]+ upnp\/1\.[01]$/i) ===
           null
       ) {
         callback(null, null);
@@ -193,7 +193,7 @@ export class BackendSearcher extends EventEmitter {
               //
               if (
                 description.root.device[0].manufacturer[0].match(
-                  /^LG Electronics$/i,
+                  /^lg electronics$/i,
                 ) !== null ||
                 description.root.device[0].friendlyName[0] === "" ||
                 description.root.device[0].UDN[0] === ""
