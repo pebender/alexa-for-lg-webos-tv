@@ -109,7 +109,7 @@ async function getAlexaToLGTV(
     uri: "ssap://tv/getExternalInputList",
   });
   const devices = (lgtvResponse as LGTV.ResponseExternalInputList).devices;
-  devices.forEach((device) => {
+  for (const device of devices) {
     const id = device.id.toUpperCase().replace(/_/g, " ");
     const label = device.label.toUpperCase().replace(/_/g, " ");
     const appId = device.appId;
@@ -119,7 +119,7 @@ async function getAlexaToLGTV(
       appId,
       device,
     });
-  });
+  }
 
   const alexaInputMap: ExternalInputMap = {};
 
@@ -128,17 +128,17 @@ async function getAlexaToLGTV(
   //
   const externalInputLabelMap: ExternalInputMap = {};
   // Create an external input map using the label as the key.
-  externalInputList.forEach((input) => {
+  for (const input of externalInputList) {
     if (externalInputLabelMap[input.label] === undefined) {
       externalInputLabelMap[input.label] = input;
     }
-  });
+  }
   //
-  alexaInputList.forEach((input) => {
+  for (const input of alexaInputList) {
     if (externalInputLabelMap[input] !== undefined) {
       alexaInputMap[input] = externalInputLabelMap[input];
     }
-  });
+  }
 
   //
   // Second map Alexa inputs that re a match for external input ids.
@@ -146,13 +146,13 @@ async function getAlexaToLGTV(
   //
   const externalInputIdlMap: ExternalInputMap = {};
   // Create an external input map using the id as the key.
-  externalInputList.forEach((input) => {
+  for (const input of externalInputList) {
     if (externalInputIdlMap[input.id] === undefined) {
       externalInputIdlMap[input.id] = input;
     }
-  });
+  }
   // Add to the external input map using the renamed id as the key.
-  externalInputList.forEach((input) => {
+  for (const input of externalInputList) {
     const idRenamed = lgtvExternalInputRenameList[input.id];
     if (
       idRenamed !== undefined &&
@@ -160,10 +160,10 @@ async function getAlexaToLGTV(
     ) {
       externalInputIdlMap[idRenamed] = input;
     }
-  });
+  }
 
   // Delete from external input map any that were already in the Alexa map using their label.
-  Object.keys(alexaInputMap).forEach((key) => {
+  for (const key of Object.keys(alexaInputMap)) {
     const id = alexaInputMap[key].id;
     if (externalInputIdlMap[id] !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -174,17 +174,17 @@ async function getAlexaToLGTV(
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete externalInputIdlMap[idRenamed];
     }
-  });
+  }
 
   //
-  alexaInputList.forEach((input) => {
+  for (const input of alexaInputList) {
     if (
       alexaInputMap[input] === undefined &&
       externalInputIdlMap[input] !== undefined
     ) {
       alexaInputMap[input] = externalInputIdlMap[input];
     }
-  });
+  }
 
   return alexaInputMap;
 }
@@ -197,7 +197,7 @@ function capabilities(
   ): Promise<Common.SHS.EventPayloadEndpointCapability> {
     const inputs: Array<{ name: string; friendlyNames: string[] }> = [];
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
-    Object.keys(alexaToLGTV).forEach((alexaInput) => {
+    for (const alexaInput of Object.keys(alexaToLGTV)) {
       // Add friendly names as long as they are no too close to the actual names.
       const friendlyNames: string[] = [];
       if (alexaInput === alexaToLGTV[alexaInput].label) {
@@ -221,7 +221,7 @@ function capabilities(
         name: alexaInput,
         friendlyNames,
       });
-    });
+    }
     const capability = await Common.SHS.Response.buildPayloadEndpointCapability(
       {
         namespace: "Alexa.InputController",

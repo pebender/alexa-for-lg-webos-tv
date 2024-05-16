@@ -75,7 +75,7 @@ export class Middle {
       "ssap://tv/getCurrentChannel",
       "ssap://tv/getExternalInputList",
     ];
-    uriList.forEach((uri) => {
+    for (const uri of uriList) {
       middle._backend.on(
         uri,
         (
@@ -93,7 +93,7 @@ export class Middle {
           );
         },
       );
-    });
+    }
 
     return middle;
   }

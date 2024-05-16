@@ -29,12 +29,12 @@ function createAlexaToLGTV(): AlexaToLGTV {
   const _alexaToLGTV: AlexaToLGTV = {};
 
   const items = (launchMap as LaunchMap).map;
-  items.forEach((item) => {
+  for (const item of items) {
     _alexaToLGTV[item.alexa.identifier] = {
       id: item.lgtv.id,
       title: item.lgtv.title,
     };
-  });
+  }
 
   return _alexaToLGTV;
 }
@@ -45,12 +45,12 @@ function createLGTVToAlexa(): LGTVToAlexa {
   const _lgtvToAlexa: LGTVToAlexa = {};
 
   const items = (launchMap as LaunchMap).map;
-  items.forEach((item) => {
+  for (const item of items) {
     _lgtvToAlexa[item.lgtv.id] = {
       identifier: item.alexa.identifier,
       name: item.alexa.name,
     };
-  });
+  }
 
   return _lgtvToAlexa;
 }

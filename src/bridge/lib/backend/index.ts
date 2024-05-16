@@ -56,7 +56,7 @@ export class Backend extends EventEmitter {
       "ssap://tv/getCurrentChannel",
       "ssap://tv/getExternalInputList",
     ];
-    uriList.forEach((uri) => {
+    for (const uri of uriList) {
       backend._controller.on(
         uri,
         (
@@ -67,7 +67,7 @@ export class Backend extends EventEmitter {
           backend.emit(uri, error, response, udn);
         },
       );
-    });
+    }
 
     backend._searcher.on("error", (error: Common.Error.CommonError): void => {
       backend.emit("error", error, "BackendSearcher");

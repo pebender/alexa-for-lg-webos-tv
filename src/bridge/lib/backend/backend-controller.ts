@@ -38,9 +38,9 @@ export class BackendController extends EventEmitter {
 
       const tvs: TV[] = records as unknown as TV[];
       const tvInitializers: Array<Promise<void>> = [];
-      tvs.forEach((tv: TV): void => {
+      for (const tv of tvs) {
         tvInitializers.push(tvInitialize(tv));
-      });
+      }
       await Promise.all(tvInitializers);
     }
 
@@ -51,9 +51,9 @@ export class BackendController extends EventEmitter {
   }
 
   public start(): void {
-    Object.keys(this._controls).forEach((udn) => {
+    for (const udn of Object.keys(this._controls)) {
       this._controls[udn].start().catch(Common.Debug.debugError);
-    });
+    }
   }
 
   private eventsAdd(udn: UDN): void {
@@ -67,7 +67,7 @@ export class BackendController extends EventEmitter {
       "ssap://tv/getCurrentChannel",
       "ssap://tv/getExternalInputList",
     ];
-    uriList.forEach((uri) => {
+    for (const uri of uriList) {
       this._controls[udn].on(
         uri,
         (
@@ -77,7 +77,7 @@ export class BackendController extends EventEmitter {
           this.emit(uri, error, response, udn);
         },
       );
-    });
+    }
 
     this._controls[udn].on("error", (error: Common.Error.CommonError): void => {
       this.emit("error", error, udn);

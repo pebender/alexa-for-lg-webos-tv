@@ -20,22 +20,22 @@ export function copyElement(original: copyElementType): copyElementType {
   if (Array.isArray(original)) {
     const originalArray = original as copyElementType[];
     const copy: copyElementType[] = [];
-    originalArray.forEach((item): void => {
+    for (const item of originalArray) {
       if (item !== undefined) {
         copy.push(copyElement(item));
       }
-    });
+    }
     return copy;
   }
 
   if (original instanceof Object) {
     const originalObject = original as Record<string, copyElementType>;
     const copy: Record<string, copyElementType> = {};
-    Object.keys(originalObject).forEach((property): void => {
+    for (const property of Object.keys(originalObject)) {
       if (originalObject[property] !== undefined) {
         copy[property] = copyElement(originalObject[property]);
       }
-    });
+    }
     return copy;
   }
 

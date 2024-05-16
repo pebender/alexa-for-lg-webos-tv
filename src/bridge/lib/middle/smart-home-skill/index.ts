@@ -60,12 +60,12 @@ async function addStates(
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   try {
-    (await Promise.all(states(backendControl))).forEach((state): void => {
+    for (const state of await Promise.all(states(backendControl))) {
       if (state === null) {
-        return;
+        continue;
       }
       alexaResponse.addContextProperty(state);
-    });
+    }
     return alexaResponse;
   } catch (error) {
     return alexaResponse;

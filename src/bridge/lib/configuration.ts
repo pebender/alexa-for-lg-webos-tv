@@ -29,7 +29,7 @@ export class Configuration {
       Common.Debug.debugError(error);
       throw error;
     }
-    cfg.authorizedUsers.forEach((authorizedUser, index) => {
+    for (const [index, authorizedUser] of cfg.authorizedUsers.entries()) {
       if (authorizedUser.bridgeHostname === undefined) {
         const error = Common.Error.create({
           message: `configuration file '${cfgFile}' is missing 'authorizedUsers[${index.toString()}].hostname'.`,
@@ -44,7 +44,7 @@ export class Configuration {
         Common.Debug.debugError(error);
         throw error;
       }
-    });
+    }
 
     const configuration = new Configuration(cfg);
 

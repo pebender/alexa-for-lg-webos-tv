@@ -62,7 +62,7 @@ async function getRecords(
     throw createDatabaseError({ specific: "not_unique" });
   }
 
-  data.Items.forEach((item) => {
+  for (const item of data.Items) {
     const record: Record = {
       userId: null,
       skillToken: null,
@@ -70,13 +70,13 @@ async function getRecords(
       bridgeToken: null,
     };
 
-    requiredFields.forEach((requiredField: string) => {
+    for (const requiredField of requiredFields) {
       if (!Object.hasOwn(item, requiredField)) {
         throw createDatabaseError({
           specific: `missing_field+${requiredField}`,
         });
       }
-    });
+    }
 
     if (item.userId !== undefined) {
       if (typeof item.userId === "string") {
@@ -121,7 +121,7 @@ async function getRecords(
     }
 
     records.push(record);
-  });
+  }
 
   return records;
 }

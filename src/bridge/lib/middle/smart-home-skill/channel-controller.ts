@@ -45,7 +45,7 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
       [key: string]: unknown;
     }>;
     const channels: Channel[] = [];
-    channelList.forEach((channel) => {
+    for (const channel of channelList) {
       if (
         typeof channel === "object" &&
         typeof channel.channelNumber === "string" &&
@@ -56,7 +56,7 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
           channelName: channel.channelName,
         });
       }
-    });
+    }
     return channels;
   } catch {
     return [];
@@ -112,7 +112,7 @@ function getChannelNumberToNumberMap(
   channels: Channel[],
 ): Record<string, string> {
   const channelNumberToNumber: Record<string, string> = {};
-  channels.forEach((channelItem) => {
+  for (const channelItem of channels) {
     const channelNumber: string = channelItem.channelNumber;
     channelNumberToNumber[channelNumber] = channelNumber;
     if (channelNumber.endsWith("-1")) {
@@ -121,7 +121,7 @@ function getChannelNumberToNumberMap(
         channelNumberToNumber[altChannelName] = channelNumber;
       }
     }
-  });
+  }
   return channelNumberToNumber;
 }
 
@@ -134,7 +134,7 @@ function getChannelNameToNumberMap(
   channels: Channel[],
 ): Record<string, string> {
   const channelNameToNumber: Record<string, string> = {};
-  channels.forEach((channelItem: Channel) => {
+  for (const channelItem of channels) {
     const channelNumber: string = channelItem.channelNumber;
     const channelName: string = channelItem.channelName.toUpperCase();
     channelNameToNumber[channelName] = channelNumber;
@@ -156,7 +156,7 @@ function getChannelNameToNumberMap(
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
-  });
+  }
   return channelNameToNumber;
 }
 

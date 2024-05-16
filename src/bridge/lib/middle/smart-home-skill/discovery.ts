@@ -56,9 +56,9 @@ async function handler(
       displayCategories: ["TV"],
       capabilities: [],
     };
-    capabilities.forEach((capability): void => {
+    for (const capability of capabilities) {
       endpoint.capabilities.push(capability);
-    });
+    }
     return endpoint;
   }
 
@@ -75,9 +75,9 @@ async function handler(
       namespace: "Alexa.Discovery",
       name: "Discover.Response",
     });
-    endpoints.forEach((endpoint: Common.SHS.EventPayloadEndpoint): void => {
+    for (const endpoint of endpoints) {
       alexaResponse.addPayloadEndpoint(endpoint);
-    });
+    }
     return alexaResponse;
   }
 
