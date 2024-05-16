@@ -111,8 +111,8 @@ function lgtvCmdsCommand(
 
 function lgtvUdnsCommand(backend: Backend): void {
   const tvList = getSortedTVList(backend);
-  for (let i = 0; i < tvList.length; i++) {
-    console.log(`${i.toString()}: ${tvList[i].udn}: ${tvList[i].name}`);
+  for (const [i, element] of tvList.entries()) {
+    console.log(`${i.toString()}: ${element.udn}: ${element.name}`);
   }
 }
 
