@@ -32,6 +32,7 @@ module.exports = {
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
     // "unicorn/catch-error-name": ["error", {"ignore": ["cause"]}],
+    "unicorn/import-style": ["error"],
     "unicorn/no-array-for-each": ["error"],
     "unicorn/no-for-loop": ["error"],
     "unicorn/no-null": "off",

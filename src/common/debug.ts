@@ -1,4 +1,4 @@
-import * as util from "node:util";
+import { inspect } from "node:util";
 import * as CommonError from "./error";
 
 export function debug(message: unknown): void {
@@ -30,7 +30,7 @@ export function debugError(error: unknown): void {
       });
     }
     console.debug(
-      "error util.inspect:" + "\n" + util.inspect(commonError, { depth: 8 }),
+      "error util.inspect:" + "\n" + inspect(commonError, { depth: 8 }),
     );
   }
 }
