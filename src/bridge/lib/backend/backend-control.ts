@@ -112,12 +112,14 @@ export class BackendControl extends EventEmitter {
 
     function ssdpConnectHandler(headers: SsdpHeaders): void {
       if (
-        headers.USN ===
+        headers.USN !==
         `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
-        if (!backendControl._connecting) {
-          backendControl._connection.connect(backendControl._tv.url);
-        }
+        return;
+      }
+
+      if (!backendControl._connecting) {
+        backendControl._connection.connect(backendControl._tv.url);
       }
     }
 
@@ -126,9 +128,11 @@ export class BackendControl extends EventEmitter {
         headers.USN ===
         `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
-        backendControl._poweredOn = false;
-        backendControl._connection.disconnect();
+        return;
       }
+
+      backendControl._poweredOn = false;
+      backendControl._connection.disconnect();
     }
 
     backendControl._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
@@ -223,12 +227,10 @@ export class BackendControl extends EventEmitter {
                 resolve(finishUUID);
               }),
           );
-          if (finishUUID !== null && currentUUID === finishUUID) {
-            if (!finished) {
-              finishUUID = null;
-              finished = true;
-              resolve(poweredOn);
-            }
+          if (finishUUID !== null && currentUUID === finishUUID && !finished) {
+            finishUUID = null;
+            finished = true;
+            resolve(poweredOn);
           }
         }
 
