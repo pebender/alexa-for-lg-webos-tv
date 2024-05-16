@@ -225,16 +225,15 @@ export class BackendSearcher extends EventEmitter {
             },
           );
         })
-        .catch((reason: unknown) => {
-          if (reason instanceof Common.Error.CommonError) {
-            callback(reason, null);
-          } else {
-            const error = Common.Error.create({
-              general: "tv",
-              cause: reason,
-            });
-            callback(error, null);
-          }
+        .catch((error) => {
+          const commonError =
+            error instanceof Common.Error.CommonError
+              ? error
+              : Common.Error.create({
+                  general: "tv",
+                  cause: error,
+                });
+          callback(commonError, null);
         });
     }
 
@@ -261,8 +260,8 @@ export class BackendSearcher extends EventEmitter {
     // Start listening from multicast notifications from the TVs.
     try {
       await this._ssdpNotify.start();
-    } catch (cause) {
-      throw Common.Error.create({ cause });
+    } catch (error) {
+      throw Common.Error.create({ cause: error });
     }
 
     // Periodically search for TVs.
@@ -272,14 +271,14 @@ export class BackendSearcher extends EventEmitter {
         "urn:lge-com:service:webos-second-screen:1",
       );
       if (search instanceof Promise) {
-        search.catch((reason: unknown) => {
-          const error: Common.Error.CommonError = Common.Error.create({
+        search.catch((error) => {
+          const commonError: Common.Error.CommonError = Common.Error.create({
             message: "TV search error",
             general: "tv",
             specific: "searchError",
-            cause: reason,
+            cause: error,
           });
-          Common.Debug.debugError(error);
+          Common.Debug.debugError(commonError);
         });
       }
       setTimeout(periodicSearch, 1_800_000);
@@ -291,14 +290,14 @@ export class BackendSearcher extends EventEmitter {
       "urn:lge-com:service:webos-second-screen:1",
     );
     if (search instanceof Promise) {
-      search.catch((reason: unknown) => {
-        const error: Common.Error.CommonError = Common.Error.create({
+      search.catch((error: unknown) => {
+        const commonError: Common.Error.CommonError = Common.Error.create({
           message: "TV search error",
           general: "tv",
           specific: "searchError",
-          cause: reason,
+          cause: error,
         });
-        Common.Debug.debugError(error);
+        Common.Debug.debugError(commonError);
       });
     }
   }
@@ -308,14 +307,14 @@ export class BackendSearcher extends EventEmitter {
       "urn:lge-com:service:webos-second-screen:1",
     );
     if (search instanceof Promise) {
-      search.catch((reason: unknown) => {
-        const error: Common.Error.CommonError = Common.Error.create({
+      search.catch((error: unknown) => {
+        const commonError: Common.Error.CommonError = Common.Error.create({
           message: "TV search error",
           general: "tv",
           specific: "searchError",
-          cause: reason,
+          cause: error,
         });
-        Common.Debug.debugError(error);
+        Common.Debug.debugError(commonError);
       });
     }
   }

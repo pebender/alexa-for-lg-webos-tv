@@ -194,11 +194,9 @@ export class Frontend {
               await Common.Profile.getUserProfile(skillToken);
             userId = userProfile.userId;
             email = userProfile.email;
-          } catch (e) {
-            const error: Common.Error.CommonError =
-              e as Common.Error.CommonError;
+          } catch (error) {
             if (
-              typeof error.general === "string" &&
+              error instanceof Common.Error.CommonError &&
               error.general === "authorization"
             ) {
               const wwwAuthenticate = "Bearer";

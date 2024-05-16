@@ -111,17 +111,16 @@ export class Middle {
       authorized = await this._authorization.authorizeSkillToken(
         shsRequest.getAccessToken(),
       );
-    } catch (c) {
-      const cause: Common.Error.CommonError = c as Common.Error.CommonError;
+    } catch (error) {
       if (
-        typeof cause.general === "string" &&
-        cause.general === "authorization"
+        error instanceof Common.Error.CommonError &&
+        error.general === "authorization"
       ) {
         authorized = false;
       } else {
         return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
           shsRequest,
-          c,
+          error,
         );
       }
     }

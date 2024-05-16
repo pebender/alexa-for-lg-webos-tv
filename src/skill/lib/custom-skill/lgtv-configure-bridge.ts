@@ -29,17 +29,17 @@ async function createHostnamesSimpleCardContent(
     sessionAttributes.hostnames = await Link.getHostnames(
       sessionAttributes.ipAddress as string,
     );
-  } catch (cause) {
+  } catch (error) {
     Common.Debug.debug(
       `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${ipAddress}'.`,
     );
-    const error = Common.Error.create({
+    const commonError = Common.Error.create({
       message: "I had a problem connecting to the bridge's I.P.  address.",
       general: "link",
-      cause,
+      cause: error,
     });
-    Common.Debug.debugError(error);
-    throw error;
+    Common.Debug.debugError(commonError);
+    throw commonError;
   }
   handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
   const hostnames: string[] = sessionAttributes.hostnames as string[];
@@ -92,16 +92,16 @@ async function setBridgeCredentials(
   try {
     credentials = await Link.getCredentials(accessToken, { bridgeHostname });
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
-  } catch (cause) {
+  } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
-    const error = Common.Error.create({
+    const commonError = Common.Error.create({
       message:
         "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
       general: "link",
-      cause,
+      cause: error,
     });
-    Common.Debug.debugError(error);
-    throw error;
+    Common.Debug.debugError(commonError);
+    throw commonError;
   }
   if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");

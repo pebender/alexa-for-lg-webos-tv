@@ -16,11 +16,11 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
 
   try {
     await Link.testConnection(accessToken);
-  } catch (c) {
-    const cause: Common.Error.CommonError = c as Common.Error.CommonError;
-    Common.Debug.debugError(cause);
-    if (typeof cause.general === "string") {
-      switch (cause.general) {
+  } catch (error) {
+    Common.Debug.debugError(error);
+
+    if (error instanceof Common.Error.CommonError) {
+      switch (error.general) {
         case "authorization": {
           const speechOutput =
             "There appears to have been a problem with account linking. " +
@@ -34,8 +34,8 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
           return speechOutput;
         }
         case "link": {
-          if (typeof cause.specific === "string") {
-            switch (cause.specific) {
+          if (typeof error.specific === "string") {
+            switch (error.specific) {
               case "bridge_hostname_not_found": {
                 const speechOutput =
                   "Your bridge hostname has not been configured.";

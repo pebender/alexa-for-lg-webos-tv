@@ -11,10 +11,10 @@ export async function getBackend(): Promise<Backend> {
 
   try {
     await fs.mkdir(configurationDir, { recursive: true });
-  } catch (cause) {
-    const error = Common.Error.create({ cause });
-    Common.Debug.debugError(error);
-    throw error;
+  } catch (error) {
+    const commonError = Common.Error.create({ cause: error });
+    Common.Debug.debugError(commonError);
+    throw commonError;
   }
 
   const configuration = await Configuration.build();

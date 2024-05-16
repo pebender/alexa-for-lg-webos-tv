@@ -50,10 +50,10 @@ export async function getUserProfile(
       email: unknown;
       [key: string]: unknown;
     };
-  } catch (cause) {
-    if (cause instanceof CommonError.CommonError) {
-      const general = cause.general;
-      const specific = cause.specific;
+  } catch (error) {
+    if (error instanceof CommonError.CommonError) {
+      const general = error.general;
+      const specific = error.specific;
       switch (general) {
         case "http": {
           switch (specific) {
@@ -63,7 +63,7 @@ export async function getUserProfile(
                   "there was an authentication error while retrieving your profile",
                 general: "authorization",
                 specific: "invalid_token",
-                cause,
+                cause: error,
               });
             }
             case "UNAUTHORIZED": {
@@ -72,20 +72,20 @@ export async function getUserProfile(
                   "there was an authorization error while retrieving your profile",
                 general: "authorization",
                 specific: "invalid_scope",
-                cause,
+                cause: error,
               });
             }
             default: {
-              throw cause;
+              throw error;
             }
           }
         }
         default: {
-          throw cause;
+          throw error;
         }
       }
     }
-    throw cause;
+    throw error;
   }
 
   if (typeof response.user_id !== "string") {

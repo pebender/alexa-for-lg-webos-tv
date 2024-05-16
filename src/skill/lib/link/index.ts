@@ -47,18 +47,18 @@ export async function getCredentials(
     try {
       const profile = await Common.Profile.getUserProfile(skillToken);
       userId = profile.userId;
-    } catch (c) {
-      const cause: Common.Error.CommonError = c as Common.Error.CommonError;
+    } catch (error) {
       if (
-        typeof cause.general === "string" &&
-        cause.general === "authorization"
+        error instanceof Common.Error.CommonError &&
+        typeof error.general === "string" &&
+        error.general === "authorization"
       ) {
-        throw cause;
+        throw error;
       }
       throw Common.Error.create({
         general: "link",
         specific: "skill_user_profile",
-        cause,
+        cause: error,
       });
     }
     await Database.setSkillToken(userId, skillToken);
@@ -275,26 +275,26 @@ export async function testConnection(skillToken: string): Promise<void> {
         skillToken,
         request,
       );
-    } catch (cause) {
-      if (cause instanceof Common.Error.CommonError) {
-        switch (cause.specific) {
+    } catch (error) {
+      if (error instanceof Common.Error.CommonError) {
+        switch (error.specific) {
           case "BAD_GATEWAY": {
             throw Common.Error.create({
               general: "link",
               specific: "link_failed_http",
-              cause,
+              cause: error,
             });
           }
           case "INVALID_AUTHORIZATION_CREDENTIAL": {
             throw Common.Error.create({
               general: "link",
               specific: "link_failed_authorization",
-              cause,
+              cause: error,
             });
           }
         }
       }
-      throw cause;
+      throw error;
     }
   }
 

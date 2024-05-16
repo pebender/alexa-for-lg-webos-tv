@@ -48,8 +48,8 @@ async function getRecords(
   let data;
   try {
     data = await dynamoDBDocumentClient.send(queryCommand);
-  } catch (cause) {
-    throw createDatabaseError({ cause });
+  } catch (error) {
+    throw createDatabaseError({ cause: error });
   }
 
   if (data.Count === undefined || data.Items === undefined) {
@@ -222,9 +222,9 @@ export async function setBridgeHostname(
     await dynamoDBDocumentClient.send(
       new UpdateCommand(bridgeHostnameUpdateParams),
     );
-  } catch (cause) {
-    Common.Debug.debugError(cause);
-    throw createDatabaseError({ cause });
+  } catch (error) {
+    Common.Debug.debugError(error);
+    throw createDatabaseError({ cause: error });
   }
 }
 
@@ -248,9 +248,9 @@ export async function setBridgeCredentials(
     await dynamoDBDocumentClient.send(
       new UpdateCommand(bridgeCredentialsUpdateParams),
     );
-  } catch (cause) {
-    Common.Debug.debugError(cause);
-    throw createDatabaseError({ cause });
+  } catch (error) {
+    Common.Debug.debugError(error);
+    throw createDatabaseError({ cause: error });
   }
 }
 
@@ -269,8 +269,8 @@ export async function setSkillToken(
     await dynamoDBDocumentClient.send(
       new UpdateCommand(skillTokenUpdateParams),
     );
-  } catch (cause) {
-    Common.Debug.debugError(cause);
-    throw createDatabaseError({ cause });
+  } catch (error) {
+    Common.Debug.debugError(error);
+    throw createDatabaseError({ cause: error });
   }
 }
