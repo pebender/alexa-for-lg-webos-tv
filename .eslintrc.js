@@ -37,7 +37,6 @@ module.exports = {
     "unicorn/catch-error-name": "off",
     // "unicorn/catch-error-name": ["error", {"ignore": ["cause"]}],
     "unicorn/no-null": "off",
-    "unicorn/numeric-separators-style": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-export-from": "off",
     "unicorn/prefer-ternary": "off",

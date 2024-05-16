@@ -282,7 +282,7 @@ export class BackendSearcher extends EventEmitter {
           Common.Debug.debugError(error);
         });
       }
-      setTimeout(periodicSearch, 1800000);
+      setTimeout(periodicSearch, 1_800_000);
     };
     periodicSearch();
 

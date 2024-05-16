@@ -30,8 +30,8 @@ export const constants = {
     // proxy.
     host: "0.0.0.0",
     port: {
-      http: 25391,
-      https: 25392,
+      http: 25_391,
+      https: 25_392,
     },
     path: {
       login: "/login",

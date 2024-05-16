@@ -66,7 +66,7 @@ export class BackendControl extends EventEmitter {
 
     const _connection = new LGTV({
       url: _tv.url,
-      timeout: 10000,
+      timeout: 10_000,
       reconnect: 0,
       clientKey,
       saveKey,
