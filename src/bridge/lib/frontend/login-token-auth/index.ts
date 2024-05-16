@@ -49,7 +49,8 @@ export class LoginTokenAuth {
 
     let email: string;
     try {
-      email = (await Common.Profile.getUserProfile(skillToken)).email;
+      const profile = await Common.Profile.getUserProfile(skillToken);
+      email = profile.email;
     } catch (error) {
       return false;
     }

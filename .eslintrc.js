@@ -34,6 +34,7 @@ module.exports = {
     // "unicorn/catch-error-name": ["error", {"ignore": ["cause"]}],
     "unicorn/import-style": ["error"],
     "unicorn/no-array-for-each": ["error"],
+    "unicorn/no-await-expression-member": ["error"],
     "unicorn/no-for-loop": ["error"],
     "unicorn/no-null": "off",
     "unicorn/no-typeof-undefined": ["error"],
