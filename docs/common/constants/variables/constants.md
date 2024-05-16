@@ -96,8 +96,8 @@
 
 ### bridge.port.http
 
-> **http**: `number` = `25391`
+> **http**: `number` = `25_391`
 
 ### bridge.port.https
 
-> **https**: `number` = `25392`
+> **https**: `number` = `25_392`
