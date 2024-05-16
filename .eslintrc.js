@@ -33,12 +33,11 @@ module.exports = {
     "prettier/prettier": ["error"],
     "unicorn/consistent-function-scoping": "off",
     "unicorn/prefer-module": "off",
+    "unicorn/prefer-event-target": "off",
 
     "unicorn/catch-error-name": "off",
     // "unicorn/catch-error-name": ["error", {"ignore": ["cause"]}],
     "unicorn/no-null": "off",
-    "unicorn/prefer-event-target": "off",
-    "unicorn/prefer-export-from": "off",
     "unicorn/prefer-ternary": "off",
     "unicorn/prefer-top-level-await": "off",
     "unicorn/prevent-abbreviations": "off",
