@@ -36,6 +36,7 @@ module.exports = {
     "unicorn/no-for-loop": ["error"],
     "unicorn/no-null": "off",
     "unicorn/no-typeof-undefined": ["error"],
+    "unicorn/prefer-node-protocol": ["error"],
     "unicorn/switch-case-braces": ["error"],
     "@typescript-eslint/return-await": ["error"],
   },

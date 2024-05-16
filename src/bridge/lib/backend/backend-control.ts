@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { Mutex } from "async-mutex";
 import * as wol from "wake_on_lan";
 import {

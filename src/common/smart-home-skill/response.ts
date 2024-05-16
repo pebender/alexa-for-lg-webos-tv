@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import * as CommonError from "../error";
 import * as CommonDebug from "../debug";
 import { copyElement } from "./copy";

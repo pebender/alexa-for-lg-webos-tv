@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 import * as Common from "../../../../common";
 import { DatabaseTable } from "../../database";
 import type { Configuration } from "../../configuration";

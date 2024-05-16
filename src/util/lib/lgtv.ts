@@ -1,4 +1,4 @@
-import * as fs from "fs/promises";
+import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
 import * as Common from "../../common";
