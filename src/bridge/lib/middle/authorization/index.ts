@@ -1,6 +1,6 @@
 import { DatabaseTable } from "../../database";
 import * as Common from "../../../../common";
-import { Configuration } from "../../configuration";
+import type { Configuration } from "../../configuration";
 
 export class Authorization {
   private readonly _configuration: Configuration;
@@ -10,7 +10,9 @@ export class Authorization {
     this._db = _db;
   }
 
-  public static async build(configuration: Configuration) {
+  public static async build(
+    configuration: Configuration,
+  ): Promise<Authorization> {
     const _db = await DatabaseTable.build(
       "middle",
       ["skillToken", "userId"],

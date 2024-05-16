@@ -7,7 +7,7 @@ const x509PrivateKey = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),
 );
 
-function create(
+async function create(
   x509PrivateKey: Buffer,
   skillToken: string,
   bridgeHostname: string,
@@ -22,7 +22,7 @@ function create(
     expiresIn: "1m",
   };
 
-  return new Promise((resolve, reject) => {
+  return await new Promise<string>((resolve, reject) => {
     jwt.sign(payload, x509PrivateKey, options, function (err, encoded) {
       if (err === null) {
         if (typeof encoded !== "undefined") {

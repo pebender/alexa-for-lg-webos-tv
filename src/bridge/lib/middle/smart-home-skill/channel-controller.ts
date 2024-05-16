@@ -1,6 +1,6 @@
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { BackendControl } from "../../backend";
+import type { BackendControl } from "../../backend";
 
 interface Channel {
   channelNumber: string;
@@ -39,11 +39,11 @@ async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
     if (typeof lgtvResponse.channelList === "undefined") {
       return [];
     }
-    const channelList = lgtvResponse.channelList as {
+    const channelList = lgtvResponse.channelList as Array<{
       channelNumber?: string;
       channelName?: string;
       [key: string]: unknown;
-    }[];
+    }>;
     const channels: Channel[] = [];
     channelList.forEach((channel) => {
       if (
@@ -115,7 +115,7 @@ function getChannelNumberToNumberMap(channels: Channel[]): {
   channels.forEach((channelItem) => {
     const channelNumber: string = channelItem.channelNumber;
     channelNumberToNumber[channelNumber] = channelNumber;
-    if (channelNumber.match(/-1$/)) {
+    if (channelNumber.endsWith("-1")) {
       const altChannelName = channelNumber.replace(/-1$/, "");
       if (typeof channelNumberToNumber[altChannelName] === "undefined") {
         channelNumberToNumber[altChannelName] = channelNumber;
@@ -138,19 +138,19 @@ function getChannelNameToNumberMap(channels: Channel[]): {
     const channelNumber: string = channelItem.channelNumber;
     const channelName: string = channelItem.channelName.toUpperCase();
     channelNameToNumber[channelName] = channelNumber;
-    if (channelName.match(/-DT$/)) {
+    if (channelName.endsWith("-DT")) {
       const altChannelName = channelName.replace(/-DT$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
-    if (channelName.match(/-HD$/)) {
+    if (channelName.endsWith("-HD")) {
       const altChannelName = channelName.replace(/-HD$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
       }
     }
-    if (channelName.match(/HD$/)) {
+    if (channelName.endsWith("HD")) {
       const altChannelName = channelName.replace(/HD$/, "");
       if (typeof channelNameToNumber[altChannelName] === "undefined") {
         channelNameToNumber[altChannelName] = channelNumber;
@@ -216,7 +216,7 @@ async function setChannel(
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.ChannelController",
@@ -227,7 +227,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty | null>[] {
+): Array<Promise<Common.SHS.ContextProperty | null>> {
   if (backendControl.getPowerState() === "OFF") {
     return [];
   }
@@ -412,22 +412,22 @@ async function changeChannelHandler(
   }
 }
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
-    return Promise.resolve(
+    return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "ChangeChannel":
-      return changeChannelHandler(alexaRequest, backendControl);
+      return await changeChannelHandler(alexaRequest, backendControl);
     case "SkipChannels":
-      return skipChannelsHandler(alexaRequest, backendControl);
+      return await skipChannelsHandler(alexaRequest, backendControl);
     default:
-      return Promise.resolve(
+      return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),

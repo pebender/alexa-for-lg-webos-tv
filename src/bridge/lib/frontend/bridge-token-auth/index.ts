@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import * as Common from "../../../../common";
 import { DatabaseTable } from "../../database";
-import { Configuration } from "../../configuration";
+import type { Configuration } from "../../configuration";
 import { authorizeUser } from "../auth";
 
 export interface BridgeTokenAuthRecord {

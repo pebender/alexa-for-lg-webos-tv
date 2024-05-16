@@ -1,7 +1,7 @@
 import * as util from "node:util";
 import * as CommonError from "./error";
 
-export function debug(message: unknown) {
+export function debug(message: unknown): void {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
@@ -15,7 +15,7 @@ export function debug(message: unknown) {
   }
 }
 
-export function debugError(error: unknown) {
+export function debugError(error: unknown): void {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"
@@ -35,7 +35,7 @@ export function debugError(error: unknown) {
   }
 }
 
-export function debugJSON(message: unknown) {
+export function debugJSON(message: unknown): void {
   if (
     typeof process.env.NODE_ENV !== "undefined" &&
     process.env.NODE_ENV === "development"

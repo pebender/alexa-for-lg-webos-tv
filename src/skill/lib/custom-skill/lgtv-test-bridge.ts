@@ -1,6 +1,6 @@
-import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
+import type { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
-import * as ASKModel from "ask-sdk-model";
+import type * as ASKModel from "ask-sdk-model";
 import * as Common from "../../../common";
 import * as Link from "../link";
 

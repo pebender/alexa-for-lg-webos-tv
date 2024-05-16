@@ -14,11 +14,7 @@
 
 ### capabilityResources?
 
-> `optional` **capabilityResources**: `object`
-
-#### friendlyNames
-
-> **friendlyNames**: `object`[]
+> `optional` **capabilityResources**: `object`[]
 
 ***
 

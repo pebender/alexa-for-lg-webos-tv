@@ -1,8 +1,8 @@
 import { EventEmitter } from "node:events";
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { DatabaseRecord, DatabaseTable } from "../database";
-import { TV, UDN } from "./tv";
+import { type DatabaseRecord, DatabaseTable } from "../database";
+import type { TV, UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
@@ -24,7 +24,7 @@ export class BackendController extends EventEmitter {
 
     const backendController = new BackendController(_db, _controls);
 
-    function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
+    async function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
         if (typeof backendController._controls[tv.udn] === "undefined") {
           backendController._controls[tv.udn] = BackendControl.build(
@@ -37,11 +37,11 @@ export class BackendController extends EventEmitter {
       }
 
       const tvs: TV[] = records as unknown as TV[];
-      const tvInitializers: Promise<void>[] = [];
+      const tvInitializers: Array<Promise<void>> = [];
       tvs.forEach((tv: TV): void => {
         tvInitializers.push(tvInitialize(tv));
       });
-      return Promise.all(tvInitializers).then();
+      await Promise.all(tvInitializers);
     }
 
     const records = await backendController._db.getRecords({});

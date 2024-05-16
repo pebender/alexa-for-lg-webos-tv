@@ -1,28 +1,28 @@
-import * as dgram from "node:dgram";
+import type * as dgram from "node:dgram";
 import { EventEmitter } from "node:events";
 import * as arp from "node-arp";
 import {
   Client as SsdpClient,
   Server as SsdpServer,
-  SsdpHeaders,
+  type SsdpHeaders,
 } from "node-ssdp";
 import { parseString as xml2js } from "xml2js";
 import * as Common from "../../../common";
-import { IP, MAC, TV, UDN } from "./tv";
+import type { IP, MAC, TV, UDN } from "./tv";
 
 export interface UPnPDevice {
   root?: {
-    device?: {
+    device?: Array<{
       manufacturer: string[];
       friendlyName: string[];
       UDN: string[];
-    }[];
+    }>;
   };
 }
 
 export class BackendSearcher extends EventEmitter {
-  private _ssdpNotify: SsdpServer;
-  private _ssdpResponse: SsdpClient;
+  private readonly _ssdpNotify: SsdpServer;
+  private readonly _ssdpResponse: SsdpClient;
   public constructor(_ssdpNotify: SsdpServer, _ssdpResponse: SsdpClient) {
     super();
 
@@ -37,11 +37,11 @@ export class BackendSearcher extends EventEmitter {
     const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);
 
     function ssdpProcessCallback(error: Error | null, tv: TV | null): void {
-      if (error) {
+      if (error !== null) {
         backendSearcher.emit("error", error);
         return;
       }
-      if (!tv) {
+      if (tv === null) {
         return;
       }
       backendSearcher.emit("found", tv);
@@ -95,7 +95,8 @@ export class BackendSearcher extends EventEmitter {
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (
         typeof headers.SERVER === "undefined" ||
-        !(headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i)
+        (headers.SERVER as string).match(/^WebOS\/[\d.]+ UPnP\/1\.[01]$/i) ===
+          null
       ) {
         callback(null, null);
         return;
@@ -128,7 +129,7 @@ export class BackendSearcher extends EventEmitter {
         return;
       }
       void fetch(headers.LOCATION)
-        .then((response: Response): Promise<Blob> => {
+        .then(async (response: Response): Promise<Blob> => {
           if (response.status !== 200) {
             throw Common.Error.create({
               message: "Could not fetch descriptionXML from the TV",
@@ -136,9 +137,9 @@ export class BackendSearcher extends EventEmitter {
               specific: "descriptionXmlFetchError",
             });
           }
-          return response.blob();
+          return await response.blob();
         })
-        .then((blob: Blob) => {
+        .then(async (blob: Blob) => {
           const mimetype: string[] = blob.type.split(";");
           if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
             throw Common.Error.create({
@@ -147,7 +148,7 @@ export class BackendSearcher extends EventEmitter {
               specific: "descriptionXmlFetchError",
             });
           }
-          return blob.text();
+          return await blob.text();
         })
         .then((descriptionXml: string): void => {
           xml2js(
@@ -193,9 +194,9 @@ export class BackendSearcher extends EventEmitter {
               // name and a UDN.
               //
               if (
-                !description.root.device[0].manufacturer[0].match(
+                description.root.device[0].manufacturer[0].match(
                   /^LG Electronics$/i,
-                ) ||
+                ) !== null ||
                 description.root.device[0].friendlyName[0] === "" ||
                 description.root.device[0].UDN[0] === ""
               ) {

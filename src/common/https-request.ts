@@ -157,19 +157,18 @@ export async function request(
           }
 
           try {
-            const body_unknown: unknown = JSON.parse(data);
-            if (typeof body_unknown !== "object" || body_unknown === null) {
+            const bodyUnknown: unknown = JSON.parse(data);
+            if (typeof bodyUnknown !== "object" || bodyUnknown === null) {
               reject(createHttpError("BODY_INVALID_FORMAT"));
               return;
             }
-            body = body_unknown;
+            body = bodyUnknown;
           } catch (cause) {
             reject(createHttpError("BODY_INVALID_FORMAT"));
             return;
           }
           // Return the body.
           resolve(body);
-          return;
         });
       });
       req.on("error", (): void => {
@@ -182,5 +181,5 @@ export async function request(
     },
   );
 
-  return response;
+  return await response;
 }

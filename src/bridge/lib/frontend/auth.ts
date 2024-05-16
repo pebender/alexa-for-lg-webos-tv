@@ -1,5 +1,5 @@
 import * as Common from "../../../common";
-import { Configuration } from "../configuration";
+import type { Configuration } from "../configuration";
 
 export function authorizeUser(
   configuration: Configuration,
@@ -15,10 +15,10 @@ export function authorizeUser(
     return false;
   }
 
-  const authorizedBridgeHostnamesAndEmails: {
+  const authorizedBridgeHostnamesAndEmails: Array<{
     bridgeHostname: string;
     emails: string[];
-  }[] = configuration.authorizedUsers();
+  }> = configuration.authorizedUsers();
   const authorizedBridgeHostnameAndEmails:
     | { bridgeHostname: string; emails: string[] }
     | undefined = authorizedBridgeHostnamesAndEmails.find(

@@ -26,7 +26,7 @@
 
 ### \_configuration
 
-> `private` **\_configuration**: `object`
+> `private` `readonly` **\_configuration**: `object`
 
 #### authorizedUsers
 

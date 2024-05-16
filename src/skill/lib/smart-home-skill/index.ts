@@ -1,4 +1,4 @@
-import * as AWSLambda from "aws-lambda";
+import type * as AWSLambda from "aws-lambda";
 import * as Common from "../../../common";
 import * as alexaAuthorization from "./authorization";
 import * as alexaDiscovery from "./discovery";
@@ -12,16 +12,16 @@ async function handlerWithErrors(
   if (typeof alexaRequest.directive.endpoint?.endpointId === "undefined") {
     switch (alexaRequest.directive.header.namespace) {
       case "Alexa.Authorization":
-        return alexaAuthorization.handler(alexaRequest);
+        return await alexaAuthorization.handler(alexaRequest);
       case "Alexa.Discovery":
-        return alexaDiscovery.handler(alexaRequest);
+        return await alexaDiscovery.handler(alexaRequest);
       default:
         return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
           alexaRequest,
         );
     }
   } else {
-    return Bridge.sendSkillDirective(alexaRequest);
+    return await Bridge.sendSkillDirective(alexaRequest);
   }
 }
 

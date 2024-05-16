@@ -1,7 +1,7 @@
-import ObjectKeyCache from "@outofsync/object-key-cache";
-import MemoryCache from "@outofsync/memory-cache";
-import Redis from "redis";
-import express from "express";
+import type ObjectKeyCache from "@outofsync/object-key-cache";
+import type MemoryCache from "@outofsync/memory-cache";
+import type Redis from "redis";
+import type express from "express";
 
 declare module "@outofsync/express-ip-blacklist" {
   type IPBlacklistLookupFn = (req: express.Request) => string[];

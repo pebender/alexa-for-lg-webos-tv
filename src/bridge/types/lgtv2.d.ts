@@ -159,9 +159,9 @@ declare namespace LGTV {
     spdVendorName?: string;
     spdSourceDeviceInfo?: string;
     lastUniqueId: number;
-    subList: {
+    subList: Array<{
       [x: string]: boolean | number | string;
-    }[];
+    }>;
     oneDepth?: boolean;
     subCount: number;
     connected: boolean;

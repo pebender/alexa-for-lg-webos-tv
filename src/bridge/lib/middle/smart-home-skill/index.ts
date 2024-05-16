@@ -1,7 +1,7 @@
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { Backend, BackendControl } from "../../backend";
-import { Authorization as DirectiveAuthorization } from "../authorization";
+import type { Backend, BackendControl } from "../../backend";
+import type { Authorization as DirectiveAuthorization } from "../authorization";
 import * as alexa from "./alexa";
 import * as alexaAuthorization from "./authorization";
 import * as alexaChannelController from "./channel-controller";
@@ -31,7 +31,7 @@ const handlers: {
 
 function capabilities(
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     ...alexa.capabilities(backendControl),
     ...alexaPowerController.capabilities(backendControl),
@@ -45,7 +45,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty | null>[] {
+): Array<Promise<Common.SHS.ContextProperty | null>> {
   return [
     ...alexa.states(backendControl),
     ...alexaPowerController.states(backendControl),
@@ -85,7 +85,7 @@ async function handler(
     case "Alexa.Authorization":
       return alexaAuthorization.handler(alexaRequest, backend);
     case "Alexa.Discovery":
-      return alexaDiscovery.handler(alexaRequest, backend);
+      return await alexaDiscovery.handler(alexaRequest, backend);
     default: {
       const udn = alexaRequest.getEndpointId();
       if (typeof udn === "undefined") {
@@ -161,9 +161,9 @@ function callback(
   authorization: DirectiveAuthorization,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-) {
+): void {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);
-  if (error) {
+  if (error !== null) {
     Common.Debug.debugError(error);
   } else {
     Common.Debug.debugJSON(response);

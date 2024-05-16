@@ -2,14 +2,14 @@ import schema from "./alexa_smart_home_message_schema.json";
 
 export { schema };
 
-export { Namespace, Header, Endpoint } from "./common";
-export { Request, Directive, DirectivePayload } from "./request";
+export type { Namespace, Header, Endpoint } from "./common";
+export { Request, type Directive, type DirectivePayload } from "./request";
 export {
   Response,
-  Event,
-  EventPayload,
-  EventPayloadEndpoint,
-  EventPayloadEndpointCapability,
-  Context,
-  ContextProperty,
+  type Event,
+  type EventPayload,
+  type EventPayloadEndpoint,
+  type EventPayloadEndpointCapability,
+  type Context,
+  type ContextProperty,
 } from "./response";

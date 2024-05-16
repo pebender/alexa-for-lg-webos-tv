@@ -1,10 +1,10 @@
 import * as Common from "../../../../common";
-import { BackendControl } from "../../backend";
+import type { BackendControl } from "../../backend";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.PowerController",
@@ -15,9 +15,9 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty | null>[] {
-  function value(): Promise<string> {
-    return Promise.resolve(backendControl.getPowerState() as string);
+): Array<Promise<Common.SHS.ContextProperty | null>> {
+  async function value(): Promise<string> {
+    return await Promise.resolve(backendControl.getPowerState() as string);
   }
 
   const powerStateState = Common.SHS.Response.buildContextProperty({
@@ -64,17 +64,19 @@ async function turnOnHandler(
   return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff":
-      return Promise.resolve(turnOffHandler(alexaRequest, backendControl));
+      return await Promise.resolve(
+        turnOffHandler(alexaRequest, backendControl),
+      );
     case "TurnOn":
-      return turnOnHandler(alexaRequest, backendControl);
+      return await turnOnHandler(alexaRequest, backendControl);
     default:
-      return Promise.resolve(
+      return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),

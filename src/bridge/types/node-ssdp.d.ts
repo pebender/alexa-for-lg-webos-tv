@@ -1,13 +1,11 @@
-/// <reference types="node" />
-
 /*
  * This @types/node-ssdp 4.0.4 but patched to
  * - expose rinfo on the Client event interface, and
  * - fix a few bugs in TSDoc
  */
 
-import * as dgram from "dgram";
-import * as events from "events";
+import type * as dgram from "node:dgram";
+import * as events from "node:events";
 
 export interface SsdpHeaders {
   /**

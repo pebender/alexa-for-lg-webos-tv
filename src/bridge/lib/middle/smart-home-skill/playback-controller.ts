@@ -1,11 +1,11 @@
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { BackendControl } from "../../backend";
+import type { BackendControl } from "../../backend";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Promise.resolve({
       type: "AlexaInterface",
@@ -19,7 +19,7 @@ function capabilities(
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty>[] {
+): Array<Promise<Common.SHS.ContextProperty>> {
   return [];
 }
 
@@ -42,48 +42,48 @@ async function genericHandler(
   return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
-    return Promise.resolve(
+    return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "Play":
-      return genericHandler(
+      return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/play",
       );
     case "Pause":
-      return genericHandler(
+      return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/pause",
       );
     case "Stop":
-      return genericHandler(
+      return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/stop",
       );
     case "Rewind":
-      return genericHandler(
+      return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/rewind",
       );
     case "FastForward":
-      return genericHandler(
+      return await genericHandler(
         alexaRequest,
         backendControl,
         "ssap://media.controls/fastForward",
       );
     default:
-      return Promise.resolve(
+      return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),

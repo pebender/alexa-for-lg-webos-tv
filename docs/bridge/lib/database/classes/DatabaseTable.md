@@ -28,19 +28,19 @@
 
 ### \_db
 
-> `private` **\_db**: `Nedb`\<`Record`\<`string`, `any`\>\>
+> `private` `readonly` **\_db**: `Nedb`\<`Record`\<`string`, `any`\>\>
 
 ***
 
 ### \_indexes
 
-> `private` **\_indexes**: `string`[]
+> `private` `readonly` **\_indexes**: `string`[]
 
 ***
 
 ### \_key
 
-> `private` **\_key**: `string`
+> `private` `readonly` **\_key**: `string`
 
 ## Methods
 

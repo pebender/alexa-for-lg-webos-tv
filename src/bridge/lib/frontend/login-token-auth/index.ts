@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 import * as Common from "../../../../common";
-import { Configuration } from "../../configuration";
+import type { Configuration } from "../../configuration";
 import { authorizeUser } from "../auth";
 
 export class LoginTokenAuth {

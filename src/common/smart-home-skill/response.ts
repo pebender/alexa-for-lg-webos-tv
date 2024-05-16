@@ -2,17 +2,17 @@ import { randomUUID } from "crypto";
 import * as CommonError from "../error";
 import * as CommonDebug from "../debug";
 import { copyElement } from "./copy";
-import { Namespace, Header, Endpoint } from "./common";
-import { Request } from "./request";
+import type { Namespace, Header, Endpoint } from "./common";
+import type { Request } from "./request";
 
 export interface EventPayloadEndpointCapability {
   type: string;
   interface: string;
   version: string;
   properties?: {
-    supported: {
+    supported: Array<{
       name: string;
-    }[];
+    }>;
     proactivelyReported: boolean;
     retrievable: boolean;
   };
@@ -21,15 +21,15 @@ export interface EventPayloadEndpointCapability {
   // 'instance', capabilityResources' and 'configuration' for 'Alexa.RangeController'
   instance?: string;
   configuration?: object;
-  capabilityResources?: {
+  capabilityResources?: Array<{
     friendlyNames: {
       "@type": "text";
       value: {
         text: string;
         locale: "en-US";
       };
-    }[];
-  };
+    };
+  }>;
   [x: string]: string | object | undefined;
 }
 
@@ -122,7 +122,7 @@ export class Response {
         endpoint: {
           endpointId: optsB.endpointId,
           scope: {
-            type: optsB.token && "BearerToken",
+            type: typeof optsB.token === "string" ? "BearerToken" : undefined,
             token: optsB.token,
           },
         },
@@ -152,7 +152,7 @@ export class Response {
     }
   }
 
-  public setEndpointId(endpointId: string) {
+  public setEndpointId(endpointId: string): void {
     if (typeof this.endpoint === "undefined") {
       this.endpoint = {};
     }
@@ -202,7 +202,7 @@ export class Response {
     }
   }
 
-  public static buildPayloadEndpointCapability(opts: {
+  public static async buildPayloadEndpointCapability(opts: {
     namespace: Namespace;
     propertyNames?: string[];
   }): Promise<EventPayloadEndpointCapability> {
@@ -220,7 +220,7 @@ export class Response {
         retrievable: true,
       };
     }
-    return Promise.resolve(capability);
+    return await Promise.resolve(capability);
   }
 
   public static buildAlexaResponse(request: Request): Response {
@@ -257,16 +257,16 @@ export class Response {
   public static buildAlexaErrorResponseForInternalError(
     request: Request,
     error: unknown,
-  ) {
+  ): Response {
     if (error instanceof CommonError.CommonError) {
       const errorName = `${error.general}.${error.specific ?? "unknown"}`;
-      const errorMessage = error.message || "unknown";
+      const errorMessage = error.message !== "" ? error.message : "unknown";
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
       return this.buildAlexaErrorResponse(request, type, message, error);
     } else if (error instanceof Error) {
-      const errorName = error.name || "unknown";
-      const errorMessage = error.message || "unknown";
+      const errorName = error.name !== "" ? error.name : "unknown";
+      const errorMessage = error.message !== "" ? error.message : "unknown";
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
       return this.buildAlexaErrorResponse(request, type, message, error);
@@ -277,7 +277,7 @@ export class Response {
 
   public static buildAlexaErrorResponseForInvalidDirectiveName(
     request: Request,
-  ) {
+  ): Response {
     const type = "INVALID_DIRECTIVE";
     const message = `unknown 'name' '${request.directive.header.name}' in namespace '${request.directive.header.namespace}'.`;
     return this.buildAlexaErrorResponse(request, type, message);
@@ -285,13 +285,15 @@ export class Response {
 
   public static buildAlexaErrorResponseForInvalidDirectiveNamespace(
     request: Request,
-  ) {
+  ): Response {
     const type = "INVALID_DIRECTIVE";
     const message = `unknown namespace '${request.directive.header.namespace}'.`;
     return this.buildAlexaErrorResponse(request, type, message);
   }
 
-  public static buildAlexaErrorResponseForInvalidValue(request: Request) {
+  public static buildAlexaErrorResponseForInvalidValue(
+    request: Request,
+  ): Response {
     const type = "INVALID_VALUE";
     return this.buildAlexaErrorResponse(request, type);
   }
@@ -299,7 +301,7 @@ export class Response {
   public static buildAlexaErrorResponseNotSupportedInCurrentMode(
     request: Request,
     message?: string,
-  ) {
+  ): Response {
     const type = "NOT_SUPPORTED_IN_CURRENT_MODE";
     return this.buildAlexaErrorResponse(request, type, message);
   }
@@ -307,7 +309,7 @@ export class Response {
   public static buildAlexaErrorResponseForValueOutOfRange(
     request: Request,
     validRange?: { minimumValue: unknown; maximumValue: unknown },
-  ) {
+  ): Response {
     const type = "VALUE_OUT_OF_RANGE";
     const response = this.buildAlexaErrorResponse(request, type);
     if (typeof validRange !== "undefined") {
@@ -316,7 +318,7 @@ export class Response {
     return response;
   }
 
-  public static buildAlexaErrorResponseForPowerOff(request: Request) {
+  public static buildAlexaErrorResponseForPowerOff(request: Request): Response {
     const type = "ENDPOINT_UNREACHABLE";
     const message = "The TV's power is off.";
     return this.buildAlexaErrorResponse(request, type, message);
@@ -326,7 +328,7 @@ export class Response {
     request: Request,
     type: string,
     message: string,
-  ) {
+  ): Response {
     const error = CommonError.create({ message });
     error.name = type;
     Error.captureStackTrace(error);

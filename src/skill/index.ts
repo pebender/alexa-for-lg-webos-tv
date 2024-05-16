@@ -1,5 +1,5 @@
-import * as ASKModel from "ask-sdk-model";
-import * as AWSLambda from "aws-lambda";
+import type * as ASKModel from "ask-sdk-model";
+import type * as AWSLambda from "aws-lambda";
 import * as Common from "../common";
 import { handler as customSkillHandler } from "./lib/custom-skill";
 import { handler as smartHomeSkillHandler } from "./lib/smart-home-skill";

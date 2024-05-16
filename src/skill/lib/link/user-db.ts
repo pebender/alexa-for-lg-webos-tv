@@ -2,7 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   QueryCommand,
-  QueryCommandInput,
+  type QueryCommandInput,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import * as Common from "../../../common";
@@ -24,7 +24,7 @@ function createDatabaseError(options?: {
   message?: string;
   specific?: string;
   cause?: unknown;
-}) {
+}): Common.Error.CommonError {
   const databaseErrorOptions: Common.Error.CommonErrorOptions = {
     general: "database",
   };
@@ -191,7 +191,10 @@ export async function getRequiredRecordUsingSkillToken(
   } = {};
   Object.assign(newOptions, options);
   newOptions.required = true;
-  return getRecordUsingSkillToken(skillToken, newOptions) as Promise<Record>;
+  return await (getRecordUsingSkillToken(
+    skillToken,
+    newOptions,
+  ) as Promise<Record>);
 }
 
 export async function getRequiredRecordUsingUserId(
@@ -204,13 +207,13 @@ export async function getRequiredRecordUsingUserId(
   } = {};
   Object.assign(newOptions, options);
   newOptions.required = true;
-  return getRecordUsingUserId(userId, newOptions) as Promise<Record>;
+  return await (getRecordUsingUserId(userId, newOptions) as Promise<Record>);
 }
 
 export async function setBridgeHostname(
   userId: string,
   bridgeHostname: string,
-) {
+): Promise<void> {
   const bridgeHostnameUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { userId },
@@ -236,7 +239,7 @@ export async function setBridgeHostname(
 export async function setBridgeCredentials(
   userId: string,
   bridgeCredentials: { bridgeHostname: string; bridgeToken: string },
-) {
+): Promise<void> {
   const bridgeCredentialsUpdateParams = {
     TableName: Common.constants.aws.dynamoDB.tableName,
     Key: { userId },

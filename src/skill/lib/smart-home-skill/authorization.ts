@@ -1,9 +1,9 @@
 import * as Common from "../../../common";
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
 ): Promise<Common.SHS.Response> {
-  return Promise.resolve(
+  return await Promise.resolve(
     Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
       alexaRequest,
     ),

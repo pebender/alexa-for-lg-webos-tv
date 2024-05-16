@@ -13,9 +13,9 @@ export interface DatabaseRecord {
 }
 
 export class DatabaseTable {
-  private _indexes: string[];
-  private _key: string;
-  private _db: Datastore;
+  private readonly _indexes: string[];
+  private readonly _key: string;
+  private readonly _db: Datastore;
   private constructor(indexes: string[], key: string, db: Datastore) {
     this._indexes = indexes;
     this._key = key;
@@ -44,8 +44,8 @@ export class DatabaseTable {
       throw Common.Error.create({ general: "database", cause });
     }
 
-    function index(fieldName: string): Promise<void> {
-      return db
+    async function index(fieldName: string): Promise<void> {
+      await db
         .ensureIndexAsync({ fieldName, unique: true })
         .catch((cause: unknown) => {
           throw Common.Error.create({ general: "database", cause });

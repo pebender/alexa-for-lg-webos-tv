@@ -1,6 +1,6 @@
 import * as CommonError from "../error";
 import { copyElement } from "./copy";
-import { Namespace, Header, Endpoint } from "./common";
+import type { Namespace, Header, Endpoint } from "./common";
 
 export interface DirectivePayload {
   scope?: {

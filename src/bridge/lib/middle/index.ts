@@ -1,10 +1,10 @@
 import Ajv from "ajv/dist/2019";
-import * as AjvTypes from "ajv";
+import type * as AjvTypes from "ajv";
 import ajvFormats from "ajv-formats";
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { Configuration } from "../configuration";
-import { Backend } from "../backend";
+import type { Configuration } from "../configuration";
+import type { Backend } from "../backend";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
@@ -25,7 +25,10 @@ export class Middle {
     this._responseSchemaValidator = _responseSchemaValidator;
   }
 
-  public static async build(configuration: Configuration, backend: Backend) {
+  public static async build(
+    configuration: Configuration,
+    backend: Backend,
+  ): Promise<Middle> {
     const _authorization = await Authorization.build(configuration);
 
     const _ajv = new Ajv({

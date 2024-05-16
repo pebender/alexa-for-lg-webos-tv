@@ -6,7 +6,7 @@
 
 # Function: getHostnames()
 
-> **getHostnames**(`ipAddress`): `Promise`\<`unknown`\>
+> **getHostnames**(`ipAddress`): `Promise`\<`string`[]\>
 
 ## Parameters
 
@@ -14,4 +14,4 @@
 
 ## Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`string`[]\>

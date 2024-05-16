@@ -34,13 +34,13 @@
 
 ### \_ssdpNotify
 
-> `private` **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
+> `private` `readonly` **\_ssdpNotify**: [`Server`](../../../../types/node-ssdp/classes/Server.md)
 
 ***
 
 ### \_ssdpResponse
 
-> `private` **\_ssdpResponse**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
+> `private` `readonly` **\_ssdpResponse**: [`Client`](../../../../types/node-ssdp/classes/Client.md)
 
 ## Methods
 

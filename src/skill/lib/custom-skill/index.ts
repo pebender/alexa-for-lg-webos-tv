@@ -1,5 +1,5 @@
-import * as ASKModel from "ask-sdk-model";
-import { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
+import type * as ASKModel from "ask-sdk-model";
+import type { HandlerInput as ASKHandlerInput } from "ask-sdk-core/dist/dispatcher/request/handler/HandlerInput";
 import { SkillBuilders as ASKSkillBuilders } from "ask-sdk-core/dist/skill/SkillBuilders.js";
 import * as ASKRequestEnvelope from "ask-sdk-core/dist/util/RequestEnvelopeUtils";
 import * as Common from "../../../common";
@@ -140,7 +140,7 @@ const skillHandler = async function (
   request: ASKModel.RequestEnvelope,
   context: ASKModel.Context,
 ): Promise<ASKModel.ResponseEnvelope> {
-  return ASKSkillBuilders.custom()
+  return await ASKSkillBuilders.custom()
     .addRequestHandlers(...handlers)
     .addErrorHandlers(ErrorHandler)
     .withCustomUserAgent(Common.constants.application.name.safe)

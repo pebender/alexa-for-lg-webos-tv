@@ -1,6 +1,6 @@
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { BackendControl } from "../../backend";
+import type { BackendControl } from "../../backend";
 
 // The list of Alexa.InputController inputs are found at
 // <https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html>.
@@ -193,11 +193,11 @@ async function getAlexaToLGTV(
 
 function capabilities(
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   async function getInputCapability(
     backendControl: BackendControl,
   ): Promise<Common.SHS.EventPayloadEndpointCapability> {
-    const inputs: { name: string; friendlyNames: string[] }[] = [];
+    const inputs: Array<{ name: string; friendlyNames: string[] }> = [];
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     Object.keys(alexaToLGTV).forEach((alexaInput) => {
       // Add friendly names as long as they are no too close to the actual names.
@@ -239,7 +239,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty | null>[] {
+): Array<Promise<Common.SHS.ContextProperty | null>> {
   async function value(): Promise<string> {
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
     async function getInput(): Promise<string> {
@@ -326,23 +326,23 @@ async function selectInputHandler(
   } else {
     lgtvId = alexaToLGTV[alexaInput].device.id;
   }
-  return setExternalInput(lgtvId);
+  return await setExternalInput(lgtvId);
 }
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
-    return Promise.resolve(
+    return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "SelectInput":
-      return selectInputHandler(alexaRequest, backendControl);
+      return await selectInputHandler(alexaRequest, backendControl);
     default:
-      return Promise.resolve(
+      return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),

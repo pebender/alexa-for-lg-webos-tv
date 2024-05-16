@@ -1,5 +1,5 @@
 import * as Common from "../../../../common";
-import { Backend, BackendControl } from "../../backend";
+import type { Backend, BackendControl } from "../../backend";
 import { capabilities as alexaSmartHomeCapabilities } from "./index";
 
 async function handler(
@@ -62,10 +62,10 @@ async function handler(
     return endpoint;
   }
 
-  function buildEndpoints(
+  async function buildEndpoints(
     backendControls: BackendControl[],
   ): Promise<Common.SHS.EventPayloadEndpoint[]> {
-    return Promise.all(backendControls.map(buildEndpoint));
+    return await Promise.all(backendControls.map(buildEndpoint));
   }
 
   function buildResponse(

@@ -1,17 +1,17 @@
 import * as Common from "../../../../common";
-import { Backend } from "../../backend";
+import type { Backend } from "../../backend";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [];
 }
 
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-): Promise<Common.SHS.ContextProperty>[] {
+): Array<Promise<Common.SHS.ContextProperty>> {
   return [];
 }
 

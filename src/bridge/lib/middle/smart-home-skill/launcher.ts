@@ -1,6 +1,6 @@
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { BackendControl } from "../../backend";
+import type { BackendControl } from "../../backend";
 //
 // "launcher.json" contains a mapping between Smart Home Skill Alexa.Launcher
 // launch target identifiers and LG webOS TV application ids. The list of Alexa
@@ -65,7 +65,7 @@ const lgtvToAlexa: LGTVToAlexa = createLGTVToAlexa();
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backendControl: BackendControl,
-): Promise<Common.SHS.EventPayloadEndpointCapability>[] {
+): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
       namespace: "Alexa.Launcher",
@@ -76,7 +76,7 @@ function capabilities(
 
 function states(
   backendControl: BackendControl,
-): Promise<Common.SHS.ContextProperty | null>[] {
+): Array<Promise<Common.SHS.ContextProperty | null>> {
   if (backendControl.getPowerState() === "OFF") {
     return [];
   }
@@ -123,7 +123,7 @@ async function launchTargetHandler(
     typeof alexaToLGTV[alexaRequest.directive.payload.identifier] ===
       "undefined"
   ) {
-    return Promise.resolve(
+    return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(alexaRequest),
     );
   }
@@ -144,7 +144,10 @@ async function launchTargetHandler(
       const response = (await backendControl.lgtvCommand(lgtvRequest)) as {
         [key: string]: unknown;
       };
-      const apps = response.apps as { id: string; [key: string]: unknown }[];
+      const apps = response.apps as Array<{
+        id: string;
+        [key: string]: unknown;
+      }>;
       const index = apps.findIndex((app) => app.id === requestedApp.id);
       if (index < 0) {
         return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
@@ -161,20 +164,20 @@ async function launchTargetHandler(
   return Common.SHS.Response.buildAlexaResponse(alexaRequest);
 }
 
-function handler(
+async function handler(
   alexaRequest: Common.SHS.Request,
   backendControl: BackendControl,
 ): Promise<Common.SHS.Response> {
   if (backendControl.getPowerState() === "OFF") {
-    return Promise.resolve(
+    return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "LaunchTarget":
-      return launchTargetHandler(alexaRequest, backendControl);
+      return await launchTargetHandler(alexaRequest, backendControl);
     default:
-      return Promise.resolve(
+      return await Promise.resolve(
         Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveName(
           alexaRequest,
         ),

@@ -8,11 +8,12 @@
 
 import { URL } from "node:url";
 import express from "express";
-import { expressjwt, ExpressJwtRequest } from "express-jwt";
+import { expressjwt } from "express-jwt";
+import type { ExpressJwtRequest } from "express-jwt";
 import IPBlacklist from "@outofsync/express-ip-blacklist";
 import * as Common from "../../../common";
-import { Configuration } from "../configuration";
-import { Middle } from "../middle";
+import type { Configuration } from "../configuration";
+import type { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
 
@@ -39,7 +40,10 @@ export class Frontend {
     this._server = _server;
   }
 
-  public static async build(configuration: Configuration, middle: Middle) {
+  public static async build(
+    configuration: Configuration,
+    middle: Middle,
+  ): Promise<Frontend> {
     const _loginToken = LoginTokenAuth.build(configuration);
     const _bridgeToken = await BridgeTokenAuth.build(configuration);
 
@@ -119,7 +123,7 @@ export class Frontend {
           return;
         }
 
-        if (err) {
+        if (err !== null) {
           ipBlacklistIncrement(req, res);
           Common.Debug.debug("jwtErrorHandler: Failed Validation:");
           Common.Debug.debugError(err);
@@ -132,7 +136,6 @@ export class Frontend {
         }
 
         next(err);
-        return;
       }
 
       function jwtPayloadHandler(
@@ -233,7 +236,9 @@ export class Frontend {
           next: express.NextFunction,
         ): Promise<void> {
           Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
-          function invalidAuthorizationCredentialResponse(message: string) {
+          function invalidAuthorizationCredentialResponse(
+            message: string,
+          ): object {
             return {
               error: "INVALID_AUTHORIZATION_CREDENTIAL",
               error_description: message,
@@ -391,7 +396,9 @@ export class Frontend {
         res: express.Response,
         next: express.NextFunction,
       ): void {
-        function invalidAuthorizationCredentialResponse(message: string) {
+        function invalidAuthorizationCredentialResponse(
+          message: string,
+        ): object {
           return {
             error: "INVALID_AUTHORIZATION_CREDENTIAL",
             error_description: message,

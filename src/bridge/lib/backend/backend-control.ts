@@ -5,12 +5,12 @@ import * as wol from "wake_on_lan";
 import {
   Client as SsdpClient,
   Server as SsdpServer,
-  SsdpHeaders,
+  type SsdpHeaders,
 } from "node-ssdp";
 import LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { DatabaseTable } from "../database";
-import { TV } from "./tv";
+import type { DatabaseTable } from "../database";
+import type { TV } from "./tv";
 
 export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;
@@ -38,7 +38,7 @@ export class BackendControl extends EventEmitter {
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static build(db: DatabaseTable, tv: TV) {
+  public static build(db: DatabaseTable, tv: TV): BackendControl {
     const _tv: TV = {
       udn: tv.udn,
       name: tv.name,
@@ -58,10 +58,8 @@ export class BackendControl extends EventEmitter {
         .catch((error: unknown) => {
           if (error instanceof Error) {
             callback(error);
-            return;
           } else {
             callback(Common.Error.create({ cause: error }));
-            return;
           }
         });
     }
@@ -140,7 +138,7 @@ export class BackendControl extends EventEmitter {
     return backendControl;
   }
 
-  public async start() {
+  public async start(): Promise<void> {
     await this._ssdpNotify.start();
   }
 
@@ -166,7 +164,7 @@ export class BackendControl extends EventEmitter {
     // of 7 seconds in an attempt to ensure that Alexa has the chance for a
     // response before its 8 second timeout.
      */
-  public turnOn(): Promise<boolean> {
+  public async turnOn(): Promise<boolean> {
     function startInterval(
       milliseconds: number,
       handler: () => void,
@@ -175,7 +173,7 @@ export class BackendControl extends EventEmitter {
       return setInterval(handler, milliseconds);
     }
 
-    return new Promise<boolean>((resolve): void => {
+    return await new Promise<boolean>((resolve): void => {
       this._poweredOn = false;
       this._connection.disconnect();
       let finishTimeoutObject: NodeJS.Timeout | null = null;
@@ -198,8 +196,8 @@ export class BackendControl extends EventEmitter {
       function finish(powerOn: boolean): void {
         async function asyncFinish(poweredOn: boolean): Promise<void> {
           const currentUUID = await finishMutex.runExclusive(
-            (): Promise<string | null> =>
-              new Promise<string | null>((resolve): void => {
+            async (): Promise<string | null> =>
+              await new Promise<string | null>((resolve): void => {
                 if (finished) {
                   resolve(null);
                   return;

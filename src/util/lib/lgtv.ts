@@ -1,9 +1,9 @@
 import * as fs from "fs/promises";
 import persistPath from "persist-path";
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../common";
 import { Configuration } from "../../bridge/lib/configuration";
-import { TV } from "../../bridge/lib/backend/tv";
+import type { TV } from "../../bridge/lib/backend/tv";
 import { Backend } from "../../bridge/lib/backend";
 
 export async function getBackend(): Promise<Backend> {
@@ -48,7 +48,7 @@ function getSortedTVList(backend: Backend): TV[] {
 function lgtvCmdsCommand(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   backend: Backend,
-) {
+): void {
   console.log("Known Commands");
   const cmds: { [cmd: string]: object | null } = {
     "api/getServiceList": null,
@@ -99,7 +99,7 @@ function lgtvCmdsCommand(
   Object.keys(cmds)
     .sort()
     .forEach((cmd) => {
-      if (cmds[cmd]) {
+      if (cmds[cmd] !== null) {
         console.log(`  command='${cmd}, payload='${JSON.stringify(cmds[cmd])}`);
       } else {
         console.log(`  command='${cmd}`);
@@ -111,14 +111,14 @@ function lgtvCmdsCommand(
   );
 }
 
-function lgtvUdnsCommand(backend: Backend) {
+function lgtvUdnsCommand(backend: Backend): void {
   const tvList = getSortedTVList(backend);
   for (let i = 0; i < tvList.length; i++) {
     console.log(`${i.toString()}: ${tvList[i].udn}: ${tvList[i].name}`);
   }
 }
 
-function lgtvRunCommand(backend: Backend) {
+function lgtvRunCommand(backend: Backend): void {
   const argv: string[] = process.argv;
   if (argv.length === 5 || argv.length === 6) {
     const tvList = getSortedTVList(backend);
@@ -126,7 +126,7 @@ function lgtvRunCommand(backend: Backend) {
     console.log(`udn: ${tv.udn}`);
     const backendControl = backend.control(tv.udn);
     backendControl.on("connect", () => {
-      const asyncConnect = async () => {
+      const asyncConnect = async (): Promise<void> => {
         const uri = `ssap://${argv[4]}`;
         if (argv.length === 5) {
           const lgtvRequest: LGTV.Request = {
@@ -177,7 +177,7 @@ function lgtvRunCommand(backend: Backend) {
   }
 }
 
-async function lgtvCommand() {
+async function lgtvCommand(): Promise<void> {
   const argv: string[] = process.argv;
 
   const backend = await getBackend();
@@ -208,4 +208,4 @@ async function lgtvCommand() {
   }
 }
 
-void lgtvCommand();
+lgtvCommand().catch(Common.Debug.debugError);

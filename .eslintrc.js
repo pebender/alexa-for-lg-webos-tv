@@ -6,6 +6,7 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
+    "love",
     "plugin:@typescript-eslint/strict-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
     "prettier",
@@ -18,6 +19,8 @@ module.exports = {
   plugins: [
     "@typescript-eslint/eslint-plugin",
     "eslint-plugin-import",
+    "eslint-plugin-n",
+    "eslint-plugin-promise",
     "eslint-plugin-tsdoc",
     "prettier",
   ],

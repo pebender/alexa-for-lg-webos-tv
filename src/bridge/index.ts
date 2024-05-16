@@ -53,7 +53,7 @@ export class Bridge {
    *
    * @returns the Bridge built
    */
-  public static async build() {
+  public static async build(): Promise<Bridge> {
     const configurationDir = persistPath(
       Common.constants.application.name.safe,
     );

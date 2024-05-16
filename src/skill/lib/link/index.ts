@@ -5,23 +5,21 @@ import * as Common from "../../../common";
 import * as Database from "./user-db";
 import * as Login from "./login";
 
-export async function getHostnames(ipAddress: string) {
+export async function getHostnames(ipAddress: string): Promise<string[]> {
   const ipPort = Common.constants.bridge.port.https;
 
-  return new Promise((resolve, reject): void => {
+  return await new Promise((resolve, reject): void => {
     const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false });
     sock.on("secureConnect", (): void => {
       const cert = sock.getPeerCertificate().raw;
       sock.on("close", (): void => {
         const hostnames = certnames.getCommonNames(cert);
         resolve(hostnames);
-        return;
       });
       sock.end();
     });
     sock.on("error", (error: Error): void => {
       reject(error);
-      return;
     });
   });
 }
@@ -175,8 +173,8 @@ export async function sendMessageUsingBridgeToken(
 }
 
 export async function testConnection(skillToken: string): Promise<void> {
-  function testTcp(hostname: string, port: number): Promise<void> {
-    return new Promise((resolve, reject): void => {
+  async function testTcp(hostname: string, port: number): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
       const client = net.connect(port, hostname);
       client
         .on("connect", (): void => {
@@ -184,7 +182,6 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
-          return;
         })
         .on("error", (cause): void => {
           const error = Common.Error.create({
@@ -193,13 +190,12 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
-          return;
         });
     });
   }
 
-  function testTls(hostname: string, port: number): Promise<void> {
-    return new Promise((resolve, reject): void => {
+  async function testTls(hostname: string, port: number): Promise<void> {
+    await new Promise<void>((resolve, reject): void => {
       const client = tls.connect(port, hostname, { rejectUnauthorized: false });
       client
         .on("secureConnect", (): void => {
@@ -207,7 +203,6 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
-          return;
         })
         .on("error", (cause): void => {
           const error = Common.Error.create({
@@ -216,16 +211,15 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
-          return;
         });
     });
   }
 
-  function testTlsTestCertificate(
+  async function testTlsTestCertificate(
     hostname: string,
     port: number,
   ): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    await new Promise<void>((resolve, reject): void => {
       const client = tls.connect(port, hostname);
       client
         .on("secureConnect", (): void => {
@@ -233,7 +227,6 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
-          return;
         })
         .on("error", (cause): void => {
           const error = Common.Error.create({
@@ -242,13 +235,15 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
-          return;
         });
     });
   }
 
-  function testTlsTestHostname(hostname: string, port: number): Promise<void> {
-    return new Promise((resolve, reject): void => {
+  async function testTlsTestHostname(
+    hostname: string,
+    port: number,
+  ): Promise<void> {
+    await new Promise<void>((resolve, reject): void => {
       const client = tls.connect(port, hostname, { servername: hostname });
       client
         .on("secureConnect", (): void => {
@@ -256,7 +251,6 @@ export async function testConnection(skillToken: string): Promise<void> {
         })
         .on("close", (): void => {
           resolve();
-          return;
         })
         .on("error", (cause): void => {
           const error = Common.Error.create({
@@ -265,7 +259,6 @@ export async function testConnection(skillToken: string): Promise<void> {
             cause,
           });
           reject(error);
-          return;
         });
     });
   }

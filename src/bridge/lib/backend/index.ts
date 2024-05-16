@@ -7,11 +7,11 @@
 //
 
 import { EventEmitter } from "node:events";
-import LGTV from "lgtv2";
+import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { Configuration } from "../configuration";
-import { TV, UDN } from "./tv";
-import { BackendControl } from "./backend-control";
+import type { Configuration } from "../configuration";
+import type { TV, UDN } from "./tv";
+import type { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
 
@@ -33,7 +33,7 @@ export class Backend extends EventEmitter {
     this._searcher = _searcher;
   }
 
-  public static async build(configuration: Configuration) {
+  public static async build(configuration: Configuration): Promise<Backend> {
     const _controller = await BackendController.build();
     const _searcher = BackendSearcher.build();
 
