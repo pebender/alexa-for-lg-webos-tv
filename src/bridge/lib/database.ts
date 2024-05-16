@@ -54,7 +54,11 @@ export class DatabaseTable {
           throw Common.Error.create({ general: "database", cause });
         });
     }
-    await Promise.all(indexes.map(index));
+    await Promise.all(
+      indexes.map(async (fieldName: string) => {
+        await index(fieldName);
+      }),
+    );
 
     return new DatabaseTable(indexes, key, db);
   }

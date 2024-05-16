@@ -65,7 +65,12 @@ async function handler(
   async function buildEndpoints(
     backendControls: BackendControl[],
   ): Promise<Common.SHS.EventPayloadEndpoint[]> {
-    return await Promise.all(backendControls.map(buildEndpoint));
+    return await Promise.all(
+      backendControls.map(
+        async (backendControl: BackendControl) =>
+          await buildEndpoint(backendControl),
+      ),
+    );
   }
 
   function buildResponse(
