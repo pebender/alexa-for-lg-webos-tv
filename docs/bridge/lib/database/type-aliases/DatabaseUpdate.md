@@ -4,8 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/database](../README.md) / DatabaseUpdate
 
-# Interface: DatabaseUpdate
+# Type alias: DatabaseUpdate
 
-## Indexable
-
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| `object` \| `null`
+> **DatabaseUpdate**: `Record`\<`string`, `boolean` \| `number` \| `string` \| `object` \| `null`\>

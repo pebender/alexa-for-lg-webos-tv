@@ -99,15 +99,10 @@ declare class LGTV extends EventEmitter {
 }
 
 declare namespace LGTV {
-  export interface RequestPayload {
-    [x: string]:
-      | boolean
-      | number
-      | string
-      | {
-          [x: string]: boolean | number | string;
-        };
-  }
+  export type RequestPayload = Record<
+    string,
+    boolean | number | string | Record<string, boolean | number | string>
+  >;
 
   export interface Request {
     uri: string;
@@ -159,9 +154,7 @@ declare namespace LGTV {
     spdVendorName?: string;
     spdSourceDeviceInfo?: string;
     lastUniqueId: number;
-    subList: Array<{
-      [x: string]: boolean | number | string;
-    }>;
+    subList: Array<Record<string, boolean | number | string>>;
     oneDepth?: boolean;
     subCount: number;
     connected: boolean;

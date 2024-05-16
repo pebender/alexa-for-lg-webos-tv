@@ -60,7 +60,7 @@
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../interfaces/DatabaseQuery.md)
+• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
 
 #### Returns
 
@@ -70,29 +70,29 @@
 
 ### getRecord()
 
-> **getRecord**(`query`): `Promise`\<`null` \| [`DatabaseRecord`](../interfaces/DatabaseRecord.md)\>
+> **getRecord**(`query`): `Promise`\<`null` \| [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)\>
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../interfaces/DatabaseQuery.md)
+• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
 
 #### Returns
 
-`Promise`\<`null` \| [`DatabaseRecord`](../interfaces/DatabaseRecord.md)\>
+`Promise`\<`null` \| [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)\>
 
 ***
 
 ### getRecords()
 
-> **getRecords**(`query`): `Promise`\<[`DatabaseRecord`](../interfaces/DatabaseRecord.md)[]\>
+> **getRecords**(`query`): `Promise`\<[`DatabaseRecord`](../type-aliases/DatabaseRecord.md)[]\>
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../interfaces/DatabaseQuery.md)
+• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
 
 #### Returns
 
-`Promise`\<[`DatabaseRecord`](../interfaces/DatabaseRecord.md)[]\>
+`Promise`\<[`DatabaseRecord`](../type-aliases/DatabaseRecord.md)[]\>
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Parameters
 
-• **record**: [`DatabaseRecord`](../interfaces/DatabaseRecord.md)
+• **record**: [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)
 
 #### Returns
 
@@ -116,9 +116,9 @@
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../interfaces/DatabaseQuery.md)
+• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
 
-• **update**: [`DatabaseUpdate`](../interfaces/DatabaseUpdate.md)
+• **update**: [`DatabaseUpdate`](../type-aliases/DatabaseUpdate.md)
 
 #### Returns
 
@@ -132,9 +132,9 @@
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../interfaces/DatabaseQuery.md)
+• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
 
-• **update**: [`DatabaseUpdate`](../interfaces/DatabaseUpdate.md)
+• **update**: [`DatabaseUpdate`](../type-aliases/DatabaseUpdate.md)
 
 #### Returns
 

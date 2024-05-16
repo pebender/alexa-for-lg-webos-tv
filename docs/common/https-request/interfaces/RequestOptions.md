@@ -10,11 +10,7 @@
 
 ### headers
 
-> **headers**: `object`
-
-#### Index signature
-
- \[`x`: `string`\]: `string`
+> **headers**: `Record`\<`string`, `string`\>
 
 ***
 

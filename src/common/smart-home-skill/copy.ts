@@ -29,10 +29,8 @@ export function copyElement(original: copyElementType): copyElementType {
   }
 
   if (original instanceof Object) {
-    const originalObject = original as { [x: string]: copyElementType };
-    const copy: {
-      [x: string]: copyElementType;
-    } = {};
+    const originalObject = original as Record<string, copyElementType>;
+    const copy: Record<string, copyElementType> = {};
     Object.keys(originalObject).forEach((property): void => {
       if (typeof originalObject[property] !== "undefined") {
         copy[property] = copyElement(originalObject[property]);

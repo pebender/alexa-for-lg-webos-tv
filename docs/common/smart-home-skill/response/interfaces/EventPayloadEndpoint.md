@@ -20,11 +20,7 @@
 
 ### cookie?
 
-> `optional` **cookie**: `object`
-
-#### Index signature
-
- \[`x`: `string`\]: `string`
+> `optional` **cookie**: `Record`\<`string`, `string`\>
 
 ***
 

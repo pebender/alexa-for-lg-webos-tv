@@ -39,9 +39,7 @@ export interface EventPayloadEndpoint {
   endpointId: string;
   friendlyName: string;
   manufacturerName: string;
-  cookie?: {
-    [x: string]: string;
-  };
+  cookie?: Record<string, string>;
   capabilities: EventPayloadEndpointCapability[];
   [x: string]: string | object | undefined;
 }

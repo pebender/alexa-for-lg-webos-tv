@@ -6,10 +6,6 @@
 
 # Class: Response
 
-## Indexable
-
- \[`x`: `string`\]: `object` \| `undefined`
-
 ## Constructors
 
 ### new Response()
@@ -59,20 +55,6 @@
 #### Parameters
 
 • **payloadEndpoint**: [`EventPayloadEndpoint`](../interfaces/EventPayloadEndpoint.md)
-
-#### Returns
-
-`void`
-
-***
-
-### setEndpointId()
-
-> **setEndpointId**(`endpointId`): `void`
-
-#### Parameters
-
-• **endpointId**: `string`
 
 #### Returns
 

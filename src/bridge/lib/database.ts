@@ -2,15 +2,18 @@ import Datastore from "@seald-io/nedb";
 import persistPath from "persist-path";
 import * as Common from "../../common";
 
-export interface DatabaseUpdate {
-  [x: string]: boolean | number | string | object | null;
-}
-export interface DatabaseQuery {
-  [x: string]: boolean | number | string | object | null;
-}
-export interface DatabaseRecord {
-  [x: string]: boolean | number | string | object | null;
-}
+export type DatabaseUpdate = Record<
+  string,
+  boolean | number | string | object | null
+>;
+export type DatabaseQuery = Record<
+  string,
+  boolean | number | string | object | null
+>;
+export type DatabaseRecord = Record<
+  string,
+  boolean | number | string | object | null
+>;
 
 export class DatabaseTable {
   private readonly _indexes: string[];

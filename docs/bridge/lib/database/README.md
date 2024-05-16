@@ -12,8 +12,8 @@
 
 - [DatabaseTable](classes/DatabaseTable.md)
 
-### Interfaces
+### Type Aliases
 
-- [DatabaseQuery](interfaces/DatabaseQuery.md)
-- [DatabaseRecord](interfaces/DatabaseRecord.md)
-- [DatabaseUpdate](interfaces/DatabaseUpdate.md)
+- [DatabaseQuery](type-aliases/DatabaseQuery.md)
+- [DatabaseRecord](type-aliases/DatabaseRecord.md)
+- [DatabaseUpdate](type-aliases/DatabaseUpdate.md)

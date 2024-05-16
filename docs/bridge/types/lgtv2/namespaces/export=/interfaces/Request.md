@@ -10,7 +10,7 @@
 
 ### payload?
 
-> `optional` **payload**: [`RequestPayload`](RequestPayload.md)
+> `optional` **payload**: [`RequestPayload`](../type-aliases/RequestPayload.md)
 
 ***
 

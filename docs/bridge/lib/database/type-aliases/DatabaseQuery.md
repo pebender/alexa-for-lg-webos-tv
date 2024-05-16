@@ -4,8 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/database](../README.md) / DatabaseQuery
 
-# Interface: DatabaseQuery
+# Type alias: DatabaseQuery
 
-## Indexable
-
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| `object` \| `null`
+> **DatabaseQuery**: `Record`\<`string`, `boolean` \| `number` \| `string` \| `object` \| `null`\>

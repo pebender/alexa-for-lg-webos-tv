@@ -4,8 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/database](../README.md) / DatabaseRecord
 
-# Interface: DatabaseRecord
+# Type alias: DatabaseRecord
 
-## Indexable
-
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| `object` \| `null`
+> **DatabaseRecord**: `Record`\<`string`, `boolean` \| `number` \| `string` \| `object` \| `null`\>

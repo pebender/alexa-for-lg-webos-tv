@@ -6,7 +6,7 @@ export interface RequestOptions {
   hostname: string;
   port: number;
   path: string;
-  headers: { [x: string]: string };
+  headers: Record<string, string>;
 }
 
 type ResponseErrorNames =
@@ -63,7 +63,7 @@ export async function request(
     port: number;
     path: string;
     method: string;
-    headers: { [x: string]: string };
+    headers: Record<string, string>;
   } = {
     hostname: requestOptions.hostname,
     port: requestOptions.port,

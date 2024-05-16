@@ -20,7 +20,7 @@
 
 • **\_db**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
 
-• **\_controls**
+• **\_controls**: `Record`\<`string`, [`BackendControl`](../../backend-control/classes/BackendControl.md)\>
 
 #### Returns
 
@@ -34,11 +34,7 @@
 
 ### \_controls
 
-> `private` `readonly` **\_controls**: `object`
-
-#### Index signature
-
- \[`x`: `string`\]: [`BackendControl`](../../backend-control/classes/BackendControl.md)
+> `private` `readonly` **\_controls**: `Record`\<`string`, [`BackendControl`](../../backend-control/classes/BackendControl.md)\>
 
 ***
 

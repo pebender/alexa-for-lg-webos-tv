@@ -180,7 +180,7 @@
 
 • **uri**: `string`
 
-• **payload**: [`RequestPayload`](../namespaces/export=/interfaces/RequestPayload.md)
+• **payload**: [`RequestPayload`](../namespaces/export=/type-aliases/RequestPayload.md)
 
 • **callback**
 
@@ -214,7 +214,7 @@
 
 • **uri**: `string`
 
-• **payload**: [`RequestPayload`](../namespaces/export=/interfaces/RequestPayload.md)
+• **payload**: [`RequestPayload`](../namespaces/export=/type-aliases/RequestPayload.md)
 
 • **callback**
 

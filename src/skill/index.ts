@@ -12,10 +12,7 @@ async function skillHandler(
   let response: ASKModel.ResponseEnvelope | Common.SHS.Response;
   if ("session" in request) {
     try {
-      response = await customSkillHandler(
-        request as ASKModel.RequestEnvelope,
-        context as ASKModel.Context,
-      );
+      response = await customSkillHandler(request, context as ASKModel.Context);
     } catch (error) {
       Common.Debug.debugError(error);
       throw error;

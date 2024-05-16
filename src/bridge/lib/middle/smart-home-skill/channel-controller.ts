@@ -108,10 +108,10 @@ function getChannelNumbers(channels: Channel[]): string[] {
 // Sometimes people ask for a channel's major number when they want the primary
 // minor channel of the major channel. So, an additional mapping of major number
 // (e.g. 10) to major number dash primary minor number (e.g. 10-1).
-function getChannelNumberToNumberMap(channels: Channel[]): {
-  [x: string]: string;
-} {
-  const channelNumberToNumber: { [x: string]: string } = {};
+function getChannelNumberToNumberMap(
+  channels: Channel[],
+): Record<string, string> {
+  const channelNumberToNumber: Record<string, string> = {};
   channels.forEach((channelItem) => {
     const channelNumber: string = channelItem.channelNumber;
     channelNumberToNumber[channelNumber] = channelNumber;
@@ -130,10 +130,10 @@ function getChannelNumberToNumberMap(channels: Channel[]): {
 // <call-sign>-DT or <call-sign>HD. So, when a channel name ending in -HD, -DT
 // or HD is encountered, an additional mapping with the ending removed is
 // created.
-function getChannelNameToNumberMap(channels: Channel[]): {
-  [x: string]: string;
-} {
-  const channelNameToNumber: { [x: string]: string } = {};
+function getChannelNameToNumberMap(
+  channels: Channel[],
+): Record<string, string> {
+  const channelNameToNumber: Record<string, string> = {};
   channels.forEach((channelItem: Channel) => {
     const channelNumber: string = channelItem.channelNumber;
     const channelName: string = channelItem.channelName.toUpperCase();

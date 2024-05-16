@@ -8,11 +8,6 @@
 
 ## Index
 
-### Interfaces
-
-- [Request](interfaces/Request.md)
-- [Response](interfaces/Response.md)
-
 ### Functions
 
 - [sendSkillDirective](functions/sendSkillDirective.md)

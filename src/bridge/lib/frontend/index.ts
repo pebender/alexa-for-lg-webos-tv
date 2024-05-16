@@ -482,7 +482,7 @@ export class Frontend {
           req: express.Request,
           res: express.Response,
         ): Promise<void> {
-          const serviceRequest = req.body as { [key: string]: unknown };
+          const serviceRequest = req.body as Record<string, unknown>;
           Common.Debug.debug("Service Request:");
           Common.Debug.debugJSON(serviceRequest);
 

@@ -7,10 +7,10 @@ import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
   private readonly _db: DatabaseTable;
-  private readonly _controls: { [x: string]: BackendControl };
+  private readonly _controls: Record<string, BackendControl>;
   private constructor(
     _db: DatabaseTable,
-    _controls: { [x: string]: BackendControl },
+    _controls: Record<string, BackendControl>,
   ) {
     super();
 

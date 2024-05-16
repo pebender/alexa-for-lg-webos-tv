@@ -4,8 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/types/lgtv2](../../../README.md) / [export=](../README.md) / RequestPayload
 
-# Interface: RequestPayload
+# Type alias: RequestPayload
 
-## Indexable
-
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| `object`
+> **RequestPayload**: `Record`\<`string`, `boolean` \| `number` \| `string` \| `Record`\<`string`, `boolean` \| `number` \| `string`\>\>

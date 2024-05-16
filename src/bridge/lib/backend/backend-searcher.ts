@@ -63,7 +63,7 @@ export class BackendSearcher extends EventEmitter {
         callback(null, null);
         return;
       }
-      const messageTypeMap: { [name: string]: string } = {
+      const messageTypeMap: Record<string, string> = {
         "advertise-alive": "NT",
         "advertise-bye": "NT",
         response: "ST",

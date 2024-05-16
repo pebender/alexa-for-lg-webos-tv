@@ -6,10 +6,6 @@
 
 # Class: Request
 
-## Indexable
-
- \[`x`: `string`\]: `object` \| `undefined`
-
 ## Constructors
 
 ### new Request()

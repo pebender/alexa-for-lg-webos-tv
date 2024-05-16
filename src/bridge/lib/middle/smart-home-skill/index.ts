@@ -17,9 +17,7 @@ type HandlerFunction = (
   backendControl: BackendControl,
 ) => Promise<Common.SHS.Response>;
 
-const handlers: {
-  [x: string]: HandlerFunction;
-} = {
+const handlers: Record<string, HandlerFunction> = {
   Alexa: alexa.handler,
   "Alexa.ChannelController": alexaChannelController.handler,
   "Alexa.InputController": alexaInputController.handler,

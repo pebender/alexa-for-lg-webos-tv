@@ -108,4 +108,4 @@
 
 ### subList
 
-> **subList**: `object`[]
+> **subList**: `Record`\<`string`, `string` \| `number` \| `boolean`\>[]

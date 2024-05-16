@@ -20,12 +20,8 @@ interface LaunchMapItem {
 interface LaunchMap {
   map: LaunchMapItem[];
 }
-interface AlexaToLGTV {
-  [alexaIdentifier: string]: { id: string; title: string };
-}
-interface LGTVToAlexa {
-  [lgtvId: string]: { identifier: string; name: string };
-}
+type AlexaToLGTV = Record<string, { id: string; title: string }>;
+type LGTVToAlexa = Record<string, { identifier: string; name: string }>;
 
 // Convert "launcher.json" into a collection of LG webOS TV application ids and
 // titles indexed by Alexa.Launcher launch target identifiers.
@@ -141,9 +137,9 @@ async function launchTargetHandler(
       uri: "ssap://com.webos.applicationManager/listApps",
     };
     try {
-      const response = (await backendControl.lgtvCommand(lgtvRequest)) as {
-        [key: string]: unknown;
-      };
+      const response = (await backendControl.lgtvCommand(
+        lgtvRequest,
+      )) as Record<string, unknown>;
       const apps = response.apps as Array<{
         id: string;
         [key: string]: unknown;

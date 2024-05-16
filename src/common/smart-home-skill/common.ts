@@ -26,6 +26,6 @@ export interface Endpoint {
     token: string;
     [x: string]: string;
   };
-  cookie?: { [x: string]: string };
+  cookie?: Record<string, string>;
   [x: string]: string | object | undefined;
 }

@@ -82,7 +82,7 @@ const alexaInputList: string[] = [
 ];
 
 // Non-trivial mappings between Alexa inputs and LGTV webOS TV ids.
-const lgtvExternalInputRenameList: { [key: string]: string } = {
+const lgtvExternalInputRenameList: Record<string, string> = {
   "AV 1": "VIDEO 1",
   "AV 2": "VIDEO 2",
   "AV 3": "VIDEO 3",
@@ -95,9 +95,7 @@ interface ExternalInput {
   device: LGTV.ResponseExternalInputListDevice;
 }
 
-interface ExternalInputMap {
-  [input: string]: ExternalInput;
-}
+type ExternalInputMap = Record<string, ExternalInput>;
 
 async function getAlexaToLGTV(
   backendControl: BackendControl,

@@ -26,7 +26,7 @@ Re-exports [Request](namespaces/export=/interfaces/Request.md)
 
 ### RequestPayload
 
-Re-exports [RequestPayload](namespaces/export=/interfaces/RequestPayload.md)
+Re-exports [RequestPayload](namespaces/export=/type-aliases/RequestPayload.md)
 
 ***
 

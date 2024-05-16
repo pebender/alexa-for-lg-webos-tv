@@ -50,7 +50,7 @@ function lgtvCmdsCommand(
   backend: Backend,
 ): void {
   console.log("Known Commands");
-  const cmds: { [cmd: string]: object | null } = {
+  const cmds: Record<string, object | null> = {
     "api/getServiceList": null,
     "audio/getStatus": null,
     "audio/getVolume": null,
