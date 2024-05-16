@@ -78,7 +78,6 @@ export interface Context {
 export class Response {
   public event: Event;
   public context?: Context;
-  [x: string]: object | undefined;
   public constructor(
     opts:
       | {
@@ -148,16 +147,8 @@ export class Response {
 
     this.event = copyElement(response.event) as Event;
     if (typeof response.context !== "undefined") {
-      this.response = copyElement(response.context) as Context;
+      this.context = copyElement(response.context) as Context;
     }
-  }
-
-  public setEndpointId(endpointId: string): void {
-    if (typeof this.endpoint === "undefined") {
-      this.endpoint = {};
-    }
-
-    (this.endpoint as Endpoint).endpointId = endpointId;
   }
 
   public addContextProperty(contextProperty: ContextProperty): void {

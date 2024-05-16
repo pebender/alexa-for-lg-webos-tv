@@ -27,7 +27,6 @@ export interface Directive {
 
 export class Request {
   public directive: Directive;
-  [x: string]: object | undefined;
   public constructor(opts: {
     directive: {
       header: {
