@@ -1,22 +1,10 @@
 import * as Link from "../link";
 import * as Common from "../../../common";
 
-export interface Request {
-  [x: string]: number | string | object | undefined;
-}
-
-export interface Response {
-  error?: {
-    name?: string;
-    message?: string;
-  };
-  [x: string]: number | string | object | undefined;
-}
-
 async function sendHandler(
   path: string,
   alexaRequest: Common.SHS.Request,
-  message: Request,
+  message: object,
 ): Promise<Common.SHS.Response> {
   const response: Common.SHS.Response = (await Link.sendMessageUsingBridgeToken(
     path,
