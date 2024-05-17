@@ -129,10 +129,12 @@ export class Frontend {
        * promises with try/catch/throw rather than callbacks for asynchronous
        * operation and error handling. However, express relies on callbacks
        * (specifically, the `next` function). This function wraps a handler
-       * written with promises and try/catch/throw
-       *       *
+       * written with promises and try/catch/throw, calling next(error) upon
+       * error and calling next() or returning upon success.
+       *
        * @param handler -
-       * @param successHandler - called when handler completes successfully.
+       * @param continueOnSuccess - on success continue by calling next() rather
+       * than returning. This is the default.
        * @returns - no return.
        */
       function synchronizer(
@@ -155,11 +157,13 @@ export class Frontend {
             Promise.resolve(handlerCore(request, response))
               .then(() =>
                 setImmediate((): void => {
+                  // eslint-disable-next-line promise/no-callback-in-promise
                   next();
                 }),
               )
               .catch((error: unknown) =>
                 setImmediate((): void => {
+                  // eslint-disable-next-line promise/no-callback-in-promise
                   next(error);
                 }),
               );
@@ -167,6 +171,7 @@ export class Frontend {
             Promise.resolve(handlerCore(request, response)).catch(
               (error: unknown) =>
                 setImmediate((): void => {
+                  // eslint-disable-next-line promise/no-callback-in-promise
                   next(error);
                 }),
             );

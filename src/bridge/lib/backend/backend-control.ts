@@ -55,14 +55,19 @@ export class BackendControl extends EventEmitter {
         .then(() => {
           _tv.key = key;
           _connection.clientKey = key;
+          return null;
         })
-        .catch((error: unknown) => {
-          if (error instanceof Error) {
-            callback(error);
-          } else {
-            callback(Common.Error.create({ cause: error }));
-          }
-        });
+        .catch((error: unknown) =>
+          setImmediate((): void => {
+            if (error instanceof Error) {
+              // eslint-disable-next-line promise/no-callback-in-promise
+              callback(error);
+            } else {
+              // eslint-disable-next-line promise/no-callback-in-promise
+              callback(Common.Error.create({ cause: error }));
+            }
+          }),
+        );
     }
 
     const _connection = new LGTV({

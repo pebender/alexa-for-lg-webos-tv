@@ -1,5 +1,6 @@
 import type * as dgram from "node:dgram";
 import { EventEmitter } from "node:events";
+import { promisify } from "node:util";
 import * as arp from "node-arp";
 import {
   Client as SsdpClient,
@@ -36,6 +37,23 @@ export class BackendSearcher extends EventEmitter {
 
     const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);
 
+    /*
+     * A version of node-arp's getMAC with its callback adjusted to match the
+     * typical Node.js callback function structure.
+     */
+    function getMAC(
+      ipAddress: string,
+      callback: (error: Error | null, result: string) => void,
+    ): void {
+      arp.getMAC(ipAddress, (isError: boolean, result: string): void => {
+        if (isError) {
+          callback(new Error(result), "");
+          return;
+        }
+        callback(null, result);
+      });
+    }
+
     function ssdpProcessCallback(error: Error | null, tv: TV | null): void {
       if (error !== null) {
         backendSearcher.emit("error", error);
@@ -47,21 +65,18 @@ export class BackendSearcher extends EventEmitter {
       backendSearcher.emit("found", tv);
     }
 
-    function ssdpProcess(
+    async function ssdpProcessAsync(
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-      callback: (error: Common.Error.CommonError | null, tv: TV | null) => void,
-    ): void {
+    ): Promise<TV | null> {
       if (headers.USN === undefined) {
-        callback(null, null);
-        return;
+        return null;
       }
       if (
         !headers.USN.endsWith("::urn:lge-com:service:webos-second-screen:1")
       ) {
-        callback(null, null);
-        return;
+        return null;
       }
       const messageTypeMap: Record<string, string> = {
         "advertise-alive": "NT",
@@ -69,28 +84,24 @@ export class BackendSearcher extends EventEmitter {
         response: "ST",
       };
       if (messageTypeMap[messageName] === undefined) {
-        callback(null, null);
-        return;
+        return null;
       }
       // Make sure it is the webOS second screen service.
       if (headers[messageTypeMap[messageName]] === undefined) {
-        callback(null, null);
-        return;
+        return null;
       }
       if (
         headers[messageTypeMap[messageName]] !==
         "urn:lge-com:service:webos-second-screen:1"
       ) {
-        callback(null, null);
-        return;
+        return null;
       }
       // Make sure that if it is a advertise (NT) message then it is "ssdp:alive".
       if (
         messageTypeMap[messageName] === "NT" &&
         (headers.NTS === undefined || headers.NTS !== "ssdp:alive")
       ) {
-        callback(null, null);
-        return;
+        return null;
       }
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (
@@ -98,13 +109,11 @@ export class BackendSearcher extends EventEmitter {
         (headers.SERVER as string).match(/^webos\/[\d.]+ upnp\/1\.[01]$/i) ===
           null
       ) {
-        callback(null, null);
-        return;
+        return null;
       }
       // Get the IP address associated with the TV.
       if (rinfo.address === undefined) {
-        callback(null, null);
-        return;
+        return null;
       }
 
       const tv: {
@@ -125,116 +134,168 @@ export class BackendSearcher extends EventEmitter {
       // and Unique Device Name (UDN).
       //
       if (headers.LOCATION === undefined) {
-        callback(null, null);
-        return;
+        return null;
       }
-      void fetch(headers.LOCATION)
-        .then(async (response: Response): Promise<Blob> => {
-          if (response.status !== 200) {
-            throw Common.Error.create({
-              message: "Could not fetch descriptionXML from the TV",
-              general: "tv",
-              specific: "descriptionXmlFetchError",
-            });
-          }
-          return await response.blob();
-        })
-        .then(async (blob: Blob) => {
-          const mimetype: string[] = blob.type.split(";");
-          if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
-            throw Common.Error.create({
-              message: "Could not fetch descriptionXML from the TV",
-              general: "tv",
-              specific: "descriptionXmlFetchError",
-            });
-          }
-          return await blob.text();
-        })
-        .then((descriptionXml: string): void => {
-          xml2js(
-            descriptionXml,
-            (error: Error | null, description?: UPnPDevice | null): void => {
-              if (error !== null) {
-                const commonError = Common.Error.create({
-                  message: "Could not fetch descriptionXML from the TV",
-                  general: "tv",
-                  specific: "descriptionXmlFetchError",
-                  cause: error,
-                });
-                callback(commonError, null);
-                return;
-              }
-              if (description === undefined || description === null) {
-                callback(null, null);
-                return;
-              }
 
-              //
-              // These properties are required by the UPnP specification but
-              // check anyway.
-              //
-              if (
-                description.root?.device === undefined ||
-                description.root.device.length !== 1 ||
-                description.root.device[0].manufacturer === undefined ||
-                description.root.device[0].manufacturer.length !== 1 ||
-                description.root.device[0].friendlyName === undefined ||
-                description.root.device[0].friendlyName.length !== 1 ||
-                description.root.device[0].UDN === undefined ||
-                description.root.device[0].UDN.length !== 1
-              ) {
-                callback(null, null);
-                return;
-              }
-
-              //
-              // Make sure this is from LG Electronics and has both a friendly
-              // name and a UDN.
-              //
-              if (
-                description.root.device[0].manufacturer[0].match(
-                  /^lg electronics$/i,
-                ) !== null ||
-                description.root.device[0].friendlyName[0] === "" ||
-                description.root.device[0].UDN[0] === ""
-              ) {
-                callback(null, null);
-                return;
-              }
-              [tv.name] = description.root.device[0].friendlyName;
-              [tv.udn] = description.root.device[0].UDN;
-
-              //
-              // Get the mac address needed to turn on the TV using wake on
-              // lan.
-              //
-              arp.getMAC(tv.ip, (isError: boolean, result: string): void => {
-                if (isError) {
-                  const error = Common.Error.create({
-                    message: "Could not get TV's MAC address",
-                    general: "tv",
-                    specific: "macAddressError",
-                    cause: result,
-                  });
-                  callback(error, null);
-                  return;
-                }
-                tv.mac = result;
-                callback(null, tv as TV);
-              });
-            },
-          );
-        })
-        .catch((error) => {
-          const commonError =
-            error instanceof Common.Error.CommonError
-              ? error
-              : Common.Error.create({
-                  general: "tv",
-                  cause: error,
-                });
-          callback(commonError, null);
+      let response;
+      try {
+        response = await fetch(headers.LOCATION);
+      } catch (error) {
+        throw Common.Error.create({ general: "tv", cause: error });
+      }
+      if (response.status !== 200) {
+        throw Common.Error.create({
+          message: "Could not fetch descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlFetchError",
         });
+      }
+
+      let blob;
+      try {
+        blob = await response.blob();
+      } catch (error) {
+        throw Common.Error.create({ general: "tv", cause: error });
+      }
+
+      const mimetype: string[] = blob.type.split(";");
+      if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
+        throw Common.Error.create({
+          message: "Could not fetch descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlFetchError",
+        });
+      }
+
+      let descriptionXml;
+      try {
+        descriptionXml = await blob.text();
+      } catch (error) {
+        throw Common.Error.create({ general: "tv", cause: error });
+      }
+
+      let description;
+      try {
+        const xml2jsWithPromise = promisify(xml2js);
+        description = (await xml2jsWithPromise(descriptionXml)) as {
+          root?: {
+            device?: Array<{
+              manufacturer?: string[];
+              friendlyName?: string[];
+              UDN?: string[];
+            }>;
+          };
+        };
+      } catch (error) {
+        throw Common.Error.create({
+          message: "Could not parse descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlParseError",
+          cause: error,
+        });
+      }
+
+      if (description === undefined || description === null) {
+        throw Common.Error.create({
+          message: "Could not parse descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlParseError",
+        });
+      }
+
+      //
+      // These properties are required by the UPnP specification but
+      // check anyway.
+      //
+      if (
+        description.root?.device === undefined ||
+        description.root.device.length !== 1 ||
+        description.root.device[0].manufacturer === undefined ||
+        description.root.device[0].manufacturer.length !== 1 ||
+        description.root.device[0].friendlyName === undefined ||
+        description.root.device[0].friendlyName.length !== 1 ||
+        description.root.device[0].UDN === undefined ||
+        description.root.device[0].UDN.length !== 1
+      ) {
+        throw Common.Error.create({
+          message: "Could not fetch descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlFormatError",
+        });
+      }
+
+      //
+      // Make sure this is from LG Electronics and has both a friendly
+      // name and a UDN.
+      //
+      if (
+        description.root.device[0].manufacturer[0].match(
+          /^lg electronics$/i,
+        ) !== null ||
+        description.root.device[0].friendlyName[0] === "" ||
+        description.root.device[0].UDN[0] === ""
+      ) {
+        throw Common.Error.create({
+          message: "Could not fetch descriptionXML from the TV",
+          general: "tv",
+          specific: "descriptionXmlFormatError",
+        });
+      }
+      [tv.name] = description.root.device[0].friendlyName;
+      [tv.udn] = description.root.device[0].UDN;
+
+      //
+      // Get the mac address needed to turn on the TV using wake on
+      // lan.
+      //
+      try {
+        const getMACWithPromise = promisify(getMAC);
+        tv.mac = await getMACWithPromise(tv.ip);
+      } catch (error) {
+        throw Common.Error.create({
+          message: "Could not get TV's MAC address",
+          general: "tv",
+          specific: "macAddressError",
+          cause: error,
+        });
+      }
+
+      return {
+        udn: tv.udn,
+        name: tv.name,
+        ip: tv.ip,
+        url: tv.url,
+        mac: tv.mac,
+        key: tv.key,
+      };
+    }
+
+    function ssdpProcess(
+      messageName: string,
+      headers: SsdpHeaders,
+      rinfo: dgram.RemoteInfo,
+      callback: (error: Common.Error.CommonError | null, tv: TV | null) => void,
+    ): void {
+      ssdpProcessAsync(messageName, headers, rinfo)
+        .then((tv: TV | null) =>
+          setImmediate((): void => {
+            // eslint-disable-next-line promise/no-callback-in-promise
+            callback(null, tv);
+          }),
+        )
+        .catch((error: unknown) =>
+          setImmediate((): void => {
+            const commonError =
+              error instanceof Common.Error.CommonError
+                ? error
+                : Common.Error.create({
+                    general: "tv",
+                    cause: error,
+                  });
+            // eslint-disable-next-line promise/no-callback-in-promise
+            callback(commonError, null);
+          }),
+        );
     }
 
     backendSearcher._ssdpNotify.on(

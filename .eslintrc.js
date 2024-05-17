@@ -11,6 +11,7 @@ module.exports = {
     "eslint-config-standard",
     "eslint-config-love",
     "eslint-config-prettier",
+    "plugin:promise/recommended",
     "plugin:unicorn/all",
   ],
   parser: "@typescript-eslint/parser",
