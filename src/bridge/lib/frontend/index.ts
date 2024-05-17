@@ -6,10 +6,7 @@
 // since the 1.6.0 release on 09 September 2015.
 //
 
-import { URL } from "node:url";
 import express from "express";
-import { expressjwt } from "express-jwt";
-import type { ExpressJwtRequest } from "express-jwt";
 import IPBlacklist from "@outofsync/express-ip-blacklist";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
@@ -99,127 +96,106 @@ export class Frontend {
         response: express.Response,
         next: express.NextFunction,
       ): void {
-        const asyncLoginTokenAuthorizationHandler = expressjwt({
-          secret: frontend._loginTokenAuth.x509PublicCert(),
-          algorithms: ["RS256"],
-        });
-
-        void asyncLoginTokenAuthorizationHandler(request, response, next).catch(
-          (error: unknown) => {
-            next(error);
-          },
-        );
-      }
-
-      function jwtErrorHandler(
-        error: unknown,
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction,
-      ): void {
-        Common.Debug.debug("jwtErrorHandler: start");
-        if (response.headersSent) {
-          next(error);
-          return;
-        }
-
-        if (error !== null) {
-          ipBlacklistIncrement(request, response);
-          Common.Debug.debug("jwtErrorHandler: Failed Validation:");
-          Common.Debug.debugError(error);
-          const wwwAuthenticate = "Bearer";
-          response
-            .setHeader("WWW-Authenticate", wwwAuthenticate)
-            .status(401)
-            .json({});
-          return;
-        }
-
-        next(error);
-      }
-
-      function jwtPayloadHandler(
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction,
-      ): void {
-        async function asyncJwtPayloadHandler(
+        async function asyncLoginTokenAuthorizationHandler(
           request: express.Request,
           response: express.Response,
           next: express.NextFunction,
         ): Promise<void> {
-          Common.Debug.debug("jwtPayloadHandler: start");
-          const jwtPayload = (request as unknown as ExpressJwtRequest).auth;
+          Common.Debug.debug("loginTokenAuthorizationHandler: start");
+          function invalidAuthorizationCredentialResponse(
+            message: string,
+          ): object {
+            return {
+              error: "INVALID_AUTHORIZATION_CREDENTIAL",
+              error_description: message,
+            };
+          }
 
-          if (jwtPayload === undefined) {
+          response.locals.bridgeHostname = null;
+          response.locals.userId = null;
+          response.locals.email = null;
+          response.locals.skillToken = null;
+
+          // Extract bridgeToken from "authorization" header. RFC-6750 allows
+          // for the Bearer token to be included in the "authorization" header, as
+          // part part of the URL or in the body. Since we put it in the header, we
+          // know that is were it will be. Per RFC-6750, failure to find the Bearer
+          // token results 401 response that includes a "WWW-Authenticate" header.
+          const wwwAuthenticate = "Bearer";
+          if (request.headers.authorization === "undefined") {
             ipBlacklistIncrement(request, response);
-            Common.Debug.debug("jwtPayloadHandler: error: no 'request.auth'.");
-            response.status(401).json({}).end();
+            const body = invalidAuthorizationCredentialResponse(
+              'Bridge connection failed due to missing "authorization" header.',
+            );
+            Common.Debug.debug("loginTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
+            response
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json({});
             return;
           }
-
-          Common.Debug.debugJSON(jwtPayload);
+          const authorization =
+            request.headers.authorization?.split(/\s+/).map((x) => x.trim()) ??
+            [];
+          if (authorization.length !== 2) {
+            ipBlacklistIncrement(request, response);
+            const body = invalidAuthorizationCredentialResponse(
+              'Bridge connection failed due to malformed "authorization" header.',
+            );
+            Common.Debug.debug("loginTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
+            response
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json(body);
+            return;
+          }
+          if (authorization[0].toLowerCase() !== "bearer") {
+            ipBlacklistIncrement(request, response);
+            const body = invalidAuthorizationCredentialResponse(
+              "Bridge connection failed due to incorrect authorization method.",
+            );
+            Common.Debug.debug("loginTokenAuthorizationHandler: failure:");
+            Common.Debug.debugJSON(body);
+            response
+              .setHeader("WWW-Authenticate", wwwAuthenticate)
+              .status(401)
+              .json(body);
+            return;
+          }
+          const loginToken = authorization[1];
 
           try {
-            const authorized =
-              await frontend._loginTokenAuth.authorizeJwTPayload(jwtPayload);
-            if (!authorized) {
+            const record =
+              await frontend._loginTokenAuth.authorizeLoginToken(loginToken);
+            if (record === null) {
               ipBlacklistIncrement(request, response);
-              Common.Debug.debug("jwtPayloadHandler: failed authorization");
-              response.status(401).json({});
-              return;
-            }
-          } catch (error) {
-            Common.Debug.debugError(error);
-            response.status(500).json({});
-          }
-
-          if (typeof jwtPayload.sub !== "string") {
-            response.status(500).json({});
-            return;
-          }
-          const skillToken = jwtPayload.sub;
-
-          if (typeof jwtPayload.aud !== "string") {
-            response.status(500).json({});
-            return;
-          }
-          const url = new URL(jwtPayload.aud);
-          const bridgeHostname = url.hostname;
-
-          let userId: string;
-          let email: string;
-          try {
-            const userProfile: Common.Profile.UserProfile =
-              await Common.Profile.getUserProfile(skillToken);
-            userId = userProfile.userId;
-            email = userProfile.email;
-          } catch (error) {
-            if (
-              error instanceof Common.Error.CommonError &&
-              error.general === "authorization"
-            ) {
-              const wwwAuthenticate = "Bearer";
+              const body = invalidAuthorizationCredentialResponse(
+                "Bridge connection failed due to invalid login token.",
+              );
               response
                 .setHeader("WWW-Authenticate", wwwAuthenticate)
                 .status(401)
-                .json({})
+                .json(body)
                 .send();
               return;
             }
-            response.status(500).json({}).send();
+            response.locals.bridgeHostname = record.bridgeHostname;
+            response.locals.email = record.email;
+            response.locals.userId = record.userId;
+            response.locals.skillToken = record.skillToken;
+          } catch (error) {
+            Common.Debug.debug("bridgeTokenAuthorizationHandler: failure:");
+            Common.Debug.debugError(error);
+            response.status(500).json({});
             return;
           }
-
-          response.locals.bridgeHostname = bridgeHostname;
-          response.locals.userId = userId;
-          response.locals.email = email;
-          response.locals.skillToken = skillToken;
-
+          Common.Debug.debug("bridgeTokenAuthorizationHandler: success");
           next();
         }
 
-        void asyncJwtPayloadHandler(request, response, next).catch(
+        void asyncLoginTokenAuthorizationHandler(request, response, next).catch(
           (error: unknown) => {
             next(error);
           },
@@ -520,8 +496,6 @@ export class Frontend {
       frontend._server.get(
         Common.constants.bridge.path.login,
         loginTokenAuthorizationHandler,
-        jwtErrorHandler,
-        jwtPayloadHandler,
         loginHandler,
       );
 

@@ -11,3 +11,7 @@
 ### Classes
 
 - [LoginTokenAuth](classes/LoginTokenAuth.md)
+
+### Interfaces
+
+- [LoginTokenAuthRecord](interfaces/LoginTokenAuthRecord.md)

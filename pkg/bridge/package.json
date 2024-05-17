@@ -48,7 +48,6 @@
     "ajv-formats",
     "async-mutex",
     "express",
-    "express-jwt",
     "http-errors",
     "isnumeric",
     "jsonwebtoken",

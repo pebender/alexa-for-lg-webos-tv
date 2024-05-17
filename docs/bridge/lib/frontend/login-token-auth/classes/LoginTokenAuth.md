@@ -36,27 +36,17 @@
 
 ## Methods
 
-### authorizeJwTPayload()
+### authorizeLoginToken()
 
-> **authorizeJwTPayload**(`jwtPayload`): `Promise`\<`boolean`\>
+> **authorizeLoginToken**(`loginToken`): `Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
 
 #### Parameters
 
-• **jwtPayload**: `JwtPayload`
+• **loginToken**: `string`
 
 #### Returns
 
-`Promise`\<`boolean`\>
-
-***
-
-### x509PublicCert()
-
-> **x509PublicCert**(): `Buffer`
-
-#### Returns
-
-`Buffer`
+`Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
 
 ***
 
