@@ -478,9 +478,11 @@ export class Frontend {
       frontend._server.use(ipBlacklistHandler);
 
       // Handle login
-      frontend._server.get(
+      frontend._server.post(
         Common.constants.bridge.path.login,
         synchronizer(loginTokenAuthorizationHandlerCore),
+        synchronizer(contentTypeHandlerCore),
+        express.json(),
         synchronizer(loginHandlerCore, false),
         errorHandler,
       );

@@ -132,12 +132,16 @@ sequenceDiagram
 
 ### The Login Interface Message Formats
 
-The `Login Request` message is the HTTP request header:
+The `Login Request` message is the HTTP request header and body:
 
 ```http
-GET /login
+POST /login
 Host: BRIDGE_HOSTNAME
 Authentication: Bearer LOGIN_TOKEN
+```
+
+```json
+{}
 ```
 
 The `Login Response` message is the HTTP response header and body
