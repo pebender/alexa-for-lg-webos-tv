@@ -1,5 +1,6 @@
 {
   "reject": [
-    "@types/node"
+    "@types/node",
+    "eslint-config-love"
   ]
 }
