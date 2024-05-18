@@ -11,6 +11,7 @@ module.exports = {
     "eslint-config-standard",
     "eslint-config-love",
     "eslint-config-prettier",
+    "plugin:import/recommended",
     "plugin:promise/recommended",
     "plugin:unicorn/all",
   ],
@@ -27,9 +28,13 @@ module.exports = {
     "eslint-plugin-tsdoc",
     "eslint-plugin-unicorn",
   ],
+  settings: {
+    'import/resolver': {
+      node: true,
+      typescript: true,
+    },
+  },
   rules: {
-    "import/newline-after-import": ["error"],
-    "import/order": ["error"],
     "tsdoc/syntax": ["error"],
     "prettier/prettier": ["error"],
     "unicorn/consistent-function-scoping": "off",
