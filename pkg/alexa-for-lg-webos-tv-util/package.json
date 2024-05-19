@@ -1,7 +1,7 @@
 {
-  "name": "alexa-for-lg-webos-tv-bridge",
+  "name": "alexa-for-lg-webos-tv-util",
   "version": "0.0.1",
-  "description": "A daemon/service to bridge the Alexa Smart Home Skill protocol to the LG webOS TV control protocol",
+  "description": "A set of utilities.",
   "main": "index.js",
   "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "files": [
+    "bin",
     "lib",
     "src",
     "TODO.txt"
@@ -48,6 +49,7 @@
     "ajv-formats",
     "async-mutex",
     "express",
+    "express-jwt",
     "http-errors",
     "isnumeric",
     "jsonwebtoken",
@@ -69,6 +71,6 @@
     "pack": "npm pack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
-    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/login-token-auth/*.crt\" \"../pkg/bridge/lib/\")"
+    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/authorization/*.crt\" \"../pkg/alexa-for-lg-webos-tv-bridge/lib/\")"
   }
 }
