@@ -66,11 +66,9 @@
     "clean": "rm -rf lib node_modules package-lock.json *.tgz",
     "install_modules": "npm install",
     "build": "npx tsc",
-    "postbuild": "npm run copy_files",
     "watch": "npx tsc --watch",
     "pack": "npm pack",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
-    "copy_files": "(cd ../../src && npx copyfiles \"bridge/lib/frontend/authorization/*.crt\" \"../pkg/alexa-for-lg-webos-tv-bridge/lib/\")"
+    "all": "npm run clean && npm run install_modules && npm run build && npm run pack"
   }
 }
