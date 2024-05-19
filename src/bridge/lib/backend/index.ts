@@ -16,6 +16,9 @@ import { BackendController } from "./backend-controller";
 import { BackendSearcher } from "./backend-searcher";
 
 export { BackendControl } from "./backend-control";
+export { BackendController } from "./backend-controller";
+export { BackendSearcher } from "./backend-searcher";
+export type { TV } from "./tv";
 
 export class Backend extends EventEmitter {
   private readonly _configuration: Configuration;

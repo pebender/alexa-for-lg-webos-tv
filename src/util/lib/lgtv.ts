@@ -2,9 +2,7 @@ import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
 import * as Common from "../../common";
-import { Configuration } from "../../bridge/lib/configuration";
-import type { TV } from "../../bridge/lib/backend/tv";
-import { Backend } from "../../bridge/lib/backend";
+import { Configuration, Backend, type TV } from "../../bridge";
 
 export async function getBackend(): Promise<Backend> {
   const configurationDirectory = persistPath(

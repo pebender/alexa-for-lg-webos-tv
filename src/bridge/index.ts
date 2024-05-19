@@ -6,6 +6,11 @@ import { Configuration } from "./lib/configuration";
 import { Frontend } from "./lib/frontend";
 import { Middle } from "./lib/middle";
 
+export { Configuration } from "./lib/configuration";
+export { Backend, type TV } from "./lib/backend";
+export { Frontend } from "./lib/frontend";
+export { Middle } from "./lib/middle";
+
 /**
  * A class to build and start a bridge.
  *

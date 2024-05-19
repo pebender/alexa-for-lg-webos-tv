@@ -17,3 +17,21 @@
 ### BackendControl
 
 Re-exports [BackendControl](backend-control/classes/BackendControl.md)
+
+***
+
+### BackendController
+
+Re-exports [BackendController](backend-controller/classes/BackendController.md)
+
+***
+
+### BackendSearcher
+
+Re-exports [BackendSearcher](backend-searcher/classes/BackendSearcher.md)
+
+***
+
+### TV
+
+Re-exports [TV](tv/interfaces/TV.md)
