@@ -157,7 +157,7 @@ export class Middle {
       try {
         const invalid = !this._responseSchemaValidator(shsResponse);
         if (invalid) {
-          const error = Common.Error.create({
+          const error = new Common.Error.CommonError({
             message: "Smart Home Skill Response schema validation failed",
             cause: {
               response: shsResponse,

@@ -86,7 +86,7 @@ export class BackendController extends EventEmitter {
 
   private throwIfNotKnownTV(methodName: string, udn: UDN): void {
     if (this._controls[udn] === undefined) {
-      throw Common.Error.create({
+      throw new Common.Error.CommonError({
         message: `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
         general: "tv",
         specific: "tvUnknown",

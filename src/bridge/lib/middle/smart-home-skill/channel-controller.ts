@@ -242,7 +242,7 @@ function states(
       const lgtvResponse: LGTV.Response =
         await backendControl.lgtvCommand(lgtvRequest);
       if (typeof lgtvResponse.appId !== "string") {
-        throw Common.Error.create({
+        throw new Common.Error.CommonError({
           message: "TV response was invalid",
           general: "tv",
           specific: "responseInvalid",
@@ -250,7 +250,7 @@ function states(
         });
       }
       if (lgtvResponse.appId !== "com.webos.app.livetv") {
-        throw Common.Error.create({
+        throw new Common.Error.CommonError({
           message: "TV channel requested when TV was not tuned to a channel",
           general: "tv",
           specific: "requestInvalidInCurrentState",

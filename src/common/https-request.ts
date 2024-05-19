@@ -28,7 +28,7 @@ function createHttpError(
   cause?: unknown,
 ): CommonError.CommonError {
   const general = "http";
-  return CommonError.create({ general, specific, cause });
+  return new CommonError.CommonError({ general, specific, cause });
 }
 
 /**

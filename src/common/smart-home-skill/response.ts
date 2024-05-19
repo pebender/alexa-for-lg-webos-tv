@@ -322,7 +322,7 @@ export class Response {
     type: string,
     message: string,
   ): Response {
-    const error = CommonError.create({ message });
+    const error = new CommonError.CommonError({ message });
     error.name = type;
     Error.captureStackTrace(error);
     return this.buildAlexaErrorResponse(request, type, message);

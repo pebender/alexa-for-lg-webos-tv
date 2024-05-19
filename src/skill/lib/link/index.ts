@@ -55,7 +55,7 @@ export async function getCredentials(
       ) {
         throw error;
       }
-      throw Common.Error.create({
+      throw new Common.Error.CommonError({
         general: "link",
         specific: "skill_user_profile",
         cause: error,
@@ -67,7 +67,7 @@ export async function getCredentials(
     });
   }
   if (record.userId === null) {
-    throw Common.Error.create({
+    throw new Common.Error.CommonError({
       message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
       general: "database",
       specific: "field_value_not_found+userId",
@@ -79,7 +79,7 @@ export async function getCredentials(
       requiredFields: ["userId"],
     });
     if (record.userId === null) {
-      throw Common.Error.create({
+      throw new Common.Error.CommonError({
         message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
         general: "database",
         specific: "field_value_not_found+userId",
@@ -117,7 +117,7 @@ export async function sendMessageUsingBridgeToken(
 ): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
   if (bridgeHostname === null || bridgeToken === null) {
-    throw Common.Error.create({
+    throw new Common.Error.CommonError({
       general: "authorization",
       specific: "bridgeHostname_or_bridgeToken_not_found",
     });
@@ -147,7 +147,7 @@ export async function sendMessageUsingBridgeToken(
         updateBridgeToken: true,
       });
       if (bridgeHostname === null || bridgeToken === null) {
-        throw Common.Error.create({
+        throw new Common.Error.CommonError({
           general: "authorization",
           specific: "bridgeHostname_or_bridgeToken_not_found",
         });
@@ -185,7 +185,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create({
+          const error = new Common.Error.CommonError({
             general: "link",
             specific: "test_failed_tcp_connection",
             cause,
@@ -206,7 +206,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create({
+          const error = new Common.Error.CommonError({
             general: "link",
             specific: "test_failed_tls_connection",
             cause,
@@ -230,7 +230,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create({
+          const error = new Common.Error.CommonError({
             general: "link",
             specific: "test_failed_tls_certificate_validation",
             cause,
@@ -254,7 +254,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = Common.Error.create({
+          const error = new Common.Error.CommonError({
             general: "link",
             specific: "test_failed_tls_hostname_validation",
             cause,
@@ -279,14 +279,14 @@ export async function testConnection(skillToken: string): Promise<void> {
       if (error instanceof Common.Error.CommonError) {
         switch (error.specific) {
           case "BAD_GATEWAY": {
-            throw Common.Error.create({
+            throw new Common.Error.CommonError({
               general: "link",
               specific: "link_failed_http",
               cause: error,
             });
           }
           case "INVALID_AUTHORIZATION_CREDENTIAL": {
-            throw Common.Error.create({
+            throw new Common.Error.CommonError({
               general: "link",
               specific: "link_failed_authorization",
               cause: error,
@@ -303,13 +303,13 @@ export async function testConnection(skillToken: string): Promise<void> {
     bridgeToken: string | null;
   } = await getCredentials(skillToken);
   if (bridgeCredentials.bridgeHostname === null) {
-    throw Common.Error.create({
+    throw new Common.Error.CommonError({
       general: "link",
       specific: "bridge_hostname_not_found",
     });
   }
   if (bridgeCredentials.bridgeToken === null) {
-    throw Common.Error.create({
+    throw new Common.Error.CommonError({
       general: "link",
       specific: "bridge_token_not_found",
     });

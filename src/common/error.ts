@@ -33,7 +33,3 @@ export class CommonError extends Error implements NodeJS.ErrnoException {
     Error.captureStackTrace(this);
   }
 }
-
-export function create(options?: CommonErrorOptions): CommonError {
-  return new CommonError(options);
-}

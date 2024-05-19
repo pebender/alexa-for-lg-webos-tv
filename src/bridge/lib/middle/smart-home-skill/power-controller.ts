@@ -34,7 +34,7 @@ function turnOffHandler(
 ): Common.SHS.Response {
   const poweredOff = backendControl.turnOff();
   if (!poweredOff) {
-    const error = Common.Error.create({
+    const error = new Common.Error.CommonError({
       message: "TV power off failed.",
       general: "tv",
     });
@@ -52,7 +52,7 @@ async function turnOnHandler(
 ): Promise<Common.SHS.Response> {
   const poweredOn = await backendControl.turnOn();
   if (!poweredOn) {
-    const error = Common.Error.create({
+    const error = new Common.Error.CommonError({
       message: "TV power on failed.",
       general: "tv",
     });

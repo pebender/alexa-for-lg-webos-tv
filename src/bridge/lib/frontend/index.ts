@@ -67,7 +67,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return Common.Error.create({
+        return new Common.Error.CommonError({
           message: options?.message,
           general: "http",
           specific: "UNAUTHORIZED",
@@ -79,7 +79,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return Common.Error.create({
+        return new Common.Error.CommonError({
           message: options?.message,
           general: "http",
           specific: "INTERNAL_SERVER_ERROR",
@@ -91,7 +91,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return Common.Error.create({
+        return new Common.Error.CommonError({
           message: options?.message,
           general: "http",
           specific: "CONTENT_TYPE_MISSING",
@@ -103,7 +103,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return Common.Error.create({
+        return new Common.Error.CommonError({
           message: options?.message,
           general: "http",
           specific: "CONTENT_TYPE_INCORRECT",
@@ -115,7 +115,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return Common.Error.create({
+        return new Common.Error.CommonError({
           message: options?.message,
           general: "http",
           specific: "BODY_INVALID_FORMAT",

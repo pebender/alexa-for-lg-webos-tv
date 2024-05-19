@@ -23,7 +23,7 @@ export function debugError(error: unknown): void {
     const commonError: CommonError.CommonError =
       error instanceof CommonError.CommonError
         ? error
-        : CommonError.create({
+        : new CommonError.CommonError({
             message: "debugError: 'error' was not of type 'CommonError'",
             cause: error,
           });

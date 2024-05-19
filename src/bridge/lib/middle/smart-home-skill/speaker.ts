@@ -25,7 +25,7 @@ function states(
       const lgtvResponse: LGTV.ResponseVolume =
         (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.volume !== "number") {
-        throw Common.Error.create({
+        throw new Common.Error.CommonError({
           message: "invalid response from the TV",
           general: "tv",
           specific: "invalidResponse",
@@ -50,7 +50,7 @@ function states(
       const lgtvResponse: LGTV.ResponseVolume =
         (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.muted !== "boolean") {
-        throw Common.Error.create({
+        throw new Common.Error.CommonError({
           message: "invalid response from the TV",
           general: "tv",
           specific: "invalidResponse",
@@ -120,7 +120,7 @@ async function adjustVolumeHandler(
       lgtvRequest,
     )) as LGTV.ResponseVolume;
     if (lgtvResponse.volume === undefined) {
-      throw Common.Error.create({
+      throw new Common.Error.CommonError({
         message: "the T.V. did not return it's volume",
         general: "tv",
         specific: "responseInvalidFormat",

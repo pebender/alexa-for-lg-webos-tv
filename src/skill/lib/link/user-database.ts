@@ -29,7 +29,7 @@ function createDatabaseError(options?: {
     general: "database",
   };
   Object.assign(databaseErrorOptions, options);
-  return Common.Error.create(databaseErrorOptions);
+  return new Common.Error.CommonError(databaseErrorOptions);
 }
 
 async function getRecords(

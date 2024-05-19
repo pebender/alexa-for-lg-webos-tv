@@ -58,7 +58,7 @@ export async function getUserProfile(
         case "http": {
           switch (specific) {
             case "BAD_REQUEST": {
-              throw CommonError.create({
+              throw new CommonError.CommonError({
                 message:
                   "there was an authentication error while retrieving your profile",
                 general: "authorization",
@@ -67,7 +67,7 @@ export async function getUserProfile(
               });
             }
             case "UNAUTHORIZED": {
-              throw CommonError.create({
+              throw new CommonError.CommonError({
                 message:
                   "there was an authorization error while retrieving your profile",
                 general: "authorization",
@@ -89,14 +89,14 @@ export async function getUserProfile(
   }
 
   if (typeof response.user_id !== "string") {
-    throw CommonError.create({
+    throw new CommonError.CommonError({
       message: "there was no 'user_id' field in your profile",
       general: "authorization",
       specific: "missing_user_id",
     });
   }
   if (typeof response.email !== "string") {
-    throw CommonError.create({
+    throw new CommonError.CommonError({
       message: "there was no 'email' field in your profile",
       general: "authorization",
       specific: "missing_email",
