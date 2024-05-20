@@ -33,9 +33,8 @@ async function createHostnamesSimpleCardContent(
     Common.Debug.debug(
       `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${ipAddress}'.`,
     );
-    const commonError = new Common.Error.CommonError({
+    const commonError = new Common.Error.LinkCommonError({
       message: "I had a problem connecting to the bridge's I.P.  address.",
-      general: "link",
       cause: error,
     });
     Common.Debug.debugError(commonError);
@@ -68,7 +67,7 @@ async function setBridgeCredentials(
   const accessToken =
     handlerInput.requestEnvelope.context.System.user.accessToken;
   if (accessToken === undefined) {
-    throw new Common.Error.CommonError({
+    throw new Common.Error.GeneralCommonError({
       message:
         "There was a problem with account linking. Please re-link the skill and try again.",
     });
@@ -94,10 +93,9 @@ async function setBridgeCredentials(
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
-    const commonError = new Common.Error.CommonError({
+    const commonError = new Common.Error.LinkCommonError({
       message:
         "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
-      general: "link",
       cause: error,
     });
     Common.Debug.debugError(commonError);
@@ -105,7 +103,7 @@ async function setBridgeCredentials(
   }
   if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");
-    throw new Common.Error.CommonError({
+    throw new Common.Error.GeneralCommonError({
       message:
         "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     });

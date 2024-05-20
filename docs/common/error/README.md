@@ -10,16 +10,20 @@
 
 ### Classes
 
+- [AuthorizationCommonError](classes/AuthorizationCommonError.md)
 - [CommonError](classes/CommonError.md)
-
-### Interfaces
-
-- [CommonErrorOptions](interfaces/CommonErrorOptions.md)
+- [DatabaseCommonError](classes/DatabaseCommonError.md)
+- [GeneralCommonError](classes/GeneralCommonError.md)
+- [HttpCommonError](classes/HttpCommonError.md)
+- [LinkCommonError](classes/LinkCommonError.md)
+- [TvCommonError](classes/TvCommonError.md)
 
 ### Type Aliases
 
-- [CommonErrorGeneral](type-aliases/CommonErrorGeneral.md)
-
-### Functions
-
-- [create](functions/create.md)
+- [AuthorizationCommonErrorCode](type-aliases/AuthorizationCommonErrorCode.md)
+- [CommonErrorName](type-aliases/CommonErrorName.md)
+- [DatabaseCommonErrorCode](type-aliases/DatabaseCommonErrorCode.md)
+- [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)
+- [HttpCommonErrorCode](type-aliases/HttpCommonErrorCode.md)
+- [LinkCommonErrorCode](type-aliases/LinkCommonErrorCode.md)
+- [TvCommonErrorCode](type-aliases/TvCommonErrorCode.md)

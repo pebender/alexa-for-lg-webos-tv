@@ -34,9 +34,8 @@ function turnOffHandler(
 ): Common.SHS.Response {
   const poweredOff = backendControl.turnOff();
   if (!poweredOff) {
-    const error = new Common.Error.CommonError({
+    const error = new Common.Error.TvCommonError({
       message: "TV power off failed.",
-      general: "tv",
     });
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -52,9 +51,8 @@ async function turnOnHandler(
 ): Promise<Common.SHS.Response> {
   const poweredOn = await backendControl.turnOn();
   if (!poweredOn) {
-    const error = new Common.Error.CommonError({
+    const error = new Common.Error.TvCommonError({
       message: "TV power on failed.",
-      general: "tv",
     });
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,

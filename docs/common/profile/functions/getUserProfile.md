@@ -12,9 +12,9 @@ This function retrieves the user profile specified by accessToken from the
 [Login with Amazon](https://developer.amazon.com/apps-and-games/login-with-amazon).
 If successful, it return the [UserProfile](../interfaces/UserProfile.md). Otherwise, it throws a
 [CommonError.CommonError](../../error/classes/CommonError.md) with
-[general](../../error/interfaces/CommonErrorOptions.md#general)="authorization" for
+CommonError.CommonErrorOptions.general | general="authorization" for
 any authorization related failures and
-[general](../../error/interfaces/CommonErrorOptions.md#general)="http" for any
+CommonError.CommonErrorOptions.general | general="http" for any
 others.
 
 ## Parameters
@@ -34,7 +34,7 @@ profile server in response to accessToken.
 ## Throws
 
 - a [CommonError.CommonError](../../error/classes/CommonError.md) with
-[general](../../error/interfaces/CommonErrorOptions.md#general)="authorization" for
+CommonError.CommonErrorOptions.general | general="authorization" for
 any authorization related failures and
-[general](../../error/interfaces/CommonErrorOptions.md#general)="http" for any
+CommonError.CommonErrorOptions.general | general="http" for any
 others.

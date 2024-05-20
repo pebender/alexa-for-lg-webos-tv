@@ -64,7 +64,7 @@ export class BackendControl extends EventEmitter {
               callback(error);
             } else {
               // eslint-disable-next-line promise/no-callback-in-promise
-              callback(new Common.Error.CommonError({ cause: error }));
+              callback(new Common.Error.TvCommonError({ cause: error }));
             }
           }),
         );
@@ -95,8 +95,7 @@ export class BackendControl extends EventEmitter {
       (error: NodeJS.ErrnoException | null): void => {
         backendControl._connecting = false;
         if (error !== null && error.code !== "EHOSTUNREACH") {
-          const commonError = new Common.Error.CommonError({
-            general: "tv",
+          const commonError = new Common.Error.TvCommonError({
             cause: error,
           });
           backendControl.emit("error", commonError);
@@ -291,10 +290,9 @@ export class BackendControl extends EventEmitter {
             (error: Error | null, response?: LGTV.Response): void => {
               if (error !== null) {
                 reject(
-                  new Common.Error.CommonError({
+                  new Common.Error.TvCommonError({
+                    code: "connectionRequestError",
                     message: "TV connection request error",
-                    general: "tv",
-                    specific: "connectionRequestError",
                     cause: error,
                   }),
                 );
@@ -302,9 +300,8 @@ export class BackendControl extends EventEmitter {
               }
               if (response === undefined) {
                 reject(
-                  new Common.Error.CommonError({
+                  new Common.Error.TvCommonError({
                     message: "LGTV API violation",
-                    general: "tv",
                   }),
                 );
                 return;
@@ -323,10 +320,9 @@ export class BackendControl extends EventEmitter {
           (error: Error | null, response?: LGTV.Response): void => {
             if (error !== null) {
               reject(
-                new Common.Error.CommonError({
+                new Common.Error.TvCommonError({
+                  code: "connectionRequestError",
                   message: "TV connection request error",
-                  general: "tv",
-                  specific: "connectionRequestError",
                   cause: error,
                 }),
               );
@@ -334,10 +330,9 @@ export class BackendControl extends EventEmitter {
             }
             if (response === undefined) {
               reject(
-                new Common.Error.CommonError({
+                new Common.Error.TvCommonError({
+                  code: "lgtvApiViolation",
                   message: "LGTV API violation",
-                  general: "tv",
-                  specific: "lgtvApiViolation",
                 }),
               );
               return;
@@ -348,10 +343,9 @@ export class BackendControl extends EventEmitter {
       });
     }
     if (lgtvResponse.returnValue === undefined) {
-      throw new Common.Error.CommonError({
+      throw new Common.Error.TvCommonError({
+        code: "connectionResponseInvalidFormat",
         message: "TV connection response missing return value",
-        general: "tv",
-        specific: "connectionResponseInvalidFormat",
         cause: { lgtvResponse },
       });
     }
@@ -370,10 +364,9 @@ export class BackendControl extends EventEmitter {
       ) {
         errorCode = lgtvResponse.errorCode.toString();
       }
-      throw new Common.Error.CommonError({
+      throw new Common.Error.TvCommonError({
+        code: "connectionResponseError",
         message: `TV connection response returned the error: ${errorText} (${errorCode}`,
-        general: "tv",
-        specific: "connectionResponseError",
         cause: { lgtvResponse },
       });
     }
@@ -399,10 +392,9 @@ export class BackendControl extends EventEmitter {
         uri,
         (error: Error | null, response?: LGTV.Response) => {
           if (error !== null) {
-            const commonError = new Common.Error.CommonError({
+            const commonError = new Common.Error.TvCommonError({
+              code: "subscriptionError",
               message: `TV error from subscription "${uri}"`,
-              general: "tv",
-              specific: "subscriptionError",
               cause: error,
             });
             this.emit(uri, commonError, null);
@@ -410,10 +402,9 @@ export class BackendControl extends EventEmitter {
           }
 
           if (response === undefined) {
-            const commonError = new Common.Error.CommonError({
+            const commonError = new Common.Error.TvCommonError({
+              code: "lgtvApiViolation",
               message: "LGTV API violation",
-              general: "tv",
-              specific: "lgtvApiViolation",
             });
             this.emit(uri, commonError, null);
             return;

@@ -20,18 +20,6 @@ const dynamoDBClient = new DynamoDBClient();
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
-function createDatabaseError(options?: {
-  message?: string;
-  specific?: string;
-  cause?: unknown;
-}): Common.Error.CommonError {
-  const databaseErrorOptions: Common.Error.CommonErrorOptions = {
-    general: "database",
-  };
-  Object.assign(databaseErrorOptions, options);
-  return new Common.Error.CommonError(databaseErrorOptions);
-}
-
 async function getRecords(
   queryCommand: QueryCommand,
   options?: {
@@ -49,17 +37,17 @@ async function getRecords(
   try {
     data = await dynamoDBDocumentClient.send(queryCommand);
   } catch (error) {
-    throw createDatabaseError({ cause: error });
+    throw new Common.Error.DatabaseCommonError({ cause: error });
   }
 
   if (data.Count === undefined || data.Items === undefined) {
-    throw createDatabaseError();
+    throw new Common.Error.DatabaseCommonError({});
   }
   if (required && data.Count === 0) {
-    throw createDatabaseError({ specific: "not_found" });
+    throw new Common.Error.DatabaseCommonError({ code: "recordNotFound" });
   }
   if (unique && data.Count > 1) {
-    throw createDatabaseError({ specific: "not_unique" });
+    throw new Common.Error.DatabaseCommonError({ code: "recordNotUnique" });
   }
 
   for (const item of data.Items) {
@@ -72,8 +60,8 @@ async function getRecords(
 
     for (const requiredField of requiredFields) {
       if (!Object.hasOwn(item, requiredField)) {
-        throw createDatabaseError({
-          specific: `missing_field+${requiredField}`,
+        throw new Common.Error.DatabaseCommonError({
+          code: "fieldNotFound",
         });
       }
     }
@@ -82,9 +70,9 @@ async function getRecords(
       if (typeof item.userId === "string") {
         record.userId = item.userId === "" ? null : item.userId;
       } else {
-        throw createDatabaseError({
+        throw new Common.Error.DatabaseCommonError({
           message: `invalid type. field 'userId' should be type 'string' but was type '${typeof item.userId}'`,
-          specific: "invalid_field+userId",
+          code: "fieldInvalid",
         });
       }
     }
@@ -92,9 +80,9 @@ async function getRecords(
       if (typeof item.skillToken === "string") {
         record.skillToken = item.skillToken === "" ? null : item.skillToken;
       } else {
-        throw createDatabaseError({
+        throw new Common.Error.DatabaseCommonError({
           message: `invalid type. field 'skillToken' should be type 'string' but was type '${typeof item.skillToken}'`,
-          specific: "invalid_field+skillToken",
+          code: "fieldInvalid",
         });
       }
     }
@@ -103,9 +91,9 @@ async function getRecords(
         record.bridgeHostname =
           item.bridgeHostname === "" ? null : item.bridgeHostname;
       } else {
-        throw createDatabaseError({
+        throw new Common.Error.DatabaseCommonError({
           message: `invalid type. field 'bridgeHostname' should be type 'string' but was type '${typeof item.bridgeHostname}'`,
-          specific: "invalid_field+bridgeHostname",
+          code: "fieldInvalid",
         });
       }
     }
@@ -113,9 +101,9 @@ async function getRecords(
       if (typeof item.bridgeToken === "string") {
         record.bridgeToken = item.bridgeToken === "" ? null : item.bridgeToken;
       } else {
-        throw createDatabaseError({
+        throw new Common.Error.DatabaseCommonError({
           message: `invalid type. field 'bridgeToken' should be type 'string' but was type '${typeof item.bridgeToken}'`,
-          specific: "invalid_field+bridgeToken",
+          code: "fieldInvalid",
         });
       }
     }
@@ -227,7 +215,7 @@ export async function setBridgeHostname(
     );
   } catch (error) {
     Common.Debug.debugError(error);
-    throw createDatabaseError({ cause: error });
+    throw new Common.Error.DatabaseCommonError({ cause: error });
   }
 }
 
@@ -253,7 +241,7 @@ export async function setBridgeCredentials(
     );
   } catch (error) {
     Common.Debug.debugError(error);
-    throw createDatabaseError({ cause: error });
+    throw new Common.Error.DatabaseCommonError({ cause: error });
   }
 }
 
@@ -274,6 +262,6 @@ export async function setSkillToken(
     );
   } catch (error) {
     Common.Debug.debugError(error);
-    throw createDatabaseError({ cause: error });
+    throw new Common.Error.DatabaseCommonError({ cause: error });
   }
 }

@@ -84,18 +84,16 @@ function states(
     const lgtvResponse: LGTV.Response =
       await backendControl.lgtvCommand(lgtvRequest);
     if (typeof lgtvResponse.appId !== "string") {
-      throw new Common.Error.CommonError({
+      throw new Common.Error.TvCommonError({
+        code: "responseInvalid",
         message: "TV response was invalid",
-        general: "tv",
-        specific: "responseInvalid",
         cause: { lgtvRequest, lgtvResponse },
       });
     }
     if (lgtvToAlexa[lgtvResponse.appId] === undefined) {
-      throw new Common.Error.CommonError({
+      throw new Common.Error.TvCommonError({
+        code: "responseValueUnknown",
         message: `TV unknown foreground application '${lgtvResponse.appId}'`,
-        general: "tv",
-        specific: "responseValueUnknown",
         cause: { lgtvRequest, lgtvResponse },
       });
     }

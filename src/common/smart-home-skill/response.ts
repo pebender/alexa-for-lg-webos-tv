@@ -252,7 +252,7 @@ export class Response {
     error: unknown,
   ): Response {
     if (error instanceof CommonError.CommonError) {
-      const errorName = `${error.general}.${error.specific ?? "unknown"}`;
+      const errorName = `${error.code} ?? "unknown"}`;
       const errorMessage = error.message === "" ? "unknown" : error.message;
       const type = "INTERNAL_ERROR";
       const message = `error: ${errorMessage} (${errorName})`;
@@ -322,7 +322,7 @@ export class Response {
     type: string,
     message: string,
   ): Response {
-    const error = new CommonError.CommonError({ message });
+    const error = new CommonError.GeneralCommonError({ message });
     error.name = type;
     Error.captureStackTrace(error);
     return this.buildAlexaErrorResponse(request, type, message);

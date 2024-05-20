@@ -10,6 +10,15 @@
 
 - `Error`
 
+## Extended by
+
+- [`GeneralCommonError`](GeneralCommonError.md)
+- [`AuthorizationCommonError`](AuthorizationCommonError.md)
+- [`DatabaseCommonError`](DatabaseCommonError.md)
+- [`HttpCommonError`](HttpCommonError.md)
+- [`LinkCommonError`](LinkCommonError.md)
+- [`TvCommonError`](TvCommonError.md)
+
 ## Implements
 
 - `ErrnoException`
@@ -18,11 +27,17 @@
 
 ### new CommonError()
 
-> **new CommonError**(`options`?): [`CommonError`](CommonError.md)
+> `protected` **new CommonError**(`options`): [`CommonError`](CommonError.md)
 
 #### Parameters
 
-• **options?**: [`CommonErrorOptions`](../interfaces/CommonErrorOptions.md)
+• **options**
+
+• **options.cause?**: `unknown`
+
+• **options.code?**: `string`
+
+• **options.message?**: `string`
 
 #### Returns
 
@@ -36,20 +51,8 @@
 
 ### code
 
-> `readonly` **code**: `string`
+> **code**: `string`
 
 #### Implementation of
 
 `NodeJS.ErrnoException.code`
-
-***
-
-### general
-
-> `readonly` **general**: [`CommonErrorGeneral`](../type-aliases/CommonErrorGeneral.md)
-
-***
-
-### specific?
-
-> `optional` `readonly` **specific**: `string`

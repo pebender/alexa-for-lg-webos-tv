@@ -23,12 +23,14 @@ export function debugError(error: unknown): void {
     const commonError: CommonError.CommonError =
       error instanceof CommonError.CommonError
         ? error
-        : new CommonError.CommonError({
+        : new CommonError.GeneralCommonError({
             message: "debugError: 'error' was not of type 'CommonError'",
             cause: error,
           });
     console.debug(
-      "error util.inspect:" + "\n" + inspect(commonError, { depth: 8 }),
+      "error util.inspect:" +
+        "\n" +
+        inspect(commonError, { depth: 8, getters: true }),
     );
   }
 }

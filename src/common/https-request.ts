@@ -9,26 +9,11 @@ export interface RequestOptions {
   headers: Record<string, string>;
 }
 
-type ResponseErrorNames =
-  | "CONNECTION_INTERRUPTED"
-  | "STATUS_CODE_MISSING"
-  | "BAD_REQUEST"
-  | "UNAUTHORIZED"
-  | "FORBIDDEN"
-  | "INTERNAL_SERVER_ERROR"
-  | "BAD_GATEWAY"
-  | "CONTENT_TYPE_MISSING"
-  | "CONTENT_TYPE_INCORRECT"
-  | "BODY_MISSING"
-  | "BODY_INVALID_FORMAT"
-  | "UNKNOWN_ERROR";
-
 function createHttpError(
-  specific: ResponseErrorNames,
+  code: CommonError.HttpCommonErrorCode,
   cause?: unknown,
-): CommonError.CommonError {
-  const general = "http";
-  return new CommonError.CommonError({ general, specific, cause });
+): CommonError.HttpCommonError {
+  return new CommonError.HttpCommonError({ code, cause });
 }
 
 /**
@@ -98,7 +83,7 @@ export async function request(
         });
         response.on("end", (): void => {
           if (!response.complete) {
-            reject(createHttpError("CONNECTION_INTERRUPTED"));
+            reject(createHttpError("connectionInterrupted"));
           }
 
           Debug.debug("HTTP Response");
@@ -110,33 +95,33 @@ export async function request(
           const contentType = response.headers["content-type"];
 
           if (statusCode === undefined) {
-            reject(createHttpError("STATUS_CODE_MISSING"));
+            reject(createHttpError("statusCodeNotFound"));
           }
           switch (statusCode) {
             case 400: {
-              reject(createHttpError("BAD_REQUEST"));
+              reject(createHttpError("badRequest"));
               break;
             }
             case 401: {
-              reject(createHttpError("UNAUTHORIZED"));
+              reject(createHttpError("unauthorized"));
               break;
             }
             case 403: {
-              reject(createHttpError("FORBIDDEN"));
+              reject(createHttpError("forbidden"));
               break;
             }
             case 500: {
-              reject(createHttpError("INTERNAL_SERVER_ERROR"));
+              reject(createHttpError("internalServerError"));
               break;
             }
             case 502: {
-              reject(createHttpError("BAD_GATEWAY"));
+              reject(createHttpError("badGateway"));
               break;
             }
           }
 
           if (contentType === undefined) {
-            reject(createHttpError("CONTENT_TYPE_MISSING"));
+            reject(createHttpError("contentTypeNotFound"));
             return;
           }
 
@@ -147,7 +132,7 @@ export async function request(
               .toLowerCase() !== "application/json"
           ) {
             reject(
-              createHttpError("CONTENT_TYPE_INCORRECT", {
+              createHttpError("contentTypeValueInvalid", {
                 contentType,
                 contentTypeParsed: contentType.split(/\w*;\w*/).toString(),
               }),
@@ -158,13 +143,13 @@ export async function request(
           try {
             const bodyUnknown: unknown = JSON.parse(data);
             if (typeof bodyUnknown !== "object" || bodyUnknown === null) {
-              reject(createHttpError("BODY_INVALID_FORMAT"));
+              reject(createHttpError("bodyNotFound"));
               return;
             }
             body = bodyUnknown;
           } catch (error) {
             Debug.debugError(error);
-            reject(createHttpError("BODY_INVALID_FORMAT"));
+            reject(createHttpError("bodyFormatInvalid"));
             return;
           }
           // Return the body.
@@ -172,7 +157,7 @@ export async function request(
         });
       });
       request.on("error", (): void => {
-        reject(createHttpError("UNKNOWN_ERROR"));
+        reject(createHttpError("unknown"));
       });
       if (options.method === "POST") {
         request.write(content);

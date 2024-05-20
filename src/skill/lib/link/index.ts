@@ -48,16 +48,11 @@ export async function getCredentials(
       const profile = await Common.Profile.getUserProfile(skillToken);
       userId = profile.userId;
     } catch (error) {
-      if (
-        error instanceof Common.Error.CommonError &&
-        typeof error.general === "string" &&
-        error.general === "authorization"
-      ) {
+      if (error instanceof Common.Error.AuthorizationCommonError) {
         throw error;
       }
-      throw new Common.Error.CommonError({
-        general: "link",
-        specific: "skill_user_profile",
+      throw new Common.Error.LinkCommonError({
+        code: "userProfileFetchFailed",
         cause: error,
       });
     }
@@ -67,10 +62,9 @@ export async function getCredentials(
     });
   }
   if (record.userId === null) {
-    throw new Common.Error.CommonError({
+    throw new Common.Error.DatabaseCommonError({
+      code: "fieldNotFound",
       message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
-      general: "database",
-      specific: "field_value_not_found+userId",
     });
   }
   if (typeof bridgeHostname === "string") {
@@ -79,10 +73,9 @@ export async function getCredentials(
       requiredFields: ["userId"],
     });
     if (record.userId === null) {
-      throw new Common.Error.CommonError({
+      throw new Common.Error.DatabaseCommonError({
+        code: "fieldNotFound",
         message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
-        general: "database",
-        specific: "field_value_not_found+userId",
       });
     }
   }
@@ -116,10 +109,14 @@ export async function sendMessageUsingBridgeToken(
   message: object,
 ): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
-  if (bridgeHostname === null || bridgeToken === null) {
-    throw new Common.Error.CommonError({
-      general: "authorization",
-      specific: "bridgeHostname_or_bridgeToken_not_found",
+  if (bridgeHostname === null) {
+    throw new Common.Error.AuthorizationCommonError({
+      code: "bridgeHostnameNotFound",
+    });
+  }
+  if (bridgeToken === null) {
+    throw new Common.Error.AuthorizationCommonError({
+      code: "bridgeTokenNotFound",
     });
   }
 
@@ -139,17 +136,21 @@ export async function sendMessageUsingBridgeToken(
     );
   } catch (error) {
     if (
-      (error as Common.Error.CommonError).general === "http" &&
-      (error as Common.Error.CommonError).specific === "UNAUTHORIZED"
+      error instanceof Common.Error.HttpCommonError &&
+      (error.code as Common.Error.HttpCommonErrorCode) === "unauthorized"
     ) {
       /* try again with a new bridge token */
       const { bridgeHostname, bridgeToken } = await getCredentials(skillToken, {
         updateBridgeToken: true,
       });
-      if (bridgeHostname === null || bridgeToken === null) {
-        throw new Common.Error.CommonError({
-          general: "authorization",
-          specific: "bridgeHostname_or_bridgeToken_not_found",
+      if (bridgeHostname === null) {
+        throw new Common.Error.AuthorizationCommonError({
+          code: "bridgeHostnameNotFound",
+        });
+      }
+      if (bridgeToken === null) {
+        throw new Common.Error.AuthorizationCommonError({
+          code: "bridgeTokenNotFound",
         });
       }
 
@@ -185,9 +186,8 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.CommonError({
-            general: "link",
-            specific: "test_failed_tcp_connection",
+          const error = new Common.Error.LinkCommonError({
+            code: "tcpConnectionFailed",
             cause,
           });
           reject(error);
@@ -206,9 +206,8 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.CommonError({
-            general: "link",
-            specific: "test_failed_tls_connection",
+          const error = new Common.Error.LinkCommonError({
+            code: "tlsConnectionFailed",
             cause,
           });
           reject(error);
@@ -230,9 +229,8 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.CommonError({
-            general: "link",
-            specific: "test_failed_tls_certificate_validation",
+          const error = new Common.Error.LinkCommonError({
+            code: "tlsCertificateValidationFailed",
             cause,
           });
           reject(error);
@@ -254,9 +252,8 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.CommonError({
-            general: "link",
-            specific: "test_failed_tls_hostname_validation",
+          const error = new Common.Error.LinkCommonError({
+            code: "tlsCertificateHostnameValidationFailed",
             cause,
           });
           reject(error);
@@ -276,19 +273,17 @@ export async function testConnection(skillToken: string): Promise<void> {
         request,
       );
     } catch (error) {
-      if (error instanceof Common.Error.CommonError) {
-        switch (error.specific) {
-          case "BAD_GATEWAY": {
-            throw new Common.Error.CommonError({
-              general: "link",
-              specific: "link_failed_http",
+      if (error instanceof Common.Error.HttpCommonError) {
+        switch (error.code as Common.Error.HttpCommonErrorCode) {
+          case "badGateway": {
+            throw new Common.Error.LinkCommonError({
+              code: "httpConnectionFailed",
               cause: error,
             });
           }
-          case "INVALID_AUTHORIZATION_CREDENTIAL": {
-            throw new Common.Error.CommonError({
-              general: "link",
-              specific: "link_failed_authorization",
+          case "unauthorized": {
+            throw new Common.Error.LinkCommonError({
+              code: "authorizationFailed",
               cause: error,
             });
           }
@@ -303,15 +298,13 @@ export async function testConnection(skillToken: string): Promise<void> {
     bridgeToken: string | null;
   } = await getCredentials(skillToken);
   if (bridgeCredentials.bridgeHostname === null) {
-    throw new Common.Error.CommonError({
-      general: "link",
-      specific: "bridge_hostname_not_found",
+    throw new Common.Error.LinkCommonError({
+      code: "bridgeHostnameNotFound",
     });
   }
   if (bridgeCredentials.bridgeToken === null) {
-    throw new Common.Error.CommonError({
-      general: "link",
-      specific: "bridge_token_not_found",
+    throw new Common.Error.LinkCommonError({
+      code: "bridgeTokenNotFound",
     });
   }
 

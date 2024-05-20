@@ -62,7 +62,7 @@ export class Request {
     if (this.directive.payload.grantee?.token !== undefined) {
       return this.directive.payload.grantee.token;
     }
-    throw new CommonError.CommonError({
+    throw new CommonError.GeneralCommonError({
       message: "the SHS Directive has no access token. this should not happen.",
     });
   }

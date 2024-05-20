@@ -1,0 +1,45 @@
+[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+
+***
+
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / LinkCommonError
+
+# Class: LinkCommonError
+
+## Extends
+
+- [`CommonError`](CommonError.md)
+
+## Constructors
+
+### new LinkCommonError()
+
+> **new LinkCommonError**(`options`): [`LinkCommonError`](LinkCommonError.md)
+
+#### Parameters
+
+• **options**
+
+• **options.cause?**: `unknown`
+
+• **options.code?**: [`LinkCommonErrorCode`](../type-aliases/LinkCommonErrorCode.md)
+
+• **options.message?**: `string`
+
+#### Returns
+
+[`LinkCommonError`](LinkCommonError.md)
+
+#### Overrides
+
+[`CommonError`](CommonError.md).[`constructor`](CommonError.md#constructors)
+
+## Properties
+
+### code
+
+> **code**: `string`
+
+#### Inherited from
+
+[`CommonError`](CommonError.md).[`code`](CommonError.md#code)

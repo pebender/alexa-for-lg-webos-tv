@@ -66,11 +66,10 @@ export class Frontend {
       function errorUnauthorized(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.CommonError {
-        return new Common.Error.CommonError({
+      }): Common.Error.HttpCommonError {
+        return new Common.Error.HttpCommonError({
+          code: "unauthorized",
           message: options?.message,
-          general: "http",
-          specific: "UNAUTHORIZED",
           cause: options?.cause,
         });
       }
@@ -79,10 +78,9 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.CommonError({
+        return new Common.Error.HttpCommonError({
+          code: "internalServerError",
           message: options?.message,
-          general: "http",
-          specific: "INTERNAL_SERVER_ERROR",
           cause: options?.cause,
         });
       }
@@ -91,10 +89,9 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.CommonError({
+        return new Common.Error.HttpCommonError({
+          code: "contentTypeNotFound",
           message: options?.message,
-          general: "http",
-          specific: "CONTENT_TYPE_MISSING",
           cause: options?.cause,
         });
       }
@@ -103,10 +100,9 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.CommonError({
+        return new Common.Error.HttpCommonError({
+          code: "contentTypeValueInvalid",
           message: options?.message,
-          general: "http",
-          specific: "CONTENT_TYPE_INCORRECT",
           cause: options?.cause,
         });
       }
@@ -115,10 +111,9 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.CommonError({
+        return new Common.Error.HttpCommonError({
+          code: "bodyFormatInvalid",
           message: options?.message,
-          general: "http",
-          specific: "BODY_INVALID_FORMAT",
           cause: options?.cause,
         });
       }
@@ -435,15 +430,14 @@ export class Frontend {
         response: express.Response,
       ): void {
         if (
-          error instanceof Common.Error.CommonError &&
-          error.general === "http" &&
-          error.specific !== undefined
+          error instanceof Common.Error.HttpCommonError &&
+          error.code !== undefined
         ) {
-          switch (error.specific) {
-            case "UNAUTHORIZED": {
+          switch (error.code as Common.Error.HttpCommonErrorCode) {
+            case "unauthorized": {
               frontend._ipBlacklist.increment(request, response);
               const body = {
-                error: error.specific,
+                error: error.code,
                 error_descriptions: error.message,
               };
               response
@@ -453,22 +447,22 @@ export class Frontend {
                 .send();
               return;
             }
-            case "CONTENT_TYPE_MISSING": {
+            case "contentTypeNotFound": {
               frontend._ipBlacklist.increment(request, response);
               response.status(400).json({}).send();
               return;
             }
-            case "CONTENT_TYPE_INCORRECT": {
+            case "contentTypeValueInvalid": {
               frontend._ipBlacklist.increment(request, response);
               response.status(415).json({}).send();
               return;
             }
-            case "BODY_INVALID_FORMAT": {
+            case "bodyFormatInvalid": {
               frontend._ipBlacklist.increment(request, response);
               response.status(422).json({}).send();
               return;
             }
-            case "INTERNAL_SERVER_ERROR": {
+            case "internalServerError": {
               response.status(500).json({}).send();
               return;
             }

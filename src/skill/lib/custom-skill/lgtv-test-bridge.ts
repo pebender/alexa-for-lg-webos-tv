@@ -20,67 +20,65 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     Common.Debug.debugError(error);
 
     if (error instanceof Common.Error.CommonError) {
-      switch (error.general) {
-        case "authorization": {
+      switch (error.name as Common.Error.CommonErrorName) {
+        case "AuthorizationCommonError": {
           const speechOutput =
             "There appears to have been a problem with account linking. " +
             "Relink your account and reconfigure your bridge.";
           return speechOutput;
         }
-        case "database": {
+        case "DatabaseCommonError": {
           const speechOutput =
             "There was a problem access the database. " +
             "Test your bridge again.";
           return speechOutput;
         }
-        case "link": {
-          if (typeof error.specific === "string") {
-            switch (error.specific) {
-              case "bridge_hostname_not_found": {
-                const speechOutput =
-                  "Your bridge hostname has not been configured.";
-                return speechOutput;
-              }
-              case "bridge_token_not_found": {
-                const speechOutput = "Your bridge token has not been acquired.";
-                return speechOutput;
-              }
-              case "test_failed_tcp_connection": {
-                const speechOutput =
-                  `Could not connect to {hostname} on port {port}. ` +
-                  "Be sure the port is forwarded to your reverse proxy and your reverse proxy is properly configured";
-                return speechOutput;
-              }
-              case "test_failed_tls_connection": {
-                const speechOutput =
-                  `Could not securely connect to {hostname} on port {port}. ` +
-                  "Be sure your reverse proxy is properly configured";
-                return speechOutput;
-              }
-              case "test_failed_tls_certificate_validation": {
-                const speechOutput =
-                  "Could not authenticate your TLS certificate against any trusted certificate authorities. " +
-                  "Be sure your TLS certificate has been signed by a trusted certificate authority.";
-                return speechOutput;
-              }
-              case "test_failed_tls_hostname_validation": {
-                const speechOutput =
-                  `Your TLS certificate is not for {hostname}. ` +
-                  "Either replace your TLS certificate or reconfigure your bridge.";
-                return speechOutput;
-              }
-              case "link_failed_http": {
-                const speechOutput =
-                  "Could not connect to your bridge. " +
-                  "Be sure your reverse proxy is forwarding requests to your bridge, and be sure your bridge is running.";
-                return speechOutput;
-              }
-              case "link_failed_authorization": {
-                const speechOutput =
-                  "Could not authenticate with your bridge. " +
-                  `Be sure your bridge allows your bridge hostname and user email to connect. " + After that, reconfigure your bridge.`;
-                return speechOutput;
-              }
+        case "LinkCommonError": {
+          switch (error.code as Common.Error.LinkCommonErrorCode) {
+            case "bridgeHostnameNotFound": {
+              const speechOutput =
+                "Your bridge hostname has not been configured.";
+              return speechOutput;
+            }
+            case "bridgeTokenNotFound": {
+              const speechOutput = "Your bridge token has not been acquired.";
+              return speechOutput;
+            }
+            case "tcpConnectionFailed": {
+              const speechOutput =
+                `Could not connect to {hostname} on port {port}. ` +
+                "Be sure the port is forwarded to your reverse proxy and your reverse proxy is properly configured";
+              return speechOutput;
+            }
+            case "tlsConnectionFailed": {
+              const speechOutput =
+                `Could not securely connect to {hostname} on port {port}. ` +
+                "Be sure your reverse proxy is properly configured";
+              return speechOutput;
+            }
+            case "tlsCertificateValidationFailed": {
+              const speechOutput =
+                "Could not authenticate your TLS certificate against any trusted certificate authorities. " +
+                "Be sure your TLS certificate has been signed by a trusted certificate authority.";
+              return speechOutput;
+            }
+            case "tlsCertificateHostnameValidationFailed": {
+              const speechOutput =
+                `Your TLS certificate is not for {hostname}. ` +
+                "Either replace your TLS certificate or reconfigure your bridge.";
+              return speechOutput;
+            }
+            case "httpConnectionFailed": {
+              const speechOutput =
+                "Could not connect to your bridge. " +
+                "Be sure your reverse proxy is forwarding requests to your bridge, and be sure your bridge is running.";
+              return speechOutput;
+            }
+            case "authorizationFailed": {
+              const speechOutput =
+                "Could not authenticate with your bridge. " +
+                `Be sure your bridge allows your bridge hostname and user email to connect. " + After that, reconfigure your bridge.`;
+              return speechOutput;
             }
           }
         }

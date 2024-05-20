@@ -141,13 +141,12 @@ export class BackendSearcher extends EventEmitter {
       try {
         response = await fetch(headers.LOCATION);
       } catch (error) {
-        throw new Common.Error.CommonError({ general: "tv", cause: error });
+        throw new Common.Error.TvCommonError({ cause: error });
       }
       if (response.status !== 200) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlFetchError",
         });
       }
 
@@ -155,15 +154,14 @@ export class BackendSearcher extends EventEmitter {
       try {
         blob = await response.blob();
       } catch (error) {
-        throw new Common.Error.CommonError({ general: "tv", cause: error });
+        throw new Common.Error.TvCommonError({ cause: error });
       }
 
       const mimetype: string[] = blob.type.split(";");
       if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlFetchError",
         });
       }
 
@@ -171,7 +169,7 @@ export class BackendSearcher extends EventEmitter {
       try {
         descriptionXml = await blob.text();
       } catch (error) {
-        throw new Common.Error.CommonError({ general: "tv", cause: error });
+        throw new Common.Error.TvCommonError({ cause: error });
       }
 
       let description;
@@ -187,19 +185,17 @@ export class BackendSearcher extends EventEmitter {
           };
         };
       } catch (error) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlParseError",
           message: "Could not parse descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlParseError",
           cause: error,
         });
       }
 
       if (description === undefined || description === null) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlParseError",
           message: "Could not parse descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlParseError",
         });
       }
 
@@ -217,10 +213,9 @@ export class BackendSearcher extends EventEmitter {
         description.root.device[0].UDN === undefined ||
         description.root.device[0].UDN.length !== 1
       ) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlFormatError",
           message: "Could not fetch descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlFormatError",
         });
       }
 
@@ -235,10 +230,9 @@ export class BackendSearcher extends EventEmitter {
         description.root.device[0].friendlyName[0] === "" ||
         description.root.device[0].UDN[0] === ""
       ) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "descriptionXmlFormatError",
           message: "Could not fetch descriptionXML from the TV",
-          general: "tv",
-          specific: "descriptionXmlFormatError",
         });
       }
       [tv.name] = description.root.device[0].friendlyName;
@@ -252,10 +246,9 @@ export class BackendSearcher extends EventEmitter {
         const getMACWithPromise = promisify(getMAC);
         tv.mac = await getMACWithPromise(tv.ip);
       } catch (error) {
-        throw new Common.Error.CommonError({
+        throw new Common.Error.TvCommonError({
+          code: "macAddressError",
           message: "Could not get TV's MAC address",
-          general: "tv",
-          specific: "macAddressError",
           cause: error,
         });
       }
@@ -288,8 +281,7 @@ export class BackendSearcher extends EventEmitter {
             const commonError =
               error instanceof Common.Error.CommonError
                 ? error
-                : new Common.Error.CommonError({
-                    general: "tv",
+                : new Common.Error.TvCommonError({
                     cause: error,
                   });
             // eslint-disable-next-line promise/no-callback-in-promise
@@ -322,7 +314,7 @@ export class BackendSearcher extends EventEmitter {
     try {
       await this._ssdpNotify.start();
     } catch (error) {
-      throw new Common.Error.CommonError({ cause: error });
+      throw new Common.Error.TvCommonError({ cause: error });
     }
 
     // Periodically search for TVs.
@@ -334,10 +326,9 @@ export class BackendSearcher extends EventEmitter {
       if (search instanceof Promise) {
         search.catch((error) => {
           const commonError: Common.Error.CommonError =
-            new Common.Error.CommonError({
+            new Common.Error.TvCommonError({
+              code: "searchError",
               message: "TV search error",
-              general: "tv",
-              specific: "searchError",
               cause: error,
             });
           Common.Debug.debugError(commonError);
@@ -354,10 +345,9 @@ export class BackendSearcher extends EventEmitter {
     if (search instanceof Promise) {
       search.catch((error: unknown) => {
         const commonError: Common.Error.CommonError =
-          new Common.Error.CommonError({
+          new Common.Error.TvCommonError({
+            code: "searchError",
             message: "TV search error",
-            general: "tv",
-            specific: "searchError",
             cause: error,
           });
         Common.Debug.debugError(commonError);
@@ -372,10 +362,9 @@ export class BackendSearcher extends EventEmitter {
     if (search instanceof Promise) {
       search.catch((error: unknown) => {
         const commonError: Common.Error.CommonError =
-          new Common.Error.CommonError({
+          new Common.Error.TvCommonError({
+            code: "searchError",
             message: "TV search error",
-            general: "tv",
-            specific: "searchError",
             cause: error,
           });
         Common.Debug.debugError(commonError);

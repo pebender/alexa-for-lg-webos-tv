@@ -51,34 +51,24 @@ export async function getUserProfile(
       [key: string]: unknown;
     };
   } catch (error) {
-    if (error instanceof CommonError.CommonError) {
-      const general = error.general;
-      const specific = error.specific;
-      switch (general) {
-        case "http": {
-          switch (specific) {
-            case "BAD_REQUEST": {
-              throw new CommonError.CommonError({
-                message:
-                  "there was an authentication error while retrieving your profile",
-                general: "authorization",
-                specific: "invalid_token",
-                cause: error,
-              });
-            }
-            case "UNAUTHORIZED": {
-              throw new CommonError.CommonError({
-                message:
-                  "there was an authorization error while retrieving your profile",
-                general: "authorization",
-                specific: "invalid_scope",
-                cause: error,
-              });
-            }
-            default: {
-              throw error;
-            }
-          }
+    if (error instanceof CommonError.HttpCommonError) {
+      const code = error.code as CommonError.HttpCommonErrorCode;
+      switch (code) {
+        case "badRequest": {
+          throw new CommonError.AuthorizationCommonError({
+            code: "userProfileInvalidToken",
+            message:
+              "there was an authentication error while retrieving your profile",
+            cause: error,
+          });
+        }
+        case "unauthorized": {
+          throw new CommonError.AuthorizationCommonError({
+            code: "userProfileInvalidScope",
+            message:
+              "there was an authorization error while retrieving your profile",
+            cause: error,
+          });
         }
         default: {
           throw error;
@@ -89,17 +79,15 @@ export async function getUserProfile(
   }
 
   if (typeof response.user_id !== "string") {
-    throw new CommonError.CommonError({
+    throw new CommonError.AuthorizationCommonError({
+      code: "userProfileUserIdNotFound",
       message: "there was no 'user_id' field in your profile",
-      general: "authorization",
-      specific: "missing_user_id",
     });
   }
   if (typeof response.email !== "string") {
-    throw new CommonError.CommonError({
+    throw new CommonError.AuthorizationCommonError({
+      code: "userProfileEmailNotFound",
       message: "there was no 'email' field in your profile",
-      general: "authorization",
-      specific: "missing_email",
     });
   }
   const userProfile: UserProfile = {

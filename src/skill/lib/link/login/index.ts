@@ -25,11 +25,13 @@ async function create(
   return await new Promise<string>((resolve, reject) => {
     jwt.sign(payload, x509PrivateKey, options, function (error, encoded) {
       if (error !== null) {
-        reject(new Common.Error.CommonError({ cause: error }));
+        reject(new Common.Error.GeneralCommonError({ cause: error }));
       }
 
       if (encoded === undefined) {
-        throw new Common.Error.CommonError({ message: "function API violation" });
+        throw new Common.Error.GeneralCommonError({
+          message: "function API violation",
+        });
       }
 
       resolve(encoded);
@@ -57,7 +59,7 @@ export async function getBridgeToken(
     };
 
   if (response.token === undefined || typeof response.token !== "string") {
-    throw new Common.Error.CommonError();
+    throw new Common.Error.GeneralCommonError({});
   }
 
   return response.token;

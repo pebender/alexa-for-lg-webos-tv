@@ -112,10 +112,7 @@ export class Middle {
         shsRequest.getAccessToken(),
       );
     } catch (error) {
-      if (
-        error instanceof Common.Error.CommonError &&
-        error.general === "authorization"
-      ) {
+      if (error instanceof Common.Error.AuthorizationCommonError) {
         authorized = false;
       } else {
         return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
@@ -157,7 +154,7 @@ export class Middle {
       try {
         const invalid = !this._responseSchemaValidator(shsResponse);
         if (invalid) {
-          const error = new Common.Error.CommonError({
+          const error = new Common.Error.GeneralCommonError({
             message: "Smart Home Skill Response schema validation failed",
             cause: {
               response: shsResponse,

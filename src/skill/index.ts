@@ -39,7 +39,9 @@ async function skillHandler(
     return response;
   }
 
-  const error = new Common.Error.CommonError({ message: "Unhandled request" });
+  const error = new Common.Error.GeneralCommonError({
+    message: "Unhandled request",
+  });
   Common.Debug.debugError(error);
   throw error;
 }
