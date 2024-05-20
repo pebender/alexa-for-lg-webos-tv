@@ -13,22 +13,19 @@ export interface UserProfile {
  * This function retrieves the user profile specified by accessToken from the
  * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}.
  * If successful, it return the {@link UserProfile}. Otherwise, it throws a
- * {@link CommonError.CommonError} with
- * {@link CommonError.CommonErrorOptions.general | general}="authorization" for
- * any authorization related failures and
- * {@link CommonError.CommonErrorOptions.general | general}="http" for any
- * others.
+ * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
+ * any authorization failures, or a
+ * {@link CommonError.HttpCommonError | HttpCommonError} for any other errors.
  *
  * @param accessToken - access token from a skill message.
  * @returns - the profile returned by the
  * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}
  * profile server in response to accessToken.
  *
- * @throws - a {@link CommonError.CommonError} with
- * {@link CommonError.CommonErrorOptions.general | general}="authorization" for
- * any authorization related failures and
- * {@link CommonError.CommonErrorOptions.general | general}="http" for any
- * others.
+ * @throws - a
+ * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
+ * any authorization failures, or a
+ * {@link CommonError.HttpCommonError | HttpCommonError} for any other errors.
  */
 export async function getUserProfile(
   accessToken: string,

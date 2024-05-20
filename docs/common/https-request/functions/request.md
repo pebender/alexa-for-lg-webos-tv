@@ -15,7 +15,8 @@ requestBody is provided, then the request is made using the HTTP
 request method "POST" and includes requestBody as "application/json".
 Otherwise, the request is made using the HTTP request method "GET". If the
 request is successful, this function returns the JSON formatted response
-received. Otherwise, this function throws a [CommonError.CommonError](../../error/classes/CommonError.md).
+received. Otherwise, this function throws a
+[HttpCommonError](../../error/classes/HttpCommonError.md).
 
 ## Parameters
 
@@ -40,5 +41,5 @@ a JSON object containing the response body.
 
 ## Throws
 
-a [CommonError.CommonError](../../error/classes/CommonError.md) with general="http" and specific from
-ResponseErrorNames.
+a [HttpCommonError](../../error/classes/HttpCommonError.md) with codes
+from [HttpCommonErrorCode](../../error/type-aliases/HttpCommonErrorCode.md).
