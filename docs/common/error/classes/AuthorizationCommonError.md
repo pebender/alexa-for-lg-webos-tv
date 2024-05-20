@@ -6,6 +6,9 @@
 
 # Class: AuthorizationCommonError
 
+A [CommonError](CommonError.md) subclass for authorization related errors. The
+supported errors codes are given by [AuthorizationCommonErrorCode](../type-aliases/AuthorizationCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)

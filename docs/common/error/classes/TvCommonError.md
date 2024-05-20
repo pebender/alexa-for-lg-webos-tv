@@ -6,6 +6,9 @@
 
 # Class: TvCommonError
 
+A [CommonError](CommonError.md) subclass for TV related errors. The supported errors
+are given by [TvCommonErrorCode](../type-aliases/TvCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)
@@ -25,8 +28,6 @@
 • **options.code?**: [`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
 
 • **options.message?**: `string`
-
-• **options.udn?**: `string`
 
 #### Returns
 

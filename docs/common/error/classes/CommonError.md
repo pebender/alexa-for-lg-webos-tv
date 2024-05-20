@@ -6,6 +6,14 @@
 
 # Class: `abstract` CommonError
 
+The class from which all errors are derived. Deriving all errors from this
+class ensures that all errors will have an error code (`code`) and will be
+understood where a `Error` class or a `NodeJS.ErrnoException` interface is
+expected. Making `code` an abstract string enables each derived error
+subclass to enumerate the `code` values it supports by declaring `code` to be
+of a string literal type that enumerates the supported values supported
+codes.
+
 ## Extends
 
 - `Error`

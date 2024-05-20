@@ -6,6 +6,9 @@
 
 # Class: HttpCommonError
 
+A [CommonError](CommonError.md) subclass for HTTP related errors. The supported errors
+are given by [HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)

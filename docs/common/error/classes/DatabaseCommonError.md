@@ -6,6 +6,9 @@
 
 # Class: DatabaseCommonError
 
+A [CommonError](CommonError.md) subclass for database related errors. The supported
+errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)

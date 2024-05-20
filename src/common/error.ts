@@ -1,3 +1,16 @@
+/**
+ * The error classes used for all errors.
+ */
+
+/**
+ * The class from which all errors are derived. Deriving all errors from this
+ * class ensures that all errors will have an error code (`code`) and will be
+ * understood where a `Error` class or a `NodeJS.ErrnoException` interface is
+ * expected. Making `code` an abstract string enables each derived error
+ * subclass to enumerate the `code` values it supports by declaring `code` to be
+ * of a string literal type that enumerates the supported values supported
+ * codes.
+ */
 export abstract class CommonError
   extends Error
   implements NodeJS.ErrnoException
@@ -17,6 +30,11 @@ export abstract class CommonError
 
 export type GeneralCommonErrorCode = "unknown";
 
+/**
+ * A {@link CommonError} subclass for errors that do not fit into any of the
+ * other error classes. The supported errors codes are given by
+ * {@link GeneralCommonErrorCode}.
+ */
 export class GeneralCommonError extends CommonError {
   public readonly code: GeneralCommonErrorCode;
 
@@ -42,6 +60,10 @@ export type AuthorizationCommonErrorCode =
   | "userProfileEmailNotFound"
   | "userProfileUserIdNotFound";
 
+/**
+ * A {@link CommonError} subclass for authorization related errors. The
+ * supported errors codes are given by {@link AuthorizationCommonErrorCode}.
+ */
 export class AuthorizationCommonError extends CommonError {
   public readonly code: AuthorizationCommonErrorCode;
 
@@ -65,6 +87,10 @@ export type DatabaseCommonErrorCode =
   | "recordNotFound"
   | "recordNotUnique";
 
+/**
+ * A {@link CommonError} subclass for database related errors. The supported
+ * errors codes are given by {@link DatabaseCommonErrorCode}.
+ */
 export class DatabaseCommonError extends CommonError {
   public readonly code: DatabaseCommonErrorCode;
 
@@ -93,6 +119,10 @@ export type HttpCommonErrorCode =
   | "unauthorized"
   | "unknown";
 
+/**
+ * A {@link CommonError} subclass for HTTP related errors. The supported errors
+ * are given by {@link HttpCommonErrorCode}.
+ */
 export class HttpCommonError extends CommonError {
   public readonly code: HttpCommonErrorCode;
 
@@ -119,6 +149,10 @@ export type LinkCommonErrorCode =
   | "tlsConnectionFailed"
   | "userProfileFetchFailed";
 
+/**
+ * A {@link CommonError} subclass for skill to bridge interface link related
+ * errors. The supported errors are given by {@link LinkCommonErrorCode}.
+ */
 export class LinkCommonError extends CommonError {
   public readonly code: LinkCommonErrorCode;
 
@@ -151,6 +185,10 @@ export type TvCommonErrorCode =
   | "subscriptionError"
   | "tvUnknown";
 
+/**
+ * A {@link CommonError} subclass for TV related errors. The supported errors
+ * are given by {@link TvCommonErrorCode}.
+ */
 export class TvCommonError extends CommonError {
   public readonly code: TvCommonErrorCode;
 
@@ -158,7 +196,6 @@ export class TvCommonError extends CommonError {
     code?: TvCommonErrorCode;
     message?: string;
     cause?: unknown;
-    udn?: string;
   }) {
     super(options);
     this.name = "TvCommonError";

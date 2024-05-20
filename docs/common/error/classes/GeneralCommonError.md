@@ -6,6 +6,10 @@
 
 # Class: GeneralCommonError
 
+A [CommonError](CommonError.md) subclass for errors that do not fit into any of the
+other error classes. The supported errors codes are given by
+[GeneralCommonErrorCode](../type-aliases/GeneralCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)

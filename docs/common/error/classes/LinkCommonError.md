@@ -6,6 +6,9 @@
 
 # Class: LinkCommonError
 
+A [CommonError](CommonError.md) subclass for skill to bridge interface link related
+errors. The supported errors are given by [LinkCommonErrorCode](../type-aliases/LinkCommonErrorCode.md).
+
 ## Extends
 
 - [`CommonError`](CommonError.md)
