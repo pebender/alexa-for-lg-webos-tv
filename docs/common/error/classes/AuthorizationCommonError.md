@@ -22,7 +22,7 @@
 
 • **options.cause?**: `unknown`
 
-• **options.code?**: [`AuthorizationCommonErrorCode`](../type-aliases/AuthorizationCommonErrorCode.md)
+• **options.code**: [`AuthorizationCommonErrorCode`](../type-aliases/AuthorizationCommonErrorCode.md)
 
 • **options.message?**: `string`
 
@@ -38,8 +38,8 @@
 
 ### code
 
-> **code**: `string`
+> `readonly` **code**: [`AuthorizationCommonErrorCode`](../type-aliases/AuthorizationCommonErrorCode.md)
 
-#### Inherited from
+#### Overrides
 
 [`CommonError`](CommonError.md).[`code`](CommonError.md#code)

@@ -7,19 +7,19 @@ export type CommonErrorName =
   | "LinkCommonError"
   | "TvCommonError";
 
-export class CommonError extends Error implements NodeJS.ErrnoException {
-  public code: string;
+export abstract class CommonError
+  extends Error
+  implements NodeJS.ErrnoException
+{
+  public abstract code: string;
 
   protected constructor(options: {
     code?: string;
     message?: string;
     cause?: unknown;
   }) {
-    const code = options.code ?? "unknown";
     const message = options.message ?? "";
-
     super(message, { cause: options.cause });
-    this.code = code;
     this.name = "CommonError";
   }
 }
@@ -27,17 +27,19 @@ export class CommonError extends Error implements NodeJS.ErrnoException {
 export type GeneralCommonErrorCode = "unknown";
 
 export class GeneralCommonError extends CommonError {
+  public readonly code: GeneralCommonErrorCode;
+
   constructor(options: {
     code?: GeneralCommonErrorCode;
     message?: string;
     cause?: unknown;
   }) {
     super({
-      code: options.code ?? "unknown",
       message: options.code ?? "Unknown General Common Error",
       cause: options.cause,
     });
     this.name = "GeneralCommonError";
+    this.code = options.code ?? "unknown";
   }
 }
 
@@ -50,17 +52,21 @@ export type AuthorizationCommonErrorCode =
   | "userProfileUserIdNotFound";
 
 export class AuthorizationCommonError extends CommonError {
+  public readonly code: AuthorizationCommonErrorCode;
+
   constructor(options: {
-    code?: AuthorizationCommonErrorCode;
+    code: AuthorizationCommonErrorCode;
     message?: string;
     cause?: unknown;
   }) {
     super(options);
     this.name = "AuthorizationCommonError";
+    this.code = options.code;
   }
 }
 
 export type DatabaseCommonErrorCode =
+  | "unknown"
   | "fieldInvalid"
   | "fieldNotFound"
   | "fieldValueNotFound"
@@ -69,6 +75,8 @@ export type DatabaseCommonErrorCode =
   | "recordNotUnique";
 
 export class DatabaseCommonError extends CommonError {
+  public readonly code: DatabaseCommonErrorCode;
+
   constructor(options: {
     code?: DatabaseCommonErrorCode;
     message?: string;
@@ -76,6 +84,7 @@ export class DatabaseCommonError extends CommonError {
   }) {
     super(options);
     this.name = "DatabaseCommonError";
+    this.code = options.code ?? "unknown";
   }
 }
 
@@ -94,17 +103,21 @@ export type HttpCommonErrorCode =
   | "unknown";
 
 export class HttpCommonError extends CommonError {
+  public readonly code: HttpCommonErrorCode;
+
   constructor(options: {
-    code?: HttpCommonErrorCode;
+    code: HttpCommonErrorCode;
     message?: string;
     cause?: unknown;
   }) {
     super(options);
     this.name = "HttpCommonError";
+    this.code = options.code;
   }
 }
 
 export type LinkCommonErrorCode =
+  | "unknown"
   | "authorizationFailed"
   | "bridgeHostnameNotFound"
   | "bridgeTokenNotFound"
@@ -116,6 +129,8 @@ export type LinkCommonErrorCode =
   | "userProfileFetchFailed";
 
 export class LinkCommonError extends CommonError {
+  public readonly code: LinkCommonErrorCode;
+
   constructor(options: {
     code?: LinkCommonErrorCode;
     message?: string;
@@ -123,10 +138,12 @@ export class LinkCommonError extends CommonError {
   }) {
     super(options);
     this.name = "LinkCommonError";
+    this.code = options.code ?? "unknown";
   }
 }
 
 export type TvCommonErrorCode =
+  | "unknown"
   | "connectionRequestError"
   | "connectionResponseError"
   | "connectionResponseInvalidFormat"
@@ -144,7 +161,7 @@ export type TvCommonErrorCode =
   | "tvUnknown";
 
 export class TvCommonError extends CommonError {
-  public readonly udn?: string;
+  public readonly code: TvCommonErrorCode;
 
   constructor(options: {
     code?: TvCommonErrorCode;
@@ -154,7 +171,6 @@ export class TvCommonError extends CommonError {
   }) {
     super(options);
     this.name = "TvCommonError";
-
-    this.udn = options.udn;
+    this.code = options.code ?? "unknown";
   }
 }

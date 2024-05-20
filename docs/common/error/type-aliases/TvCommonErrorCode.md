@@ -6,4 +6,4 @@
 
 # Type alias: TvCommonErrorCode
 
-> **TvCommonErrorCode**: `"connectionRequestError"` \| `"connectionResponseError"` \| `"connectionResponseInvalidFormat"` \| `"descriptionXmlFetchError"` \| `"descriptionXmlFormatError"` \| `"descriptionXmlParseError"` \| `"lgtvApiViolation"` \| `"macAddressError"` \| `"off"` \| `"requestInvalidInCurrentState"` \| `"responseInvalid"` \| `"responseValueUnknown"` \| `"searchError"` \| `"subscriptionError"` \| `"tvUnknown"`
+> **TvCommonErrorCode**: `"unknown"` \| `"connectionRequestError"` \| `"connectionResponseError"` \| `"connectionResponseInvalidFormat"` \| `"descriptionXmlFetchError"` \| `"descriptionXmlFormatError"` \| `"descriptionXmlParseError"` \| `"lgtvApiViolation"` \| `"macAddressError"` \| `"off"` \| `"requestInvalidInCurrentState"` \| `"responseInvalid"` \| `"responseValueUnknown"` \| `"searchError"` \| `"subscriptionError"` \| `"tvUnknown"`

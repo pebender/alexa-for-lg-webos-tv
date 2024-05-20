@@ -38,8 +38,8 @@
 
 ### code
 
-> **code**: `string`
+> `readonly` **code**: `"unknown"`
 
-#### Inherited from
+#### Overrides
 
 [`CommonError`](CommonError.md).[`code`](CommonError.md#code)

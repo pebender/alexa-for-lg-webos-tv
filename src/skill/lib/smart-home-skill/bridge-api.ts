@@ -19,7 +19,7 @@ function mapErrorToAlexaResponse(
   error: unknown,
 ): Common.SHS.Response {
   if (error instanceof Common.Error.HttpCommonError) {
-    switch (error.code as Common.Error.HttpCommonErrorCode) {
+    switch (error.code) {
       case "connectionInterrupted": {
         return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,

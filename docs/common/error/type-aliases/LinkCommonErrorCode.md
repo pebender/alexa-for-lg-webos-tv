@@ -6,4 +6,4 @@
 
 # Type alias: LinkCommonErrorCode
 
-> **LinkCommonErrorCode**: `"authorizationFailed"` \| `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"httpConnectionFailed"` \| `"tcpConnectionFailed"` \| `"tlsCertificateValidationFailed"` \| `"tlsCertificateHostnameValidationFailed"` \| `"tlsConnectionFailed"` \| `"userProfileFetchFailed"`
+> **LinkCommonErrorCode**: `"unknown"` \| `"authorizationFailed"` \| `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"httpConnectionFailed"` \| `"tcpConnectionFailed"` \| `"tlsCertificateValidationFailed"` \| `"tlsCertificateHostnameValidationFailed"` \| `"tlsConnectionFailed"` \| `"userProfileFetchFailed"`

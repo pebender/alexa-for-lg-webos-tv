@@ -38,8 +38,8 @@
 
 ### code
 
-> **code**: `string`
+> `readonly` **code**: [`DatabaseCommonErrorCode`](../type-aliases/DatabaseCommonErrorCode.md)
 
-#### Inherited from
+#### Overrides
 
 [`CommonError`](CommonError.md).[`code`](CommonError.md#code)

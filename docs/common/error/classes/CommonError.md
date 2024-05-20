@@ -4,7 +4,7 @@
 
 [alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / CommonError
 
-# Class: CommonError
+# Class: `abstract` CommonError
 
 ## Extends
 
@@ -51,7 +51,7 @@
 
 ### code
 
-> **code**: `string`
+> `abstract` **code**: `string`
 
 #### Implementation of
 

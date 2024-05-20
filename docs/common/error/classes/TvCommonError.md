@@ -40,14 +40,8 @@
 
 ### code
 
-> **code**: `string`
+> `readonly` **code**: [`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
 
-#### Inherited from
+#### Overrides
 
 [`CommonError`](CommonError.md).[`code`](CommonError.md#code)
-
-***
-
-### udn?
-
-> `optional` `readonly` **udn**: `string`

@@ -6,4 +6,4 @@
 
 # Type alias: DatabaseCommonErrorCode
 
-> **DatabaseCommonErrorCode**: `"fieldInvalid"` \| `"fieldNotFound"` \| `"fieldValueNotFound"` \| `"fieldValueNotUnique"` \| `"recordNotFound"` \| `"recordNotUnique"`
+> **DatabaseCommonErrorCode**: `"unknown"` \| `"fieldInvalid"` \| `"fieldNotFound"` \| `"fieldValueNotFound"` \| `"fieldValueNotUnique"` \| `"recordNotFound"` \| `"recordNotUnique"`

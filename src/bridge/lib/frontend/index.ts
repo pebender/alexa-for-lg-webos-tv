@@ -429,11 +429,8 @@ export class Frontend {
         request: express.Request,
         response: express.Response,
       ): void {
-        if (
-          error instanceof Common.Error.HttpCommonError &&
-          error.code !== undefined
-        ) {
-          switch (error.code as Common.Error.HttpCommonErrorCode) {
+        if (error instanceof Common.Error.HttpCommonError) {
+          switch (error.code) {
             case "unauthorized": {
               frontend._ipBlacklist.increment(request, response);
               const body = {

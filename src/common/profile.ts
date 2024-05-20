@@ -52,7 +52,7 @@ export async function getUserProfile(
     };
   } catch (error) {
     if (error instanceof CommonError.HttpCommonError) {
-      const code = error.code as CommonError.HttpCommonErrorCode;
+      const code = error.code;
       switch (code) {
         case "badRequest": {
           throw new CommonError.AuthorizationCommonError({

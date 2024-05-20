@@ -22,7 +22,7 @@
 
 • **options.cause?**: `unknown`
 
-• **options.code?**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
+• **options.code**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
 
 • **options.message?**: `string`
 
@@ -38,8 +38,8 @@
 
 ### code
 
-> **code**: `string`
+> `readonly` **code**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
 
-#### Inherited from
+#### Overrides
 
 [`CommonError`](CommonError.md).[`code`](CommonError.md#code)
