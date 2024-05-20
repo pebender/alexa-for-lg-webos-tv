@@ -1,12 +1,3 @@
-export type CommonErrorName =
-  | "CommonError"
-  | "GeneralCommonError"
-  | "AuthorizationCommonError"
-  | "DatabaseCommonError"
-  | "HttpCommonError"
-  | "LinkCommonError"
-  | "TvCommonError";
-
 export abstract class CommonError
   extends Error
   implements NodeJS.ErrnoException

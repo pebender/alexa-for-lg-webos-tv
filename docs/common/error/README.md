@@ -21,7 +21,6 @@
 ### Type Aliases
 
 - [AuthorizationCommonErrorCode](type-aliases/AuthorizationCommonErrorCode.md)
-- [CommonErrorName](type-aliases/CommonErrorName.md)
 - [DatabaseCommonErrorCode](type-aliases/DatabaseCommonErrorCode.md)
 - [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)
 - [HttpCommonErrorCode](type-aliases/HttpCommonErrorCode.md)
