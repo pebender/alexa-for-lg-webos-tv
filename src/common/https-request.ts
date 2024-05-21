@@ -1,3 +1,4 @@
+import type * as http from "node:http";
 import * as https from "node:https";
 import * as Debug from "./debug";
 import * as CommonError from "./error";
@@ -9,11 +10,51 @@ export interface RequestOptions {
   headers: Record<string, string>;
 }
 
-function createHttpError(
-  code: CommonError.HttpCommonErrorCode,
-  cause?: unknown,
-): CommonError.HttpCommonError {
-  return new CommonError.HttpCommonError({ code, cause });
+export type HttpCommonErrorCode =
+  | "badGateway"
+  | "badRequest"
+  | "bodyFormatInvalid"
+  | "bodyNotFound"
+  | "connectionInterrupted"
+  | "contentTypeNotFound"
+  | "contentTypeValueInvalid"
+  | "forbidden"
+  | "internalServerError"
+  | "statusCodeNotFound"
+  | "unauthorized"
+  | "unknown";
+
+/**
+ * A {@link CommonError.CommonError | CommonError} subclass for HTTP related
+ * errors. The supported errors are given by {@link HttpCommonErrorCode}.
+ */
+export class HttpCommonError extends CommonError.CommonError {
+  public readonly code: HttpCommonErrorCode;
+  public readonly requestOptions?: https.RequestOptions;
+  public readonly requestBody?: object;
+  public readonly responseStatusCode?: number;
+  public readonly responseHeaders?: http.IncomingHttpHeaders;
+  public readonly responseBody?: string | object;
+
+  constructor(options: {
+    code: HttpCommonErrorCode;
+    message?: string;
+    requestOptions?: https.RequestOptions;
+    requestBody?: object;
+    responseStatusCode?: number;
+    responseHeaders?: http.IncomingHttpHeaders;
+    responseBody?: string | object;
+    cause?: unknown;
+  }) {
+    super(options);
+    this.name = "HttpCommonError";
+    this.code = options.code;
+    this.requestOptions = options.requestOptions;
+    this.requestBody = options.requestBody;
+    this.responseStatusCode = options.responseStatusCode;
+    this.responseHeaders = options.responseHeaders;
+    this.responseBody = options.responseBody;
+  }
 }
 
 /**
@@ -83,8 +124,29 @@ export async function request(
           data += chunk;
         });
         response.on("end", (): void => {
+          function createHttpError(
+            code: HttpCommonErrorCode,
+            cause?: unknown,
+          ): HttpCommonError {
+            return new HttpCommonError({
+              code,
+              requestOptions: options,
+              requestBody,
+              responseStatusCode: response.statusCode,
+              responseHeaders: response.headers,
+              responseBody: data,
+              cause,
+            });
+          }
+
           if (!response.complete) {
-            reject(createHttpError("connectionInterrupted"));
+            reject(
+              new HttpCommonError({
+                code: "connectionInterrupted",
+                requestOptions: options,
+                requestBody,
+              }),
+            );
           }
 
           Debug.debug("HTTP Response");
@@ -157,8 +219,15 @@ export async function request(
           resolve(body);
         });
       });
-      request.on("error", (): void => {
-        reject(createHttpError("unknown"));
+      request.on("error", (error): void => {
+        reject(
+          new HttpCommonError({
+            code: "unknown",
+            requestOptions: options,
+            requestBody,
+            cause: error,
+          }),
+        );
       });
       if (options.method === "POST") {
         request.write(content);

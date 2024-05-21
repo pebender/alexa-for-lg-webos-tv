@@ -66,8 +66,8 @@ export class Frontend {
       function errorUnauthorized(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.HttpCommonError {
-        return new Common.Error.HttpCommonError({
+      }): Common.HTTPSRequest.HttpCommonError {
+        return new Common.HTTPSRequest.HttpCommonError({
           code: "unauthorized",
           message: options?.message,
           cause: options?.cause,
@@ -78,7 +78,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.HttpCommonError({
+        return new Common.HTTPSRequest.HttpCommonError({
           code: "internalServerError",
           message: options?.message,
           cause: options?.cause,
@@ -89,7 +89,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.HttpCommonError({
+        return new Common.HTTPSRequest.HttpCommonError({
           code: "contentTypeNotFound",
           message: options?.message,
           cause: options?.cause,
@@ -100,7 +100,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.HttpCommonError({
+        return new Common.HTTPSRequest.HttpCommonError({
           code: "contentTypeValueInvalid",
           message: options?.message,
           cause: options?.cause,
@@ -111,7 +111,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.Error.HttpCommonError({
+        return new Common.HTTPSRequest.HttpCommonError({
           code: "bodyFormatInvalid",
           message: options?.message,
           cause: options?.cause,
@@ -429,7 +429,7 @@ export class Frontend {
         request: express.Request,
         response: express.Response,
       ): void {
-        if (error instanceof Common.Error.HttpCommonError) {
+        if (error instanceof Common.HTTPSRequest.HttpCommonError) {
           switch (error.code) {
             case "unauthorized": {
               frontend._ipBlacklist.increment(request, response);

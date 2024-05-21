@@ -101,38 +101,6 @@ export class DatabaseCommonError extends CommonError {
   }
 }
 
-export type HttpCommonErrorCode =
-  | "badGateway"
-  | "badRequest"
-  | "bodyFormatInvalid"
-  | "bodyNotFound"
-  | "connectionInterrupted"
-  | "contentTypeNotFound"
-  | "contentTypeValueInvalid"
-  | "forbidden"
-  | "internalServerError"
-  | "statusCodeNotFound"
-  | "unauthorized"
-  | "unknown";
-
-/**
- * A {@link CommonError} subclass for HTTP related errors. The supported errors
- * are given by {@link HttpCommonErrorCode}.
- */
-export class HttpCommonError extends CommonError {
-  public readonly code: HttpCommonErrorCode;
-
-  constructor(options: {
-    code: HttpCommonErrorCode;
-    message?: string;
-    cause?: unknown;
-  }) {
-    super(options);
-    this.name = "HttpCommonError";
-    this.code = options.code;
-  }
-}
-
 export type LinkCommonErrorCode =
   | "unknown"
   | "authorizationFailed"

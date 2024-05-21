@@ -24,8 +24,8 @@ codes.
 - [`GeneralCommonError`](GeneralCommonError.md)
 - [`AuthorizationCommonError`](AuthorizationCommonError.md)
 - [`DatabaseCommonError`](DatabaseCommonError.md)
-- [`HttpCommonError`](HttpCommonError.md)
 - [`LinkCommonError`](LinkCommonError.md)
+- [`HttpCommonError`](../../https-request/classes/HttpCommonError.md)
 
 ## Implements
 

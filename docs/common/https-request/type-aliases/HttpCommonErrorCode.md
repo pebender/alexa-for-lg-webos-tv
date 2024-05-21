@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / HttpCommonErrorCode
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/https-request](../README.md) / HttpCommonErrorCode
 
 # Type alias: HttpCommonErrorCode
 

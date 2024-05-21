@@ -136,7 +136,7 @@ export async function sendMessageUsingBridgeToken(
     );
   } catch (error) {
     if (
-      error instanceof Common.Error.HttpCommonError &&
+      error instanceof Common.HTTPSRequest.HttpCommonError &&
       error.code === "unauthorized"
     ) {
       /* try again with a new bridge token */
@@ -273,7 +273,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         request,
       );
     } catch (error) {
-      if (error instanceof Common.Error.HttpCommonError) {
+      if (error instanceof Common.HTTPSRequest.HttpCommonError) {
         switch (error.code) {
           case "badGateway": {
             throw new Common.Error.LinkCommonError({

@@ -8,9 +8,17 @@
 
 ## Index
 
+### Classes
+
+- [HttpCommonError](classes/HttpCommonError.md)
+
 ### Interfaces
 
 - [RequestOptions](interfaces/RequestOptions.md)
+
+### Type Aliases
+
+- [HttpCommonErrorCode](type-aliases/HttpCommonErrorCode.md)
 
 ### Functions
 

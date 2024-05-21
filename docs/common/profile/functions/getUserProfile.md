@@ -13,7 +13,7 @@ This function retrieves the user profile specified by accessToken from the
 If successful, it return the [UserProfile](../interfaces/UserProfile.md). Otherwise, it throws a
 [AuthorizationCommonError](../../error/classes/AuthorizationCommonError.md) for
 any authorization failures, or a
-[HttpCommonError](../../error/classes/HttpCommonError.md) for any other errors.
+CommonError.HttpCommonError | HttpCommonError for any other errors.
 
 ## Parameters
 
@@ -34,4 +34,4 @@ profile server in response to accessToken.
 - a
 [AuthorizationCommonError](../../error/classes/AuthorizationCommonError.md) for
 any authorization failures, or a
-[HttpCommonError](../../error/classes/HttpCommonError.md) for any other errors.
+CommonError.HttpCommonError | HttpCommonError for any other errors.

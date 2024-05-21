@@ -48,7 +48,7 @@ export async function getUserProfile(
       [key: string]: unknown;
     };
   } catch (error) {
-    if (error instanceof CommonError.HttpCommonError) {
+    if (error instanceof HTTPSRequest.HttpCommonError) {
       const code = error.code;
       switch (code) {
         case "badRequest": {
