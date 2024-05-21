@@ -66,8 +66,7 @@ export class HttpCommonError extends CommonError.CommonError {
  * request method "POST" and includes requestBody as "application/json".
  * Otherwise, the request is made using the HTTP request method "GET". If the
  * request is successful, this function returns the JSON formatted response
- * received. Otherwise, this function throws a
- * {@link CommonError.HttpCommonError | HttpCommonError}.
+ * received. Otherwise, this function throws a {@link HttpCommonError}.
  *
  * @param requestOptions - basic HTTP options.
  * @param bearerToken - the bearer token for authorizing the request with the
@@ -75,8 +74,8 @@ export class HttpCommonError extends CommonError.CommonError {
  * @param requestBody - a JSON object containing the request message to be sent.
  * @returns a JSON object containing the response body.
  *
- * @throws a {@link CommonError.HttpCommonError | HttpCommonError} with codes
- * from {@link CommonError.HttpCommonErrorCode | HttpCommonErrorCode}.
+ * @throws a {@link HttpCommonError} with codes from
+ * {@link HttpCommonErrorCode}.
  */
 export async function request(
   requestOptions: RequestOptions,

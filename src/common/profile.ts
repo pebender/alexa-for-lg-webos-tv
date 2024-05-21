@@ -15,7 +15,7 @@ export interface UserProfile {
  * If successful, it return the {@link UserProfile}. Otherwise, it throws a
  * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
  * any authorization failures, or a
- * {@link CommonError.HttpCommonError | HttpCommonError} for any other errors.
+ * {@link HTTPSRequest.HttpCommonError | HttpCommonError} for any other errors.
  *
  * @param accessToken - access token from a skill message.
  * @returns - the profile returned by the
@@ -25,7 +25,7 @@ export interface UserProfile {
  * @throws - a
  * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
  * any authorization failures, or a
- * {@link CommonError.HttpCommonError | HttpCommonError} for any other errors.
+ * {@link HTTPSRequest.HttpCommonError | HttpCommonError} for any other errors.
  */
 export async function getUserProfile(
   accessToken: string,
