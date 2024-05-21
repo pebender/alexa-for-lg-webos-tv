@@ -230,7 +230,7 @@ export class BackendSearcher extends EventEmitter {
       if (
         description.root.device[0].manufacturer[0].match(
           /^lg electronics$/i,
-        ) !== null ||
+        ) === null ||
         description.root.device[0].friendlyName[0] === "" ||
         description.root.device[0].UDN[0] === ""
       ) {
@@ -333,6 +333,7 @@ export class BackendSearcher extends EventEmitter {
       const search = this._ssdpResponse.search(
         "urn:lge-com:service:webos-second-screen:1",
       );
+      Common.Debug.debug("periodicSearch");
       if (search instanceof Promise) {
         search.catch((error) => {
           const commonError: Common.Error.CommonError = new TvCommonError({
