@@ -92,22 +92,6 @@
 
 ***
 
-### throwIfNotKnownTV()
-
-> `private` **throwIfNotKnownTV**(`methodName`, `udn`): `void`
-
-#### Parameters
-
-• **methodName**: `string`
-
-• **udn**: `string`
-
-#### Returns
-
-`void`
-
-***
-
 ### tvUpsert()
 
 > **tvUpsert**(`tv`): `Promise`\<`void`\>

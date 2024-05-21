@@ -8,6 +8,10 @@
 
 ## Index
 
+### Classes
+
+- [TvCommonError](classes/TvCommonError.md)
+
 ### Interfaces
 
 - [TV](interfaces/TV.md)
@@ -18,4 +22,5 @@
 - [IPv4](type-aliases/IPv4.md)
 - [IPv6](type-aliases/IPv6.md)
 - [MAC](type-aliases/MAC.md)
+- [TvCommonErrorCode](type-aliases/TvCommonErrorCode.md)
 - [UDN](type-aliases/UDN.md)

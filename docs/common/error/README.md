@@ -16,7 +16,6 @@
 - [GeneralCommonError](classes/GeneralCommonError.md)
 - [HttpCommonError](classes/HttpCommonError.md)
 - [LinkCommonError](classes/LinkCommonError.md)
-- [TvCommonError](classes/TvCommonError.md)
 
 ### Type Aliases
 
@@ -25,4 +24,3 @@
 - [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)
 - [HttpCommonErrorCode](type-aliases/HttpCommonErrorCode.md)
 - [LinkCommonErrorCode](type-aliases/LinkCommonErrorCode.md)
-- [TvCommonErrorCode](type-aliases/TvCommonErrorCode.md)

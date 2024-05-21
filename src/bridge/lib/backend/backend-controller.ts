@@ -2,7 +2,7 @@ import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
 import { type DatabaseRecord, DatabaseTable } from "../database";
-import type { TV, UDN } from "./tv";
+import { type TV, TvCommonError, type UDN } from "./tv";
 import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
@@ -84,15 +84,6 @@ export class BackendController extends EventEmitter {
     });
   }
 
-  private throwIfNotKnownTV(methodName: string, udn: UDN): void {
-    if (this._controls[udn] === undefined) {
-      throw new Common.Error.TvCommonError({
-        code: "tvUnknown",
-        message: `the requested television '${udn}' is not known in 'BackendController.${methodName}'`,
-      });
-    }
-  }
-
   public async tvUpsert(tv: TV): Promise<void> {
     try {
       const record = await this._database.getRecord({
@@ -131,7 +122,13 @@ export class BackendController extends EventEmitter {
   }
 
   public control(udn: UDN): BackendControl {
-    this.throwIfNotKnownTV("control", udn);
+    if (this._controls[udn] === undefined) {
+      throw new TvCommonError({
+        code: "tvUnknown",
+        message: `the requested television '${udn}' is not known'`,
+      });
+    }
+
     return this._controls[udn];
   }
 

@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import type { BackendControl } from "../../backend";
+import { type BackendControl, TV } from "../../backend";
 
 // The list of Alexa.InputController inputs are found at
 // <https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html>.
@@ -240,38 +240,43 @@ function states(
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
   async function value(): Promise<string> {
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
-    async function getInput(): Promise<string> {
-      if (backendControl.getPowerState() === "OFF") {
-        throw new Common.Error.TvCommonError({
-          code: "off",
-          message: "TV is off",
-        });
-      }
-      const lgtvRequest: LGTV.Request = {
-        uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
-      };
-      const lgtvResponse: LGTV.ResponseForegroundAppInfo =
-        (await backendControl.lgtvCommand(
-          lgtvRequest,
-        )) as LGTV.ResponseForegroundAppInfo;
-      if (lgtvResponse.appId === undefined) {
-        throw new Common.Error.TvCommonError({
-          code: "responseInvalid",
-          message: "TV response was invalid",
-          cause: { lgtvResponse },
-        });
-      }
-      return lgtvResponse.appId;
+
+    if (backendControl.getPowerState() === "OFF") {
+      throw new TV.TvCommonError({
+        code: "off",
+        message: "TV is off",
+        tv: backendControl.tv,
+      });
     }
-    const appId = await getInput();
+
+    const lgtvRequest: LGTV.Request = {
+      uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
+    };
+    const lgtvResponse: LGTV.ResponseForegroundAppInfo =
+      (await backendControl.lgtvCommand(
+        lgtvRequest,
+      )) as LGTV.ResponseForegroundAppInfo;
+    if (lgtvResponse.appId === undefined) {
+      throw new TV.TvCommonError({
+        code: "responseInvalid",
+        message: "TV response was invalid",
+        tv: backendControl.tv,
+        request: lgtvRequest,
+        response: lgtvResponse,
+      });
+    }
+
+    const appId = lgtvResponse.appId;
     const alexaInput = Object.keys(alexaToLGTV).find(
       (item) => alexaToLGTV[item].appId === appId,
     );
     if (alexaInput === undefined) {
-      throw new Common.Error.TvCommonError({
+      throw new TV.TvCommonError({
         code: "responseInvalid",
         message: "TV input was unknown",
-        cause: { appId, alexaToLGTV },
+        tv: backendControl.tv,
+        request: lgtvRequest,
+        response: lgtvResponse,
       });
     }
     return alexaInput;

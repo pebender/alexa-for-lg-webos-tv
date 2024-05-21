@@ -20,12 +20,12 @@ codes.
 
 ## Extended by
 
+- [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
 - [`GeneralCommonError`](GeneralCommonError.md)
 - [`AuthorizationCommonError`](AuthorizationCommonError.md)
 - [`DatabaseCommonError`](DatabaseCommonError.md)
 - [`HttpCommonError`](HttpCommonError.md)
 - [`LinkCommonError`](LinkCommonError.md)
-- [`TvCommonError`](TvCommonError.md)
 
 ## Implements
 

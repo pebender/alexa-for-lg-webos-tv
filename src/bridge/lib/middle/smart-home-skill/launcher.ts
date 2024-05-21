@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import type { BackendControl } from "../../backend";
+import { type BackendControl, TV } from "../../backend";
 //
 // "launcher.json" contains a mapping between Smart Home Skill Alexa.Launcher
 // launch target identifiers and LG webOS TV application ids. The list of Alexa
@@ -84,17 +84,21 @@ function states(
     const lgtvResponse: LGTV.Response =
       await backendControl.lgtvCommand(lgtvRequest);
     if (typeof lgtvResponse.appId !== "string") {
-      throw new Common.Error.TvCommonError({
+      throw new TV.TvCommonError({
         code: "responseInvalid",
         message: "TV response was invalid",
-        cause: { lgtvRequest, lgtvResponse },
+        tv: backendControl.tv,
+        request: lgtvRequest,
+        response: lgtvResponse,
       });
     }
     if (lgtvToAlexa[lgtvResponse.appId] === undefined) {
-      throw new Common.Error.TvCommonError({
+      throw new TV.TvCommonError({
         code: "responseValueUnknown",
         message: `TV unknown foreground application '${lgtvResponse.appId}'`,
-        cause: { lgtvRequest, lgtvResponse },
+        tv: backendControl.tv,
+        request: lgtvRequest,
+        response: lgtvResponse,
       });
     }
     return lgtvToAlexa[lgtvResponse.appId];

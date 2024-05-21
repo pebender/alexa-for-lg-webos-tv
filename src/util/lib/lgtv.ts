@@ -36,7 +36,7 @@ export async function getBackend(): Promise<Backend> {
   return backend;
 }
 
-function getSortedTVList(backend: Backend): TV[] {
+function getSortedTVList(backend: Backend): TV.TV[] {
   const backendControls = backend.controls();
   const udnList = backendControls
     .map((backendControl) => backendControl.tv.udn)

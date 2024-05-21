@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / TvCommonErrorCode
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/backend/tv](../README.md) / TvCommonErrorCode
 
 # Type alias: TvCommonErrorCode
 

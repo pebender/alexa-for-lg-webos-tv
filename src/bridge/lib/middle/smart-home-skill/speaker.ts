@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import type { BackendControl } from "../../backend";
+import { type BackendControl, TV } from "../../backend";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,9 +25,11 @@ function states(
       const lgtvResponse: LGTV.ResponseVolume =
         (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.volume !== "number") {
-        throw new Common.Error.TvCommonError({
+        throw new TV.TvCommonError({
           code: "responseInvalid",
           message: "invalid response from the TV",
+          tv: backendControl.tv,
+          request: lgtvRequest,
         });
       }
       return lgtvResponse.volume;
@@ -49,9 +51,12 @@ function states(
       const lgtvResponse: LGTV.ResponseVolume =
         (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.muted !== "boolean") {
-        throw new Common.Error.TvCommonError({
+        throw new TV.TvCommonError({
           code: "responseInvalid",
           message: "invalid response from the TV",
+          tv: backendControl.tv,
+          request: lgtvRequest,
+          response: lgtvResponse,
         });
       }
       return lgtvResponse.muted;
@@ -118,9 +123,12 @@ async function adjustVolumeHandler(
       lgtvRequest,
     )) as LGTV.ResponseVolume;
     if (lgtvResponse.volume === undefined) {
-      throw new Common.Error.TvCommonError({
+      throw new TV.TvCommonError({
         code: "responseInvalid",
         message: "the T.V. did not return it's volume",
+        tv: backendControl.tv,
+        request: lgtvRequest,
+        response: lgtvResponse,
       });
     }
     let volume = lgtvResponse.volume;

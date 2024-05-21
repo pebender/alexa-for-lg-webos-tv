@@ -44,4 +44,4 @@ Re-exports [Middle](lib/middle/classes/Middle.md)
 
 ### TV
 
-Re-exports [TV](lib/backend/tv/interfaces/TV.md)
+Renames and re-exports [bridge/lib/backend/tv](lib/backend/tv/README.md)

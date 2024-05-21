@@ -1,8 +1,4 @@
 /**
- * The error classes used for all errors.
- */
-
-/**
  * The class from which all errors are derived. Deriving all errors from this
  * class ensures that all errors will have an error code (`code`) and will be
  * understood where a `Error` class or a `NodeJS.ErrnoException` interface is
@@ -163,42 +159,6 @@ export class LinkCommonError extends CommonError {
   }) {
     super(options);
     this.name = "LinkCommonError";
-    this.code = options.code ?? "unknown";
-  }
-}
-
-export type TvCommonErrorCode =
-  | "unknown"
-  | "connectionRequestError"
-  | "connectionResponseError"
-  | "connectionResponseInvalidFormat"
-  | "descriptionXmlFetchError"
-  | "descriptionXmlFormatError"
-  | "descriptionXmlParseError"
-  | "lgtvApiViolation"
-  | "macAddressError"
-  | "off"
-  | "requestInvalidInCurrentState"
-  | "responseInvalid"
-  | "responseValueUnknown"
-  | "searchError"
-  | "subscriptionError"
-  | "tvUnknown";
-
-/**
- * A {@link CommonError} subclass for TV related errors. The supported errors
- * are given by {@link TvCommonErrorCode}.
- */
-export class TvCommonError extends CommonError {
-  public readonly code: TvCommonErrorCode;
-
-  constructor(options: {
-    code?: TvCommonErrorCode;
-    message?: string;
-    cause?: unknown;
-  }) {
-    super(options);
-    this.name = "TvCommonError";
     this.code = options.code ?? "unknown";
   }
 }

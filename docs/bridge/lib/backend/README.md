@@ -34,4 +34,4 @@ Re-exports [BackendSearcher](backend-searcher/classes/BackendSearcher.md)
 
 ### TV
 
-Re-exports [TV](tv/interfaces/TV.md)
+Renames and re-exports [bridge/lib/backend/tv](tv/README.md)
