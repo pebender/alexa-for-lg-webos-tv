@@ -428,6 +428,7 @@ export class Frontend {
         error: unknown,
         request: express.Request,
         response: express.Response,
+        next: express.NextFunction,
       ): void {
         if (error instanceof Common.HTTPSRequest.HttpCommonError) {
           switch (error.code) {
