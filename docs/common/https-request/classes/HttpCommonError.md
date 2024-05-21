@@ -31,11 +31,15 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 • **options.requestBody?**: `object`
 
-• **options.requestOptions?**: `RequestOptions`
+• **options.requestHeaders?**: `Record`\<`string`, `string`\>
+
+• **options.requestMethod?**: `"GET"` \| `"POST"`
+
+• **options.requestUrl?**: `string`
 
 • **options.responseBody?**: `string` \| `object`
 
-• **options.responseHeaders?**: `IncomingHttpHeaders`
+• **options.responseHeaders?**: `Headers`
 
 • **options.responseStatusCode?**: `number`
 
@@ -65,9 +69,21 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ***
 
-### requestOptions?
+### requestHeaders?
 
-> `optional` `readonly` **requestOptions**: `RequestOptions`
+> `optional` `readonly` **requestHeaders**: `Record`\<`string`, `string`\>
+
+***
+
+### requestMethod?
+
+> `optional` `readonly` **requestMethod**: `"GET"` \| `"POST"`
+
+***
+
+### requestUrl?
+
+> `optional` `readonly` **requestUrl**: `string`
 
 ***
 
@@ -79,7 +95,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ### responseHeaders?
 
-> `optional` `readonly` **responseHeaders**: `IncomingHttpHeaders`
+> `optional` `readonly` **responseHeaders**: `Headers`
 
 ***
 

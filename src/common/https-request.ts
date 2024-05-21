@@ -1,5 +1,3 @@
-import type * as http from "node:http";
-import * as https from "node:https";
 import * as Debug from "./debug";
 import * as CommonError from "./error";
 
@@ -30,26 +28,33 @@ export type HttpCommonErrorCode =
  */
 export class HttpCommonError extends CommonError.CommonError {
   public readonly code: HttpCommonErrorCode;
-  public readonly requestOptions?: https.RequestOptions;
+  public readonly requestUrl?: string;
+  public readonly requestMethod?: "GET" | "POST";
+  public readonly requestHeaders?: Record<string, string>;
   public readonly requestBody?: object;
   public readonly responseStatusCode?: number;
-  public readonly responseHeaders?: http.IncomingHttpHeaders;
+  public readonly responseHeaders?: Headers;
   public readonly responseBody?: string | object;
 
   constructor(options: {
     code: HttpCommonErrorCode;
     message?: string;
-    requestOptions?: https.RequestOptions;
+    requestUrl?: string;
+    requestMethod?: "GET" | "POST";
+    requestHeaders?: Record<string, string>;
     requestBody?: object;
     responseStatusCode?: number;
-    responseHeaders?: http.IncomingHttpHeaders;
+    responseHeaders?: Headers;
     responseBody?: string | object;
     cause?: unknown;
   }) {
     super(options);
     this.name = "HttpCommonError";
     this.code = options.code;
-    this.requestOptions = options.requestOptions;
+
+    this.requestUrl = options.requestUrl;
+    this.requestMethod = options.requestMethod;
+    this.requestHeaders = options.requestHeaders;
     this.requestBody = options.requestBody;
     this.responseStatusCode = options.responseStatusCode;
     this.responseHeaders = options.responseHeaders;
@@ -82,158 +87,121 @@ export async function request(
   bearerToken: string,
   requestBody?: object,
 ): Promise<object> {
-  const content = requestBody === undefined ? "" : JSON.stringify(requestBody);
+  const url: string = `https://${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}`;
   const options: {
-    hostname: string;
-    port: number;
-    path: string;
-    method: string;
+    method: "GET" | "POST";
+    body?: string;
     headers: Record<string, string>;
   } = {
-    hostname: requestOptions.hostname,
-    port: requestOptions.port,
-    path: requestOptions.path,
-    method: requestBody === undefined ? "GET" : "POST",
-    headers: {},
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${bearerToken}`,
+      accept: "application/json",
+    },
   };
 
-  Object.assign(options.headers, requestOptions.headers);
-  options.headers.authorization = `Bearer ${bearerToken}`;
-  // eslint-disable-next-line @typescript-eslint/dot-notation
-  options.headers["Accept"] = "application/json";
-  if (options.method === "POST") {
+  if (requestBody !== undefined) {
+    const body = JSON.stringify(requestBody);
+    options.method = "POST";
     options.headers["content-type"] = "application/json";
-    options.headers["content-length"] = Buffer.byteLength(content).toString();
+    options.headers["content-length"] = Buffer.byteLength(body).toString();
+    options.body = body;
   }
 
   Debug.debug("HTTP Request");
+  Debug.debugJSON(url);
   Debug.debugJSON(options);
-  Debug.debugJSON(content);
 
-  let body: object;
-  let data = "";
-  const response = new Promise(
-    (
-      resolve: (value: object) => void,
-      reject: (error: CommonError.CommonError) => void,
-    ): void => {
-      const request = https.request(options, (response): void => {
-        response.setEncoding("utf8");
-        response.on("data", (chunk: string): void => {
-          data += chunk;
-        });
-        response.on("end", (): void => {
-          function createHttpError(
-            code: HttpCommonErrorCode,
-            cause?: unknown,
-          ): HttpCommonError {
-            return new HttpCommonError({
-              code,
-              requestOptions: options,
-              requestBody,
-              responseStatusCode: response.statusCode,
-              responseHeaders: response.headers,
-              responseBody: data,
-              cause,
-            });
-          }
+  let response: Response | undefined;
+  let data: string | undefined;
+  let body: string | object | undefined;
 
-          if (!response.complete) {
-            reject(
-              new HttpCommonError({
-                code: "connectionInterrupted",
-                requestOptions: options,
-                requestBody,
-              }),
-            );
-          }
+  function createHttpError(
+    code: HttpCommonErrorCode,
+    cause?: unknown,
+  ): HttpCommonError {
+    return new HttpCommonError({
+      code,
+      requestUrl: url,
+      requestMethod: options.method,
+      requestHeaders: options.headers,
+      requestBody,
+      responseStatusCode: response?.status,
+      responseHeaders: response?.headers,
+      responseBody: body ?? data,
+      cause,
+    });
+  }
 
-          Debug.debug("HTTP Response");
-          Debug.debug(response.statusCode);
-          Debug.debugJSON(response.headers);
-          Debug.debugJSON(data);
+  try {
+    response = await fetch(url, options);
+  } catch (error) {
+    throw createHttpError("unknown", error);
+  }
 
-          const statusCode = response.statusCode;
-          const contentType = response.headers["content-type"];
+  let blob: Blob;
+  try {
+    blob = await response.blob();
+  } catch (error) {
+    throw createHttpError("unknown", error);
+  }
 
-          if (statusCode === undefined) {
-            reject(createHttpError("statusCodeNotFound"));
-          }
-          switch (statusCode) {
-            case 400: {
-              reject(createHttpError("badRequest"));
-              break;
-            }
-            case 401: {
-              reject(createHttpError("unauthorized"));
-              break;
-            }
-            case 403: {
-              reject(createHttpError("forbidden"));
-              break;
-            }
-            case 500: {
-              reject(createHttpError("internalServerError"));
-              break;
-            }
-            case 502: {
-              reject(createHttpError("badGateway"));
-              break;
-            }
-          }
+  const statusCode: number = response.status;
+  const contentType: string = blob.type;
 
-          if (contentType === undefined) {
-            reject(createHttpError("contentTypeNotFound"));
-            return;
-          }
+  if (statusCode === undefined) {
+    throw createHttpError("statusCodeNotFound");
+  }
+  switch (statusCode) {
+    case 400: {
+      throw createHttpError("badRequest");
+    }
+    case 401: {
+      throw createHttpError("unauthorized");
+    }
+    case 403: {
+      throw createHttpError("forbidden");
+    }
+    case 500: {
+      throw createHttpError("internalServerError");
+    }
+    case 502: {
+      throw createHttpError("badGateway");
+    }
+  }
 
-          if (
-            contentType
-              .split(/\s*;\s*/)[0]
-              .trim()
-              .toLowerCase() !== "application/json"
-          ) {
-            reject(
-              createHttpError("contentTypeValueInvalid", {
-                contentType,
-                contentTypeParsed: contentType.split(/\w*;\w*/).toString(),
-              }),
-            );
-            return;
-          }
+  if (contentType === undefined) {
+    throw createHttpError("contentTypeNotFound");
+  }
 
-          try {
-            const bodyUnknown: unknown = JSON.parse(data);
-            if (typeof bodyUnknown !== "object" || bodyUnknown === null) {
-              reject(createHttpError("bodyNotFound"));
-              return;
-            }
-            body = bodyUnknown;
-          } catch (error) {
-            Debug.debugError(error);
-            reject(createHttpError("bodyFormatInvalid"));
-            return;
-          }
-          // Return the body.
-          resolve(body);
-        });
-      });
-      request.on("error", (error): void => {
-        reject(
-          new HttpCommonError({
-            code: "unknown",
-            requestOptions: options,
-            requestBody,
-            cause: error,
-          }),
-        );
-      });
-      if (options.method === "POST") {
-        request.write(content);
-      }
-      request.end();
-    },
-  );
+  if (
+    contentType
+      .split(/\s*;\s*/)[0]
+      .trim()
+      .toLowerCase() !== "application/json"
+  ) {
+    throw createHttpError("contentTypeValueInvalid", {
+      contentType,
+      contentTypeParsed: contentType.split(/\w*;\w*/).toString(),
+    });
+  }
 
-  return await response;
+  try {
+    data = await blob.text();
+  } catch (error) {
+    throw createHttpError("bodyFormatInvalid", error);
+  }
+
+  try {
+    const bodyUnknown: unknown = JSON.parse(data);
+    if (typeof bodyUnknown !== "object" || bodyUnknown === null) {
+      throw createHttpError("bodyNotFound");
+    }
+    body = bodyUnknown;
+  } catch (error) {
+    Debug.debugError(error);
+    throw createHttpError("bodyFormatInvalid");
+  }
+
+  return body;
 }
