@@ -6,8 +6,8 @@
 
 # Class: TvCommonError
 
-A CommonError subclass for TV related errors. The supported errors
-are given by [TvCommonErrorCode](../type-aliases/TvCommonErrorCode.md).
+A [CommonError](../../../../../common/error/classes/CommonError.md) subclass for TV related
+errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/TvCommonErrorCode.md).
 
 ## Extends
 

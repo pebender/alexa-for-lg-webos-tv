@@ -36,8 +36,8 @@ export type TvCommonErrorCode =
   | "tvUnknown";
 
 /**
- * A {@link CommonError} subclass for TV related errors. The supported errors
- * are given by {@link TvCommonErrorCode}.
+ * A {@link Common.Error.CommonError | CommonError} subclass for TV related
+ * errors. The supported errors are given by {@link TvCommonErrorCode}.
  */
 export class TvCommonError extends Common.Error.CommonError {
   public readonly code: TvCommonErrorCode;
