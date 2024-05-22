@@ -17,6 +17,27 @@ import {
   type BridgeTokenAuthRecord,
 } from "./bridge-token-auth";
 
+type FrontendCommonErrorCode =
+  | "bodyFormatInvalid"
+  | "contentTypeValueInvalid"
+  | "contentTypeNotFound"
+  | "internalServerError"
+  | "unauthorized";
+
+class FrontendCommonError extends Common.Error.CommonError {
+  public readonly code: FrontendCommonErrorCode;
+
+  constructor(options: {
+    code: FrontendCommonErrorCode;
+    message?: string;
+    cause?: unknown;
+  }) {
+    super(options);
+    this.name = "FrontendCommonError";
+    this.code = options.code;
+  }
+}
+
 export class Frontend {
   private readonly _loginTokenAuth: LoginTokenAuth;
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
@@ -66,8 +87,8 @@ export class Frontend {
       function errorUnauthorized(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.HTTPSRequest.HttpCommonError {
-        return new Common.HTTPSRequest.HttpCommonError({
+      }): FrontendCommonError {
+        return new FrontendCommonError({
           code: "unauthorized",
           message: options?.message,
           cause: options?.cause,
@@ -78,7 +99,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.HTTPSRequest.HttpCommonError({
+        return new FrontendCommonError({
           code: "internalServerError",
           message: options?.message,
           cause: options?.cause,
@@ -89,7 +110,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.HTTPSRequest.HttpCommonError({
+        return new FrontendCommonError({
           code: "contentTypeNotFound",
           message: options?.message,
           cause: options?.cause,
@@ -100,7 +121,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.HTTPSRequest.HttpCommonError({
+        return new FrontendCommonError({
           code: "contentTypeValueInvalid",
           message: options?.message,
           cause: options?.cause,
@@ -111,7 +132,7 @@ export class Frontend {
         message?: string;
         cause?: unknown;
       }): Common.Error.CommonError {
-        return new Common.HTTPSRequest.HttpCommonError({
+        return new FrontendCommonError({
           code: "bodyFormatInvalid",
           message: options?.message,
           cause: options?.cause,
@@ -432,7 +453,7 @@ export class Frontend {
         next: express.NextFunction,
       ): void {
         Common.Debug.debugError(error);
-        if (error instanceof Common.HTTPSRequest.HttpCommonError) {
+        if (error instanceof FrontendCommonError) {
           switch (error.code) {
             case "unauthorized": {
               frontend._ipBlacklist.increment(request, response);
