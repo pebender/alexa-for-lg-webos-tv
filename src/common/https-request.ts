@@ -113,8 +113,7 @@ export async function request(
   Debug.debugJSON(options);
 
   let response: Response | undefined;
-  let data: string | undefined;
-  let body: string | object | undefined;
+  let responseBody: string | object | undefined;
 
   function createHttpError(
     code: HttpCommonErrorCode,
@@ -128,7 +127,7 @@ export async function request(
       requestBody,
       responseStatusCode: response?.status,
       responseHeaders: response?.headers,
-      responseBody: body ?? data,
+      responseBody,
       cause,
     });
   }
@@ -139,69 +138,61 @@ export async function request(
     throw createHttpError("unknown", error);
   }
 
-  let blob: Blob;
-  try {
-    blob = await response.blob();
-  } catch (error) {
-    throw createHttpError("unknown", error);
-  }
-
-  const statusCode: number = response.status;
-  const contentType: string = blob.type;
-
-  if (statusCode === undefined) {
-    throw createHttpError("statusCodeNotFound");
-  }
-  switch (statusCode) {
-    case 400: {
-      throw createHttpError("badRequest");
+  if (!response.ok) {
+    const statusCode: number = response.status;
+    if (statusCode === undefined) {
+      throw createHttpError("statusCodeNotFound");
     }
-    case 401: {
-      throw createHttpError("unauthorized");
-    }
-    case 403: {
-      throw createHttpError("forbidden");
-    }
-    case 500: {
-      throw createHttpError("internalServerError");
-    }
-    case 502: {
-      throw createHttpError("badGateway");
+    switch (statusCode) {
+      case 400: {
+        throw createHttpError("badRequest");
+      }
+      case 401: {
+        throw createHttpError("unauthorized");
+      }
+      case 403: {
+        throw createHttpError("forbidden");
+      }
+      case 500: {
+        throw createHttpError("internalServerError");
+      }
+      case 502: {
+        throw createHttpError("badGateway");
+      }
+      default: {
+        throw createHttpError("unknown");
+      }
     }
   }
 
-  if (contentType === undefined) {
+  const contentType: string | null = response.headers.get("content-type");
+  if (contentType === null) {
     throw createHttpError("contentTypeNotFound");
   }
-
-  if (
-    contentType
-      .split(/\s*;\s*/)[0]
-      .trim()
-      .toLowerCase() !== "application/json"
-  ) {
-    throw createHttpError("contentTypeValueInvalid", {
-      contentType,
-      contentTypeParsed: contentType.split(/\w*;\w*/).toString(),
-    });
+  const mimeType: string = contentType
+    .split(/\s*;\s*/)[0]
+    .trim()
+    .toLowerCase();
+  if (mimeType !== "application/json") {
+    throw createHttpError("contentTypeValueInvalid");
   }
 
   try {
-    data = await blob.text();
+    const responseBodyUnknown: unknown = response.json();
+    /*
+     * application/json is either an Array ({}) or an Object ({}) both of which
+     * are typeof object.
+     */
+    if (
+      typeof responseBodyUnknown !== "object" ||
+      responseBodyUnknown === null
+    ) {
+      throw createHttpError("bodyFormatInvalid");
+    }
+    responseBody = responseBodyUnknown;
   } catch (error) {
     throw createHttpError("bodyFormatInvalid", error);
   }
 
-  try {
-    const bodyUnknown: unknown = JSON.parse(data);
-    if (typeof bodyUnknown !== "object" || bodyUnknown === null) {
-      throw createHttpError("bodyNotFound");
-    }
-    body = bodyUnknown;
-  } catch (error) {
-    Debug.debugError(error);
-    throw createHttpError("bodyFormatInvalid");
-  }
-
-  return body;
+  return responseBody;
 }
