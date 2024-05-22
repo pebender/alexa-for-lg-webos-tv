@@ -295,21 +295,22 @@ export class Frontend {
         }
         const bridgeToken = authorization[1];
 
+        let record;
         try {
-          const record =
+          record =
             await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
-          if (record === null) {
-            throw errorUnauthorized({
-              message: "Bridge connection failed due to invalid bearer token.",
-            });
-          }
-          response.locals.bridgeHostname = record.bridgeHostname;
-          response.locals.email = record.email;
-          response.locals.userId = record.userId;
-          response.locals.skillToken = record.skillToken;
         } catch (error) {
           throw errorInternalServerError({ cause: error });
         }
+        if (record === null) {
+          throw errorUnauthorized({
+            message: "Bridge connection failed due to invalid bearer token.",
+          });
+        }
+        response.locals.bridgeHostname = record.bridgeHostname;
+        response.locals.email = record.email;
+        response.locals.userId = record.userId;
+        response.locals.skillToken = record.skillToken;
       }
 
       function contentTypeHandlerCore(
@@ -430,6 +431,7 @@ export class Frontend {
         response: express.Response,
         next: express.NextFunction,
       ): void {
+        Common.Debug.debugError(error);
         if (error instanceof Common.HTTPSRequest.HttpCommonError) {
           switch (error.code) {
             case "unauthorized": {
