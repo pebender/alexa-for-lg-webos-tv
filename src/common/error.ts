@@ -51,7 +51,8 @@ export class GeneralCommonError extends CommonError {
 export type AuthorizationCommonErrorCode =
   | "bridgeHostnameNotFound"
   | "bridgeTokenNotFound"
-  | "userProfileInvalidScope"
+  | "userProfileError"
+  | "userProfileInsufficientScope"
   | "userProfileInvalidToken"
   | "userProfileEmailNotFound"
   | "userProfileUserIdNotFound";

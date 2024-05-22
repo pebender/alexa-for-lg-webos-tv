@@ -26,6 +26,7 @@ codes.
 - [`DatabaseCommonError`](DatabaseCommonError.md)
 - [`LinkCommonError`](LinkCommonError.md)
 - [`HttpCommonError`](../../https-request/classes/HttpCommonError.md)
+- [`UserProfileCommonError`](../../profile/classes/UserProfileCommonError.md)
 
 ## Implements
 

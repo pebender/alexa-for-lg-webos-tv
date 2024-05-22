@@ -8,9 +8,17 @@
 
 ## Index
 
+### Classes
+
+- [UserProfileCommonError](classes/UserProfileCommonError.md)
+
 ### Interfaces
 
 - [UserProfile](interfaces/UserProfile.md)
+
+### Type Aliases
+
+- [UserProfileCommonErrorCode](type-aliases/UserProfileCommonErrorCode.md)
 
 ### Functions
 

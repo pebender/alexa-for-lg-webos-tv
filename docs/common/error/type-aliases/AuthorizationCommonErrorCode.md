@@ -6,4 +6,4 @@
 
 # Type alias: AuthorizationCommonErrorCode
 
-> **AuthorizationCommonErrorCode**: `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"userProfileInvalidScope"` \| `"userProfileInvalidToken"` \| `"userProfileEmailNotFound"` \| `"userProfileUserIdNotFound"`
+> **AuthorizationCommonErrorCode**: `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"userProfileError"` \| `"userProfileInsufficientScope"` \| `"userProfileInvalidToken"` \| `"userProfileEmailNotFound"` \| `"userProfileUserIdNotFound"`
