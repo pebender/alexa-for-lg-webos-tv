@@ -29,7 +29,7 @@ function states(
           code: "responseInvalid",
           message: "invalid response from the TV",
           tv: backendControl.tv,
-          request: lgtvRequest,
+          lgtvRequest,
         });
       }
       return lgtvResponse.volume;
@@ -55,8 +55,8 @@ function states(
           code: "responseInvalid",
           message: "invalid response from the TV",
           tv: backendControl.tv,
-          request: lgtvRequest,
-          response: lgtvResponse,
+          lgtvRequest,
+          lgtvResponse,
         });
       }
       return lgtvResponse.muted;
@@ -127,8 +127,8 @@ async function adjustVolumeHandler(
         code: "responseInvalid",
         message: "the T.V. did not return it's volume",
         tv: backendControl.tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     let volume = lgtvResponse.volume;

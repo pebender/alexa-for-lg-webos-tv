@@ -9,8 +9,8 @@ import {
 } from "node-ssdp";
 import { parseString as xml2js } from "xml2js";
 import * as Common from "../../../common";
-import type { IP, MAC, TV, UDN } from "./tv";
-import { TvCommonError } from "./tv-common-error";
+import type { TV } from "./tv";
+import { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
 export interface UPnPDevice {
   root?: {
@@ -71,6 +71,26 @@ export class BackendSearcher extends EventEmitter {
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
     ): Promise<TV | null> {
+      const tv: Partial<TV> = {};
+      let descriptionXml: string;
+
+      function createTvCommonError(options: {
+        code: TvCommonErrorCode;
+        message?: string;
+        cause?: unknown;
+      }): TvCommonError {
+        return new TvCommonError({
+          ...options,
+          tv,
+          ssdpResponse: {
+            messageName,
+            headers,
+            rinfo,
+          },
+          ssdpDescription: descriptionXml,
+        });
+      }
+
       if (headers.USN === undefined) {
         return null;
       }
@@ -117,17 +137,8 @@ export class BackendSearcher extends EventEmitter {
         return null;
       }
 
-      const tv: {
-        udn?: UDN;
-        name?: string;
-        ip: IP;
-        url: string;
-        mac?: MAC;
-        key?: string;
-      } = {
-        ip: rinfo.address,
-        url: `ws://${rinfo.address}:3000`,
-      };
+      tv.ip = rinfo.address;
+      tv.url = `ws://${rinfo.address}:3000`;
 
       //
       // Get the device description. I use this to make sure that this is an
@@ -142,12 +153,13 @@ export class BackendSearcher extends EventEmitter {
       try {
         response = await fetch(headers.LOCATION);
       } catch (error) {
-        throw new TvCommonError({ cause: error });
+        throw createTvCommonError({ code: "unknown", cause: error });
       }
       if (response.status !== 200) {
         throw new TvCommonError({
           code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
+          tv,
         });
       }
 
@@ -155,22 +167,21 @@ export class BackendSearcher extends EventEmitter {
       try {
         blob = await response.blob();
       } catch (error) {
-        throw new TvCommonError({ cause: error });
+        throw createTvCommonError({ code: "unknown", cause: error });
       }
 
       const mimetype: string[] = blob.type.split(";");
       if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
         });
       }
 
-      let descriptionXml;
       try {
         descriptionXml = await blob.text();
       } catch (error) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
           cause: error,
@@ -190,7 +201,7 @@ export class BackendSearcher extends EventEmitter {
           };
         };
       } catch (error) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlParseError",
           message: "Could not parse descriptionXML from the TV",
           cause: error,
@@ -198,7 +209,7 @@ export class BackendSearcher extends EventEmitter {
       }
 
       if (description === undefined || description === null) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlParseError",
           message: "Could not parse descriptionXML from the TV",
         });
@@ -218,7 +229,7 @@ export class BackendSearcher extends EventEmitter {
         description.root.device[0].UDN === undefined ||
         description.root.device[0].UDN.length !== 1
       ) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlFormatError",
           message: "Could not fetch descriptionXML from the TV",
         });
@@ -235,7 +246,7 @@ export class BackendSearcher extends EventEmitter {
         description.root.device[0].friendlyName[0] === "" ||
         description.root.device[0].UDN[0] === ""
       ) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "descriptionXmlFormatError",
           message: "Could not fetch descriptionXML from the TV",
         });
@@ -251,13 +262,12 @@ export class BackendSearcher extends EventEmitter {
         const getMACWithPromise = promisify(getMAC);
         tv.mac = await getMACWithPromise(tv.ip);
       } catch (error) {
-        throw new TvCommonError({
+        throw createTvCommonError({
           code: "macAddressError",
           message: "Could not get TV's MAC address",
           cause: error,
         });
       }
-
       return {
         udn: tv.udn,
         name: tv.name,

@@ -261,8 +261,8 @@ function states(
         code: "responseInvalid",
         message: "TV response was invalid",
         tv: backendControl.tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
 
@@ -275,8 +275,8 @@ function states(
         code: "responseInvalid",
         message: "TV input was unknown",
         tv: backendControl.tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     return alexaInput;

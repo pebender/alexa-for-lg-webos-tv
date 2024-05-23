@@ -88,8 +88,8 @@ function states(
         code: "responseInvalid",
         message: "TV response was invalid",
         tv: backendControl.tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     if (lgtvToAlexa[lgtvResponse.appId] === undefined) {
@@ -97,8 +97,8 @@ function states(
         code: "responseValueUnknown",
         message: `TV unknown foreground application '${lgtvResponse.appId}'`,
         tv: backendControl.tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     return lgtvToAlexa[lgtvResponse.appId];

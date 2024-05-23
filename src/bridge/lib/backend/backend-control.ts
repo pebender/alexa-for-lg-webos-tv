@@ -296,7 +296,7 @@ export class BackendControl extends EventEmitter {
                     code: "connectionRequestError",
                     message: "TV connection request error",
                     tv: this.tv,
-                    request: lgtvRequest,
+                    lgtvRequest,
                     cause: error,
                   }),
                 );
@@ -308,7 +308,7 @@ export class BackendControl extends EventEmitter {
                     code: "lgtvApiViolation",
                     message: "LGTV API violation",
                     tv: this.tv,
-                    request: lgtvRequest,
+                    lgtvRequest,
                   }),
                 );
                 return;
@@ -331,7 +331,7 @@ export class BackendControl extends EventEmitter {
                   code: "connectionRequestError",
                   message: "TV connection request error",
                   tv: this._tv,
-                  request: lgtvRequest,
+                  lgtvRequest,
                   cause: error,
                 }),
               );
@@ -343,7 +343,7 @@ export class BackendControl extends EventEmitter {
                   code: "lgtvApiViolation",
                   message: "LGTV API violation",
                   tv: this._tv,
-                  request: lgtvRequest,
+                  lgtvRequest,
                 }),
               );
               return;
@@ -358,8 +358,8 @@ export class BackendControl extends EventEmitter {
         code: "connectionResponseInvalidFormat",
         message: "TV connection response missing return value",
         tv: this._tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     if (!lgtvResponse.returnValue) {
@@ -381,8 +381,8 @@ export class BackendControl extends EventEmitter {
         code: "connectionResponseError",
         message: `TV connection response returned the error: ${errorText} (${errorCode}`,
         tv: this._tv,
-        request: lgtvRequest,
-        response: lgtvResponse,
+        lgtvRequest,
+        lgtvResponse,
       });
     }
     return lgtvResponse;

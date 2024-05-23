@@ -27,13 +27,23 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 • **options.code?**: [`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
 
+• **options.lgtvRequest?**: [`Request`](../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+
+• **options.lgtvResponse?**: [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+
 • **options.message?**: `string`
 
-• **options.request?**: [`Request`](../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+• **options.ssdpDescription?**: `string`
 
-• **options.response?**: [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+• **options.ssdpResponse?**
 
-• **options.tv?**: [`TV`](../../tv/interfaces/TV.md)
+• **options.ssdpResponse.headers**: [`SsdpHeaders`](../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+
+• **options.ssdpResponse.messageName**: `string`
+
+• **options.ssdpResponse.rinfo**: `RemoteInfo`
+
+• **options.tv?**: `Partial`\<[`TV`](../../tv/interfaces/TV.md)\>
 
 #### Returns
 
@@ -52,3 +62,45 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 #### Overrides
 
 [`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`code`](../../../../../common/common-error/classes/CommonError.md#code)
+
+***
+
+### lgtvRequest?
+
+> `optional` `readonly` **lgtvRequest**: [`Request`](../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+
+***
+
+### lgtvResponse?
+
+> `optional` `readonly` **lgtvResponse**: [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+
+***
+
+### ssdpDescription?
+
+> `optional` `readonly` **ssdpDescription**: `string`
+
+***
+
+### ssdpResponse?
+
+> `optional` `readonly` **ssdpResponse**: `object`
+
+#### headers
+
+> **headers**: [`SsdpHeaders`](../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+
+#### messageName
+
+> **messageName**: `string`
+
+#### rinfo
+
+> **rinfo**: `RemoteInfo`
+
+***
+
+### tv?
+
+> `optional` `readonly` **tv**: `Partial`\<[`TV`](../../tv/interfaces/TV.md)\>

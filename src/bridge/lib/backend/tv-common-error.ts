@@ -1,4 +1,6 @@
+import type dgram from "node:dgram";
 import type LGTV from "lgtv2";
+import type { SsdpHeaders } from "node-ssdp";
 import { CommonError } from "../../../common";
 import type { TV } from "./tv";
 
@@ -27,16 +29,42 @@ export type TvCommonErrorCode =
 export class TvCommonError extends CommonError {
   public readonly code: TvCommonErrorCode;
 
+  public readonly tv?: Partial<TV>;
+
+  public readonly lgtvRequest?: LGTV.Request;
+
+  public readonly lgtvResponse?: LGTV.Response;
+
+  public readonly ssdpResponse?: {
+    messageName: string;
+    headers: SsdpHeaders;
+    rinfo: dgram.RemoteInfo;
+  };
+
+  public readonly ssdpDescription?: string;
+
   constructor(options: {
     code?: TvCommonErrorCode;
     message?: string;
-    tv?: TV;
-    request?: LGTV.Request;
-    response?: LGTV.Response;
+    tv?: Partial<TV>;
+    lgtvRequest?: LGTV.Request;
+    lgtvResponse?: LGTV.Response;
+    ssdpResponse?: {
+      messageName: string;
+      headers: SsdpHeaders;
+      rinfo: dgram.RemoteInfo;
+    };
+    ssdpDescription?: string;
     cause?: unknown;
   }) {
     super(options);
     this.name = "TvCommonError";
     this.code = options.code ?? "unknown";
+
+    this.tv = options.tv;
+    this.lgtvRequest = options.lgtvRequest;
+    this.lgtvResponse = options.lgtvResponse;
+    this.ssdpResponse = options.ssdpResponse;
+    this.ssdpDescription = options.ssdpDescription;
   }
 }

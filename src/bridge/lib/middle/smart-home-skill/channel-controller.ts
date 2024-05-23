@@ -246,8 +246,8 @@ function states(
           code: "responseInvalid",
           message: "TV response was invalid",
           tv: backendControl.tv,
-          request: lgtvRequest,
-          response: lgtvResponse,
+          lgtvRequest,
+          lgtvResponse,
         });
       }
       if (lgtvResponse.appId !== "com.webos.app.livetv") {
@@ -255,8 +255,8 @@ function states(
           code: "requestInvalidInCurrentState",
           message: "TV channel requested when TV was not tuned to a channel",
           tv: backendControl.tv,
-          request: lgtvRequest,
-          response: lgtvResponse,
+          lgtvRequest,
+          lgtvResponse,
         });
       }
     }
