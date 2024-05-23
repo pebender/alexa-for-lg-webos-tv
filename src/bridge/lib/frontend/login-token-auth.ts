@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import path from "node:path";
 import * as jwt from "jsonwebtoken";
-import * as Common from "../../../../common";
-import type { Configuration } from "../../configuration";
+import * as Common from "../../../common";
+import type { Configuration } from "../configuration";
 import { authorizeUser } from "./authorize-user";
 
 export interface LoginTokenAuthRecord {

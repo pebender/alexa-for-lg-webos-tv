@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
-import * as Common from "../../../../common";
-import { DatabaseTable } from "../../database";
-import type { Configuration } from "../../configuration";
+import * as Common from "../../../common";
+import { DatabaseTable } from "../database";
+import type { Configuration } from "../configuration";
 import { authorizeUser } from "./authorize-user";
 
 export interface BridgeTokenAuthRecord {
