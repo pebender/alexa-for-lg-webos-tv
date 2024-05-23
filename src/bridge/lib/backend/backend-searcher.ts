@@ -12,16 +12,6 @@ import * as Common from "../../../common";
 import type { TV } from "./tv";
 import { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
-export interface UPnPDevice {
-  root?: {
-    device?: Array<{
-      manufacturer: string[];
-      friendlyName: string[];
-      UDN: string[];
-    }>;
-  };
-}
-
 export class BackendSearcher extends EventEmitter {
   private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
