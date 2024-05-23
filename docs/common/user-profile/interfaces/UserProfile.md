@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/profile](../README.md) / UserProfile
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/user-profile](../README.md) / UserProfile
 
 # Interface: UserProfile
 

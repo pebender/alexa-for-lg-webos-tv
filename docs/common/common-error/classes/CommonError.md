@@ -25,7 +25,7 @@ codes.
 - [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
 - [`DatabaseCommonError`](../../database-common-error/classes/DatabaseCommonError.md)
 - [`GeneralCommonError`](../../general-common-error/classes/GeneralCommonError.md)
-- [`UserProfileCommonError`](../../profile/classes/UserProfileCommonError.md)
+- [`UserProfileCommonError`](../../user-profile/classes/UserProfileCommonError.md)
 
 ## Implements
 

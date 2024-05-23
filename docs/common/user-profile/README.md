@@ -2,9 +2,9 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../modules.md) / common/profile
+[alexa-for-lg-webos-tv](../../modules.md) / common/user-profile
 
-# common/profile
+# common/user-profile
 
 ## Index
 

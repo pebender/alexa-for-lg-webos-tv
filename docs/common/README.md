@@ -46,7 +46,7 @@ Re-exports [GeneralCommonErrorCode](general-common-error/type-aliases/GeneralCom
 
 ### Profile
 
-Renames and re-exports [common/profile](profile/README.md)
+Renames and re-exports [common/user-profile](user-profile/README.md)
 
 ***
 

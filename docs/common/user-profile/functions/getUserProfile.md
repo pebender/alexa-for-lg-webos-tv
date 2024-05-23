@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/profile](../README.md) / getUserProfile
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/user-profile](../README.md) / getUserProfile
 
 # Function: getUserProfile()
 

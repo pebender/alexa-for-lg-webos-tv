@@ -19,6 +19,6 @@ export {
   DatabaseCommonError,
   type DatabaseCommonErrorCode,
 } from "./database-common-error";
-export * as Profile from "./profile";
+export * as Profile from "./user-profile";
 export * as SHS from "./smart-home-skill";
 export * as Debug from "./debug";

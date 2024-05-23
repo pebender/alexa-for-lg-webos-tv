@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/profile](../README.md) / UserProfileCommonErrorCode
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/user-profile](../README.md) / UserProfileCommonErrorCode
 
 # Type alias: UserProfileCommonErrorCode
 
