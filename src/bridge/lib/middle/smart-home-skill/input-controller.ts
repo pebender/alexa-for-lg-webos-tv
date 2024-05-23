@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { type BackendControl, TV } from "../../backend";
+import { type BackendControl, TvCommonError } from "../../backend";
 
 // The list of Alexa.InputController inputs are found at
 // <https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html>.
@@ -242,7 +242,7 @@ function states(
     const alexaToLGTV = await getAlexaToLGTV(backendControl);
 
     if (backendControl.getPowerState() === "OFF") {
-      throw new TV.TvCommonError({
+      throw new TvCommonError({
         code: "off",
         message: "TV is off",
         tv: backendControl.tv,
@@ -257,7 +257,7 @@ function states(
         lgtvRequest,
       )) as LGTV.ResponseForegroundAppInfo;
     if (lgtvResponse.appId === undefined) {
-      throw new TV.TvCommonError({
+      throw new TvCommonError({
         code: "responseInvalid",
         message: "TV response was invalid",
         tv: backendControl.tv,
@@ -271,7 +271,7 @@ function states(
       (item) => alexaToLGTV[item].appId === appId,
     );
     if (alexaInput === undefined) {
-      throw new TV.TvCommonError({
+      throw new TvCommonError({
         code: "responseInvalid",
         message: "TV input was unknown",
         tv: backendControl.tv,

@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/backend/tv](../README.md) / TvCommonError
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/backend/tv-common-error](../README.md) / TvCommonError
 
 # Class: TvCommonError
 
@@ -33,7 +33,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 • **options.response?**: [`Response`](../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
 
-• **options.tv?**: [`TV`](../interfaces/TV.md)
+• **options.tv?**: [`TV`](../../tv/interfaces/TV.md)
 
 #### Returns
 

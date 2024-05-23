@@ -10,7 +10,8 @@ import {
 import LGTV from "lgtv2";
 import * as Common from "../../../common";
 import type { DatabaseTable } from "../database";
-import { type TV, TvCommonError } from "./tv";
+import type { TV } from "./tv";
+import { TvCommonError } from "./tv-common-error";
 
 export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;

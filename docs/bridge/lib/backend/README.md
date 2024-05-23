@@ -35,3 +35,15 @@ Re-exports [BackendSearcher](backend-searcher/classes/BackendSearcher.md)
 ### TV
 
 Renames and re-exports [bridge/lib/backend/tv](tv/README.md)
+
+***
+
+### TvCommonError
+
+Re-exports [TvCommonError](tv-common-error/classes/TvCommonError.md)
+
+***
+
+### TvCommonErrorCode
+
+Re-exports [TvCommonErrorCode](tv-common-error/type-aliases/TvCommonErrorCode.md)

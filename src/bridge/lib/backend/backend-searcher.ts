@@ -9,7 +9,8 @@ import {
 } from "node-ssdp";
 import { parseString as xml2js } from "xml2js";
 import * as Common from "../../../common";
-import { type IP, type MAC, type TV, TvCommonError, type UDN } from "./tv";
+import type { IP, MAC, TV, UDN } from "./tv";
+import { TvCommonError } from "./tv-common-error";
 
 export interface UPnPDevice {
   root?: {

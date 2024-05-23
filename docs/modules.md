@@ -12,6 +12,7 @@
 - [bridge/lib/backend/backend-controller](bridge/lib/backend/backend-controller/README.md)
 - [bridge/lib/backend/backend-searcher](bridge/lib/backend/backend-searcher/README.md)
 - [bridge/lib/backend/tv](bridge/lib/backend/tv/README.md)
+- [bridge/lib/backend/tv-common-error](bridge/lib/backend/tv-common-error/README.md)
 - [bridge/lib/configuration](bridge/lib/configuration/README.md)
 - [bridge/lib/database](bridge/lib/database/README.md)
 - [bridge/lib/frontend](bridge/lib/frontend/README.md)

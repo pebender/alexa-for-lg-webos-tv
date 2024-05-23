@@ -1,5 +1,5 @@
 import * as Common from "../../../../common";
-import { type BackendControl, TV } from "../../backend";
+import { type BackendControl, TvCommonError } from "../../backend";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,7 +34,7 @@ function turnOffHandler(
 ): Common.SHS.Response {
   const poweredOff = backendControl.turnOff();
   if (!poweredOff) {
-    const error = new TV.TvCommonError({
+    const error = new TvCommonError({
       message: "TV power off failed.",
       tv: backendControl.tv,
     });
@@ -52,7 +52,7 @@ async function turnOnHandler(
 ): Promise<Common.SHS.Response> {
   const poweredOn = await backendControl.turnOn();
   if (!poweredOn) {
-    const error = new TV.TvCommonError({
+    const error = new TvCommonError({
       message: "TV power on failed.",
       tv: backendControl.tv,
     });

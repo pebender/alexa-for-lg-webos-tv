@@ -19,6 +19,7 @@ export { BackendControl } from "./backend-control";
 export { BackendController } from "./backend-controller";
 export { BackendSearcher } from "./backend-searcher";
 export * as TV from "./tv";
+export { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
 export class Backend extends EventEmitter {
   private readonly _configuration: Configuration;

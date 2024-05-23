@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { type BackendControl, TV } from "../../backend";
+import { type BackendControl, TvCommonError } from "../../backend";
 
 interface Channel {
   channelNumber: string;
@@ -242,7 +242,7 @@ function states(
       const lgtvResponse: LGTV.Response =
         await backendControl.lgtvCommand(lgtvRequest);
       if (typeof lgtvResponse.appId !== "string") {
-        throw new TV.TvCommonError({
+        throw new TvCommonError({
           code: "responseInvalid",
           message: "TV response was invalid",
           tv: backendControl.tv,
@@ -251,7 +251,7 @@ function states(
         });
       }
       if (lgtvResponse.appId !== "com.webos.app.livetv") {
-        throw new TV.TvCommonError({
+        throw new TvCommonError({
           code: "requestInvalidInCurrentState",
           message: "TV channel requested when TV was not tuned to a channel",
           tv: backendControl.tv,

@@ -2,7 +2,8 @@ import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
 import { type DatabaseRecord, DatabaseTable } from "../database";
-import { type TV, TvCommonError, type UDN } from "./tv";
+import type { TV, UDN } from "./tv";
+import { TvCommonError } from "./tv-common-error";
 import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {

@@ -22,7 +22,7 @@ codes.
 
 - [`HttpCommonError`](../../../skill/lib/link/https-request/classes/HttpCommonError.md)
 - [`LinkCommonError`](../../../skill/lib/link/link-common-error/classes/LinkCommonError.md)
-- [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
+- [`TvCommonError`](../../../bridge/lib/backend/tv-common-error/classes/TvCommonError.md)
 - [`DatabaseCommonError`](../../database-common-error/classes/DatabaseCommonError.md)
 - [`GeneralCommonError`](../../general-common-error/classes/GeneralCommonError.md)
 - [`UserProfileCommonError`](../../user-profile/classes/UserProfileCommonError.md)
