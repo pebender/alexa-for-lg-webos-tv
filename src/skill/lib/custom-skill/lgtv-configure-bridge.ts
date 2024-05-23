@@ -33,7 +33,7 @@ async function createHostnamesSimpleCardContent(
     Common.Debug.debug(
       `LGTV_ConfigureBridgeIntent: cannot connect to IPv4 address '${ipAddress}'.`,
     );
-    const commonError = new Common.Error.LinkCommonError({
+    const commonError = new Link.LinkCommonError({
       message: "I had a problem connecting to the bridge's I.P.  address.",
       cause: error,
     });
@@ -93,7 +93,7 @@ async function setBridgeCredentials(
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
   } catch (error) {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error:");
-    const commonError = new Common.Error.LinkCommonError({
+    const commonError = new Link.LinkCommonError({
       message:
         "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
       cause: error,

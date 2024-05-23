@@ -30,7 +30,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
         "There was a problem access the database. " + "Test your bridge again.";
       return speechOutput;
     }
-    if (error instanceof Common.Error.LinkCommonError) {
+    if (error instanceof Link.LinkCommonError) {
       switch (error.code) {
         case "bridgeHostnameNotFound": {
           const speechOutput = "Your bridge hostname has not been configured.";

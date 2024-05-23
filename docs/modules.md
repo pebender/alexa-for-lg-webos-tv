@@ -51,6 +51,7 @@
 - [skill/lib/custom-skill/lgtv-test-bridge](skill/lib/custom-skill/lgtv-test-bridge/README.md)
 - [skill/lib/link](skill/lib/link/README.md)
 - [skill/lib/link/https-request](skill/lib/link/https-request/README.md)
+- [skill/lib/link/link-common-error](skill/lib/link/link-common-error/README.md)
 - [skill/lib/link/login](skill/lib/link/login/README.md)
 - [skill/lib/link/user-database](skill/lib/link/user-database/README.md)
 - [skill/lib/smart-home-skill](skill/lib/smart-home-skill/README.md)

@@ -2,11 +2,13 @@ import * as net from "node:net";
 import * as tls from "node:tls";
 import * as certnames from "certnames";
 import * as Common from "../../../common";
+import { LinkCommonError } from "./link-common-error";
 import * as Database from "./user-database";
 import * as HTTPSRequest from "./https-request";
 import * as Login from "./login";
 
 export * as HTTPSRequest from "./https-request";
+export { LinkCommonError, type LinkCommonErrorCode } from "./link-common-error";
 
 export async function getHostnames(ipAddress: string): Promise<string[]> {
   const ipPort = Common.constants.bridge.port.https;
@@ -54,7 +56,7 @@ export async function getCredentials(
       if (error instanceof Common.Error.AuthorizationCommonError) {
         throw error;
       }
-      throw new Common.Error.LinkCommonError({
+      throw new LinkCommonError({
         code: "userProfileFetchFailed",
         cause: error,
       });
@@ -185,7 +187,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.LinkCommonError({
+          const error = new LinkCommonError({
             code: "tcpConnectionFailed",
             cause,
           });
@@ -205,7 +207,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.LinkCommonError({
+          const error = new LinkCommonError({
             code: "tlsConnectionFailed",
             cause,
           });
@@ -228,7 +230,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.LinkCommonError({
+          const error = new LinkCommonError({
             code: "tlsCertificateValidationFailed",
             cause,
           });
@@ -251,7 +253,7 @@ export async function testConnection(skillToken: string): Promise<void> {
           resolve();
         })
         .on("error", (cause): void => {
-          const error = new Common.Error.LinkCommonError({
+          const error = new LinkCommonError({
             code: "tlsCertificateHostnameValidationFailed",
             cause,
           });
@@ -275,13 +277,13 @@ export async function testConnection(skillToken: string): Promise<void> {
       if (error instanceof HTTPSRequest.HttpCommonError) {
         switch (error.code) {
           case "badGateway": {
-            throw new Common.Error.LinkCommonError({
+            throw new LinkCommonError({
               code: "httpConnectionFailed",
               cause: error,
             });
           }
           case "unauthorized": {
-            throw new Common.Error.LinkCommonError({
+            throw new LinkCommonError({
               code: "authorizationFailed",
               cause: error,
             });
@@ -297,12 +299,12 @@ export async function testConnection(skillToken: string): Promise<void> {
     bridgeToken: string | null;
   } = await getCredentials(skillToken);
   if (bridgeCredentials.bridgeHostname === null) {
-    throw new Common.Error.LinkCommonError({
+    throw new LinkCommonError({
       code: "bridgeHostnameNotFound",
     });
   }
   if (bridgeCredentials.bridgeToken === null) {
-    throw new Common.Error.LinkCommonError({
+    throw new LinkCommonError({
       code: "bridgeTokenNotFound",
     });
   }

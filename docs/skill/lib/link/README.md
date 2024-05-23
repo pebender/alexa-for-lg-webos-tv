@@ -20,3 +20,15 @@
 ### HTTPSRequest
 
 Renames and re-exports [skill/lib/link/https-request](https-request/README.md)
+
+***
+
+### LinkCommonError
+
+Re-exports [LinkCommonError](link-common-error/classes/LinkCommonError.md)
+
+***
+
+### LinkCommonErrorCode
+
+Re-exports [LinkCommonErrorCode](link-common-error/type-aliases/LinkCommonErrorCode.md)
