@@ -78,11 +78,7 @@ export class Middle {
     for (const uri of uriList) {
       middle._backend.on(
         uri,
-        (
-          error: Common.CommonError,
-          response: LGTV.Response,
-          udn: string,
-        ) => {
+        (error: Common.CommonError, response: LGTV.Response, udn: string) => {
           SHS.callback(
             uri,
             error,
