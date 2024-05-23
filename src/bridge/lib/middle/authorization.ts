@@ -1,6 +1,6 @@
-import { DatabaseTable } from "../../database";
-import * as Common from "../../../../common";
-import type { Configuration } from "../../configuration";
+import { DatabaseTable } from "../database";
+import * as Common from "../../../common";
+import type { Configuration } from "../configuration";
 
 export class Authorization {
   private readonly _configuration: Configuration;

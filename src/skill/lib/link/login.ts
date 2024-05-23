@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import path from "node:path";
 import * as jwt from "jsonwebtoken";
-import * as Common from "../../../../common";
-import { HTTPSRequest } from "../index";
+import * as Common from "../../../common";
+import { HTTPSRequest } from "./index";
 
 const x509PrivateKey = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),

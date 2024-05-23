@@ -1,10 +1,10 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / bridge/lib/frontend/auth/bridge-token-auth
+[alexa-for-lg-webos-tv](../../../../modules.md) / bridge/lib/frontend/bridge-token-auth
 
-# bridge/lib/frontend/auth/bridge-token-auth
+# bridge/lib/frontend/bridge-token-auth
 
 ## Index
 

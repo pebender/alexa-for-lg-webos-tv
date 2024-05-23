@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/lib/frontend/auth/login-token-auth](../README.md) / LoginTokenAuth
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/login-token-auth](../README.md) / LoginTokenAuth
 
 # Class: LoginTokenAuth
 
@@ -14,7 +14,7 @@
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
+• **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
 • **\_x509PublicCert**: `Buffer`
 
@@ -26,7 +26,7 @@
 
 ### \_configuration
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
 ***
 
@@ -56,7 +56,7 @@
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
+• **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
 #### Returns
 

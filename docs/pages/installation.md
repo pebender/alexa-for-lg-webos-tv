@@ -45,7 +45,7 @@ Visual Studio Code has builtin support for the [TypeScript](https://code.visuals
 
 You need to do two things before you compile.
 
-First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary private key (ForLGwebOSTV.key) and public certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/link/login/](../../src/skill/lib/link/login/) and put the public certificate in [src/bridge/lib/frontend/login-token-auth/](../../src/bridge/lib/frontend/login-token-auth/).
+First, you need to add an x.509 RSA private / public key pair to the software. The script in [src/common/x509/x509-generate.sh](../../src/common/x509/x509-generate.sh) will generate the necessary private key (ForLGwebOSTV.key) and public certificate (ForLGwebOSTV.crt) under Linux and MacOS. Once you have them, put the private key in [src/skill/lib/link/](../../src/skill/lib/link/) and put the public certificate in [src/bridge/lib/frontend/](../../src/bridge/lib/frontend/).
 
 Second, you need to install Node.js version v20.x.
 
