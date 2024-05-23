@@ -7,7 +7,7 @@ import {
   Server as SsdpServer,
   type SsdpHeaders,
 } from "node-ssdp";
-import { parseString as xml2js } from "xml2js";
+import { parseStringPromise as xml2js } from "xml2js";
 import * as Common from "../../../common";
 import type { TV } from "./tv";
 import { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
@@ -155,23 +155,25 @@ export class BackendSearcher extends EventEmitter {
       } catch (error) {
         throw createTvCommonError({ code: "unknown", cause: error });
       }
-      if (response.status !== 200) {
-        throw new TvCommonError({
+      if (!response.ok) {
+        throw createTvCommonError({
           code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
-          tv,
         });
       }
 
-      let blob;
-      try {
-        blob = await response.blob();
-      } catch (error) {
-        throw createTvCommonError({ code: "unknown", cause: error });
+      const contentType: string | null = response.headers.get("content-type");
+      if (contentType === null) {
+        throw createTvCommonError({
+          code: "descriptionXmlFetchError",
+          message: "Could not fetch descriptionXML from the TV",
+        });
       }
-
-      const mimetype: string[] = blob.type.split(";");
-      if (mimetype[0].toLocaleLowerCase() !== "text/xml") {
+      const mimeType: string = contentType
+        .split(/\s*;\s*/)[0]
+        .trim()
+        .toLowerCase();
+      if (mimeType !== "text/xml") {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
           message: "Could not fetch descriptionXML from the TV",
@@ -179,7 +181,7 @@ export class BackendSearcher extends EventEmitter {
       }
 
       try {
-        descriptionXml = await blob.text();
+        descriptionXml = await response.text();
       } catch (error) {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
@@ -190,8 +192,7 @@ export class BackendSearcher extends EventEmitter {
 
       let description;
       try {
-        const xml2jsWithPromise = promisify(xml2js);
-        description = (await xml2jsWithPromise(descriptionXml)) as {
+        description = (await xml2js(descriptionXml)) as {
           root?: {
             device?: Array<{
               manufacturer?: string[];
