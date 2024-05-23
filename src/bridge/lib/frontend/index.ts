@@ -11,11 +11,11 @@ import IPBlacklist from "@outofsync/express-ip-blacklist";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import type { Middle } from "../middle";
-import { LoginTokenAuth } from "./login-token-auth";
+import { LoginTokenAuth } from "./auth/login-token-auth";
 import {
   BridgeTokenAuth,
   type BridgeTokenAuthRecord,
-} from "./bridge-token-auth";
+} from "./auth/bridge-token-auth";
 
 type FrontendCommonErrorCode =
   | "bodyFormatInvalid"

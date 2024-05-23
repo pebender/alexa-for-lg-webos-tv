@@ -16,9 +16,9 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 #### Parameters
 
-• **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
+• **\_loginTokenAuth**: [`LoginTokenAuth`](../auth/login-token-auth/classes/LoginTokenAuth.md)
 
-• **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
+• **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../auth/bridge-token-auth/classes/BridgeTokenAuth.md)
 
 • **\_middle**: [`Middle`](../../middle/classes/Middle.md)
 
@@ -34,7 +34,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ### \_bridgeTokenAuth
 
-> `private` `readonly` **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
+> `private` `readonly` **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../auth/bridge-token-auth/classes/BridgeTokenAuth.md)
 
 ***
 
@@ -46,7 +46,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ### \_loginTokenAuth
 
-> `private` `readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
+> `private` `readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](../auth/login-token-auth/classes/LoginTokenAuth.md)
 
 ***
 

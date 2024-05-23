@@ -11,7 +11,3 @@
 ### Classes
 
 - [BackendSearcher](classes/BackendSearcher.md)
-
-### Interfaces
-
-- [UPnPDevice](interfaces/UPnPDevice.md)

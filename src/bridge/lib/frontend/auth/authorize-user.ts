@@ -1,5 +1,5 @@
-import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
+import * as Common from "../../../../common";
+import type { Configuration } from "../../configuration";
 
 export function authorizeUser(
   configuration: Configuration,

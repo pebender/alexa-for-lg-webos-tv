@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/bridge-token-auth](../README.md) / BridgeTokenAuth
+[alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/lib/frontend/auth/bridge-token-auth](../README.md) / BridgeTokenAuth
 
 # Class: BridgeTokenAuth
 
@@ -14,9 +14,9 @@
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **\_configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../../database/classes/DatabaseTable.md)
 
 #### Returns
 
@@ -26,13 +26,13 @@
 
 ### \_configuration
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
 
 ***
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../../database/classes/DatabaseTable.md)
 
 ## Methods
 
@@ -102,7 +102,7 @@
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **configuration**: [`Configuration`](../../../../configuration/classes/Configuration.md)
 
 #### Returns
 

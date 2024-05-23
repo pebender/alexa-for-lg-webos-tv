@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/login-token-auth](../README.md) / LoginTokenAuthRecord
+[alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/lib/frontend/auth/login-token-auth](../README.md) / LoginTokenAuthRecord
 
 # Interface: LoginTokenAuthRecord
 
