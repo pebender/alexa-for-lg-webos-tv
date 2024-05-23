@@ -1,17 +1,17 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/https-request](../README.md) / HttpCommonError
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/https-request](../README.md) / HttpCommonError
 
 # Class: HttpCommonError
 
-A [CommonError](../../error/classes/CommonError.md) subclass for HTTP related
+A [CommonError](../../../../../common/error/classes/CommonError.md) subclass for HTTP related
 errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
 
 ## Extends
 
-- [`CommonError`](../../error/classes/CommonError.md)
+- [`CommonError`](../../../../../common/error/classes/CommonError.md)
 
 ## Constructors
 
@@ -49,7 +49,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 #### Overrides
 
-[`CommonError`](../../error/classes/CommonError.md).[`constructor`](../../error/classes/CommonError.md#constructors)
+[`CommonError`](../../../../../common/error/classes/CommonError.md).[`constructor`](../../../../../common/error/classes/CommonError.md#constructors)
 
 ## Properties
 
@@ -59,7 +59,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 #### Overrides
 
-[`CommonError`](../../error/classes/CommonError.md).[`code`](../../error/classes/CommonError.md#code)
+[`CommonError`](../../../../../common/error/classes/CommonError.md).[`code`](../../../../../common/error/classes/CommonError.md#code)
 
 ***
 

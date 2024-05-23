@@ -3,7 +3,10 @@ import * as tls from "node:tls";
 import * as certnames from "certnames";
 import * as Common from "../../../common";
 import * as Database from "./user-database";
+import * as HTTPSRequest from "./https-request";
 import * as Login from "./login";
+
+export * as HTTPSRequest from "./https-request";
 
 export async function getHostnames(ipAddress: string): Promise<string[]> {
   const ipPort = Common.constants.bridge.port.https;
@@ -120,7 +123,7 @@ export async function sendMessageUsingBridgeToken(
     });
   }
 
-  const requestOptions: Common.HTTPSRequest.RequestOptions = {
+  const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: bridgeHostname,
     path,
     port: Common.constants.bridge.port.https,
@@ -129,14 +132,10 @@ export async function sendMessageUsingBridgeToken(
 
   let response: object;
   try {
-    response = await Common.HTTPSRequest.request(
-      requestOptions,
-      bridgeToken,
-      message,
-    );
+    response = await HTTPSRequest.request(requestOptions, bridgeToken, message);
   } catch (error) {
     if (
-      error instanceof Common.HTTPSRequest.HttpCommonError &&
+      error instanceof HTTPSRequest.HttpCommonError &&
       error.code === "unauthorized"
     ) {
       /* try again with a new bridge token */
@@ -154,14 +153,14 @@ export async function sendMessageUsingBridgeToken(
         });
       }
 
-      const requestOptions: Common.HTTPSRequest.RequestOptions = {
+      const requestOptions: HTTPSRequest.RequestOptions = {
         hostname: bridgeHostname,
         path,
         port: Common.constants.bridge.port.https,
         headers: {},
       };
 
-      response = await Common.HTTPSRequest.request(
+      response = await HTTPSRequest.request(
         requestOptions,
         bridgeToken,
         message,
@@ -273,7 +272,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         request,
       );
     } catch (error) {
-      if (error instanceof Common.HTTPSRequest.HttpCommonError) {
+      if (error instanceof HTTPSRequest.HttpCommonError) {
         switch (error.code) {
           case "badGateway": {
             throw new Common.Error.LinkCommonError({

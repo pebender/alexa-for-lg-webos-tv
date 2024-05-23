@@ -20,12 +20,12 @@ codes.
 
 ## Extended by
 
+- [`HttpCommonError`](../../../skill/lib/link/https-request/classes/HttpCommonError.md)
 - [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
 - [`GeneralCommonError`](GeneralCommonError.md)
 - [`AuthorizationCommonError`](AuthorizationCommonError.md)
 - [`DatabaseCommonError`](DatabaseCommonError.md)
 - [`LinkCommonError`](LinkCommonError.md)
-- [`HttpCommonError`](../../https-request/classes/HttpCommonError.md)
 - [`UserProfileCommonError`](../../profile/classes/UserProfileCommonError.md)
 
 ## Implements

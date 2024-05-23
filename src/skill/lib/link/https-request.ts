@@ -1,5 +1,4 @@
-import * as Debug from "./debug";
-import * as CommonError from "./error";
+import * as Common from "../../../common";
 
 export interface RequestOptions {
   hostname: string;
@@ -23,10 +22,10 @@ export type HttpCommonErrorCode =
   | "unknown";
 
 /**
- * A {@link CommonError.CommonError | CommonError} subclass for HTTP related
+ * A {@link Common.Error.CommonError | CommonError} subclass for HTTP related
  * errors. The supported errors are given by {@link HttpCommonErrorCode}.
  */
-export class HttpCommonError extends CommonError.CommonError {
+export class HttpCommonError extends Common.Error.CommonError {
   public readonly code: HttpCommonErrorCode;
   public readonly requestUrl?: string;
   public readonly requestMethod?: "GET" | "POST";
@@ -108,9 +107,9 @@ export async function request(
     options.body = body;
   }
 
-  Debug.debug("HTTP Request");
-  Debug.debugJSON(url);
-  Debug.debugJSON(options);
+  Common.Debug.debug("HTTP Request");
+  Common.Debug.debugJSON(url);
+  Common.Debug.debugJSON(options);
 
   let response: Response | undefined;
   let responseBody: string | object | undefined;

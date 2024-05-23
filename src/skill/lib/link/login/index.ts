@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import path from "node:path";
 import * as jwt from "jsonwebtoken";
 import * as Common from "../../../../common";
+import { HTTPSRequest } from "../index";
 
 const x509PrivateKey = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),
@@ -43,7 +44,7 @@ export async function getBridgeToken(
   skillToken: string,
   bridgeHostname: string,
 ): Promise<string> {
-  const requestOptions: Common.HTTPSRequest.RequestOptions = {
+  const requestOptions: HTTPSRequest.RequestOptions = {
     hostname: bridgeHostname,
     path: Common.constants.bridge.path.login,
     port: Common.constants.bridge.port.https,
@@ -53,7 +54,7 @@ export async function getBridgeToken(
   const token = await create(x509PrivateKey, skillToken, bridgeHostname);
 
   const response: { token?: string; [key: string]: unknown } =
-    (await Common.HTTPSRequest.request(requestOptions, token, {})) as {
+    (await HTTPSRequest.request(requestOptions, token, {})) as {
       token?: string;
       [key: string]: unknown;
     };

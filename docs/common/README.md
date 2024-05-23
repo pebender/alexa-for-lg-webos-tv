@@ -20,12 +20,6 @@ Renames and re-exports [common/error](error/README.md)
 
 ***
 
-### HTTPSRequest
-
-Renames and re-exports [common/https-request](https-request/README.md)
-
-***
-
 ### Profile
 
 Renames and re-exports [common/profile](profile/README.md)

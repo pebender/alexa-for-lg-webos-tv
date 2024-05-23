@@ -14,3 +14,9 @@
 - [getHostnames](functions/getHostnames.md)
 - [sendMessageUsingBridgeToken](functions/sendMessageUsingBridgeToken.md)
 - [testConnection](functions/testConnection.md)
+
+## References
+
+### HTTPSRequest
+
+Renames and re-exports [skill/lib/link/https-request](https-request/README.md)
