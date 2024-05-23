@@ -19,7 +19,10 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
   } catch (error) {
     Common.Debug.debugError(error);
 
-    if (error instanceof Common.Error.AuthorizationCommonError) {
+    if (
+      error instanceof Common.Error.GeneralCommonError &&
+      error.code === "unauthorized"
+    ) {
       const speechOutput =
         "There appears to have been a problem with account linking. " +
         "Relink your account and reconfigure your bridge.";

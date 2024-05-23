@@ -6,4 +6,4 @@
 
 # Type alias: UserProfileCommonErrorCode
 
-> **UserProfileCommonErrorCode**: `"httpError"` \| `"httpResponseInvalidBodyMissing"` \| `"httpResponseInvalidBodyParseError"` \| `"httpResponseInvalidContentTypeInvalid"` \| `"httpResponseInvalidStatusCodeMissing"`
+> **UserProfileCommonErrorCode**: `"httpError"` \| `"httpResponseInvalidBodyMissing"` \| `"httpResponseInvalidBodyParseError"` \| `"httpResponseInvalidContentTypeInvalid"` \| `"httpResponseInvalidStatusCodeMissing"` \| `"httpResponseStatus400InvalidToken"` \| `"httpResponseStatus401"` \| `"httpResponseStatus401InsufficientScope"` \| `"userProfileEmailNotFound"` \| `"userProfileUserIdNotFound"`

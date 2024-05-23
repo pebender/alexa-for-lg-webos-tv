@@ -12,7 +12,12 @@ export type UserProfileCommonErrorCode =
   | "httpResponseInvalidBodyMissing"
   | "httpResponseInvalidBodyParseError"
   | "httpResponseInvalidContentTypeInvalid"
-  | "httpResponseInvalidStatusCodeMissing";
+  | "httpResponseInvalidStatusCodeMissing"
+  | "httpResponseStatus400InvalidToken"
+  | "httpResponseStatus401"
+  | "httpResponseStatus401InsufficientScope"
+  | "userProfileEmailNotFound"
+  | "userProfileUserIdNotFound";
 
 export class UserProfileCommonError extends CommonError.CommonError {
   public readonly code: UserProfileCommonErrorCode;
@@ -32,20 +37,15 @@ export class UserProfileCommonError extends CommonError.CommonError {
  *
  * This function retrieves the user profile specified by accessToken from the
  * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}.
- * If successful, it return the {@link UserProfile}. Otherwise, it throws a
- * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
- * any authorization failures, or a
- * {@link ProfileCommonError} for any other errors.
+ * If successful, it return the {@link UserProfile}.
+ * Otherwise, it throws a {@link UserProfileCommonError}.
  *
  * @param accessToken - access token from a skill message.
  * @returns - the profile returned by the
  * {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon}
  * profile server in response to accessToken.
  *
- * @throws - a
- * {@link CommonError.AuthorizationCommonError | AuthorizationCommonError} for
- * any authorization failures, or a
- * {@link ProfileCommonError} for any other errors.
+ * @throws - a {@link UserProfileCommonError}.
  */
 export async function getUserProfile(
   accessToken: string,
@@ -67,6 +67,16 @@ export async function getUserProfile(
     return new UserProfileCommonError({
       code,
       cause,
+    });
+  }
+
+  function createUnauthorizedUserProfileError(
+    code: UserProfileCommonErrorCode,
+    cause?: unknown,
+  ): CommonError.GeneralCommonError {
+    return new CommonError.GeneralCommonError({
+      code: "unauthorized",
+      cause: createUserProfileError(code, cause),
     });
   }
 
@@ -126,27 +136,19 @@ export async function getUserProfile(
           throw createUserProfileError("httpError");
         }
         if (responseBodyErrorCode === "invalid_token") {
-          throw new CommonError.AuthorizationCommonError({
-            code: "userProfileInvalidToken",
-            message:
-              "there was an authentication error while retrieving your profile",
-          });
+          throw createUnauthorizedUserProfileError(
+            "httpResponseStatus400InvalidToken",
+          );
         }
         throw createUserProfileError("httpError");
       }
       case 401: {
         if (responseBodyErrorCode === "insufficient_scope") {
-          throw new CommonError.AuthorizationCommonError({
-            code: "userProfileInsufficientScope",
-            message:
-              "there was an authentication error while retrieving your profile",
-          });
+          throw createUnauthorizedUserProfileError(
+            "httpResponseStatus401InsufficientScope",
+          );
         }
-        throw new CommonError.AuthorizationCommonError({
-          code: "userProfileError",
-          message:
-            "there was an authentication error while retrieving your profile",
-        });
+        throw createUnauthorizedUserProfileError("httpResponseStatus401");
       }
       case 500: {
         throw createUserProfileError("httpError");
@@ -164,16 +166,10 @@ export async function getUserProfile(
     !("user_id" in responseBody) ||
     typeof responseBody.user_id !== "string"
   ) {
-    throw new CommonError.AuthorizationCommonError({
-      code: "userProfileUserIdNotFound",
-      message: "there was no 'user_id' field in your profile",
-    });
+    throw createUnauthorizedUserProfileError("userProfileUserIdNotFound");
   }
   if (!("email" in responseBody) || typeof responseBody.email !== "string") {
-    throw new CommonError.AuthorizationCommonError({
-      code: "userProfileEmailNotFound",
-      message: "there was no 'email' field in your profile",
-    });
+    throw createUnauthorizedUserProfileError("userProfileEmailNotFound");
   }
   return {
     userId: responseBody.user_id,

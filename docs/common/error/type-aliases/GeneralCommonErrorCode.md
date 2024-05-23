@@ -6,4 +6,4 @@
 
 # Type alias: GeneralCommonErrorCode
 
-> **GeneralCommonErrorCode**: `"unknown"`
+> **GeneralCommonErrorCode**: `"unknown"` \| `"unauthorized"`

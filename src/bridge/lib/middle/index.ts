@@ -112,7 +112,10 @@ export class Middle {
         shsRequest.getAccessToken(),
       );
     } catch (error) {
-      if (error instanceof Common.Error.AuthorizationCommonError) {
+      if (
+        error instanceof Common.Error.GeneralCommonError &&
+        error.code === "unauthorized"
+      ) {
         authorized = false;
       } else {
         return Common.SHS.Response.buildAlexaErrorResponseForInternalError(

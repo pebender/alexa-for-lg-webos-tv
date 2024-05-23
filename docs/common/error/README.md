@@ -10,13 +10,11 @@
 
 ### Classes
 
-- [AuthorizationCommonError](classes/AuthorizationCommonError.md)
 - [CommonError](classes/CommonError.md)
 - [DatabaseCommonError](classes/DatabaseCommonError.md)
 - [GeneralCommonError](classes/GeneralCommonError.md)
 
 ### Type Aliases
 
-- [AuthorizationCommonErrorCode](type-aliases/AuthorizationCommonErrorCode.md)
 - [DatabaseCommonErrorCode](type-aliases/DatabaseCommonErrorCode.md)
 - [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)

@@ -24,7 +24,7 @@ export abstract class CommonError
   }
 }
 
-export type GeneralCommonErrorCode = "unknown";
+export type GeneralCommonErrorCode = "unknown" | "unauthorized";
 
 /**
  * A {@link CommonError} subclass for errors that do not fit into any of the
@@ -45,33 +45,6 @@ export class GeneralCommonError extends CommonError {
     });
     this.name = "GeneralCommonError";
     this.code = options.code ?? "unknown";
-  }
-}
-
-export type AuthorizationCommonErrorCode =
-  | "bridgeHostnameNotFound"
-  | "bridgeTokenNotFound"
-  | "userProfileError"
-  | "userProfileInsufficientScope"
-  | "userProfileInvalidToken"
-  | "userProfileEmailNotFound"
-  | "userProfileUserIdNotFound";
-
-/**
- * A {@link CommonError} subclass for authorization related errors. The
- * supported errors codes are given by {@link AuthorizationCommonErrorCode}.
- */
-export class AuthorizationCommonError extends CommonError {
-  public readonly code: AuthorizationCommonErrorCode;
-
-  constructor(options: {
-    code: AuthorizationCommonErrorCode;
-    message?: string;
-    cause?: unknown;
-  }) {
-    super(options);
-    this.name = "AuthorizationCommonError";
-    this.code = options.code;
   }
 }
 

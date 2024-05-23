@@ -26,7 +26,7 @@ other error classes. The supported errors codes are given by
 
 • **options.cause?**: `unknown`
 
-• **options.code?**: `"unknown"`
+• **options.code?**: [`GeneralCommonErrorCode`](../type-aliases/GeneralCommonErrorCode.md)
 
 • **options.message?**: `string`
 
@@ -42,7 +42,7 @@ other error classes. The supported errors codes are given by
 
 ### code
 
-> `readonly` **code**: `"unknown"`
+> `readonly` **code**: [`GeneralCommonErrorCode`](../type-aliases/GeneralCommonErrorCode.md)
 
 #### Overrides
 

@@ -24,7 +24,6 @@ codes.
 - [`LinkCommonError`](../../../skill/lib/link/link-common-error/classes/LinkCommonError.md)
 - [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
 - [`GeneralCommonError`](GeneralCommonError.md)
-- [`AuthorizationCommonError`](AuthorizationCommonError.md)
 - [`DatabaseCommonError`](DatabaseCommonError.md)
 - [`UserProfileCommonError`](../../profile/classes/UserProfileCommonError.md)
 

@@ -53,7 +53,10 @@ export async function getCredentials(
       const profile = await Common.Profile.getUserProfile(skillToken);
       userId = profile.userId;
     } catch (error) {
-      if (error instanceof Common.Error.AuthorizationCommonError) {
+      if (
+        error instanceof Common.Error.GeneralCommonError &&
+        error.code === "unauthorized"
+      ) {
         throw error;
       }
       throw new LinkCommonError({
@@ -115,13 +118,19 @@ export async function sendMessageUsingBridgeToken(
 ): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
   if (bridgeHostname === null) {
-    throw new Common.Error.AuthorizationCommonError({
-      code: "bridgeHostnameNotFound",
+    throw new Common.Error.GeneralCommonError({
+      code: "unauthorized",
+      cause: new LinkCommonError({
+        code: "bridgeHostnameNotFound",
+      }),
     });
   }
   if (bridgeToken === null) {
-    throw new Common.Error.AuthorizationCommonError({
-      code: "bridgeTokenNotFound",
+    throw new Common.Error.GeneralCommonError({
+      code: "unauthorized",
+      cause: new LinkCommonError({
+        code: "bridgeTokenNotFound",
+      }),
     });
   }
 
@@ -145,13 +154,19 @@ export async function sendMessageUsingBridgeToken(
         updateBridgeToken: true,
       });
       if (bridgeHostname === null) {
-        throw new Common.Error.AuthorizationCommonError({
-          code: "bridgeHostnameNotFound",
+        throw new Common.Error.GeneralCommonError({
+          code: "unauthorized",
+          cause: new LinkCommonError({
+            code: "bridgeHostnameNotFound",
+          }),
         });
       }
       if (bridgeToken === null) {
-        throw new Common.Error.AuthorizationCommonError({
-          code: "bridgeTokenNotFound",
+        throw new Common.Error.GeneralCommonError({
+          code: "unauthorized",
+          cause: new LinkCommonError({
+            code: "bridgeTokenNotFound",
+          }),
         });
       }
 
