@@ -12,7 +12,7 @@ export async function getBackend(): Promise<Backend> {
   try {
     await fs.mkdir(configurationDirectory, { recursive: true });
   } catch (error) {
-    const commonError = new Common.Error.GeneralCommonError({ cause: error });
+    const commonError = new Common.GeneralCommonError({ cause: error });
     Common.Debug.debugError(commonError);
     throw commonError;
   }

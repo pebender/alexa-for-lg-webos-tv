@@ -79,7 +79,7 @@ export class Middle {
       middle._backend.on(
         uri,
         (
-          error: Common.Error.CommonError,
+          error: Common.CommonError,
           response: LGTV.Response,
           udn: string,
         ) => {
@@ -113,7 +113,7 @@ export class Middle {
       );
     } catch (error) {
       if (
-        error instanceof Common.Error.GeneralCommonError &&
+        error instanceof Common.GeneralCommonError &&
         error.code === "unauthorized"
       ) {
         authorized = false;
@@ -157,7 +157,7 @@ export class Middle {
       try {
         const invalid = !this._responseSchemaValidator(shsResponse);
         if (invalid) {
-          const error = new Common.Error.GeneralCommonError({
+          const error = new Common.GeneralCommonError({
             message: "Smart Home Skill Response schema validation failed",
             cause: {
               response: shsResponse,

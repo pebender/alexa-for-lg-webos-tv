@@ -54,7 +54,7 @@ export async function getCredentials(
       userId = profile.userId;
     } catch (error) {
       if (
-        error instanceof Common.Error.GeneralCommonError &&
+        error instanceof Common.GeneralCommonError &&
         error.code === "unauthorized"
       ) {
         throw error;
@@ -70,7 +70,7 @@ export async function getCredentials(
     });
   }
   if (record.userId === null) {
-    throw new Common.Error.DatabaseCommonError({
+    throw new Common.DatabaseCommonError({
       code: "fieldNotFound",
       message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
     });
@@ -81,7 +81,7 @@ export async function getCredentials(
       requiredFields: ["userId"],
     });
     if (record.userId === null) {
-      throw new Common.Error.DatabaseCommonError({
+      throw new Common.DatabaseCommonError({
         code: "fieldNotFound",
         message: `skill link user database is missing field 'userId' for 'skillToken'='${skillToken}'`,
       });
@@ -118,7 +118,7 @@ export async function sendMessageUsingBridgeToken(
 ): Promise<object> {
   const { bridgeHostname, bridgeToken } = await getCredentials(skillToken);
   if (bridgeHostname === null) {
-    throw new Common.Error.GeneralCommonError({
+    throw new Common.GeneralCommonError({
       code: "unauthorized",
       cause: new LinkCommonError({
         code: "bridgeHostnameNotFound",
@@ -126,7 +126,7 @@ export async function sendMessageUsingBridgeToken(
     });
   }
   if (bridgeToken === null) {
-    throw new Common.Error.GeneralCommonError({
+    throw new Common.GeneralCommonError({
       code: "unauthorized",
       cause: new LinkCommonError({
         code: "bridgeTokenNotFound",
@@ -154,7 +154,7 @@ export async function sendMessageUsingBridgeToken(
         updateBridgeToken: true,
       });
       if (bridgeHostname === null) {
-        throw new Common.Error.GeneralCommonError({
+        throw new Common.GeneralCommonError({
           code: "unauthorized",
           cause: new LinkCommonError({
             code: "bridgeHostnameNotFound",
@@ -162,7 +162,7 @@ export async function sendMessageUsingBridgeToken(
         });
       }
       if (bridgeToken === null) {
-        throw new Common.Error.GeneralCommonError({
+        throw new Common.GeneralCommonError({
           code: "unauthorized",
           cause: new LinkCommonError({
             code: "bridgeTokenNotFound",

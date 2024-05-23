@@ -1,5 +1,6 @@
 import { inspect } from "node:util";
-import * as CommonError from "./error";
+import { CommonError } from "./common-error";
+import { GeneralCommonError } from "./general-common-error";
 
 export function debug(message: unknown): void {
   if (
@@ -20,10 +21,10 @@ export function debugError(error: unknown): void {
     process.env.NODE_ENV !== undefined &&
     process.env.NODE_ENV === "development"
   ) {
-    const commonError: CommonError.CommonError =
-      error instanceof CommonError.CommonError
+    const commonError: CommonError =
+      error instanceof CommonError
         ? error
-        : new CommonError.GeneralCommonError({
+        : new GeneralCommonError({
             message: "debugError: 'error' was not of type 'CommonError'",
             cause: error,
           });

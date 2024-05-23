@@ -1,4 +1,4 @@
-import * as CommonError from "../error";
+import { GeneralCommonError } from "../general-common-error";
 import { copyElement } from "./copy";
 import type { Namespace, Header, Endpoint } from "./common";
 
@@ -62,7 +62,7 @@ export class Request {
     if (this.directive.payload.grantee?.token !== undefined) {
       return this.directive.payload.grantee.token;
     }
-    throw new CommonError.GeneralCommonError({
+    throw new GeneralCommonError({
       message: "the SHS Directive has no access token. this should not happen.",
     });
   }

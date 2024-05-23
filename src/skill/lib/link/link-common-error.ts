@@ -13,11 +13,11 @@ export type LinkCommonErrorCode =
   | "userProfileFetchFailed";
 
 /**
- * A {@link Common.Error.CommonError | CommonError} subclass for skill to bridge
+ * A {@link Common.CommonError | CommonError} subclass for skill to bridge
  * interface link related errors. The supported errors are given by
  * {@link LinkCommonErrorCode}.
  */
-export class LinkCommonError extends Common.Error.CommonError {
+export class LinkCommonError extends Common.CommonError {
   public readonly code: LinkCommonErrorCode;
 
   constructor(options: {

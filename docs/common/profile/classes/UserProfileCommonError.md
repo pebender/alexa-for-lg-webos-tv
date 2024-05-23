@@ -16,7 +16,7 @@ codes.
 
 ## Extends
 
-- [`CommonError`](../../error/classes/CommonError.md)
+- [`CommonError`](../../common-error/classes/CommonError.md)
 
 ## Constructors
 
@@ -40,7 +40,7 @@ codes.
 
 #### Overrides
 
-[`CommonError`](../../error/classes/CommonError.md).[`constructor`](../../error/classes/CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
 
 ## Properties
 
@@ -50,4 +50,4 @@ codes.
 
 #### Overrides
 
-[`CommonError`](../../error/classes/CommonError.md).[`code`](../../error/classes/CommonError.md#code)
+[`CommonError`](../../common-error/classes/CommonError.md).[`code`](../../common-error/classes/CommonError.md#code)

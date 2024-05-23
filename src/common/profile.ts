@@ -1,4 +1,5 @@
-import * as CommonError from "./error";
+import { CommonError } from "./common-error";
+import { GeneralCommonError } from "./general-common-error";
 
 export interface UserProfile {
   /** The user_id from the user's linked {@link https://developer.amazon.com/apps-and-games/login-with-amazon | Login with Amazon} account profile. */
@@ -19,7 +20,7 @@ export type UserProfileCommonErrorCode =
   | "userProfileEmailNotFound"
   | "userProfileUserIdNotFound";
 
-export class UserProfileCommonError extends CommonError.CommonError {
+export class UserProfileCommonError extends CommonError {
   public readonly code: UserProfileCommonErrorCode;
 
   constructor(options: {
@@ -73,8 +74,8 @@ export async function getUserProfile(
   function createUnauthorizedUserProfileError(
     code: UserProfileCommonErrorCode,
     cause?: unknown,
-  ): CommonError.GeneralCommonError {
-    return new CommonError.GeneralCommonError({
+  ): GeneralCommonError {
+    return new GeneralCommonError({
       code: "unauthorized",
       cause: createUserProfileError(code, cause),
     });

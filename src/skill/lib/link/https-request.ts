@@ -22,10 +22,10 @@ export type HttpCommonErrorCode =
   | "unknown";
 
 /**
- * A {@link Common.Error.CommonError | CommonError} subclass for HTTP related
+ * A {@link Common.CommonError | CommonError} subclass for HTTP related
  * errors. The supported errors are given by {@link HttpCommonErrorCode}.
  */
-export class HttpCommonError extends Common.Error.CommonError {
+export class HttpCommonError extends Common.CommonError {
   public readonly code: HttpCommonErrorCode;
   public readonly requestUrl?: string;
   public readonly requestMethod?: "GET" | "POST";

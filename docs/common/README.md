@@ -8,15 +8,39 @@
 
 ## References
 
+### CommonError
+
+Re-exports [CommonError](common-error/classes/CommonError.md)
+
+***
+
+### DatabaseCommonError
+
+Re-exports [DatabaseCommonError](database-common-error/classes/DatabaseCommonError.md)
+
+***
+
+### DatabaseCommonErrorCode
+
+Re-exports [DatabaseCommonErrorCode](database-common-error/type-aliases/DatabaseCommonErrorCode.md)
+
+***
+
 ### Debug
 
 Renames and re-exports [common/debug](debug/README.md)
 
 ***
 
-### Error
+### GeneralCommonError
 
-Renames and re-exports [common/error](error/README.md)
+Re-exports [GeneralCommonError](general-common-error/classes/GeneralCommonError.md)
+
+***
+
+### GeneralCommonErrorCode
+
+Re-exports [GeneralCommonErrorCode](general-common-error/type-aliases/GeneralCommonErrorCode.md)
 
 ***
 

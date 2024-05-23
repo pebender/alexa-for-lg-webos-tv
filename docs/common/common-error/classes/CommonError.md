@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / CommonError
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/common-error](../README.md) / CommonError
 
 # Class: `abstract` CommonError
 
@@ -23,8 +23,8 @@ codes.
 - [`HttpCommonError`](../../../skill/lib/link/https-request/classes/HttpCommonError.md)
 - [`LinkCommonError`](../../../skill/lib/link/link-common-error/classes/LinkCommonError.md)
 - [`TvCommonError`](../../../bridge/lib/backend/tv/classes/TvCommonError.md)
-- [`GeneralCommonError`](GeneralCommonError.md)
-- [`DatabaseCommonError`](DatabaseCommonError.md)
+- [`DatabaseCommonError`](../../database-common-error/classes/DatabaseCommonError.md)
+- [`GeneralCommonError`](../../general-common-error/classes/GeneralCommonError.md)
 - [`UserProfileCommonError`](../../profile/classes/UserProfileCommonError.md)
 
 ## Implements

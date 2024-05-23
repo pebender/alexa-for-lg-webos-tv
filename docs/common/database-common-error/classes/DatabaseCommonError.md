@@ -2,16 +2,16 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / DatabaseCommonError
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/database-common-error](../README.md) / DatabaseCommonError
 
 # Class: DatabaseCommonError
 
-A [CommonError](CommonError.md) subclass for database related errors. The supported
+A [CommonError](../../common-error/classes/CommonError.md) subclass for database related errors. The supported
 errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseCommonErrorCode.md).
 
 ## Extends
 
-- [`CommonError`](CommonError.md)
+- [`CommonError`](../../common-error/classes/CommonError.md)
 
 ## Constructors
 
@@ -35,7 +35,7 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 #### Overrides
 
-[`CommonError`](CommonError.md).[`constructor`](CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
 
 ## Properties
 
@@ -45,4 +45,4 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 #### Overrides
 
-[`CommonError`](CommonError.md).[`code`](CommonError.md#code)
+[`CommonError`](../../common-error/classes/CommonError.md).[`code`](../../common-error/classes/CommonError.md#code)

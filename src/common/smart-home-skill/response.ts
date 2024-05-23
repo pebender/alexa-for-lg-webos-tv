@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import * as CommonError from "../error";
+import { CommonError } from "../common-error";
+import { GeneralCommonError } from "../general-common-error";
 import * as CommonDebug from "../debug";
 import { copyElement } from "./copy";
 import type { Namespace, Header, Endpoint } from "./common";
@@ -251,7 +252,7 @@ export class Response {
     request: Request,
     error: unknown,
   ): Response {
-    if (error instanceof CommonError.CommonError) {
+    if (error instanceof CommonError) {
       const errorName = `${error.code} ?? "unknown"}`;
       const errorMessage = error.message === "" ? "unknown" : error.message;
       const type = "INTERNAL_ERROR";
@@ -322,7 +323,7 @@ export class Response {
     type: string,
     message: string,
   ): Response {
-    const error = new CommonError.GeneralCommonError({ message });
+    const error = new GeneralCommonError({ message });
     error.name = type;
     Error.captureStackTrace(error);
     return this.buildAlexaErrorResponse(request, type, message);

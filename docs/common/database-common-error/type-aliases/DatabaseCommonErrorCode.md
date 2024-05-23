@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / DatabaseCommonErrorCode
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/database-common-error](../README.md) / DatabaseCommonErrorCode
 
 # Type alias: DatabaseCommonErrorCode
 

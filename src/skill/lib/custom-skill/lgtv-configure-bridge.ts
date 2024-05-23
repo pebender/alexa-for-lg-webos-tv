@@ -67,7 +67,7 @@ async function setBridgeCredentials(
   const accessToken =
     handlerInput.requestEnvelope.context.System.user.accessToken;
   if (accessToken === undefined) {
-    throw new Common.Error.GeneralCommonError({
+    throw new Common.GeneralCommonError({
       message:
         "There was a problem with account linking. Please re-link the skill and try again.",
     });
@@ -103,7 +103,7 @@ async function setBridgeCredentials(
   }
   if (typeof credentials.bridgeToken !== "string") {
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: error");
-    throw new Common.Error.GeneralCommonError({
+    throw new Common.GeneralCommonError({
       message:
         "I encountered a problem creating your bridge's token. So, I cannot configure your bridge.",
     });

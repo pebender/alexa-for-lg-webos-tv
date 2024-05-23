@@ -2,19 +2,16 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../modules.md) / common/error
+[alexa-for-lg-webos-tv](../../modules.md) / common/database-common-error
 
-# common/error
+# common/database-common-error
 
 ## Index
 
 ### Classes
 
-- [CommonError](classes/CommonError.md)
 - [DatabaseCommonError](classes/DatabaseCommonError.md)
-- [GeneralCommonError](classes/GeneralCommonError.md)
 
 ### Type Aliases
 
 - [DatabaseCommonErrorCode](type-aliases/DatabaseCommonErrorCode.md)
-- [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)

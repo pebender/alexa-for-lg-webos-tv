@@ -271,7 +271,7 @@ export class BackendSearcher extends EventEmitter {
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-      callback: (error: Common.Error.CommonError | null, tv: TV | null) => void,
+      callback: (error: Common.CommonError | null, tv: TV | null) => void,
     ): void {
       ssdpProcessAsync(messageName, headers, rinfo)
         .then((tv: TV | null) =>
@@ -283,7 +283,7 @@ export class BackendSearcher extends EventEmitter {
         .catch((error: unknown) =>
           setImmediate((): void => {
             const commonError =
-              error instanceof Common.Error.CommonError
+              error instanceof Common.CommonError
                 ? error
                 : new TvCommonError({
                     code: "searchError",
@@ -336,7 +336,7 @@ export class BackendSearcher extends EventEmitter {
       Common.Debug.debug("periodicSearch");
       if (search instanceof Promise) {
         search.catch((error) => {
-          const commonError: Common.Error.CommonError = new TvCommonError({
+          const commonError: Common.CommonError = new TvCommonError({
             code: "searchError",
             message: "TV search error",
             cause: error,
@@ -354,7 +354,7 @@ export class BackendSearcher extends EventEmitter {
     );
     if (search instanceof Promise) {
       search.catch((error: unknown) => {
-        const commonError: Common.Error.CommonError = new TvCommonError({
+        const commonError: Common.CommonError = new TvCommonError({
           code: "searchError",
           message: "TV search error",
           cause: error,
@@ -370,7 +370,7 @@ export class BackendSearcher extends EventEmitter {
     );
     if (search instanceof Promise) {
       search.catch((error: unknown) => {
-        const commonError: Common.Error.CommonError = new TvCommonError({
+        const commonError: Common.CommonError = new TvCommonError({
           code: "searchError",
           message: "TV search error",
           cause: error,

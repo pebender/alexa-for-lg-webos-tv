@@ -272,7 +272,7 @@ export class BackendControl extends EventEmitter {
    * @returns The LGTV response from the TV.
    *
    * @throws
-   * a {@link Common.Error.CommonError | CommonError} with
+   * a {@link Common.CommonError | CommonError} with
    *
    * - general: "tv", specific: "connectionRequestError",
    * - general: "tv", specific: "connectionResponseInvalidFormat",
@@ -391,7 +391,7 @@ export class BackendControl extends EventEmitter {
    * Adds subscriptions to TV state change events. State changes communicated
    * from the TV are shared using an {@link EventEmitter | EventEmitter}
    * emitting an event containing the subscription identifier, any error and any
-   * response. The error is a {@link Common.Error.CommonError | CommonError}
+   * response. The error is a {@link Common.CommonError | CommonError}
    * with
    *
    * - general: "tv", specific "subscriptionError",

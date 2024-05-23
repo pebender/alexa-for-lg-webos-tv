@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / GeneralCommonErrorCode
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/general-common-error](../README.md) / GeneralCommonErrorCode
 
 # Type alias: GeneralCommonErrorCode
 

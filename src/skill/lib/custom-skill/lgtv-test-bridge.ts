@@ -20,7 +20,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     Common.Debug.debugError(error);
 
     if (
-      error instanceof Common.Error.GeneralCommonError &&
+      error instanceof Common.GeneralCommonError &&
       error.code === "unauthorized"
     ) {
       const speechOutput =
@@ -28,7 +28,7 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
         "Relink your account and reconfigure your bridge.";
       return speechOutput;
     }
-    if (error instanceof Common.Error.DatabaseCommonError) {
+    if (error instanceof Common.DatabaseCommonError) {
       const speechOutput =
         "There was a problem access the database. " + "Test your bridge again.";
       return speechOutput;

@@ -24,7 +24,7 @@ type FrontendCommonErrorCode =
   | "internalServerError"
   | "unauthorized";
 
-class FrontendCommonError extends Common.Error.CommonError {
+class FrontendCommonError extends Common.CommonError {
   public readonly code: FrontendCommonErrorCode;
 
   constructor(options: {
@@ -98,7 +98,7 @@ export class Frontend {
       function errorInternalServerError(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.CommonError {
+      }): Common.CommonError {
         return new FrontendCommonError({
           code: "internalServerError",
           message: options?.message,
@@ -109,7 +109,7 @@ export class Frontend {
       function errorContentTypeMissing(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.CommonError {
+      }): Common.CommonError {
         return new FrontendCommonError({
           code: "contentTypeNotFound",
           message: options?.message,
@@ -120,7 +120,7 @@ export class Frontend {
       function errorContentTypeIncorrect(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.CommonError {
+      }): Common.CommonError {
         return new FrontendCommonError({
           code: "contentTypeValueInvalid",
           message: options?.message,
@@ -131,7 +131,7 @@ export class Frontend {
       function errorBodyInvalidFormat(options?: {
         message?: string;
         cause?: unknown;
-      }): Common.Error.CommonError {
+      }): Common.CommonError {
         return new FrontendCommonError({
           code: "bodyFormatInvalid",
           message: options?.message,

@@ -6,12 +6,12 @@
 
 # Class: HttpCommonError
 
-A [CommonError](../../../../../common/error/classes/CommonError.md) subclass for HTTP related
+A [CommonError](../../../../../common/common-error/classes/CommonError.md) subclass for HTTP related
 errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
 
 ## Extends
 
-- [`CommonError`](../../../../../common/error/classes/CommonError.md)
+- [`CommonError`](../../../../../common/common-error/classes/CommonError.md)
 
 ## Constructors
 
@@ -49,7 +49,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 #### Overrides
 
-[`CommonError`](../../../../../common/error/classes/CommonError.md).[`constructor`](../../../../../common/error/classes/CommonError.md#constructors)
+[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../common/common-error/classes/CommonError.md#constructors)
 
 ## Properties
 
@@ -59,7 +59,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 #### Overrides
 
-[`CommonError`](../../../../../common/error/classes/CommonError.md).[`code`](../../../../../common/error/classes/CommonError.md#code)
+[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`code`](../../../../../common/common-error/classes/CommonError.md#code)
 
 ***
 

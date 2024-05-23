@@ -71,7 +71,7 @@ export class BackendController extends EventEmitter {
       this._controls[udn].on(
         uri,
         (
-          error: Common.Error.CommonError | null,
+          error: Common.CommonError | null,
           response: LGTV.Request | null,
         ) => {
           this.emit(uri, error, response, udn);
@@ -79,7 +79,7 @@ export class BackendController extends EventEmitter {
       );
     }
 
-    this._controls[udn].on("error", (error: Common.Error.CommonError): void => {
+    this._controls[udn].on("error", (error: Common.CommonError): void => {
       this.emit("error", error, udn);
     });
   }

@@ -44,7 +44,7 @@ export class Backend extends EventEmitter {
 
     backend._controller.on(
       "error",
-      (id: string, error: Common.Error.CommonError): void => {
+      (id: string, error: Common.CommonError): void => {
         backend.emit("error", error, `BackendController.${id}`);
       },
     );
@@ -63,7 +63,7 @@ export class Backend extends EventEmitter {
       backend._controller.on(
         uri,
         (
-          error: Common.Error.CommonError | null,
+          error: Common.CommonError | null,
           response: LGTV.Response | null,
           udn: string,
         ) => {
@@ -72,7 +72,7 @@ export class Backend extends EventEmitter {
       );
     }
 
-    backend._searcher.on("error", (error: Common.Error.CommonError): void => {
+    backend._searcher.on("error", (error: Common.CommonError): void => {
       backend.emit("error", error, "BackendSearcher");
     });
     backend._searcher.on("found", (tv: TV) => {

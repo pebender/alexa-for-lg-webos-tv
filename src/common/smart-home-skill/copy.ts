@@ -1,4 +1,4 @@
-import * as CommonError from "../error";
+import { GeneralCommonError } from "../general-common-error";
 
 export type copyElementType =
   | boolean
@@ -39,7 +39,7 @@ export function copyElement(original: copyElementType): copyElementType {
     return copy;
   }
 
-  throw new CommonError.GeneralCommonError({
+  throw new GeneralCommonError({
     message: "'original' contains an object that cannot be copied.",
   });
 }

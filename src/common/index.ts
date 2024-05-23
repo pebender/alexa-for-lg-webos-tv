@@ -10,7 +10,15 @@
  */
 
 export { constants } from "./constants";
-export * as Error from "./error";
+export { CommonError } from "./common-error";
+export {
+  GeneralCommonError,
+  type GeneralCommonErrorCode,
+} from "./general-common-error";
+export {
+  DatabaseCommonError,
+  type DatabaseCommonErrorCode,
+} from "./database-common-error";
 export * as Profile from "./profile";
 export * as SHS from "./smart-home-skill";
 export * as Debug from "./debug";

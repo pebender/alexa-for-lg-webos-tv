@@ -2,17 +2,17 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../modules.md) / [common/error](../README.md) / GeneralCommonError
+[alexa-for-lg-webos-tv](../../../modules.md) / [common/general-common-error](../README.md) / GeneralCommonError
 
 # Class: GeneralCommonError
 
-A [CommonError](CommonError.md) subclass for errors that do not fit into any of the
+A [CommonError](../../common-error/classes/CommonError.md) subclass for errors that do not fit into any of the
 other error classes. The supported errors codes are given by
 [GeneralCommonErrorCode](../type-aliases/GeneralCommonErrorCode.md).
 
 ## Extends
 
-- [`CommonError`](CommonError.md)
+- [`CommonError`](../../common-error/classes/CommonError.md)
 
 ## Constructors
 
@@ -36,7 +36,7 @@ other error classes. The supported errors codes are given by
 
 #### Overrides
 
-[`CommonError`](CommonError.md).[`constructor`](CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
 
 ## Properties
 
@@ -46,4 +46,4 @@ other error classes. The supported errors codes are given by
 
 #### Overrides
 
-[`CommonError`](CommonError.md).[`code`](CommonError.md#code)
+[`CommonError`](../../common-error/classes/CommonError.md).[`code`](../../common-error/classes/CommonError.md#code)

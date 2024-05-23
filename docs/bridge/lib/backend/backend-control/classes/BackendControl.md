@@ -97,7 +97,7 @@
 Adds subscriptions to TV state change events. State changes communicated
 from the TV are shared using an EventEmitter | EventEmitter
 emitting an event containing the subscription identifier, any error and any
-response. The error is a [CommonError](../../../../../common/error/classes/CommonError.md)
+response. The error is a [CommonError](../../../../../common/common-error/classes/CommonError.md)
 with
 
 - general: "tv", specific "subscriptionError",
@@ -139,7 +139,7 @@ The LGTV response from the TV.
 
 #### Throws
 
-a [CommonError](../../../../../common/error/classes/CommonError.md) with
+a [CommonError](../../../../../common/common-error/classes/CommonError.md) with
 
 - general: "tv", specific: "connectionRequestError",
 - general: "tv", specific: "connectionResponseInvalidFormat",
