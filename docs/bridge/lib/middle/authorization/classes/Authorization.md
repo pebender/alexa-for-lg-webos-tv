@@ -16,7 +16,7 @@
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`AuthorizationRecord`](../interfaces/AuthorizationRecord.md)\>
 
 #### Returns
 
@@ -32,7 +32,7 @@
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`AuthorizationRecord`](../interfaces/AuthorizationRecord.md)\>
 
 ## Methods
 

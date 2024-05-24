@@ -14,6 +14,5 @@
 
 ### Type Aliases
 
-- [DatabaseQuery](type-aliases/DatabaseQuery.md)
-- [DatabaseRecord](type-aliases/DatabaseRecord.md)
-- [DatabaseUpdate](type-aliases/DatabaseUpdate.md)
+- [AllowOnly](type-aliases/AllowOnly.md)
+- [OneOf](type-aliases/OneOf.md)

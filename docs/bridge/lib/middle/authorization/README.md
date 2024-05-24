@@ -11,3 +11,11 @@
 ### Classes
 
 - [Authorization](classes/Authorization.md)
+
+### Interfaces
+
+- [AuthorizationRecord](interfaces/AuthorizationRecord.md)
+
+### Type Aliases
+
+- [AuthorizationField](type-aliases/AuthorizationField.md)

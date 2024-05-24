@@ -18,7 +18,7 @@
 
 #### Parameters
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
 
 • **\_tv**: [`TV`](../../tv/interfaces/TV.md)
 
@@ -52,7 +52,7 @@
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
 
 ***
 
@@ -184,7 +184,7 @@ a [CommonError](../../../../../common/common-error/classes/CommonError.md) with
 
 #### Parameters
 
-• **database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)
+• **database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
 
 • **tv**: [`TV`](../../tv/interfaces/TV.md)
 

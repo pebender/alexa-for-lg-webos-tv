@@ -4,25 +4,29 @@
 
 [alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/database](../README.md) / DatabaseTable
 
-# Class: DatabaseTable
+# Class: DatabaseTable\<DatabaseRecord\>
+
+## Type parameters
+
+• **DatabaseRecord**
 
 ## Constructors
 
 ### new DatabaseTable()
 
-> `private` **new DatabaseTable**(`indexes`, `key`, `database`): [`DatabaseTable`](DatabaseTable.md)
+> `private` **new DatabaseTable**\<`DatabaseRecord`\>(`indexes`, `key`, `database`): [`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
 
 #### Parameters
 
-• **indexes**: `string`[]
+• **indexes**: keyof `DatabaseRecord`[]
 
-• **key**: `string`
+• **key**: keyof `DatabaseRecord`
 
 • **database**: `Nedb`\<`Record`\<`string`, `any`\>\>
 
 #### Returns
 
-[`DatabaseTable`](DatabaseTable.md)
+[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
 
 ## Properties
 
@@ -34,13 +38,13 @@
 
 ### \_indexes
 
-> `private` `readonly` **\_indexes**: `string`[]
+> `private` `readonly` **\_indexes**: keyof `DatabaseRecord`[]
 
 ***
 
 ### \_key
 
-> `private` `readonly` **\_key**: `string`
+> `private` `readonly` **\_key**: keyof `DatabaseRecord`
 
 ## Methods
 
@@ -60,7 +64,7 @@
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -70,29 +74,29 @@
 
 ### getRecord()
 
-> **getRecord**(`query`): `Promise`\<`null` \| [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)\>
+> **getRecord**(`query`): `Promise`\<`null` \| `DatabaseRecord`\>
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
-`Promise`\<`null` \| [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)\>
+`Promise`\<`null` \| `DatabaseRecord`\>
 
 ***
 
 ### getRecords()
 
-> **getRecords**(`query`): `Promise`\<[`DatabaseRecord`](../type-aliases/DatabaseRecord.md)[]\>
+> **getRecords**(`query`): `Promise`\<`DatabaseRecord`[]\>
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
-`Promise`\<[`DatabaseRecord`](../type-aliases/DatabaseRecord.md)[]\>
+`Promise`\<`DatabaseRecord`[]\>
 
 ***
 
@@ -102,7 +106,23 @@
 
 #### Parameters
 
-• **record**: [`DatabaseRecord`](../type-aliases/DatabaseRecord.md)
+• **record**: `DatabaseRecord`
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### updateFields()
+
+> **updateFields**(`query`, `fields`): `Promise`\<`void`\>
+
+#### Parameters
+
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+
+• **fields**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -112,29 +132,13 @@
 
 ### updateOrInsertRecord()
 
-> **updateOrInsertRecord**(`query`, `update`): `Promise`\<`void`\>
+> **updateOrInsertRecord**(`query`, `record`): `Promise`\<`void`\>
 
 #### Parameters
 
-• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
-• **update**: [`DatabaseUpdate`](../type-aliases/DatabaseUpdate.md)
-
-#### Returns
-
-`Promise`\<`void`\>
-
-***
-
-### updateRecord()
-
-> **updateRecord**(`query`, `update`): `Promise`\<`void`\>
-
-#### Parameters
-
-• **query**: [`DatabaseQuery`](../type-aliases/DatabaseQuery.md)
-
-• **update**: [`DatabaseUpdate`](../type-aliases/DatabaseUpdate.md)
+• **record**: `DatabaseRecord`
 
 #### Returns
 
@@ -144,16 +148,20 @@
 
 ### build()
 
-> `static` **build**(`name`, `indexes`, `key`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\>
+> `static` **build**\<`DatabaseRecord`\>(`name`, `indexes`, `key`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
+
+#### Type parameters
+
+• **DatabaseRecord**
 
 #### Parameters
 
 • **name**: `string`
 
-• **indexes**: `string`[]
+• **indexes**: keyof `DatabaseRecord`[]
 
-• **key**: `string`
+• **key**: keyof `DatabaseRecord`
 
 #### Returns
 
-`Promise`\<[`DatabaseTable`](DatabaseTable.md)\>
+`Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
