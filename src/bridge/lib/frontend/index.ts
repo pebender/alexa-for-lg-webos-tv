@@ -12,10 +12,7 @@ import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import type { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
-import {
-  BridgeTokenAuth,
-  type BridgeTokenAuthRecord,
-} from "./bridge-token-auth";
+import { BridgeTokenAuth } from "./bridge-token-auth";
 
 type FrontendCommonErrorCode =
   | "bodyFormatInvalid"
@@ -364,10 +361,8 @@ export class Frontend {
           throw errorBodyInvalidFormat();
         }
 
-        const credentials = response.locals
-          .credentials as BridgeTokenAuthRecord;
-
-        const authorizedSkillToken: string = credentials.skillToken;
+        const authorizedSkillToken: string = response.locals
+          .skillToken as string;
         const skillToken: string = testRequest.skillToken;
 
         if (authorizedSkillToken !== skillToken) {
