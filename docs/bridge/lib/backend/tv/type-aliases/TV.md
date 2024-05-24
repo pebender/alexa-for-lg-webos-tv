@@ -4,39 +4,31 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/backend/tv](../README.md) / TV
 
-# Interface: TV
+# Type alias: TV
 
-## Properties
+> **TV**: `object`
+
+## Type declaration
 
 ### ip
 
-> **ip**: `string`
-
-***
+> **ip**: [`IP`](IP.md)
 
 ### key?
 
 > `optional` **key**: `string`
 
-***
-
 ### mac
 
-> **mac**: `string`
-
-***
+> **mac**: [`MAC`](MAC.md)
 
 ### name
 
 > **name**: `string`
 
-***
-
 ### udn
 
-> **udn**: `string`
-
-***
+> **udn**: [`UDN`](UDN.md)
 
 ### url
 

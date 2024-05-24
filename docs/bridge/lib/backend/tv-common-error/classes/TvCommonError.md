@@ -43,7 +43,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 • **options.ssdpResponse.rinfo**: `RemoteInfo`
 
-• **options.tv?**: `Partial`\<[`TV`](../../tv/interfaces/TV.md)\>
+• **options.tv?**: `Partial`\<[`TV`](../../tv/type-aliases/TV.md)\>
 
 #### Returns
 
@@ -103,4 +103,4 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### tv?
 
-> `optional` `readonly` **tv**: `Partial`\<[`TV`](../../tv/interfaces/TV.md)\>
+> `optional` `readonly` **tv**: `Partial`\<[`TV`](../../tv/type-aliases/TV.md)\>

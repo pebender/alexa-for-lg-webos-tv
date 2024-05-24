@@ -4,20 +4,15 @@ import { DatabaseTable } from "../database";
 import type { Configuration } from "../configuration";
 import { authorizeUser } from "./authorize-user";
 
-export interface BridgeTokenAuthRecord {
+/* This is a type because DatabaseTable needs it to be a type. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type BridgeTokenAuthRecord = {
   bridgeToken: string;
   bridgeHostname: string;
   email: string;
   userId: string;
   skillToken: string;
-}
-
-export type BridgeTokenAuthField =
-  | "bridgeToken"
-  | "bridgeHostname"
-  | "email"
-  | "userId"
-  | "skillToken";
+};
 
 export class BridgeTokenAuth {
   private readonly _configuration: Configuration;

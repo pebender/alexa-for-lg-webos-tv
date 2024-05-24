@@ -18,7 +18,7 @@
 
 #### Parameters
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/type-aliases/TV.md)\>
 
 • **\_controls**: `Record`\<`string`, [`BackendControl`](../../backend-control/classes/BackendControl.md)\>
 
@@ -40,7 +40,7 @@
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/type-aliases/TV.md)\>
 
 ## Methods
 
@@ -98,7 +98,7 @@
 
 #### Parameters
 
-• **tv**: [`TV`](../../tv/interfaces/TV.md)
+• **tv**: [`TV`](../../tv/type-aliases/TV.md)
 
 #### Returns
 

@@ -2,10 +2,12 @@ import { DatabaseTable } from "../database";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 
-export interface AuthorizationRecord {
+/* This is a type because DatabaseTable needs it to be a type. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type AuthorizationRecord = {
   skillToken: string;
   userId: string;
-}
+};
 
 export type AuthorizationField = "skillToken" | "userId";
 

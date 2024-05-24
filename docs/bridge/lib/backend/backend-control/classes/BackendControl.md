@@ -18,9 +18,9 @@
 
 #### Parameters
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/type-aliases/TV.md)\>
 
-• **\_tv**: [`TV`](../../tv/interfaces/TV.md)
+• **\_tv**: [`TV`](../../tv/type-aliases/TV.md)
 
 • **\_connection**: [`export=`](../../../../types/lgtv2/classes/export=.md)
 
@@ -52,7 +52,7 @@
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/type-aliases/TV.md)\>
 
 ***
 
@@ -76,17 +76,17 @@
 
 ### \_tv
 
-> `private` `readonly` **\_tv**: [`TV`](../../tv/interfaces/TV.md)
+> `private` `readonly` **\_tv**: [`TV`](../../tv/type-aliases/TV.md)
 
 ## Accessors
 
 ### tv
 
-> `get` **tv**(): [`TV`](../../tv/interfaces/TV.md)
+> `get` **tv**(): [`TV`](../../tv/type-aliases/TV.md)
 
 #### Returns
 
-[`TV`](../../tv/interfaces/TV.md)
+[`TV`](../../tv/type-aliases/TV.md)
 
 ## Methods
 
@@ -184,9 +184,9 @@ a [CommonError](../../../../../common/common-error/classes/CommonError.md) with
 
 #### Parameters
 
-• **database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/interfaces/TV.md)\>
+• **database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`TV`](../../tv/type-aliases/TV.md)\>
 
-• **tv**: [`TV`](../../tv/interfaces/TV.md)
+• **tv**: [`TV`](../../tv/type-aliases/TV.md)
 
 #### Returns
 

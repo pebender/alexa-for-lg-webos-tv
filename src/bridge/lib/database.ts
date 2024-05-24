@@ -3,7 +3,7 @@ import persistPath from "persist-path";
 import * as Common from "../../common";
 
 /**
- * OneOf was lifted from {@link
+ * AllowOnly and OneOf were lifted from {@link
  * https://github.com/salto-io/salto/blob/4465d201ae4881a8b3ecb42e3903eeb839ebd7c8/packages/lowerdash/src/types.ts}.
  * and explained at {@link https://amir.rachum.com/typescript-oneof/}.
  */
@@ -12,7 +12,15 @@ export type AllowOnly<T, K extends keyof T> = Pick<T, K> & {
 };
 export type OneOf<T, K = keyof T> = K extends keyof T ? AllowOnly<T, K> : never;
 
-export class DatabaseTable<DatabaseRecord> {
+/**
+ * This generic class provides typed basic access to an {@link https://www.npmjs.com/package/@seald-io/nedb | @seald-io/nedb} database. `DatabaseRecord` specifies the fields in a record. It must be a `type` not an `interface` because it must have a signature so that we can limit it using `extends`.  You can learn more about this difference between a 'type' and an 'interface' at {@link https://github.com/microsoft/TypeScript/issues/15300}.
+ */
+export class DatabaseTable<
+  DatabaseRecord extends Record<
+    string,
+    string | number | boolean | Date | null
+  >,
+> {
   private readonly _indexes: Array<keyof DatabaseRecord>;
   private readonly _key: keyof DatabaseRecord;
   private readonly _database: Datastore;
@@ -26,7 +34,12 @@ export class DatabaseTable<DatabaseRecord> {
     this._database = database;
   }
 
-  public static async build<DatabaseRecord>(
+  public static async build<
+    DatabaseRecord extends Record<
+      string,
+      string | number | boolean | Date | null
+    >,
+  >(
     name: string,
     indexes: Array<keyof DatabaseRecord>,
     key: keyof DatabaseRecord,

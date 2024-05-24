@@ -8,14 +8,11 @@
 
 ## Index
 
-### Interfaces
-
-- [TV](interfaces/TV.md)
-
 ### Type Aliases
 
 - [IP](type-aliases/IP.md)
 - [IPv4](type-aliases/IPv4.md)
 - [IPv6](type-aliases/IPv6.md)
 - [MAC](type-aliases/MAC.md)
+- [TV](type-aliases/TV.md)
 - [UDN](type-aliases/UDN.md)

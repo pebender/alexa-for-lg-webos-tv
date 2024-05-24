@@ -4,33 +4,27 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/bridge-token-auth](../README.md) / BridgeTokenAuthRecord
 
-# Interface: BridgeTokenAuthRecord
+# Type alias: BridgeTokenAuthRecord
 
-## Properties
+> **BridgeTokenAuthRecord**: `object`
+
+## Type declaration
 
 ### bridgeHostname
 
 > **bridgeHostname**: `string`
 
-***
-
 ### bridgeToken
 
 > **bridgeToken**: `string`
-
-***
 
 ### email
 
 > **email**: `string`
 
-***
-
 ### skillToken
 
 > **skillToken**: `string`
-
-***
 
 ### userId
 

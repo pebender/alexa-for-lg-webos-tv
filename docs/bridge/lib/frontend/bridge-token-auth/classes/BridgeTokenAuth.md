@@ -16,7 +16,7 @@
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Returns
 
@@ -32,13 +32,13 @@
 
 ### \_database
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ## Methods
 
 ### authorizeBridgeToken()
 
-> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -46,7 +46,7 @@
 
 #### Returns
 
-`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 
@@ -62,7 +62,7 @@
 
 ### getBridgeToken()
 
-> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -70,7 +70,7 @@
 
 #### Returns
 
-`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../interfaces/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 

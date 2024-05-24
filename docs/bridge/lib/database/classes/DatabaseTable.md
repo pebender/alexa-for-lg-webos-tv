@@ -6,9 +6,11 @@
 
 # Class: DatabaseTable\<DatabaseRecord\>
 
+This generic class provides typed basic access to an [@seald-io/nedb](https://www.npmjs.com/package/@seald-io/nedb) database. `DatabaseRecord` specifies the fields in a record. It must be a `type` not an `interface` because it must have a signature so that we can limit it using `extends`.  You can learn more about this difference between a 'type' and an 'interface' at [https://github.com/microsoft/TypeScript/issues/15300](https://github.com/microsoft/TypeScript/issues/15300).
+
 ## Type parameters
 
-• **DatabaseRecord**
+• **DatabaseRecord** *extends* `Record`\<`string`, `string` \| `number` \| `boolean` \| `Date` \| `null`\>
 
 ## Constructors
 
@@ -152,7 +154,7 @@
 
 #### Type parameters
 
-• **DatabaseRecord**
+• **DatabaseRecord** *extends* `Record`\<`string`, `null` \| `string` \| `number` \| `boolean` \| `Date`\>
 
 #### Parameters
 
