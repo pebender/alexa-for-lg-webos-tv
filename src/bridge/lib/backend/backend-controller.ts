@@ -44,7 +44,7 @@ export class BackendController extends EventEmitter {
       await Promise.all(tvInitializers);
     }
 
-    const records = await backendController._database.getRecords({});
+    const records = await backendController._database.getRecords();
     await tvsInitialize(records);
 
     return backendController;

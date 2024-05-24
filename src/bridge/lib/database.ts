@@ -97,7 +97,9 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async getRecord(
-    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
+    query:
+      | OneOf<Required<DatabaseRecord>>
+      | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord | null> {
     let record: Record<string, unknown> | null;
     try {
@@ -115,12 +117,14 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async getRecords(
-    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
+    query?:
+      | OneOf<Required<DatabaseRecord>>
+      | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord[]> {
     let records: Array<Record<string, unknown>>;
     try {
       records = await this._database
-        .findAsync(Array.isArray(query) ? { $and: query } : query)
+        .findAsync(Array.isArray(query) ? { $and: query } : query ?? {})
         .execAsync();
     } catch (error) {
       throw new Common.DatabaseCommonError({ cause: error });
@@ -141,7 +145,9 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async updateOrInsertRecord(
-    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
+    query:
+      | OneOf<Required<DatabaseRecord>>
+      | Array<OneOf<Required<DatabaseRecord>>>,
     record: DatabaseRecord,
   ): Promise<void> {
     try {
@@ -159,8 +165,12 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async updateFields(
-    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
-    fields: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
+    query:
+      | OneOf<Required<DatabaseRecord>>
+      | Array<OneOf<Required<DatabaseRecord>>>,
+    fields:
+      | OneOf<Required<DatabaseRecord>>
+      | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<void> {
     try {
       await this._database.updateAsync(

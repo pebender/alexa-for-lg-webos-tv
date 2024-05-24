@@ -78,7 +78,7 @@
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -88,11 +88,11 @@
 
 ### getRecords()
 
-> **getRecords**(`query`): `Promise`\<`DatabaseRecord`[]\>
+> **getRecords**(`query`?): `Promise`\<`DatabaseRecord`[]\>
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+• **query?**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -120,9 +120,9 @@
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
-• **fields**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+• **fields**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -136,7 +136,7 @@
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 • **record**: `DatabaseRecord`
 
