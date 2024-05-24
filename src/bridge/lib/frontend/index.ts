@@ -257,7 +257,7 @@ export class Frontend {
         try {
           const record =
             await frontend._loginTokenAuth.authorizeLoginToken(loginToken);
-          if (record === null) {
+          if (record === undefined) {
             throw errorUnauthorized({
               message: "Bridge connection failed due to invalid login token.",
             });
@@ -320,7 +320,7 @@ export class Frontend {
         } catch (error) {
           throw errorInternalServerError({ cause: error });
         }
-        if (record === null) {
+        if (record === undefined) {
           throw errorUnauthorized({
             message: "Bridge connection failed due to invalid bearer token.",
           });

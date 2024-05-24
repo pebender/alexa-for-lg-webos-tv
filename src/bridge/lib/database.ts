@@ -113,7 +113,7 @@ export class DatabaseTable<
     query:
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
-  ): Promise<DatabaseRecord | null> {
+  ): Promise<DatabaseRecord | undefined> {
     let record: Record<string, unknown> | null;
     try {
       record = await this._database
@@ -123,7 +123,7 @@ export class DatabaseTable<
       throw new Common.DatabaseCommonError({ cause: error });
     }
     if (record === null) {
-      return null;
+      return undefined;
     }
     delete record._id;
     return record as DatabaseRecord;

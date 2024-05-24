@@ -76,7 +76,7 @@ This generic class provides typed basic access to an [@seald-io/nedb](https://ww
 
 ### getRecord()
 
-> **getRecord**(`query`): `Promise`\<`null` \| `DatabaseRecord`\>
+> **getRecord**(`query`): `Promise`\<`undefined` \| `DatabaseRecord`\>
 
 #### Parameters
 
@@ -84,7 +84,7 @@ This generic class provides typed basic access to an [@seald-io/nedb](https://ww
 
 #### Returns
 
-`Promise`\<`null` \| `DatabaseRecord`\>
+`Promise`\<`undefined` \| `DatabaseRecord`\>
 
 ***
 
