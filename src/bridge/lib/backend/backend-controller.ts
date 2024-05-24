@@ -1,16 +1,16 @@
 import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import { type DatabaseRecord, DatabaseTable } from "../database";
+import { DatabaseTable } from "../database";
 import type { TV, UDN } from "./tv";
 import { TvCommonError } from "./tv-common-error";
 import { BackendControl } from "./backend-control";
 
 export class BackendController extends EventEmitter {
-  private readonly _database: DatabaseTable;
+  private readonly _database: DatabaseTable<TV>;
   private readonly _controls: Record<string, BackendControl>;
   private constructor(
-    _database: DatabaseTable,
+    _database: DatabaseTable<TV>,
     _controls: Record<string, BackendControl>,
   ) {
     super();
@@ -20,12 +20,12 @@ export class BackendController extends EventEmitter {
   }
 
   public static async build(): Promise<BackendController> {
-    const _database = await DatabaseTable.build("backend", ["udn"], "udn");
+    const _database = await DatabaseTable.build<TV>("backend", ["udn"], "udn");
     const _controls = {};
 
     const backendController = new BackendController(_database, _controls);
 
-    async function tvsInitialize(records: DatabaseRecord[]): Promise<void> {
+    async function tvsInitialize(tvs: TV[]): Promise<void> {
       async function tvInitialize(tv: TV): Promise<void> {
         if (backendController._controls[tv.udn] === undefined) {
           backendController._controls[tv.udn] = BackendControl.build(
@@ -37,7 +37,6 @@ export class BackendController extends EventEmitter {
         }
       }
 
-      const tvs: TV[] = records as unknown as TV[];
       const tvInitializers: Array<Promise<void>> = [];
       for (const tv of tvs) {
         tvInitializers.push(tvInitialize(tv));
@@ -84,15 +83,13 @@ export class BackendController extends EventEmitter {
 
   public async tvUpsert(tv: TV): Promise<void> {
     try {
-      const record = await this._database.getRecord({
-        $and: [
-          { udn: tv.udn },
-          { name: tv.name },
-          { ip: tv.ip },
-          { url: tv.url },
-          { mac: tv.mac },
-        ],
-      });
+      const record = await this._database.getRecord([
+        { udn: tv.udn },
+        { name: tv.name },
+        { ip: tv.ip },
+        { url: tv.url },
+        { mac: tv.mac },
+      ]);
       if (record === null) {
         if (Reflect.has(this._controls, tv.udn)) {
           Reflect.deleteProperty(this._controls, tv.udn);

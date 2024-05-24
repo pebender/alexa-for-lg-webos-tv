@@ -16,13 +16,13 @@ import { TvCommonError } from "./tv-common-error";
 export class BackendControl extends EventEmitter {
   private _poweredOn: boolean;
   private _connecting: boolean;
-  private readonly _database: DatabaseTable;
+  private readonly _database: DatabaseTable<TV>;
   private readonly _tv: TV;
   private readonly _connection: LGTV;
   private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
   private constructor(
-    _database: DatabaseTable,
+    _database: DatabaseTable<TV>,
     _tv: TV,
     _connection: LGTV,
     _ssdpNotify: SsdpServer,
@@ -39,7 +39,7 @@ export class BackendControl extends EventEmitter {
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static build(database: DatabaseTable, tv: TV): BackendControl {
+  public static build(database: DatabaseTable<TV>, tv: TV): BackendControl {
     const _tv: TV = {
       udn: tv.udn,
       name: tv.name,
@@ -52,7 +52,7 @@ export class BackendControl extends EventEmitter {
 
     function saveKey(key: string, callback: (error: Error) => void): void {
       database
-        .updateRecord({ udn: _tv.udn }, { $set: { key } })
+        .updateFields({ udn: _tv.udn }, { key })
         .then(() => {
           _tv.key = key;
           _connection.clientKey = key;

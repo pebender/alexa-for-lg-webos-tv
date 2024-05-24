@@ -2,10 +2,20 @@ import { DatabaseTable } from "../database";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 
+export interface AuthorizationRecord {
+  skillToken: string;
+  userId: string;
+}
+
+export type AuthorizationField = "skillToken" | "userId";
+
 export class Authorization {
   private readonly _configuration: Configuration;
-  private readonly _database: DatabaseTable;
-  private constructor(_configuration: Configuration, _database: DatabaseTable) {
+  private readonly _database: DatabaseTable<AuthorizationRecord>;
+  private constructor(
+    _configuration: Configuration,
+    _database: DatabaseTable<AuthorizationRecord>,
+  ) {
     this._configuration = _configuration;
     this._database = _database;
   }
@@ -13,7 +23,7 @@ export class Authorization {
   public static async build(
     configuration: Configuration,
   ): Promise<Authorization> {
-    const _database = await DatabaseTable.build(
+    const _database = await DatabaseTable.build<AuthorizationRecord>(
       "middle",
       ["skillToken", "userId"],
       "skillToken",

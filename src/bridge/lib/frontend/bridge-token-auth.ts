@@ -21,8 +21,11 @@ export type BridgeTokenAuthField =
 
 export class BridgeTokenAuth {
   private readonly _configuration: Configuration;
-  private readonly _database: DatabaseTable;
-  private constructor(_configuration: Configuration, _database: DatabaseTable) {
+  private readonly _database: DatabaseTable<BridgeTokenAuthRecord>;
+  private constructor(
+    _configuration: Configuration,
+    _database: DatabaseTable<BridgeTokenAuthRecord>,
+  ) {
     this._configuration = _configuration;
     this._database = _database;
   }
@@ -30,7 +33,7 @@ export class BridgeTokenAuth {
   public static async build(
     configuration: Configuration,
   ): Promise<BridgeTokenAuth> {
-    const _database = await DatabaseTable.build(
+    const _database = await DatabaseTable.build<BridgeTokenAuthRecord>(
       "frontend",
       ["bridgeToken", "bridgeHostname", "email", "userId", "skillToken"],
       "bridgeToken",
@@ -56,7 +59,7 @@ export class BridgeTokenAuth {
     Common.Debug.debug("setBridgeToken");
     Common.Debug.debugJSON(record);
     await this._database.updateOrInsertRecord(
-      { $and: [{ bridgeHostname }, { email }] },
+      [{ bridgeHostname }, { email }],
       record,
     );
   }
