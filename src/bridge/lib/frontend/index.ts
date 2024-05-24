@@ -221,10 +221,10 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("loginTokenAuthorizationHandler: start");
 
-        response.locals.bridgeHostname = null;
-        response.locals.userId = null;
-        response.locals.email = null;
-        response.locals.skillToken = null;
+        delete response.locals.bridgeHostname;
+        delete response.locals.userId;
+        delete response.locals.email;
+        delete response.locals.skillToken;
 
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
@@ -280,10 +280,10 @@ export class Frontend {
       ): Promise<void> {
         Common.Debug.debug("bridgeTokenAuthorizationHandler: start");
 
-        response.locals.bridgeHostname = null;
-        response.locals.userId = null;
-        response.locals.email = null;
-        response.locals.skillToken = null;
+        delete response.locals.bridgeHostname;
+        delete response.locals.userId;
+        delete response.locals.email;
+        delete response.locals.skillToken;
 
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
