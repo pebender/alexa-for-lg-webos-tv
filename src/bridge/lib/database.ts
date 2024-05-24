@@ -2,11 +2,25 @@ import Datastore from "@seald-io/nedb";
 import persistPath from "persist-path";
 import * as Common from "../../common";
 
+/**
+ * OneOf was lifted from {@link
+ * https://github.com/salto-io/salto/blob/4465d201ae4881a8b3ecb42e3903eeb839ebd7c8/packages/lowerdash/src/types.ts}.
+ * and explained at {@link https://amir.rachum.com/typescript-oneof/}.
+ */
+export type AllowOnly<T, K extends keyof T> = Pick<T, K> & {
+  [P in keyof Omit<T, K>]?: never;
+};
+export type OneOf<T, K = keyof T> = K extends keyof T ? AllowOnly<T, K> : never;
+
 export class DatabaseTable<DatabaseRecord> {
-  private readonly _indexes: string[];
-  private readonly _key: string;
+  private readonly _indexes: Array<keyof DatabaseRecord>;
+  private readonly _key: keyof DatabaseRecord;
   private readonly _database: Datastore;
-  private constructor(indexes: string[], key: string, database: Datastore) {
+  private constructor(
+    indexes: Array<keyof DatabaseRecord>,
+    key: keyof DatabaseRecord,
+    database: Datastore,
+  ) {
     this._indexes = indexes;
     this._key = key;
     this._database = database;
@@ -14,8 +28,8 @@ export class DatabaseTable<DatabaseRecord> {
 
   public static async build<DatabaseRecord>(
     name: string,
-    indexes: string[],
-    key: string,
+    indexes: Array<keyof DatabaseRecord>,
+    key: keyof DatabaseRecord,
   ): Promise<DatabaseTable<DatabaseRecord>> {
     const configurationDirectory = persistPath(
       Common.constants.application.name.safe,
@@ -36,9 +50,9 @@ export class DatabaseTable<DatabaseRecord> {
       throw new Common.DatabaseCommonError({ cause: error });
     }
 
-    async function index(fieldName: string): Promise<void> {
+    async function index(fieldName: keyof DatabaseRecord): Promise<void> {
       await database
-        .ensureIndexAsync({ fieldName, unique: true })
+        .ensureIndexAsync({ fieldName: fieldName as string, unique: true })
         .catch((error) => {
           throw new Common.DatabaseCommonError({
             cause: error,
@@ -46,7 +60,7 @@ export class DatabaseTable<DatabaseRecord> {
         });
     }
     await Promise.all(
-      indexes.map(async (fieldName: string) => {
+      indexes.map(async (fieldName: keyof DatabaseRecord) => {
         await index(fieldName);
       }),
     );
@@ -56,9 +70,9 @@ export class DatabaseTable<DatabaseRecord> {
 
   public async clean(): Promise<void> {
     const query1: Record<string, unknown> = {};
-    query1[this._key] = { $exists: false };
+    query1[this._key as string] = { $exists: false };
     const query2: Record<string, unknown> = {};
-    query2[this._key] = null;
+    query2[this._key as string] = null;
     const query: Record<string, unknown> = { $or: [query1, query2] };
     try {
       await this._database.removeAsync(query, { multi: true });
@@ -69,7 +83,7 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async deleteRecord(
-    query: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
+    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
   ): Promise<void> {
     try {
       await this._database.removeAsync(
@@ -83,7 +97,7 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async getRecord(
-    query: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
+    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
   ): Promise<DatabaseRecord | null> {
     let record: Record<string, unknown> | null;
     try {
@@ -101,7 +115,7 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async getRecords(
-    query: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
+    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
   ): Promise<DatabaseRecord[]> {
     let records: Array<Record<string, unknown>>;
     try {
@@ -127,7 +141,7 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async updateOrInsertRecord(
-    query: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
+    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
     record: DatabaseRecord,
   ): Promise<void> {
     try {
@@ -145,8 +159,8 @@ export class DatabaseTable<DatabaseRecord> {
   }
 
   public async updateFields(
-    query: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
-    fields: Partial<DatabaseRecord> | Array<Partial<DatabaseRecord>>,
+    query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
+    fields: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
   ): Promise<void> {
     try {
       await this._database.updateAsync(
