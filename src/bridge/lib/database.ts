@@ -3,17 +3,31 @@ import persistPath from "persist-path";
 import * as Common from "../../common";
 
 /**
- * AllowOnly and OneOf were lifted from {@link
- * https://github.com/salto-io/salto/blob/4465d201ae4881a8b3ecb42e3903eeb839ebd7c8/packages/lowerdash/src/types.ts}.
- * and explained at {@link https://amir.rachum.com/typescript-oneof/}.
+ * AllowOnly and {@link OneOf} were lifted from {@link
+ * https://github.com/salto-io/salto/blob/4465d201ae4881a8b3ecb42e3903eeb839ebd7c8/packages/lowerdash/src/types.ts
+ * | https://github.com/salto-io/salto/*\/packages/lowerdash/src/types.ts}. and
+ * are explained by {@link https://amir.rachum.com/typescript-oneof/}.
  */
 export type AllowOnly<T, K extends keyof T> = Pick<T, K> & {
   [P in keyof Omit<T, K>]?: never;
 };
+
+/**
+ * OneOf and {@link AllowOnly} were lifted from {@link
+ * https://github.com/salto-io/salto/blob/4465d201ae4881a8b3ecb42e3903eeb839ebd7c8/packages/lowerdash/src/types.ts
+ * | https://github.com/salto-io/salto/*\/packages/lowerdash/src/types.ts} and
+ * are explained by {@link https://amir.rachum.com/typescript-oneof/}.
+ */
 export type OneOf<T, K = keyof T> = K extends keyof T ? AllowOnly<T, K> : never;
 
 /**
- * This generic class provides typed basic access to an {@link https://www.npmjs.com/package/@seald-io/nedb | @seald-io/nedb} database. `DatabaseRecord` specifies the fields in a record. It must be a `type` not an `interface` because it must have a signature so that we can limit it using `extends`.  You can learn more about this difference between a 'type' and an 'interface' at {@link https://github.com/microsoft/TypeScript/issues/15300}.
+ * This generic class provides typed basic access to an
+ * {@link https://www.npmjs.com/package/@seald-io/nedb | @seald-io/nedb}
+ * database. `DatabaseRecord` specifies the fields in a record. It must be a
+ * `type` not an `interface` because it must have a signature so that we can
+ * limit it using `extends`.  You can learn more about this difference between a
+ * 'type' and an 'interface' at
+ * {@link https://github.com/microsoft/TypeScript/issues/15300}.
  */
 export class DatabaseTable<
   DatabaseRecord extends Record<
@@ -23,7 +37,7 @@ export class DatabaseTable<
 > {
   private readonly _indexes: Array<keyof DatabaseRecord>;
   private readonly _key: keyof DatabaseRecord;
-  private readonly _database: Datastore;
+  private readonly _database: Datastore<DatabaseRecord>;
   private constructor(
     indexes: Array<keyof DatabaseRecord>,
     key: keyof DatabaseRecord,
@@ -53,7 +67,7 @@ export class DatabaseTable<
     // occurs once at startup and because the database is needed before the LG
     // webOS TV bridge can run.
     //
-    const database = new Datastore({
+    const database = new Datastore<DatabaseRecord>({
       filename: `${configurationDirectory}/${name}.nedb`,
     });
 
@@ -114,7 +128,7 @@ export class DatabaseTable<
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord | undefined> {
-    let record: Record<string, unknown> | null;
+    let record: (DatabaseRecord & { _id?: unknown }) | null;
     try {
       record = await this._database
         .findOneAsync(Array.isArray(query) ? { $and: query } : query)
@@ -134,7 +148,7 @@ export class DatabaseTable<
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord[]> {
-    let records: Array<Record<string, unknown>>;
+    let records: Array<DatabaseRecord & { _id?: unknown }>;
     try {
       records = await this._database
         .findAsync(Array.isArray(query) ? { $and: query } : query ?? {})
@@ -150,7 +164,7 @@ export class DatabaseTable<
 
   public async insertRecord(record: DatabaseRecord): Promise<void> {
     try {
-      await this._database.insertAsync(record as Record<string, unknown>);
+      await this._database.insertAsync(record);
       await this._database.compactDatafileAsync();
     } catch (error) {
       throw new Common.DatabaseCommonError({ cause: error });
