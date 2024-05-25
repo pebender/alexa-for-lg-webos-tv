@@ -52,7 +52,7 @@ export class BackendControl extends EventEmitter {
 
     function saveKey(key: string, callback: (error: Error) => void): void {
       database
-        .updateFields({ udn: _tv.udn }, { url: tv.url })
+        .updateOrInsertFields({ udn: _tv.udn }, { url: tv.url })
         .then(() => {
           _tv.key = key;
           _connection.clientKey = key;

@@ -95,21 +95,7 @@ export class DatabaseTable<
     return new DatabaseTable(indexes, key, database);
   }
 
-  public async clean(): Promise<void> {
-    const query1: Record<string, unknown> = {};
-    query1[this._key as string] = { $exists: false };
-    const query2: Record<string, unknown> = {};
-    query2[this._key as string] = null;
-    const query: Record<string, unknown> = { $or: [query1, query2] };
-    try {
-      await this._database.removeAsync(query, { multi: true });
-      await this._database.compactDatafileAsync();
-    } catch (error) {
-      throw new Common.DatabaseCommonError({ cause: error });
-    }
-  }
-
-  public async deleteRecord(
+  public async deleteRecords(
     query: OneOf<DatabaseRecord> | Array<OneOf<DatabaseRecord>>,
   ): Promise<void> {
     try {
@@ -162,15 +148,6 @@ export class DatabaseTable<
     return records as DatabaseRecord[];
   }
 
-  public async insertRecord(record: DatabaseRecord): Promise<void> {
-    try {
-      await this._database.insertAsync(record);
-      await this._database.compactDatafileAsync();
-    } catch (error) {
-      throw new Common.DatabaseCommonError({ cause: error });
-    }
-  }
-
   public async updateOrInsertRecord(
     query:
       | OneOf<Required<DatabaseRecord>>
@@ -191,7 +168,7 @@ export class DatabaseTable<
     }
   }
 
-  public async updateFields(
+  public async updateOrInsertFields(
     query:
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,

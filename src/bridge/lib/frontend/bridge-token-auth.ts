@@ -80,7 +80,7 @@ export class BridgeTokenAuth {
       record.email,
     );
     if (!authorized) {
-      await this._database.deleteRecord({ bridgeToken });
+      await this._database.deleteRecords({ bridgeToken });
       return undefined;
     }
 

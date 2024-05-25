@@ -56,19 +56,9 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ## Methods
 
-### clean()
+### deleteRecords()
 
-> **clean**(): `Promise`\<`void`\>
-
-#### Returns
-
-`Promise`\<`void`\>
-
-***
-
-### deleteRecord()
-
-> **deleteRecord**(`query`): `Promise`\<`void`\>
+> **deleteRecords**(`query`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -108,23 +98,9 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ***
 
-### insertRecord()
+### updateOrInsertFields()
 
-> **insertRecord**(`record`): `Promise`\<`void`\>
-
-#### Parameters
-
-• **record**: `DatabaseRecord`
-
-#### Returns
-
-`Promise`\<`void`\>
-
-***
-
-### updateFields()
-
-> **updateFields**(`query`, `fields`): `Promise`\<`void`\>
+> **updateOrInsertFields**(`query`, `fields`): `Promise`\<`void`\>
 
 #### Parameters
 
