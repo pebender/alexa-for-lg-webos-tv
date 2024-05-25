@@ -20,7 +20,7 @@ export class BackendController extends EventEmitter {
   }
 
   public static async build(): Promise<BackendController> {
-    const _database = await DatabaseTable.build<TV>("backend", ["udn"], "udn");
+    const _database = await DatabaseTable.build<TV>("backend", ["udn"]);
     const _controls = {};
 
     const backendController = new BackendController(_database, _controls);
@@ -90,7 +90,7 @@ export class BackendController extends EventEmitter {
         { url: tv.url },
         { mac: tv.mac },
       ]);
-      if (record === null) {
+      if (record === undefined) {
         if (Reflect.has(this._controls, tv.udn)) {
           Reflect.deleteProperty(this._controls, tv.udn);
         }

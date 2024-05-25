@@ -12,7 +12,10 @@ import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import type { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
-import { BridgeTokenAuth } from "./bridge-token-auth";
+import {
+  BridgeTokenAuth,
+  type BridgeTokenAuthRecord,
+} from "./bridge-token-auth";
 
 type FrontendCommonErrorCode =
   | "bodyFormatInvalid"
@@ -313,7 +316,7 @@ export class Frontend {
         }
         const bridgeToken = authorization[1];
 
-        let record;
+        let record: BridgeTokenAuthRecord | undefined;
         try {
           record =
             await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);

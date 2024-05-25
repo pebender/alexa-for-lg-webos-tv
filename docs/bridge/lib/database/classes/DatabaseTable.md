@@ -22,13 +22,11 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### new DatabaseTable()
 
-> `private` **new DatabaseTable**\<`DatabaseRecord`\>(`indexes`, `key`, `database`): [`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
+> `private` **new DatabaseTable**\<`DatabaseRecord`\>(`indexes`, `database`): [`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
 
 #### Parameters
 
 • **indexes**: keyof `DatabaseRecord`[]
-
-• **key**: keyof `DatabaseRecord`
 
 • **database**: `Nedb`\<`Record`\<`string`, `any`\>\>
 
@@ -47,12 +45,6 @@ limit it using `extends`.  You can learn more about this difference between a
 ### \_indexes
 
 > `private` `readonly` **\_indexes**: keyof `DatabaseRecord`[]
-
-***
-
-### \_key
-
-> `private` `readonly` **\_key**: keyof `DatabaseRecord`
 
 ## Methods
 
@@ -132,7 +124,7 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### build()
 
-> `static` **build**\<`DatabaseRecord`\>(`name`, `indexes`, `key`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
+> `static` **build**\<`DatabaseRecord`\>(`name`, `indexes`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
 
 #### Type parameters
 
@@ -143,8 +135,6 @@ limit it using `extends`.  You can learn more about this difference between a
 • **name**: `string`
 
 • **indexes**: keyof `DatabaseRecord`[]
-
-• **key**: keyof `DatabaseRecord`
 
 #### Returns
 

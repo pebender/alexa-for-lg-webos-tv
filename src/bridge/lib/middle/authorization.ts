@@ -25,11 +25,10 @@ export class Authorization {
   public static async build(
     configuration: Configuration,
   ): Promise<Authorization> {
-    const _database = await DatabaseTable.build<AuthorizationRecord>(
-      "middle",
-      ["skillToken", "userId"],
+    const _database = await DatabaseTable.build<AuthorizationRecord>("middle", [
       "skillToken",
-    );
+      "userId",
+    ]);
 
     const authorization = new Authorization(configuration, _database);
 

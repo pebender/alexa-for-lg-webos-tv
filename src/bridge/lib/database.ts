@@ -36,15 +36,12 @@ export class DatabaseTable<
   >,
 > {
   private readonly _indexes: Array<keyof DatabaseRecord>;
-  private readonly _key: keyof DatabaseRecord;
   private readonly _database: Datastore<DatabaseRecord>;
   private constructor(
     indexes: Array<keyof DatabaseRecord>,
-    key: keyof DatabaseRecord,
     database: Datastore,
   ) {
     this._indexes = indexes;
-    this._key = key;
     this._database = database;
   }
 
@@ -56,7 +53,6 @@ export class DatabaseTable<
   >(
     name: string,
     indexes: Array<keyof DatabaseRecord>,
-    key: keyof DatabaseRecord,
   ): Promise<DatabaseTable<DatabaseRecord>> {
     const configurationDirectory = persistPath(
       Common.constants.application.name.safe,
@@ -92,7 +88,7 @@ export class DatabaseTable<
       }),
     );
 
-    return new DatabaseTable(indexes, key, database);
+    return new DatabaseTable(indexes, database);
   }
 
   public async deleteRecords(
