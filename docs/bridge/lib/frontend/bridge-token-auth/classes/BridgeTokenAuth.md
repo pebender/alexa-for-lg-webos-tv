@@ -76,19 +76,11 @@
 
 ### setBridgeToken()
 
-> **setBridgeToken**(`bridgeToken`, `bridgeHostname`, `email`, `userId`, `skillToken`): `Promise`\<`void`\>
+> **setBridgeToken**(`record`): `Promise`\<`void`\>
 
 #### Parameters
 
-• **bridgeToken**: `string`
-
-• **bridgeHostname**: `string`
-
-• **email**: `string`
-
-• **userId**: `string`
-
-• **skillToken**: `string`
+• **record**: [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)
 
 #### Returns
 

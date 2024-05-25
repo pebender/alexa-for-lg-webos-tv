@@ -42,18 +42,11 @@ export class BridgeTokenAuth {
     return crypto.randomBytes(512).toString("base64").slice(0, 256);
   }
 
-  public async setBridgeToken(
-    bridgeToken: string,
-    bridgeHostname: string,
-    email: string,
-    userId: string,
-    skillToken: string,
-  ): Promise<void> {
-    const record = { bridgeToken, bridgeHostname, email, userId, skillToken };
+  public async setBridgeToken(record: BridgeTokenAuthRecord): Promise<void> {
     Common.Debug.debug("setBridgeToken");
     Common.Debug.debugJSON(record);
     await this._database.updateOrInsertRecord(
-      [{ bridgeHostname }, { email }],
+      [{ bridgeHostname: record.bridgeHostname }, { email: record.email }],
       record,
     );
   }

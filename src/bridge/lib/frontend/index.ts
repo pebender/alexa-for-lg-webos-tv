@@ -395,27 +395,21 @@ export class Frontend {
         response: express.Response,
       ): Promise<void> {
         Common.Debug.debug("Login:");
-
-        const bridgeHostname: string = response.locals.bridgeHostname as string;
-        const email: string = response.locals.email as string;
-        const userId: string = response.locals.userId as string;
-        const skillToken: string = response.locals.skillToken as string;
-
-        const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
+        const record: BridgeTokenAuthRecord = {
+          bridgeToken: frontend._bridgeTokenAuth.generateBridgeToken(),
+          bridgeHostname: response.locals.bridgeHostname as string,
+          email: response.locals.email as string,
+          userId: response.locals.userId as string,
+          skillToken: response.locals.skillToken as string,
+        };
         try {
-          await frontend._bridgeTokenAuth.setBridgeToken(
-            bridgeToken,
-            bridgeHostname,
-            email,
-            userId,
-            skillToken,
-          );
+          await frontend._bridgeTokenAuth.setBridgeToken(record);
         } catch (error) {
           throw errorInternalServerError({ cause: error });
         }
 
         response.status(200).json({
-          token: bridgeToken,
+          token: record.bridgeToken,
         });
       }
 
