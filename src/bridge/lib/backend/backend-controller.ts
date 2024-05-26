@@ -90,7 +90,7 @@ export class BackendController extends EventEmitter {
         { url: tv.url },
         { mac: tv.mac },
       ]);
-      if (record === undefined) {
+      if (record === null) {
         if (Reflect.has(this._controls, tv.udn)) {
           Reflect.deleteProperty(this._controls, tv.udn);
         }
