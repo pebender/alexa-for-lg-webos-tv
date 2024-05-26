@@ -41,7 +41,7 @@ export class BridgeTokenAuth {
   public generateBridgeToken(): string {
     let bridgeToken: string | undefined;
     while (bridgeToken === undefined) {
-      bridgeToken = crypto.randomBytes(192).toString("base64").slice(0, 256);
+      bridgeToken = crypto.randomBytes(192).toString("base64url").slice(0, 256);
       if (this.getBridgeToken(bridgeToken) === null) {
         bridgeToken = undefined;
       }
