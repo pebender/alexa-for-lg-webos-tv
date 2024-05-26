@@ -17,14 +17,14 @@ async function getLoginToken(
   let loginToken: string;
   let privateKey: jose.KeyLike;
   try {
-    privateKey = await jose.importPKCS8(x509PrivateKey, "RS256");
+    privateKey = await jose.importPKCS8(x509PrivateKey, "EdDSA");
   } catch (error) {
     throw new LinkCommonError({ cause: error });
   }
   try {
     loginToken = await new jose.SignJWT()
       .setProtectedHeader({
-        alg: "RS256",
+        alg: "EdDSA",
       })
       .setIssuedAt()
       .setIssuer(Common.constants.bridge.jwt.iss)

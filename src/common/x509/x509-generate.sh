@@ -5,7 +5,7 @@ filename="ForLGwebOSTV"
 
 openssl \
   req -x509 \
-  -newkey rsa:2048 -sha256 -days 3650 \
+  -newkey ed25519 \
   -noenc \
   -keyout "${filename}.key" \
   -out "${filename}.crt" \

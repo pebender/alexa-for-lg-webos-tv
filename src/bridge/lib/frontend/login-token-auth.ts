@@ -36,7 +36,7 @@ export class LoginTokenAuth {
   ): Promise<LoginTokenAuthRecord | null> {
     let publicKey: jose.KeyLike;
     try {
-      publicKey = await jose.importX509(this._x509PublicCert, "RS256");
+      publicKey = await jose.importX509(this._x509PublicCert, "EdDSA");
     } catch (error) {
       Common.Debug.debugError(error);
       return null;
@@ -47,7 +47,7 @@ export class LoginTokenAuth {
       const result: jose.JWTVerifyResult = await jose.jwtVerify(
         loginToken,
         publicKey,
-        { algorithms: ["RS256"] },
+        { algorithms: ["EdDSA"] },
       );
       payload = result.payload;
     } catch (error) {
