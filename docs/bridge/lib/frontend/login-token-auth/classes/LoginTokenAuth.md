@@ -38,7 +38,7 @@
 
 ### authorizeLoginToken()
 
-> **authorizeLoginToken**(`loginToken`): `Promise`\<`undefined` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
+> **authorizeLoginToken**(`loginToken`): `Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -46,7 +46,7 @@
 
 #### Returns
 
-`Promise`\<`undefined` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
 
 ***
 

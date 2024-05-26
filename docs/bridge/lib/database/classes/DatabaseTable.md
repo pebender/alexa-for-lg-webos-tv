@@ -64,7 +64,7 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### getRecord()
 
-> **getRecord**(`query`): `Promise`\<`undefined` \| `DatabaseRecord`\>
+> **getRecord**(`query`): `Promise`\<`null` \| `DatabaseRecord`\>
 
 #### Parameters
 
@@ -72,7 +72,7 @@ limit it using `extends`.  You can learn more about this difference between a
 
 #### Returns
 
-`Promise`\<`undefined` \| `DatabaseRecord`\>
+`Promise`\<`null` \| `DatabaseRecord`\>
 
 ***
 

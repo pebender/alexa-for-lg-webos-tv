@@ -60,17 +60,42 @@ export class BridgeTokenAuth {
 
   public async getBridgeToken(
     bridgeToken: string,
-  ): Promise<BridgeTokenAuthRecord | undefined> {
+  ): Promise<BridgeTokenAuthRecord | null> {
     // get bridgeToken record.
-    return await this._database.getRecord({ bridgeToken });
+    const record = await this._database.getRecord({ bridgeToken });
+    if (record === null) {
+      return null;
+    }
+    Common.Debug.debug("getBridgeToken");
+    Common.Debug.debugJSON(record);
+
+    // bad bridgeToken record.
+    if (
+      typeof record.bridgeToken !== "string" ||
+      typeof record.bridgeHostname !== "string" ||
+      typeof record.email !== "string" ||
+      typeof record.userId !== "string" ||
+      typeof record.skillToken !== "string"
+    ) {
+      await this._database.deleteRecords({ bridgeToken });
+      return null;
+    }
+
+    return {
+      bridgeToken: record.bridgeToken,
+      bridgeHostname: record.bridgeHostname,
+      email: record.email,
+      userId: record.userId,
+      skillToken: record.skillToken,
+    };
   }
 
   public async authorizeBridgeToken(
     bridgeToken: string,
-  ): Promise<BridgeTokenAuthRecord | undefined> {
+  ): Promise<BridgeTokenAuthRecord | null> {
     const record = await this.getBridgeToken(bridgeToken);
-    if (record === undefined) {
-      return undefined;
+    if (record === null) {
+      return null;
     }
 
     const authorized = authorizeUser(
@@ -80,7 +105,7 @@ export class BridgeTokenAuth {
     );
     if (!authorized) {
       await this._database.deleteRecords({ bridgeToken });
-      return undefined;
+      return null;
     }
 
     return record;

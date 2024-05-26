@@ -109,8 +109,8 @@ export class DatabaseTable<
     query:
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
-  ): Promise<DatabaseRecord | undefined> {
-    let record: (DatabaseRecord & { _id?: unknown }) | null;
+  ): Promise<DatabaseRecord | null> {
+    let record: Record<string, unknown> | null;
     try {
       record = await this._database
         .findOneAsync(Array.isArray(query) ? { $and: query } : query)
@@ -119,7 +119,7 @@ export class DatabaseTable<
       throw new Common.DatabaseCommonError({ cause: error });
     }
     if (record === null) {
-      return undefined;
+      return null;
     }
     delete record._id;
     return record as DatabaseRecord;

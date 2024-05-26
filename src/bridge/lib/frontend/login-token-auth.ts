@@ -32,19 +32,19 @@ export class LoginTokenAuth {
 
   public async authorizeLoginToken(
     loginToken: string,
-  ): Promise<LoginTokenAuthRecord | undefined> {
+  ): Promise<LoginTokenAuthRecord | null> {
     let decodedLoginToken: jwt.Jwt | null;
     try {
       decodedLoginToken = jwt.decode(loginToken, { complete: true });
     } catch (error) {
       Common.Debug.debugError(error);
-      return undefined;
+      return null;
     }
     if (decodedLoginToken === null) {
-      return undefined;
+      return null;
     }
     if (typeof decodedLoginToken.payload === "string") {
-      return undefined;
+      return null;
     }
     const payload: jwt.JwtPayload = decodedLoginToken.payload;
 
@@ -55,23 +55,23 @@ export class LoginTokenAuth {
       jwt.verify(loginToken, this._x509PublicCert, verifyOptions);
     } catch (error) {
       Common.Debug.debugError(error);
-      return undefined;
+      return null;
     }
 
     if (
       typeof payload.sub !== "string" ||
       payload.iss !== Common.constants.bridge.jwt.iss
     ) {
-      return undefined;
+      return null;
     }
 
     if (typeof payload.sub !== "string") {
-      return undefined;
+      return null;
     }
     const skillToken = payload.sub;
 
     if (typeof payload.aud !== "string") {
-      return undefined;
+      return null;
     }
     const url = new URL(payload.aud);
     const bridgeHostname = url.hostname;
@@ -85,7 +85,7 @@ export class LoginTokenAuth {
       email = userProfile.email;
     } catch (error) {
       Common.Debug.debugError(error);
-      return undefined;
+      return null;
     }
 
     const authorized = authorizeUser(
@@ -94,7 +94,7 @@ export class LoginTokenAuth {
       email,
     );
     if (!authorized) {
-      return undefined;
+      return null;
     }
 
     return {

@@ -15,4 +15,3 @@
 ### Type Aliases
 
 - [AuthorizationField](type-aliases/AuthorizationField.md)
-- [AuthorizationRecord](type-aliases/AuthorizationRecord.md)

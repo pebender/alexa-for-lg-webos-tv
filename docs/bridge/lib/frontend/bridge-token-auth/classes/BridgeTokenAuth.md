@@ -38,7 +38,7 @@
 
 ### authorizeBridgeToken()
 
-> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`undefined` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -46,7 +46,7 @@
 
 #### Returns
 
-`Promise`\<`undefined` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 
@@ -62,7 +62,7 @@
 
 ### getBridgeToken()
 
-> **getBridgeToken**(`bridgeToken`): `Promise`\<`undefined` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 #### Parameters
 
@@ -70,7 +70,7 @@
 
 #### Returns
 
-`Promise`\<`undefined` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
 
 ***
 

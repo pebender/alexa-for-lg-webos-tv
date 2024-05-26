@@ -4,7 +4,7 @@ import type { Configuration } from "../configuration";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type AuthorizationRecord = {
+type AuthorizationRecord = {
   skillToken: string;
   userId: string;
 };
@@ -46,7 +46,7 @@ export class Authorization {
       );
       record = await this._database.getRecord({ skillToken });
     }
-    if (record === undefined) {
+    if (record === null) {
       return false;
     }
     return skillToken === record.skillToken;
