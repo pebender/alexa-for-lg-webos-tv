@@ -1,43 +1,41 @@
 import * as fs from "node:fs";
 import path from "node:path";
-import * as jwt from "jsonwebtoken";
+import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
-import { HTTPSRequest } from "./index";
+import { HTTPSRequest, LinkCommonError } from "./index";
 
-const x509PrivateKey = fs.readFileSync(
+const x509PrivateKeyFile: string = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),
+  "ascii",
 );
 
-async function create(
-  x509PrivateKey: Buffer,
+async function getLoginToken(
+  x509PrivateKey: string,
   skillToken: string,
   bridgeHostname: string,
 ): Promise<string> {
-  const payload: jwt.JwtPayload = {
-    iss: Common.constants.bridge.jwt.iss,
-    sub: skillToken,
-    aud: `https://${bridgeHostname}`,
-  };
-  const options: jwt.SignOptions = {
-    algorithm: "RS256",
-    expiresIn: "1m",
-  };
-
-  return await new Promise<string>((resolve, reject) => {
-    jwt.sign(payload, x509PrivateKey, options, function (error, encoded) {
-      if (error !== null) {
-        reject(new Common.GeneralCommonError({ cause: error }));
-      }
-
-      if (encoded === undefined) {
-        throw new Common.GeneralCommonError({
-          message: "function API violation",
-        });
-      }
-
-      resolve(encoded);
-    });
-  });
+  let loginToken: string;
+  let privateKey: jose.KeyLike;
+  try {
+    privateKey = await jose.importPKCS8(x509PrivateKey, "RS256");
+  } catch (error) {
+    throw new LinkCommonError({ cause: error });
+  }
+  try {
+    loginToken = await new jose.SignJWT()
+      .setProtectedHeader({
+        alg: "RS256",
+      })
+      .setIssuedAt()
+      .setIssuer(Common.constants.bridge.jwt.iss)
+      .setSubject(skillToken)
+      .setAudience(`https://${bridgeHostname}`)
+      .setExpirationTime("1 min")
+      .sign(privateKey);
+  } catch (error) {
+    throw new LinkCommonError({ cause: error });
+  }
+  return loginToken;
 }
 
 export async function getBridgeToken(
@@ -51,10 +49,14 @@ export async function getBridgeToken(
     headers: {},
   };
 
-  const token = await create(x509PrivateKey, skillToken, bridgeHostname);
+  const loginToken = await getLoginToken(
+    x509PrivateKeyFile,
+    skillToken,
+    bridgeHostname,
+  );
 
   const response: { token?: string; [key: string]: unknown } =
-    (await HTTPSRequest.request(requestOptions, token, {})) as {
+    (await HTTPSRequest.request(requestOptions, loginToken, {})) as {
       token?: string;
       [key: string]: unknown;
     };

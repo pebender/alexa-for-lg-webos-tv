@@ -16,7 +16,7 @@
 
 • **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
 
-• **\_x509PublicCert**: `Buffer`
+• **\_x509PublicCert**: `string`
 
 #### Returns
 
@@ -32,7 +32,7 @@
 
 ### \_x509PublicCert
 
-> `private` `readonly` **\_x509PublicCert**: `Buffer`
+> `private` `readonly` **\_x509PublicCert**: `string`
 
 ## Methods
 

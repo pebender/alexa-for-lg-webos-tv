@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import path from "node:path";
-import * as jwt from "jsonwebtoken";
+import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import { authorizeUser } from "./authorize-user";
@@ -14,15 +14,16 @@ export interface LoginTokenAuthRecord {
 
 export class LoginTokenAuth {
   private readonly _configuration: Configuration;
-  private readonly _x509PublicCert: Buffer;
-  private constructor(_configuration: Configuration, _x509PublicCert: Buffer) {
+  private readonly _x509PublicCert: string;
+  private constructor(_configuration: Configuration, _x509PublicCert: string) {
     this._configuration = _configuration;
     this._x509PublicCert = _x509PublicCert;
   }
 
   public static build(configuration: Configuration): LoginTokenAuth {
-    const _x509PublicCert = fs.readFileSync(
+    const _x509PublicCert: string = fs.readFileSync(
       path.join(__dirname, Common.constants.bridge.jwt.x509PublicCertFile),
+      "ascii",
     );
 
     const loginTokenAuth = new LoginTokenAuth(configuration, _x509PublicCert);
@@ -33,26 +34,22 @@ export class LoginTokenAuth {
   public async authorizeLoginToken(
     loginToken: string,
   ): Promise<LoginTokenAuthRecord | null> {
-    let decodedLoginToken: jwt.Jwt | null;
+    let publicKey: jose.KeyLike;
     try {
-      decodedLoginToken = jwt.decode(loginToken, { complete: true });
+      publicKey = await jose.importX509(this._x509PublicCert, "RS256");
     } catch (error) {
       Common.Debug.debugError(error);
       return null;
     }
-    if (decodedLoginToken === null) {
-      return null;
-    }
-    if (typeof decodedLoginToken.payload === "string") {
-      return null;
-    }
-    const payload: jwt.JwtPayload = decodedLoginToken.payload;
 
-    const verifyOptions: jwt.VerifyOptions = {
-      algorithms: ["RS256"],
-    };
+    let payload: jose.JWTPayload;
     try {
-      jwt.verify(loginToken, this._x509PublicCert, verifyOptions);
+      const result: jose.JWTVerifyResult = await jose.jwtVerify(
+        loginToken,
+        publicKey,
+        { algorithms: ["RS256"] },
+      );
+      payload = result.payload;
     } catch (error) {
       Common.Debug.debugError(error);
       return null;
@@ -74,7 +71,7 @@ export class LoginTokenAuth {
       return null;
     }
     const url = new URL(payload.aud);
-    const bridgeHostname = url.hostname;
+    const bridgeHostname: string = url.hostname;
 
     let userId: string;
     let email: string;

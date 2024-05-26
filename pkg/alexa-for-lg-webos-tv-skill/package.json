@@ -24,18 +24,17 @@
     "@aws-sdk/client-dynamodb": "3.515.0",
     "@aws-sdk/lib-dynamodb": "3.515.0",
     "certnames": "1.0.4",
-    "jsonwebtoken": "9.0.2"
+    "jose-node-cjs-runtime": "5.3.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.138",
-    "@types/jsonwebtoken": "9.0.6",
     "@types/node": "20.12.12"
   },
   "bundledDependencies": [
     "ask-sdk-core",
     "ask-sdk-model",
     "certnames",
-    "jsonwebtoken"
+    "jose-node-cjs-runtime"
   ],
   "scripts": {
     "clean": "rm -rf lib node_modules package-lock.json *.zip",
