@@ -255,7 +255,7 @@ export class Frontend {
               "Bridge connection failed due to incorrect authorization method.",
           });
         }
-        const loginToken = authorization[1];
+        const loginToken: string = authorization[1];
 
         try {
           const record =
@@ -314,9 +314,9 @@ export class Frontend {
               "Bridge connection failed due to incorrect authorization method.",
           });
         }
-        const bridgeToken = authorization[1];
+        const bridgeToken: string = authorization[1];
 
-        let record: BridgeTokenAuthRecord | undefined;
+        let record: BridgeTokenAuthRecord | null;
         try {
           record =
             await frontend._bridgeTokenAuth.authorizeBridgeToken(bridgeToken);
