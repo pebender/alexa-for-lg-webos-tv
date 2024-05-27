@@ -53,7 +53,7 @@ The login token is a JSON Web Token (JWT) with the form
 }
 ```
 
-The login token's `"iss"` field identifies the skill. In the skill implementation and the bridge implementation, it is set by `constants.jwt.iss` in [src/common/constants.ts](../../src/common/constants.ts) and is currently set to
+The login token's `"iss"` field identifies the skill. In the skill implementation and the bridge implementation, it is set by `constants.jwt.iss` in [src/common/constants.ts](../../../src/common/constants.ts) and is currently set to
 
 ```text
 "For LG webOS TV"
@@ -64,6 +64,8 @@ The login token's `"sub"` field identifies the user. SKILL_TOKEN is the access t
 The login token's `"aud"` field identifies the service. It's a URL that identifies the bridge. BRIDGE_HOSTNAME is the bridge's DNS name. In the skill implementation, BRIDGE_HOSTNAME is set using the Custom Skill.
 
 The login token's `"exp"` field specifies when the login token will expire. It's recommended that the login token have a short lifetime in order to reduce the chance of replay. In the skill implementation, the login token is set to expire one minute after it was generated.
+
+In the skill implementation and bridge implementation, the JWT is signed using EdDSA (Ed25519). The keys are generated using the shell script [src/common/x509/x509-generate.sh](../../../src/common/x509/x509-generate.sh). The private key is placed in [src/skill/lib/link/](../../../src/skill/lib/link/). The public key is placed in [src/bridge/lib/frontend](../../../src/bridge/lib/frontend/).
 
 #### The Login Token Authorization
 

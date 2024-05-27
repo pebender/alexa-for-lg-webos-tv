@@ -4,7 +4,7 @@ import type { Configuration } from "../configuration";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type AuthorizationRecord = {
+export type AuthorizationRecord = {
   skillToken: string;
   userId: string;
 };
