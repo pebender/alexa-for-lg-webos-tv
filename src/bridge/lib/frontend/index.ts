@@ -11,10 +11,7 @@ import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import type { Middle } from "../middle";
 import { LoginTokenAuth } from "./login-token-auth";
-import {
-  BridgeTokenAuth,
-  type BridgeTokenAuthRecord,
-} from "./bridge-token-auth";
+import { BridgeTokenAuth } from "./bridge-token-auth";
 
 interface Credentials {
   bridgeHostname: string;
@@ -150,7 +147,6 @@ export class Frontend {
           request: express.Request,
           response: express.Response,
         ) => void | Promise<void>,
-        continueOnSuccess: boolean = true,
       ): (
         request: express.Request,
         response: express.Response,
@@ -161,29 +157,13 @@ export class Frontend {
           response: express.Response,
           next: express.NextFunction,
         ): void => {
-          if (continueOnSuccess) {
-            Promise.resolve(handlerCore(request, response))
-              .then(() =>
-                setImmediate((): void => {
-                  // eslint-disable-next-line promise/no-callback-in-promise
-                  next();
-                }),
-              )
-              .catch((error: unknown) =>
-                setImmediate((): void => {
-                  // eslint-disable-next-line promise/no-callback-in-promise
-                  next(error);
-                }),
-              );
-          } else {
-            Promise.resolve(handlerCore(request, response)).catch(
-              (error: unknown) =>
-                setImmediate((): void => {
-                  // eslint-disable-next-line promise/no-callback-in-promise
-                  next(error);
-                }),
-            );
-          }
+          Promise.resolve(handlerCore(request, response)).catch(
+            (error: unknown) =>
+              setImmediate((): void => {
+                // eslint-disable-next-line promise/no-callback-in-promise
+                next(error);
+              }),
+          );
         };
       }
 
@@ -200,29 +180,25 @@ export class Frontend {
         next();
       }
 
-      async function linkTokenAuthorizationHandlerCore(
-        request: express.Request,
-        response: express.Response,
+      async function getCredentials(
+        authorizationHeader: string | undefined,
         tokenType: "loginToken" | "bridgeToken",
-      ): Promise<void> {
-        Common.Debug.debug("linkTokenAuthorizationHandlerCore: start");
-
-        delete response.locals.credentials;
+      ): Promise<Credentials> {
+        Common.Debug.debug("getCredentials: start");
 
         // Extract bridgeToken from "authorization" header. RFC-6750 allows
         // for the Bearer token to be included in the "authorization" header, as
         // part part of the URL or in the body. Since we put it in the header, we
         // know that is were it will be. Per RFC-6750, failure to find the Bearer
         // token results 401 response that includes a "WWW-Authenticate" header.
-        if (request.headers.authorization === "undefined") {
+        if (authorizationHeader === undefined) {
           throw errorUnauthorized({
             message:
               'Bridge connection failed due to missing "authorization" header.',
           });
         }
         const authorization =
-          request.headers.authorization?.split(/\s+/).map((x) => x.trim()) ??
-          [];
+          authorizationHeader.split(/\s+/).map((x) => x.trim()) ?? [];
         if (authorization.length !== 2) {
           throw errorUnauthorized({
             message:
@@ -253,40 +229,56 @@ export class Frontend {
             message: "Bridge connection failed due to invalid login token.",
           });
         }
-        response.locals.credentials = record;
-        Common.Debug.debug("linkTokenAuthorizationHandlerCore: success");
+        Common.Debug.debug("getCredentials: success");
+        return record;
       }
 
-      async function loginTokenAuthorizationHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): Promise<void> {
-        Common.Debug.debug("loginTokenAuthorizationHandlerCore: start");
-        await linkTokenAuthorizationHandlerCore(
-          request,
-          response,
-          "loginToken",
-        );
-        Common.Debug.debug("loginTokenAuthorizationHandlerCore: success");
+      function getTestBodySkillToken(requestBody: object): string {
+        const testRequest = requestBody as {
+          skillToken?: string;
+        };
+        if (typeof testRequest.skillToken !== "string") {
+          throw errorBodyInvalidFormat();
+        }
+        return testRequest.skillToken;
       }
 
-      async function bridgeTokenAuthorizationHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): Promise<void> {
-        Common.Debug.debug("bridgeTokenAuthorizationHandlerCore: start");
-        await linkTokenAuthorizationHandlerCore(
-          request,
-          response,
-          "bridgeToken",
-        );
-        Common.Debug.debug("bridgeTokenAuthorizationHandlerCore: success");
-      }
-
-      function contentTypeHandlerCore(
-        request: express.Request,
-        response: express.Response,
+      function skillTokenAuthorizationHandler(
+        requestBody: object,
+        credentials: Credentials,
+        linkType: "login" | "test" | "service",
       ): void {
+        if (linkType === "login") {
+          return;
+        }
+        let skillToken: string | undefined;
+        if (linkType === "test") {
+          skillToken = getTestBodySkillToken(requestBody);
+        }
+        if (linkType === "service") {
+          skillToken = frontend._middle.getSkillToken(requestBody);
+        }
+        if (skillToken === undefined || skillToken !== credentials.skillToken) {
+          throw errorUnauthorized({
+            message: "Bridge connection failed due to invalid bearer token.",
+          });
+        }
+      }
+
+      async function linkCore(
+        request: express.Request,
+        response: express.Response,
+        linkType: "login" | "test" | "service",
+      ): Promise<void> {
+        const tokenType = linkType === "login" ? "loginToken" : "bridgeToken";
+        const credentials: Credentials = await getCredentials(
+          request.headers.authorization,
+          tokenType,
+        );
+
+        /*
+         * Verify that 'content-type' is 'application/json'
+         */
         const contentType = request.headers["content-type"];
         if (contentType === undefined) {
           throw errorContentTypeMissing();
@@ -299,93 +291,55 @@ export class Frontend {
         ) {
           throw errorContentTypeIncorrect();
         }
-      }
 
-      function testAuthorizationHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): void {
-        const testRequest: { skillToken?: string } = request.body as {
-          skillToken?: string;
-        };
-
-        if (typeof testRequest.skillToken !== "string") {
-          throw errorBodyInvalidFormat();
-        }
-
-        const authorizedSkillToken: string = response.locals.credentials
-          .skillToken as string;
-        const skillToken: string = testRequest.skillToken;
-
-        if (authorizedSkillToken !== skillToken) {
-          throw errorUnauthorized();
-        }
-      }
-
-      function serviceAuthorizationHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): void {
-        const authorizedSkillToken: string = response.locals.credentials
-          .skillToken as string;
-        const skillToken: string = frontend._middle.getSkillToken(
-          request.body as object,
-        );
-
-        if (authorizedSkillToken !== skillToken) {
-          throw errorUnauthorized({
-            message: "Bridge connection failed due to invalid bearer token.",
+        /*
+         * Parse the raw request body to a json request body
+         */
+        await new Promise<void>((resolve, reject) => {
+          express.json()(request, response, (error: unknown): void => {
+            if (error !== undefined) {
+              reject(errorBodyInvalidFormat({ cause: error }));
+            }
+            resolve();
           });
-        }
-      }
-
-      async function loginHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): Promise<void> {
-        Common.Debug.debug("Login:");
-        const credentials = response.locals.credentials as Credentials;
-        const record: BridgeTokenAuthRecord = {
-          bridgeToken: frontend._bridgeTokenAuth.generateBridgeToken(),
-          bridgeHostname: credentials.bridgeHostname,
-          email: credentials.email,
-          userId: credentials.userId,
-          skillToken: credentials.skillToken,
-        };
-        try {
-          await frontend._bridgeTokenAuth.setBridgeToken(record);
-        } catch (error) {
-          throw errorInternalServerError({ cause: error });
-        }
-
-        response.status(200).json({
-          token: record.bridgeToken,
         });
-      }
+        const requestBody: object = request.body as object;
 
-      function testHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): void {
-        Common.Debug.debug("Test:");
+        /*
+         * Verify the link and the request carried by the link are bound to the
+         * same skillToken
+         */
+        skillTokenAuthorizationHandler(requestBody, credentials, linkType);
 
-        response.status(200).json({});
-      }
-
-      async function serviceHandlerCore(
-        request: express.Request,
-        response: express.Response,
-      ): Promise<void> {
-        const serviceRequest = request.body as Record<string, unknown>;
-        Common.Debug.debug("Service Request:");
-        Common.Debug.debugJSON(serviceRequest);
-
-        const serviceResponse = await frontend._middle.handler(serviceRequest);
-
-        Common.Debug.debug("Service Response:");
-        Common.Debug.debugJSON(serviceResponse);
-
-        response.status(200).json(serviceResponse);
+        /*
+         * Do application level processing.
+         */
+        switch (linkType) {
+          case "login": {
+            const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
+            try {
+              await frontend._bridgeTokenAuth.setBridgeToken({
+                bridgeToken,
+                ...credentials,
+              });
+            } catch (error) {
+              throw errorInternalServerError({ cause: error });
+            }
+            response.status(200).json({ token: bridgeToken });
+            break;
+          }
+          case "test": {
+            response.status(200).json({});
+            break;
+          }
+          case "service": {
+            const serviceResponse = await frontend._middle.handler(
+              requestBody as Record<string, unknown>,
+            );
+            response.status(200).json(serviceResponse);
+            break;
+          }
+        }
       }
 
       function errorHandler(
@@ -436,32 +390,27 @@ export class Frontend {
       // Handle login
       frontend._server.post(
         Common.constants.bridge.path.login,
-        synchronizer(loginTokenAuthorizationHandlerCore),
-        synchronizer(contentTypeHandlerCore),
-        express.json(),
-        synchronizer(loginHandlerCore, false),
+        synchronizer(async (request, response) => {
+          await linkCore(request, response, "login");
+        }),
         errorHandler,
       );
 
       // Handle test
       frontend._server.post(
         Common.constants.bridge.path.test,
-        synchronizer(bridgeTokenAuthorizationHandlerCore),
-        synchronizer(contentTypeHandlerCore),
-        express.json(),
-        synchronizer(testAuthorizationHandlerCore),
-        synchronizer(testHandlerCore, false),
+        synchronizer(async (request, response) => {
+          await linkCore(request, response, "test");
+        }),
         errorHandler,
       );
 
       // Handle Smart Home Skill directives.
       frontend._server.post(
         Common.constants.bridge.path.service,
-        synchronizer(bridgeTokenAuthorizationHandlerCore),
-        synchronizer(contentTypeHandlerCore),
-        express.json(),
-        synchronizer(serviceAuthorizationHandlerCore),
-        synchronizer(serviceHandlerCore, false),
+        synchronizer(async (request, response) => {
+          await linkCore(request, response, "service");
+        }),
         errorHandler,
       );
 
