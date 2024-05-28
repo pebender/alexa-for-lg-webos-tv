@@ -23,13 +23,9 @@ The frontend handles the communication link between the skill and the bridge. It
 
 The frontend performs the authorization described in [login token authorization](./skill-to-bridge-interface.md#the-login-token-authorization).
 
-If authorization fails multiple times from the same IP address, the IP address of the skill is temporarily blocked.
-
 #### Bridge Token Authorization
 
 The frontend performs the authorization described in [bridge token authorization](./skill-to-bridge-interface.md#the-bridge-token-authorization).
-
-If authorization fails multiple times from the same IP address, the IP address of the skill is temporarily blocked.
 
 ## The Middle
 

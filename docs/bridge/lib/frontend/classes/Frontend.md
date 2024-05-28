@@ -10,7 +10,7 @@
 
 ### new Frontend()
 
-> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_ipBlacklist`, `_server`): [`Frontend`](Frontend.md)
+> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_server`): [`Frontend`](Frontend.md)
 
 The constructor is private. To instantiate a Frontend, use [Frontend.build](Frontend.md#build)().
 
@@ -21,8 +21,6 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 • **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
 
 • **\_middle**: [`Middle`](../../middle/classes/Middle.md)
-
-• **\_ipBlacklist**: [`default`](../../../types/@outofsync/express-ip-blacklist/classes/default.md)
 
 • **\_server**: `Express`
 
@@ -35,12 +33,6 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 ### \_bridgeTokenAuth
 
 > `private` `readonly` **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
-
-***
-
-### \_ipBlacklist
-
-> `private` `readonly` **\_ipBlacklist**: [`default`](../../../types/@outofsync/express-ip-blacklist/classes/default.md)
 
 ***
 

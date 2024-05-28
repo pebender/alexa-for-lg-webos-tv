@@ -32,7 +32,7 @@ The bridge consumes resources. Therefore, even though the services supported by 
 
 [As mentioned above](#the-skill-to-bridge-interface), interface access is controlled using tokens carried in the HTTP request Authorization header. The token is bound to a user and a bridge. The token enables the bridge to verify that the message is from a trusted skill and that the message is being sent on behalf of a user who has been authorized to use the bridge.
 
-When the bridge receives a message on any skill to bridge interface, it verifies the token. If token verification fails, then the bridge rejects the message. After some number of repeated token verification failures originating from the same IP address, the bridge may (temporarily) block the IP address.
+When the bridge receives a message on any skill to bridge interface, it verifies the token. If token verification fails, then the bridge rejects the message.
 
 There are two types of tokens: the login token and the bridge token. The skill uses a login token when accessing the login interface. The skill uses a bridge token when accessing the test interface or any service interface. The skill uses the login interface to "exchange" a login token for a bridge token. Login tokens are exchanged for bridge tokens because bridge tokens are less expensive to transmit, less expensive to verify and easier to revoke.
 

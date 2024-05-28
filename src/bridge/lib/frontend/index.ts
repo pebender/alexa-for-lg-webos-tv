@@ -7,7 +7,6 @@
 //
 
 import express from "express";
-import IPBlacklist from "@outofsync/express-ip-blacklist";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
 import type { Middle } from "../middle";
@@ -104,7 +103,6 @@ export class Frontend {
   private readonly _loginTokenAuth: LoginTokenAuth;
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _middle: Middle;
-  private readonly _ipBlacklist: IPBlacklist;
   private readonly _server: express.Express;
   /**
    * The constructor is private. To instantiate a Frontend, use {@link Frontend.build}().
@@ -113,13 +111,11 @@ export class Frontend {
     _loginTokenAuth: LoginTokenAuth,
     _bridgeTokenAuth: BridgeTokenAuth,
     _middle: Middle,
-    _ipBlacklist: IPBlacklist,
     _server: express.Express,
   ) {
     this._loginTokenAuth = _loginTokenAuth;
     this._bridgeTokenAuth = _bridgeTokenAuth;
     this._middle = _middle;
-    this._ipBlacklist = _ipBlacklist;
     this._server = _server;
   }
 
@@ -130,20 +126,9 @@ export class Frontend {
     const _loginToken = LoginTokenAuth.build(configuration);
     const _bridgeToken = await BridgeTokenAuth.build(configuration);
 
-    // The blacklist is due to auth failures so blacklist quickly.
-    // There should be no auth failures and each auth failure results
-    // in sending a profile request to Amazon.
-    const _ipBlacklist = new IPBlacklist("blacklist", { count: 5 });
-
     const _server = express();
 
-    const frontend = new Frontend(
-      _loginToken,
-      _bridgeToken,
-      middle,
-      _ipBlacklist,
-      _server,
-    );
+    const frontend = new Frontend(_loginToken, _bridgeToken, middle, _server);
 
     function buildServer(): void {
       /**
@@ -213,16 +198,6 @@ export class Frontend {
         Common.Debug.debug(`method: ${request.method}`);
         Common.Debug.debugJSON(request.headers);
         next();
-      }
-
-      function ipBlacklistHandler(
-        request: express.Request,
-        response: express.Response,
-        next: express.NextFunction,
-      ): void {
-        Common.Debug.debug("ipBlacklistHandler: start");
-        frontend._ipBlacklist.checkBlacklist(request, response, next);
-        Common.Debug.debug("ipBlacklistHandler: end");
       }
 
       async function linkTokenAuthorizationHandlerCore(
@@ -423,7 +398,6 @@ export class Frontend {
         if (error instanceof FrontendCommonError) {
           switch (error.code) {
             case "unauthorized": {
-              frontend._ipBlacklist.increment(request, response);
               const body = {
                 error: error.code,
                 error_descriptions: error.message,
@@ -436,17 +410,14 @@ export class Frontend {
               return;
             }
             case "contentTypeNotFound": {
-              frontend._ipBlacklist.increment(request, response);
               response.status(400).json({}).send();
               return;
             }
             case "contentTypeValueInvalid": {
-              frontend._ipBlacklist.increment(request, response);
               response.status(415).json({}).send();
               return;
             }
             case "bodyFormatInvalid": {
-              frontend._ipBlacklist.increment(request, response);
               response.status(422).json({}).send();
               return;
             }
@@ -461,8 +432,6 @@ export class Frontend {
 
       // Log request message
       frontend._server.use(requestHeaderLoggingHandler);
-      // Check the IP address blacklist.
-      frontend._server.use(ipBlacklistHandler);
 
       // Handle login
       frontend._server.post(

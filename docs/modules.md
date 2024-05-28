@@ -31,7 +31,6 @@
 - [bridge/lib/middle/smart-home-skill/playback-controller](bridge/lib/middle/smart-home-skill/playback-controller/README.md)
 - [bridge/lib/middle/smart-home-skill/power-controller](bridge/lib/middle/smart-home-skill/power-controller/README.md)
 - [bridge/lib/middle/smart-home-skill/speaker](bridge/lib/middle/smart-home-skill/speaker/README.md)
-- [bridge/types/@outofsync/express-ip-blacklist](bridge/types/@outofsync/express-ip-blacklist/README.md)
 - [bridge/types/lgtv2](bridge/types/lgtv2/README.md)
 - [bridge/types/node-arp](bridge/types/node-arp/README.md)
 - [bridge/types/node-ssdp](bridge/types/node-ssdp/README.md)
