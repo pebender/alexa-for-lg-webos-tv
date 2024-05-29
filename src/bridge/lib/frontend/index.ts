@@ -22,42 +22,18 @@ interface Credentials {
   skillToken: string;
 }
 
-type FrontendCommonErrorCode =
-  | "bodyFormatInvalid"
-  | "contentTypeValueInvalid"
-  | "contentTypeNotFound"
-  | "internalServerError"
-  | "unauthorized";
+type AllowedStatusCode = 200 | 400 | 401 | 415 | 422 | 500;
 
-const errorCodeToStatusCode: Record<string, number> = {
-  bodyFormatInvalid: 422,
-  contentTypeValueInvalid: 415,
-  contentTypeNotFound: 400,
-  internalServerError: 500,
-  unauthorized: 401,
-};
-
-class FrontendCommonError extends Common.CommonError {
-  public readonly code: FrontendCommonErrorCode;
-  public readonly statusCode: number;
-
-  constructor(options: {
-    code: FrontendCommonErrorCode;
-    message?: string;
-    cause?: unknown;
-  }) {
-    super(options);
-    this.name = "FrontendCommonError";
-    this.code = options.code;
-    this.statusCode = errorCodeToStatusCode[options.code];
+function createResponse(
+  response: FastifyReply,
+  statusCode: AllowedStatusCode,
+  body: object = {},
+): object {
+  if (statusCode === 401) {
+    void response.header("WWW-Authenticate", "Bearer");
   }
-}
-
-function createError(
-  code: FrontendCommonErrorCode,
-  cause?: unknown,
-): FrontendCommonError {
-  return new FrontendCommonError({ code, cause });
+  void response.status(statusCode);
+  return body;
 }
 
 export class Frontend {
@@ -121,28 +97,23 @@ export class Frontend {
          * failure to find the Bearer token results 401 response that
          * includes a "WWW-Authenticate" header.
          */
-        let credentials: Credentials | null = null;
         if (request.headers.authorization === undefined) {
-          throw createError("unauthorized");
+          return createResponse(response, 401);
         }
         const authorization =
           request.headers.authorization.split(/\s+/).map((x) => x.trim()) ?? [];
         if (authorization.length !== 2) {
-          throw createError("unauthorized");
+          return createResponse(response, 401);
         }
         if (authorization[0].toLowerCase() !== "bearer") {
-          throw createError("unauthorized");
+          return createResponse(response, 401);
         }
         const token: string = authorization[1];
-        try {
-          credentials = await (linkType === "login"
-            ? frontend._loginTokenAuth.authorizeLoginToken(token)
-            : frontend._bridgeTokenAuth.authorizeBridgeToken(token));
-        } catch (error) {
-          throw createError("internalServerError", error);
-        }
+        const credentials: Credentials | null = await (linkType === "login"
+          ? frontend._loginTokenAuth.authorizeLoginToken(token)
+          : frontend._bridgeTokenAuth.authorizeBridgeToken(token));
         if (credentials === null) {
-          throw createError("unauthorized");
+          return createResponse(response, 401);
         }
 
         /*
@@ -150,7 +121,7 @@ export class Frontend {
          */
         const contentType = request.headers["content-type"];
         if (contentType === undefined) {
-          throw createError("contentTypeNotFound");
+          return createResponse(response, 400);
         }
         if (
           contentType
@@ -158,7 +129,7 @@ export class Frontend {
             .trim()
             .toLowerCase() !== "application/json"
         ) {
-          throw createError("contentTypeValueInvalid");
+          return createResponse(response, 415);
         }
 
         const requestBody: object = request.body as object;
@@ -178,7 +149,7 @@ export class Frontend {
               skillToken?: string;
             };
             if (typeof testRequest.skillToken !== "string") {
-              throw createError("bodyFormatInvalid");
+              return createResponse(response, 422);
             }
             const skillToken: string = testRequest.skillToken;
             authorized = skillToken === credentials.skillToken;
@@ -192,64 +163,34 @@ export class Frontend {
           }
         }
         if (!authorized) {
-          throw createError("unauthorized");
+          return createResponse(response, 401);
         }
 
         /*
          * Do application level processing.
          */
-        let responseBody: object | undefined;
         switch (linkType) {
           case "login": {
             const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
-            try {
-              await frontend._bridgeTokenAuth.setBridgeToken({
-                bridgeToken,
-                ...credentials,
-              });
-            } catch (error) {
-              throw createError("internalServerError", error);
-            }
-            responseBody = { token: bridgeToken };
-            break;
+            await frontend._bridgeTokenAuth.setBridgeToken({
+              bridgeToken,
+              ...credentials,
+            });
+            return createResponse(response, 200, { token: bridgeToken });
           }
           case "test": {
-            responseBody = {};
-            break;
+            return createResponse(response, 200, {});
           }
           case "service": {
-            responseBody = await frontend._middle.handler(
+            const responseBody = await frontend._middle.handler(
               requestBody as Record<string, unknown>,
             );
-            break;
+            return createResponse(response, 200, responseBody);
           }
         }
-        if (responseBody === undefined) {
-          throw createError("internalServerError");
-        }
-        void response.status(200);
-        return responseBody;
       } catch (error) {
         Common.Debug.debugError(error);
-        if (error instanceof FrontendCommonError) {
-          switch (error.statusCode) {
-            case 401: {
-              void response
-                .header("WWW-Authenticate", "Bearer")
-                .status(error.statusCode);
-              return {
-                error: error.code,
-                error_descriptions: error.message,
-              };
-            }
-            default: {
-              void response.status(error.statusCode);
-              return {};
-            }
-          }
-        }
-        void response.status(500);
-        return {};
+        return createResponse(response, 500);
       }
     }
 
