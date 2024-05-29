@@ -41,59 +41,11 @@ class FrontendCommonError extends Common.CommonError {
   }
 }
 
-function errorUnauthorized(options?: {
-  message?: string;
-  cause?: unknown;
-}): FrontendCommonError {
-  return new FrontendCommonError({
-    code: "unauthorized",
-    message: options?.message,
-    cause: options?.cause,
-  });
-}
-
-function errorInternalServerError(options?: {
-  message?: string;
-  cause?: unknown;
-}): Common.CommonError {
-  return new FrontendCommonError({
-    code: "internalServerError",
-    message: options?.message,
-    cause: options?.cause,
-  });
-}
-
-function errorContentTypeMissing(options?: {
-  message?: string;
-  cause?: unknown;
-}): Common.CommonError {
-  return new FrontendCommonError({
-    code: "contentTypeNotFound",
-    message: options?.message,
-    cause: options?.cause,
-  });
-}
-
-function errorContentTypeIncorrect(options?: {
-  message?: string;
-  cause?: unknown;
-}): Common.CommonError {
-  return new FrontendCommonError({
-    code: "contentTypeValueInvalid",
-    message: options?.message,
-    cause: options?.cause,
-  });
-}
-
-function errorBodyInvalidFormat(options?: {
-  message?: string;
-  cause?: unknown;
-}): Common.CommonError {
-  return new FrontendCommonError({
-    code: "bodyFormatInvalid",
-    message: options?.message,
-    cause: options?.cause,
-  });
+function createError(
+  code: FrontendCommonErrorCode,
+  cause?: unknown,
+): FrontendCommonError {
+  return new FrontendCommonError({ code, cause });
 }
 
 export class Frontend {
@@ -180,89 +132,14 @@ export class Frontend {
         next();
       }
 
-      async function getCredentials(
-        authorizationHeader: string | undefined,
-        tokenType: "loginToken" | "bridgeToken",
-      ): Promise<Credentials> {
-        Common.Debug.debug("getCredentials: start");
-
-        // Extract bridgeToken from "authorization" header. RFC-6750 allows
-        // for the Bearer token to be included in the "authorization" header, as
-        // part part of the URL or in the body. Since we put it in the header, we
-        // know that is were it will be. Per RFC-6750, failure to find the Bearer
-        // token results 401 response that includes a "WWW-Authenticate" header.
-        if (authorizationHeader === undefined) {
-          throw errorUnauthorized({
-            message:
-              'Bridge connection failed due to missing "authorization" header.',
-          });
-        }
-        const authorization =
-          authorizationHeader.split(/\s+/).map((x) => x.trim()) ?? [];
-        if (authorization.length !== 2) {
-          throw errorUnauthorized({
-            message:
-              'Bridge connection failed due to malformed "authorization" header.',
-          });
-        }
-        if (authorization[0].toLowerCase() !== "bearer") {
-          throw errorUnauthorized({
-            message:
-              "Bridge connection failed due to incorrect authorization method.",
-          });
-        }
-        const token: string = authorization[1];
-
-        let record: Credentials | null = null;
-        try {
-          if (tokenType === "loginToken") {
-            record = await frontend._loginTokenAuth.authorizeLoginToken(token);
-          } else if (tokenType === "bridgeToken") {
-            record =
-              await frontend._bridgeTokenAuth.authorizeBridgeToken(token);
-          }
-        } catch (error) {
-          throw errorInternalServerError({ cause: error });
-        }
-        if (record === null) {
-          throw errorUnauthorized({
-            message: "Bridge connection failed due to invalid login token.",
-          });
-        }
-        Common.Debug.debug("getCredentials: success");
-        return record;
-      }
-
       function getTestBodySkillToken(requestBody: object): string {
         const testRequest = requestBody as {
           skillToken?: string;
         };
         if (typeof testRequest.skillToken !== "string") {
-          throw errorBodyInvalidFormat();
+          throw createError("bodyFormatInvalid");
         }
         return testRequest.skillToken;
-      }
-
-      function skillTokenAuthorizationHandler(
-        requestBody: object,
-        credentials: Credentials,
-        linkType: "login" | "test" | "service",
-      ): void {
-        if (linkType === "login") {
-          return;
-        }
-        let skillToken: string | undefined;
-        if (linkType === "test") {
-          skillToken = getTestBodySkillToken(requestBody);
-        }
-        if (linkType === "service") {
-          skillToken = frontend._middle.getSkillToken(requestBody);
-        }
-        if (skillToken === undefined || skillToken !== credentials.skillToken) {
-          throw errorUnauthorized({
-            message: "Bridge connection failed due to invalid bearer token.",
-          });
-        }
       }
 
       async function linkCore(
@@ -270,18 +147,45 @@ export class Frontend {
         response: express.Response,
         linkType: "login" | "test" | "service",
       ): Promise<void> {
-        const tokenType = linkType === "login" ? "loginToken" : "bridgeToken";
-        const credentials: Credentials = await getCredentials(
-          request.headers.authorization,
-          tokenType,
-        );
+        /*
+         * Authorize the link token and return the link user's credentials.
+         *
+         * Extract bridgeToken from "authorization" header. RFC-6750 allows
+         * for the Bearer token to be included in the "authorization" header, as
+         * part part of the URL or in the body. Since we put it in the header, we
+         * know that is were it will be. Per RFC-6750, failure to find the Bearer
+         * token results 401 response that includes a "WWW-Authenticate" header.
+         */
+        let credentials: Credentials | null = null;
+        if (request.headers.authorization === undefined) {
+          throw createError("unauthorized");
+        }
+        const authorization =
+          request.headers.authorization.split(/\s+/).map((x) => x.trim()) ?? [];
+        if (authorization.length !== 2) {
+          throw createError("unauthorized");
+        }
+        if (authorization[0].toLowerCase() !== "bearer") {
+          throw createError("unauthorized");
+        }
+        const token: string = authorization[1];
+        try {
+          credentials = await (linkType === "login"
+            ? frontend._loginTokenAuth.authorizeLoginToken(token)
+            : frontend._bridgeTokenAuth.authorizeBridgeToken(token));
+        } catch (error) {
+          throw createError("internalServerError", error);
+        }
+        if (credentials === null) {
+          throw createError("unauthorized");
+        }
 
         /*
          * Verify that 'content-type' is 'application/json'
          */
         const contentType = request.headers["content-type"];
         if (contentType === undefined) {
-          throw errorContentTypeMissing();
+          throw createError("contentTypeNotFound");
         }
         if (
           contentType
@@ -289,7 +193,7 @@ export class Frontend {
             .trim()
             .toLowerCase() !== "application/json"
         ) {
-          throw errorContentTypeIncorrect();
+          throw createError("contentTypeValueInvalid");
         }
 
         /*
@@ -298,7 +202,7 @@ export class Frontend {
         await new Promise<void>((resolve, reject) => {
           express.json()(request, response, (error: unknown): void => {
             if (error !== undefined) {
-              reject(errorBodyInvalidFormat({ cause: error }));
+              reject(createError("bodyFormatInvalid", error));
             }
             resolve();
           });
@@ -307,13 +211,34 @@ export class Frontend {
 
         /*
          * Verify the link and the request carried by the link are bound to the
-         * same skillToken
+         * same skillToken.
          */
-        skillTokenAuthorizationHandler(requestBody, credentials, linkType);
+        let authorized: boolean = false;
+        switch (linkType) {
+          case "login": {
+            authorized = true;
+            break;
+          }
+          case "test": {
+            const skillToken: string = getTestBodySkillToken(requestBody);
+            authorized = skillToken === credentials.skillToken;
+            break;
+          }
+          case "service": {
+            const skillToken: string =
+              frontend._middle.getSkillToken(requestBody);
+            authorized = skillToken === credentials.skillToken;
+            break;
+          }
+        }
+        if (!authorized) {
+          throw createError("unauthorized");
+        }
 
         /*
          * Do application level processing.
          */
+        let responseBody: object | undefined;
         switch (linkType) {
           case "login": {
             const bridgeToken = frontend._bridgeTokenAuth.generateBridgeToken();
@@ -323,23 +248,26 @@ export class Frontend {
                 ...credentials,
               });
             } catch (error) {
-              throw errorInternalServerError({ cause: error });
+              throw createError("internalServerError", error);
             }
-            response.status(200).json({ token: bridgeToken });
+            responseBody = { token: bridgeToken };
             break;
           }
           case "test": {
-            response.status(200).json({});
+            responseBody = {};
             break;
           }
           case "service": {
-            const serviceResponse = await frontend._middle.handler(
+            responseBody = await frontend._middle.handler(
               requestBody as Record<string, unknown>,
             );
-            response.status(200).json(serviceResponse);
             break;
           }
         }
+        if (responseBody === undefined) {
+          throw createError("internalServerError");
+        }
+        response.status(200).json(responseBody);
       }
 
       function errorHandler(
