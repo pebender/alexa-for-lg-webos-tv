@@ -27,8 +27,17 @@ type FrontendCommonErrorCode =
   | "internalServerError"
   | "unauthorized";
 
+const errorCodeToStatusCode: Record<string, number> = {
+  bodyFormatInvalid: 422,
+  contentTypeValueInvalid: 415,
+  contentTypeNotFound: 400,
+  internalServerError: 500,
+  unauthorized: 401,
+};
+
 class FrontendCommonError extends Common.CommonError {
   public readonly code: FrontendCommonErrorCode;
+  public readonly statusCode: number;
 
   constructor(options: {
     code: FrontendCommonErrorCode;
@@ -38,6 +47,7 @@ class FrontendCommonError extends Common.CommonError {
     super(options);
     this.name = "FrontendCommonError";
     this.code = options.code;
+    this.statusCode = errorCodeToStatusCode[options.code];
   }
 }
 
@@ -98,7 +108,7 @@ export class Frontend {
         handlerCore: (
           request: express.Request,
           response: express.Response,
-        ) => void | Promise<void>,
+        ) => Promise<void>,
       ): (
         request: express.Request,
         response: express.Response,
@@ -109,12 +119,11 @@ export class Frontend {
           response: express.Response,
           next: express.NextFunction,
         ): void => {
-          Promise.resolve(handlerCore(request, response)).catch(
-            (error: unknown) =>
-              setImmediate((): void => {
-                // eslint-disable-next-line promise/no-callback-in-promise
-                next(error);
-              }),
+          handlerCore(request, response).catch((error: unknown) =>
+            setImmediate((): void => {
+              // eslint-disable-next-line promise/no-callback-in-promise
+              next(error);
+            }),
           );
         };
       }
@@ -278,33 +287,21 @@ export class Frontend {
       ): void {
         Common.Debug.debugError(error);
         if (error instanceof FrontendCommonError) {
-          switch (error.code) {
-            case "unauthorized": {
+          switch (error.statusCode) {
+            case 401: {
               const body = {
                 error: error.code,
                 error_descriptions: error.message,
               };
               response
                 .setHeader("WWW-Authenticate", "Bearer")
-                .status(401)
+                .status(error.statusCode)
                 .json(body)
                 .send();
               return;
             }
-            case "contentTypeNotFound": {
-              response.status(400).json({}).send();
-              return;
-            }
-            case "contentTypeValueInvalid": {
-              response.status(415).json({}).send();
-              return;
-            }
-            case "bodyFormatInvalid": {
-              response.status(422).json({}).send();
-              return;
-            }
-            case "internalServerError": {
-              response.status(500).json({}).send();
+            default: {
+              response.status(error.statusCode).json({}).send();
               return;
             }
           }
