@@ -101,7 +101,7 @@ export class Bridge {
    * - starts the Backend.
    */
   public async start(): Promise<void> {
-    this._frontend.start();
+    await this._frontend.start();
     await this._backend.start();
   }
 }
