@@ -227,14 +227,14 @@ export class Frontend {
         if (responseBody === undefined) {
           throw createError("internalServerError");
         }
-        response.status(200);
+        void response.status(200);
         return responseBody;
       } catch (error) {
         Common.Debug.debugError(error);
         if (error instanceof FrontendCommonError) {
           switch (error.statusCode) {
             case 401: {
-              response
+              void response
                 .header("WWW-Authenticate", "Bearer")
                 .status(error.statusCode);
               return {
@@ -243,12 +243,12 @@ export class Frontend {
               };
             }
             default: {
-              response.status(error.statusCode);
+              void response.status(error.statusCode);
               return {};
             }
           }
         }
-        response.status(500);
+        void response.status(500);
         return {};
       }
     }
