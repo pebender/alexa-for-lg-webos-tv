@@ -21,14 +21,14 @@
   ],
   "dependencies": {
     "ask-sdk": "2.14.0",
-    "@aws-sdk/client-dynamodb": "3.515.0",
-    "@aws-sdk/lib-dynamodb": "3.515.0",
+    "@aws-sdk/client-dynamodb": "3.552.0",
+    "@aws-sdk/lib-dynamodb": "3.552.0",
     "certnames": "1.0.4",
     "jose-node-cjs-runtime": "5.3.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.138",
-    "@types/node": "20.12.12"
+    "@types/node": "20.12.13"
   },
   "bundledDependencies": [
     "ask-sdk-core",
