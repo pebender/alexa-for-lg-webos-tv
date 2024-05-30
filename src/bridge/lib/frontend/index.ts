@@ -25,6 +25,8 @@ type FrontendCommonErrorCode =
   | "contentTypeValueInvalid"
   | "contentTypeNotFound"
   | "internalServerError"
+  | "methodNotAllowed"
+  | "notFound"
   | "unauthorized";
 
 const errorCodeToStatusCode: Record<string, number> = {
@@ -32,6 +34,8 @@ const errorCodeToStatusCode: Record<string, number> = {
   contentTypeValueInvalid: 415,
   contentTypeNotFound: 400,
   internalServerError: 500,
+  methodNotAllowed: 405,
+  notFound: 404,
   unauthorized: 401,
 };
 
@@ -95,7 +99,6 @@ export class Frontend {
     function linkHandler(
       request: express.Request,
       response: express.Response,
-      linkType: "login" | "test" | "service",
     ): void {
       const linkHandlerAsync = async (): Promise<void> => {
         try {
@@ -104,6 +107,29 @@ export class Frontend {
           Common.Debug.debug(`path: ${request.path}`);
           Common.Debug.debug(`method: ${request.method}`);
           Common.Debug.debugJSON(request.headers);
+
+          let linkType: "login" | "test" | "service";
+          switch (request.path) {
+            case Common.constants.bridge.path.login: {
+              linkType = "login";
+              break;
+            }
+            case Common.constants.bridge.path.test: {
+              linkType = "test";
+              break;
+            }
+            case Common.constants.bridge.path.service: {
+              linkType = "service";
+              break;
+            }
+            default: {
+              throw createError("notFound");
+            }
+          }
+
+          if (request.method !== "POST") {
+            throw createError("methodNotAllowed");
+          }
 
           /*
            * Authorize the link token and return the link user's credentials.
@@ -266,35 +292,7 @@ export class Frontend {
       );
     }
 
-    // Handle login
-    frontend._server.post(
-      Common.constants.bridge.path.login,
-      (request: express.Request, response: express.Response): void => {
-        linkHandler(request, response, "login");
-      },
-    );
-
-    // Handle test
-    frontend._server.post(
-      Common.constants.bridge.path.test,
-      (request: express.Request, response: express.Response): void => {
-        linkHandler(request, response, "test");
-      },
-    );
-
-    // Handle Smart Home Skill directives.
-    frontend._server.post(
-      Common.constants.bridge.path.service,
-      (request: express.Request, response: express.Response): void => {
-        linkHandler(request, response, "service");
-      },
-    );
-
-    frontend._server.use(
-      (request: express.Request, response: express.Response): void => {
-        response.status(404).json({});
-      },
-    );
+    frontend._server.use(linkHandler);
 
     return frontend;
   }
