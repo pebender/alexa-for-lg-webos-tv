@@ -33,7 +33,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 • **options.requestHeaders?**: `Record`\<`string`, `string`\>
 
-• **options.requestMethod?**: `"GET"` \| `"POST"`
+• **options.requestMethod?**: `"POST"` \| `"GET"`
 
 • **options.requestUrl?**: `string`
 
@@ -77,7 +77,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ### requestMethod?
 
-> `optional` `readonly` **requestMethod**: `"GET"` \| `"POST"`
+> `optional` `readonly` **requestMethod**: `"POST"` \| `"GET"`
 
 ***
 
