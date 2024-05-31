@@ -17,9 +17,15 @@
 
 ## References
 
-### HTTPSRequest
+### HttpCommonError
 
-Renames and re-exports [skill/lib/link/https-request](https-request/README.md)
+Re-exports [HttpCommonError](http-common-error/classes/HttpCommonError.md)
+
+***
+
+### HttpCommonErrorCode
+
+Re-exports [HttpCommonErrorCode](http-common-error/type-aliases/HttpCommonErrorCode.md)
 
 ***
 
@@ -32,3 +38,15 @@ Re-exports [LinkCommonError](link-common-error/classes/LinkCommonError.md)
 ### LinkCommonErrorCode
 
 Re-exports [LinkCommonErrorCode](link-common-error/type-aliases/LinkCommonErrorCode.md)
+
+***
+
+### RequestOptions
+
+Re-exports [RequestOptions](request/interfaces/RequestOptions.md)
+
+***
+
+### request
+
+Re-exports [request](request/functions/request.md)

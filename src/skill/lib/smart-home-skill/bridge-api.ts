@@ -29,8 +29,11 @@ function mapErrorToAlexaResponse(
       }
     }
   }
-  if (error instanceof Link.HTTPSRequest.HttpCommonError) {
-    switch (error.code) {
+  if (
+    error instanceof Link.LinkCommonError &&
+    error.cause instanceof Link.HttpCommonError
+  ) {
+    switch (error.cause.code) {
       case "connectionInterrupted": {
         return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,

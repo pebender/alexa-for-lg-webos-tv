@@ -2,7 +2,8 @@ import * as fs from "node:fs";
 import path from "node:path";
 import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
-import { HTTPSRequest, LinkCommonError } from "./index";
+import { request, type RequestOptions } from "./request";
+import { LinkCommonError } from "./link-common-error";
 
 const x509PrivateKeyFile: string = fs.readFileSync(
   path.join(__dirname, Common.constants.bridge.jwt.x509PrivateKeyFile),
@@ -42,7 +43,7 @@ export async function getBridgeToken(
   skillToken: string,
   bridgeHostname: string,
 ): Promise<string> {
-  const requestOptions: HTTPSRequest.RequestOptions = {
+  const requestOptions: RequestOptions = {
     hostname: bridgeHostname,
     path: Common.constants.bridge.path.login,
     port: Common.constants.bridge.port.https,
@@ -55,11 +56,14 @@ export async function getBridgeToken(
     bridgeHostname,
   );
 
-  const response: { token?: string; [key: string]: unknown } =
-    (await HTTPSRequest.request(requestOptions, loginToken, {})) as {
-      token?: string;
-      [key: string]: unknown;
-    };
+  const response: { token?: string; [key: string]: unknown } = (await request(
+    requestOptions,
+    loginToken,
+    {},
+  )) as {
+    token?: string;
+    [key: string]: unknown;
+  };
 
   if (response.token === undefined || typeof response.token !== "string") {
     throw new Common.GeneralCommonError({});

@@ -20,7 +20,7 @@ codes.
 
 ## Extended by
 
-- [`HttpCommonError`](../../../skill/lib/link/https-request/classes/HttpCommonError.md)
+- [`HttpCommonError`](../../../skill/lib/link/http-common-error/classes/HttpCommonError.md)
 - [`LinkCommonError`](../../../skill/lib/link/link-common-error/classes/LinkCommonError.md)
 - [`TvCommonError`](../../../bridge/lib/backend/tv-common-error/classes/TvCommonError.md)
 - [`DatabaseCommonError`](../../database-common-error/classes/DatabaseCommonError.md)

@@ -3,11 +3,13 @@ import * as tls from "node:tls";
 import * as certnames from "certnames";
 import * as Common from "../../../common";
 import { LinkCommonError } from "./link-common-error";
+import { HttpCommonError } from "./http-common-error";
 import * as Database from "./user-database";
-import * as HTTPSRequest from "./https-request";
+import { request, type RequestOptions } from "./request";
 import * as Login from "./login";
 
-export * as HTTPSRequest from "./https-request";
+export { request, type RequestOptions } from "./request";
+export { HttpCommonError, type HttpCommonErrorCode } from "./http-common-error";
 export { LinkCommonError, type LinkCommonErrorCode } from "./link-common-error";
 
 export async function getHostnames(ipAddress: string): Promise<string[]> {
@@ -134,7 +136,7 @@ export async function sendMessageUsingBridgeToken(
     });
   }
 
-  const requestOptions: HTTPSRequest.RequestOptions = {
+  const requestOptions: RequestOptions = {
     hostname: bridgeHostname,
     path,
     port: Common.constants.bridge.port.https,
@@ -143,11 +145,11 @@ export async function sendMessageUsingBridgeToken(
 
   let response: object;
   try {
-    response = await HTTPSRequest.request(requestOptions, bridgeToken, message);
+    response = await request(requestOptions, bridgeToken, message);
   } catch (error) {
     if (
-      error instanceof HTTPSRequest.HttpCommonError &&
-      error.code === "unauthorized"
+      error instanceof LinkCommonError &&
+      error.code === "authorizationFailed"
     ) {
       /* try again with a new bridge token */
       const { bridgeHostname, bridgeToken } = await getCredentials(skillToken, {
@@ -170,18 +172,14 @@ export async function sendMessageUsingBridgeToken(
         });
       }
 
-      const requestOptions: HTTPSRequest.RequestOptions = {
+      const requestOptions: RequestOptions = {
         hostname: bridgeHostname,
         path,
         port: Common.constants.bridge.port.https,
         headers: {},
       };
 
-      response = await HTTPSRequest.request(
-        requestOptions,
-        bridgeToken,
-        message,
-      );
+      response = await request(requestOptions, bridgeToken, message);
     } else {
       throw error;
     }
@@ -289,7 +287,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         request,
       );
     } catch (error) {
-      if (error instanceof HTTPSRequest.HttpCommonError) {
+      if (error instanceof HttpCommonError) {
         switch (error.code) {
           case "badGateway": {
             throw new LinkCommonError({

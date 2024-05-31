@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/https-request](../README.md) / RequestOptions
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/request](../README.md) / RequestOptions
 
 # Interface: RequestOptions
 

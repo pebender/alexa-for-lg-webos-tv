@@ -2,7 +2,7 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/https-request](../README.md) / request
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [skill/lib/link/request](../README.md) / request
 
 # Function: request()
 
@@ -15,7 +15,7 @@ requestBody is provided, then the request is made using the HTTP
 request method "POST" and includes requestBody as "application/json".
 Otherwise, the request is made using the HTTP request method "GET". If the
 request is successful, this function returns the JSON formatted response
-received. Otherwise, this function throws a [HttpCommonError](../classes/HttpCommonError.md).
+received. Otherwise, this function throws a [HttpCommonError](../../http-common-error/classes/HttpCommonError.md).
 
 ## Parameters
 
@@ -40,5 +40,5 @@ a JSON object containing the response body.
 
 ## Throws
 
-a [HttpCommonError](../classes/HttpCommonError.md) with codes from
-[HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
+a [HttpCommonError](../../http-common-error/classes/HttpCommonError.md) with codes from
+[HttpCommonErrorCode](../../http-common-error/type-aliases/HttpCommonErrorCode.md).
