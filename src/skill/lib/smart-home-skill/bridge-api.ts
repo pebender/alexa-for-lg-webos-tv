@@ -18,6 +18,17 @@ function mapErrorToAlexaResponse(
   alexaRequest: Common.SHS.Request,
   error: unknown,
 ): Common.SHS.Response {
+  if (error instanceof Common.GeneralCommonError) {
+    switch (error.code) {
+      case "unauthorized": {
+        return Common.SHS.Response.buildAlexaErrorResponse(
+          alexaRequest,
+          "INVALID_AUTHORIZATION_CREDENTIAL",
+          "Failed to retrieve user profile.",
+        );
+      }
+    }
+  }
   if (error instanceof Link.HTTPSRequest.HttpCommonError) {
     switch (error.code) {
       case "connectionInterrupted": {
@@ -91,13 +102,12 @@ function mapErrorToAlexaResponse(
         );
       }
     }
-  } else {
-    return Common.SHS.Response.buildAlexaErrorResponse(
-      alexaRequest,
-      "INTERNAL_ERROR",
-      "error: unknown.",
-    );
   }
+  return Common.SHS.Response.buildAlexaErrorResponse(
+    alexaRequest,
+    "INTERNAL_ERROR",
+    "error: unknown.",
+  );
 }
 
 export async function sendSkillDirective(
