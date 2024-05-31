@@ -184,7 +184,7 @@ export class BackendControl extends EventEmitter {
       return setInterval(handler, milliseconds);
     }
 
-    return await new Promise<boolean>((resolve): void => {
+    return await new Promise<boolean>((resolve) => {
       this._poweredOn = false;
       this._connection.disconnect();
       let finishTimeoutObject: NodeJS.Timeout | null = null;
@@ -208,7 +208,7 @@ export class BackendControl extends EventEmitter {
         async function asyncFinish(poweredOn: boolean): Promise<void> {
           const currentUUID = await finishMutex.runExclusive(
             async (): Promise<string | null> =>
-              await new Promise<string | null>((resolve): void => {
+              await new Promise<string | null>((resolve) => {
                 if (finished) {
                   resolve(null);
                   return;
@@ -285,42 +285,40 @@ export class BackendControl extends EventEmitter {
       returnValue: false,
     };
     if (lgtvRequest.payload === undefined) {
-      lgtvResponse = await new Promise<LGTV.Response>(
-        (resolve, reject): void => {
-          this._connection.request(
-            lgtvRequest.uri,
-            (error: Error | null, response?: LGTV.Response): void => {
-              if (error !== null) {
-                reject(
-                  new TvCommonError({
-                    code: "connectionRequestError",
-                    message: "TV connection request error",
-                    tv: this.tv,
-                    lgtvRequest,
-                    cause: error,
-                  }),
-                );
-                return;
-              }
-              if (response === undefined) {
-                reject(
-                  new TvCommonError({
-                    code: "lgtvApiViolation",
-                    message: "LGTV API violation",
-                    tv: this.tv,
-                    lgtvRequest,
-                  }),
-                );
-                return;
-              }
-              resolve(response);
-            },
-          );
-        },
-      );
+      lgtvResponse = await new Promise<LGTV.Response>((resolve, reject) => {
+        this._connection.request(
+          lgtvRequest.uri,
+          (error: Error | null, response?: LGTV.Response): void => {
+            if (error !== null) {
+              reject(
+                new TvCommonError({
+                  code: "connectionRequestError",
+                  message: "TV connection request error",
+                  tv: this.tv,
+                  lgtvRequest,
+                  cause: error,
+                }),
+              );
+              return;
+            }
+            if (response === undefined) {
+              reject(
+                new TvCommonError({
+                  code: "lgtvApiViolation",
+                  message: "LGTV API violation",
+                  tv: this.tv,
+                  lgtvRequest,
+                }),
+              );
+              return;
+            }
+            resolve(response);
+          },
+        );
+      });
     } else {
       const payload = lgtvRequest.payload;
-      lgtvResponse = await new Promise((resolve, reject): void => {
+      lgtvResponse = await new Promise<LGTV.Response>((resolve, reject) => {
         this._connection.request(
           lgtvRequest.uri,
           payload,

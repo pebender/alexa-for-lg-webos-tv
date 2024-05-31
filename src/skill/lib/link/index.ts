@@ -13,7 +13,7 @@ export { LinkCommonError, type LinkCommonErrorCode } from "./link-common-error";
 export async function getHostnames(ipAddress: string): Promise<string[]> {
   const ipPort = Common.constants.bridge.port.https;
 
-  return await new Promise((resolve, reject): void => {
+  return await new Promise<string[]>((resolve, reject) => {
     const sock = tls.connect(ipPort, ipAddress, { rejectUnauthorized: false });
     sock.on("secureConnect", (): void => {
       const cert = sock.getPeerCertificate().raw;
@@ -212,7 +212,7 @@ export async function testConnection(skillToken: string): Promise<void> {
   }
 
   async function testTls(hostname: string, port: number): Promise<void> {
-    await new Promise<void>((resolve, reject): void => {
+    await new Promise<void>((resolve, reject) => {
       const client = tls.connect(port, hostname, { rejectUnauthorized: false });
       client
         .on("secureConnect", (): void => {
@@ -221,7 +221,7 @@ export async function testConnection(skillToken: string): Promise<void> {
         .on("close", (): void => {
           resolve();
         })
-        .on("error", (cause): void => {
+        .on("error", (cause: unknown): void => {
           const error = new LinkCommonError({
             code: "tlsConnectionFailed",
             cause,
@@ -235,7 +235,7 @@ export async function testConnection(skillToken: string): Promise<void> {
     hostname: string,
     port: number,
   ): Promise<void> {
-    await new Promise<void>((resolve, reject): void => {
+    await new Promise<void>((resolve, reject) => {
       const client = tls.connect(port, hostname);
       client
         .on("secureConnect", (): void => {
@@ -258,7 +258,7 @@ export async function testConnection(skillToken: string): Promise<void> {
     hostname: string,
     port: number,
   ): Promise<void> {
-    await new Promise<void>((resolve, reject): void => {
+    await new Promise<void>((resolve, reject) => {
       const client = tls.connect(port, hostname, { servername: hostname });
       client
         .on("secureConnect", (): void => {
