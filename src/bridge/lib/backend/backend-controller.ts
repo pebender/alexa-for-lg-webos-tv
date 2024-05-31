@@ -19,8 +19,14 @@ export class BackendController extends EventEmitter {
     this._controls = _controls;
   }
 
-  public static async build(): Promise<BackendController> {
-    const _database = await DatabaseTable.build<TV>("backend", ["udn"]);
+  public static async build(
+    _configurationDirectory: string,
+  ): Promise<BackendController> {
+    const _database = await DatabaseTable.build<TV>(
+      _configurationDirectory,
+      "backend",
+      ["udn"],
+    );
     const _controls = {};
 
     const backendController = new BackendController(_database, _controls);

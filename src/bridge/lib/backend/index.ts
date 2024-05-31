@@ -9,7 +9,6 @@
 import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
 import type { TV, UDN } from "./tv";
 import type { BackendControl } from "./backend-control";
 import { BackendController } from "./backend-controller";
@@ -22,26 +21,30 @@ export * as TV from "./tv";
 export { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
 export class Backend extends EventEmitter {
-  private readonly _configuration: Configuration;
+  private readonly _configurationDirectory: string;
   private readonly _controller: BackendController;
   private readonly _searcher: BackendSearcher;
   private constructor(
-    _configuration: Configuration,
+    _configurationDirectory: string,
     _controller: BackendController,
     _searcher: BackendSearcher,
   ) {
     super();
 
-    this._configuration = _configuration;
+    this._configurationDirectory = _configurationDirectory;
     this._controller = _controller;
     this._searcher = _searcher;
   }
 
-  public static async build(configuration: Configuration): Promise<Backend> {
-    const _controller = await BackendController.build();
+  public static async build(_configurationDirectory: string): Promise<Backend> {
+    const _controller = await BackendController.build(_configurationDirectory);
     const _searcher = BackendSearcher.build();
 
-    const backend = new Backend(configuration, _controller, _searcher);
+    const backend = new Backend(
+      _configurationDirectory,
+      _controller,
+      _searcher,
+    );
 
     backend._controller.on(
       "error",

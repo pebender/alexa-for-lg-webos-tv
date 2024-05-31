@@ -1,5 +1,4 @@
 import Datastore from "@seald-io/nedb";
-import persistPath from "persist-path";
 import * as Common from "../../common";
 
 /**
@@ -51,13 +50,10 @@ export class DatabaseTable<
       string | number | boolean | Date | null
     >,
   >(
+    configurationDirectory: string,
     name: string,
     indexes: Array<keyof DatabaseRecord>,
   ): Promise<DatabaseTable<DatabaseRecord>> {
-    const configurationDirectory = persistPath(
-      Common.constants.application.name.safe,
-    );
-
     //
     // This operation is synchronous. It is both expected and desired because it
     // occurs once at startup and because the database is needed before the LG

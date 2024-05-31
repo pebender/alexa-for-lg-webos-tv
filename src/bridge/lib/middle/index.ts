@@ -1,7 +1,6 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
-import type { Backend } from "../backend";
+import { Backend } from "../backend";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
@@ -13,12 +12,16 @@ export class Middle {
     this._backend = _backend;
   }
 
-  public static async build(
-    configuration: Configuration,
-    backend: Backend,
-  ): Promise<Middle> {
-    const _authorization = await Authorization.build(configuration);
-    const middle = new Middle(_authorization, backend);
+  public static async build(configurationDirectory: string): Promise<Middle> {
+    const _authorization = await Authorization.build(configurationDirectory);
+
+    const _backend = await Backend.build(configurationDirectory);
+    _backend.on("error", (error: Error, id: string): void => {
+      Common.Debug.debug(id);
+      Common.Debug.debugError(error);
+    });
+
+    const middle = new Middle(_authorization, _backend);
 
     const uriList: string[] = [
       "ssap://audio/getStatus",
@@ -47,6 +50,10 @@ export class Middle {
     }
 
     return middle;
+  }
+
+  public async start(): Promise<void> {
+    await this._backend.start();
   }
 
   public getSkillToken(rawRequest: object): string {

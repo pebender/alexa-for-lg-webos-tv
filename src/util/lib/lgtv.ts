@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
 import * as Common from "../../common";
-import { Configuration, Backend, type TV } from "../../bridge";
+import { Backend, type TV } from "../../bridge";
 
 export async function getBackend(): Promise<Backend> {
   const configurationDirectory = persistPath(
@@ -17,8 +17,6 @@ export async function getBackend(): Promise<Backend> {
     throw commonError;
   }
 
-  const configuration = await Configuration.build();
-
   //
   // I keep long term information needed to connect to each TV in a database.
   // The long term information is the TV's unique device name (udn), friendly name
@@ -26,7 +24,7 @@ export async function getBackend(): Promise<Backend> {
   // and client key (key).
   //
 
-  const backend = await Backend.build(configuration);
+  const backend = await Backend.build(configurationDirectory);
   backend.on("error", (error: Error, id: string): void => {
     Common.Debug.debug(id);
     Common.Debug.debugError(error);

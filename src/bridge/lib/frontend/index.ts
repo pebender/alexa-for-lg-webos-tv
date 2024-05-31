@@ -83,11 +83,15 @@ export class Frontend {
   }
 
   public static async build(
+    configurationDirectory: string,
     configuration: Configuration,
     middle: Middle,
   ): Promise<Frontend> {
     const _loginToken = LoginTokenAuth.build(configuration);
-    const _bridgeToken = await BridgeTokenAuth.build(configuration);
+    const _bridgeToken = await BridgeTokenAuth.build(
+      configuration,
+      configurationDirectory,
+    );
 
     const _server = express();
 

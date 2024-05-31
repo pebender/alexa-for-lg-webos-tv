@@ -1,6 +1,5 @@
 import { DatabaseTable } from "../database";
 import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -12,25 +11,26 @@ export type AuthorizationRecord = {
 export type AuthorizationField = "skillToken" | "userId";
 
 export class Authorization {
-  private readonly _configuration: Configuration;
+  private readonly _configurationDirectory: string;
   private readonly _database: DatabaseTable<AuthorizationRecord>;
   private constructor(
-    _configuration: Configuration,
+    _configurationDirectory: string,
     _database: DatabaseTable<AuthorizationRecord>,
   ) {
-    this._configuration = _configuration;
+    this._configurationDirectory = _configurationDirectory;
     this._database = _database;
   }
 
   public static async build(
-    configuration: Configuration,
+    configurationDirectory: string,
   ): Promise<Authorization> {
-    const _database = await DatabaseTable.build<AuthorizationRecord>("middle", [
-      "skillToken",
-      "userId",
-    ]);
+    const _database = await DatabaseTable.build<AuthorizationRecord>(
+      configurationDirectory,
+      "middle",
+      ["skillToken", "userId"],
+    );
 
-    const authorization = new Authorization(configuration, _database);
+    const authorization = new Authorization(configurationDirectory, _database);
 
     return authorization;
   }

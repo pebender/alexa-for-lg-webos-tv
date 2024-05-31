@@ -27,8 +27,10 @@ export class BridgeTokenAuth {
 
   public static async build(
     configuration: Configuration,
+    configurationDirectory: string,
   ): Promise<BridgeTokenAuth> {
     const _database = await DatabaseTable.build<BridgeTokenAuthRecord>(
+      configurationDirectory,
       "frontend",
       ["bridgeToken", "userId", "skillToken"],
     );

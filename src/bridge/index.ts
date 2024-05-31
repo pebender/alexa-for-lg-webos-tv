@@ -1,7 +1,6 @@
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import * as Common from "../common";
-import { Backend } from "./lib/backend";
 import { Configuration } from "./lib/configuration";
 import { Frontend } from "./lib/frontend";
 import { Middle } from "./lib/middle";
@@ -26,7 +25,6 @@ export { Middle } from "./lib/middle";
  */
 export class Bridge {
   private readonly _configuration: Configuration;
-  private readonly _backend: Backend;
   private readonly _middle: Middle;
   private readonly _frontend: Frontend;
   /**
@@ -34,12 +32,10 @@ export class Bridge {
    */
   private constructor(
     _configuration: Configuration,
-    _backend: Backend,
     _middle: Middle,
     _frontend: Frontend,
   ) {
     this._configuration = _configuration;
-    this._backend = _backend;
     this._middle = _middle;
     this._frontend = _frontend;
   }
@@ -81,15 +77,14 @@ export class Bridge {
     // and client key (key).
     //
 
-    const _backend = await Backend.build(_configuration);
-    _backend.on("error", (error: Error, id: string): void => {
-      Common.Debug.debug(id);
-      Common.Debug.debugError(error);
-    });
-    const _middle = await Middle.build(_configuration, _backend);
-    const _frontend = await Frontend.build(_configuration, _middle);
+    const _middle = await Middle.build(configurationDirectory);
+    const _frontend = await Frontend.build(
+      configurationDirectory,
+      _configuration,
+      _middle,
+    );
 
-    const bridge = new Bridge(_configuration, _backend, _middle, _frontend);
+    const bridge = new Bridge(_configuration, _middle, _frontend);
 
     return bridge;
   }
@@ -102,7 +97,7 @@ export class Bridge {
    */
   public async start(): Promise<void> {
     this._frontend.start();
-    await this._backend.start();
+    await this._middle.start();
   }
 }
 
