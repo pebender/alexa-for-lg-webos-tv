@@ -59,7 +59,7 @@ export async function getBridgeToken(
   const response: { token?: string; [key: string]: unknown } = (await request(
     requestOptions,
     loginToken,
-    {},
+    { skillToken },
   )) as {
     token?: string;
     [key: string]: unknown;
