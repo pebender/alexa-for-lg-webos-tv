@@ -6,6 +6,10 @@
 
 # Class: LoginTokenAuth
 
+## Implements
+
+- [`TokenAuth`](../../token-auth/interfaces/TokenAuth.md)
+
 ## Constructors
 
 ### new LoginTokenAuth()
@@ -36,9 +40,9 @@
 
 ## Methods
 
-### authorizeLoginToken()
+### authorize()
 
-> **authorizeLoginToken**(`loginToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **authorize**(`loginToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 #### Parameters
 
@@ -47,6 +51,10 @@
 #### Returns
 
 `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+
+#### Implementation of
+
+[`TokenAuth`](../../token-auth/interfaces/TokenAuth.md).[`authorize`](../../token-auth/interfaces/TokenAuth.md#authorize)
 
 ***
 

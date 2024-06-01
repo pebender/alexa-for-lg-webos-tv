@@ -20,7 +20,7 @@
 
 ### Application
 
-Re-exports [Application](application/classes/Application.md)
+Re-exports [Application](application/interfaces/Application.md)
 
 ***
 

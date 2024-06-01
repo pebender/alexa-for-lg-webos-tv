@@ -4,8 +4,9 @@ import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
 import type { Credentials } from "./credentials";
 import type { UserAuth } from "./user-auth";
+import type { TokenAuth } from "./token-auth";
 
-export class LoginTokenAuth {
+export class LoginTokenAuth implements TokenAuth {
   private readonly _userAuth: UserAuth;
   private readonly _x509PublicCert: string;
   private constructor(_userAuth: UserAuth, _x509PublicCert: string) {
@@ -24,9 +25,7 @@ export class LoginTokenAuth {
     return loginTokenAuth;
   }
 
-  public async authorizeLoginToken(
-    loginToken: string,
-  ): Promise<Credentials | null> {
+  public async authorize(loginToken: string): Promise<Credentials | null> {
     let publicKey: jose.KeyLike;
     try {
       publicKey = await jose.importX509(this._x509PublicCert, "EdDSA");

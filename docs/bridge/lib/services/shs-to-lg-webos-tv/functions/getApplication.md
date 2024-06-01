@@ -6,7 +6,7 @@
 
 # Function: getApplication()
 
-> **getApplication**(`configurationDirectory`): `Promise`\<[`Application`](../../../link/application/classes/Application.md)\>
+> **getApplication**(`configurationDirectory`): `Promise`\<[`Application`](../../../link/application/interfaces/Application.md)\>
 
 ## Parameters
 
@@ -14,4 +14,4 @@
 
 ## Returns
 
-`Promise`\<[`Application`](../../../link/application/classes/Application.md)\>
+`Promise`\<[`Application`](../../../link/application/interfaces/Application.md)\>

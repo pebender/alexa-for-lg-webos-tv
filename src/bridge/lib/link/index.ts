@@ -9,13 +9,14 @@
 import express from "express";
 import * as Common from "../../../common";
 import type { Credentials } from "./credentials";
-import { Application } from "./application";
+import type { Application } from "./application";
 import { UserAuth } from "./user-auth";
+import type { TokenAuth } from "./token-auth";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
 
 export type { Credentials } from "./credentials";
-export { Application } from "./application";
+export type { Application } from "./application";
 
 type LinkManagerCommonErrorCode =
   | "bodyFormatInvalid"
@@ -59,11 +60,10 @@ function createError(
   return new LinkManagerCommonError({ code, cause });
 }
 
-class LoginApplication extends Application {
+class LoginApplication implements Application {
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
 
   public constructor(_bridgeTokenAuth: BridgeTokenAuth) {
-    super();
     this._bridgeTokenAuth = _bridgeTokenAuth;
   }
 
@@ -87,7 +87,7 @@ class LoginApplication extends Application {
     request: object,
     credentials: Credentials,
   ): Promise<object> {
-    const bridgeToken = this._bridgeTokenAuth.generateBridgeToken();
+    const bridgeToken = this._bridgeTokenAuth.generate();
     try {
       await this._bridgeTokenAuth.setCredentials(bridgeToken, credentials);
     } catch (error) {
@@ -97,7 +97,7 @@ class LoginApplication extends Application {
   }
 }
 
-class TestApplication extends Application {
+class TestApplication implements Application {
   public async start(): Promise<void> {
     await new Promise<void>((resolve) => {
       resolve();
@@ -123,28 +123,20 @@ class TestApplication extends Application {
 }
 
 export interface LinkDescription {
-  path: string;
-  bearerTokenType: "loginToken" | "bridgeToken";
-  linkType: "login" | "test" | "service";
+  tokenAuth: TokenAuth;
   application: Application;
 }
 
 export class LinkManager {
-  private readonly _loginTokenAuth: LoginTokenAuth;
-  private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _links: Record<string, LinkDescription>;
   private readonly _server: express.Express;
   /**
    * The constructor is private. To instantiate a LinkManager, use {@link LinkManager.build}().
    */
   private constructor(
-    _loginTokenAuth: LoginTokenAuth,
-    _bridgeTokenAuth: BridgeTokenAuth,
     _links: Record<string, LinkDescription>,
     _server: express.Express,
   ) {
-    this._loginTokenAuth = _loginTokenAuth;
-    this._bridgeTokenAuth = _bridgeTokenAuth;
     this._links = _links;
     this._server = _server;
   }
@@ -153,43 +145,32 @@ export class LinkManager {
     configurationDirectory: string,
     serviceApplications: Record<string, Application>,
   ): Promise<LinkManager> {
-    const _userAuth = await UserAuth.build(configurationDirectory);
-    const _loginTokenAuth = LoginTokenAuth.build(_userAuth);
-    const _bridgeTokenAuth = await BridgeTokenAuth.build(
-      _userAuth,
+    const userAuth = await UserAuth.build(configurationDirectory);
+    const loginTokenAuth = LoginTokenAuth.build(userAuth);
+    const bridgeTokenAuth = await BridgeTokenAuth.build(
+      userAuth,
       configurationDirectory,
     );
 
     const _links: Record<string, LinkDescription> = {};
     _links[Common.constants.bridge.path.login] = {
-      path: Common.constants.bridge.path.login,
-      bearerTokenType: "loginToken",
-      linkType: "login",
-      application: new LoginApplication(_bridgeTokenAuth),
+      tokenAuth: loginTokenAuth,
+      application: new LoginApplication(bridgeTokenAuth),
     };
     _links[Common.constants.bridge.path.test] = {
-      path: Common.constants.bridge.path.test,
-      bearerTokenType: "bridgeToken",
-      linkType: "test",
+      tokenAuth: bridgeTokenAuth,
       application: new TestApplication(),
     };
     for (const [path, application] of Object.entries(serviceApplications)) {
       _links[path] = {
-        path,
-        bearerTokenType: "bridgeToken",
-        linkType: "service",
+        tokenAuth: bridgeTokenAuth,
         application,
       };
     }
 
     const _server = express();
 
-    const linkManager = new LinkManager(
-      _loginTokenAuth,
-      _bridgeTokenAuth,
-      _links,
-      _server,
-    );
+    const linkManager = new LinkManager(_links, _server);
 
     /*
      * Function to handle the links.
@@ -237,9 +218,7 @@ export class LinkManager {
            */
           let credentials: Credentials | null = null;
           try {
-            credentials = await (link.bearerTokenType === "loginToken"
-              ? linkManager._loginTokenAuth.authorizeLoginToken(bearerToken)
-              : linkManager._bridgeTokenAuth.authorizeBridgeToken(bearerToken));
+            credentials = await link.tokenAuth.authorize(bearerToken);
           } catch (error) {
             throw createError("internalServerError", error);
           }

@@ -2,6 +2,7 @@ import * as crypto from "node:crypto";
 import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
 import type { Credentials } from "./credentials";
+import type { TokenAuth } from "./token-auth";
 import type { UserAuth } from "./user-auth";
 
 /* This is a type because DatabaseTable needs it to be a type. */
@@ -14,9 +15,10 @@ export type BridgeTokenAuthRecord = {
   skillToken: string;
 };
 
-export class BridgeTokenAuth {
+export class BridgeTokenAuth implements TokenAuth {
   private readonly _userAuth: UserAuth;
   private readonly _database: DatabaseTable<BridgeTokenAuthRecord>;
+
   private constructor(
     _userAuth: UserAuth,
     _database: DatabaseTable<BridgeTokenAuthRecord>,
@@ -40,7 +42,25 @@ export class BridgeTokenAuth {
     return bridgeTokenAuth;
   }
 
-  public generateBridgeToken(): string {
+  public async authorize(bridgeToken: string): Promise<Credentials | null> {
+    const record = await this.getCredentials(bridgeToken);
+    if (record === null) {
+      return null;
+    }
+
+    const authorized = this._userAuth.authorizeUser(
+      record.bridgeHostname,
+      record.email,
+    );
+    if (!authorized) {
+      await this._database.deleteRecords({ bridgeToken });
+      return null;
+    }
+
+    return record;
+  }
+
+  public generate(): string {
     let bridgeToken: string | undefined;
     while (bridgeToken === undefined) {
       bridgeToken = crypto.randomBytes(192).toString("base64url").slice(0, 256);
@@ -93,25 +113,5 @@ export class BridgeTokenAuth {
       userId: record.userId,
       skillToken: record.skillToken,
     };
-  }
-
-  public async authorizeBridgeToken(
-    bridgeToken: string,
-  ): Promise<Credentials | null> {
-    const record = await this.getCredentials(bridgeToken);
-    if (record === null) {
-      return null;
-    }
-
-    const authorized = this._userAuth.authorizeUser(
-      record.bridgeHostname,
-      record.email,
-    );
-    if (!authorized) {
-      await this._database.deleteRecords({ bridgeToken });
-      return null;
-    }
-
-    return record;
   }
 }

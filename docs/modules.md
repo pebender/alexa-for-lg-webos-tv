@@ -13,6 +13,7 @@
 - [bridge/lib/link/bridge-token-auth](bridge/lib/link/bridge-token-auth/README.md)
 - [bridge/lib/link/credentials](bridge/lib/link/credentials/README.md)
 - [bridge/lib/link/login-token-auth](bridge/lib/link/login-token-auth/README.md)
+- [bridge/lib/link/token-auth](bridge/lib/link/token-auth/README.md)
 - [bridge/lib/link/user-auth](bridge/lib/link/user-auth/README.md)
 - [bridge/lib/services/shs-to-lg-webos-tv](bridge/lib/services/shs-to-lg-webos-tv/README.md)
 - [bridge/lib/services/shs-to-lg-webos-tv/authorization](bridge/lib/services/shs-to-lg-webos-tv/authorization/README.md)

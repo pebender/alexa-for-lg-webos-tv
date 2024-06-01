@@ -31,7 +31,7 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 • **\_link**: [`LinkManager`](../lib/link/classes/LinkManager.md)
 
-• **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/classes/Application.md)\>
+• **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/interfaces/Application.md)\>
 
 #### Returns
 
@@ -47,7 +47,7 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 ### \_services
 
-> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/classes/Application.md)\>
+> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/interfaces/Application.md)\>
 
 ## Methods
 

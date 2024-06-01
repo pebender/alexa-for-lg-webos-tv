@@ -1,17 +1,16 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../../common";
-import { type Credentials, Application } from "../../link";
+import type { Credentials, Application } from "../../link";
 import { TvManager } from "./tv-manager";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
 export { TvManager, type TvRecord } from "./tv-manager";
 
-class ShsToLgWebOsTvService extends Application {
+class ShsToLgWebOsTvService implements Application {
   private readonly _authorization: Authorization;
   private readonly _tvManager: TvManager;
   private constructor(_authorization: Authorization, _tvManager: TvManager) {
-    super();
     this._authorization = _authorization;
     this._tvManager = _tvManager;
   }

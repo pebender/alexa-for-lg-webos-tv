@@ -6,6 +6,10 @@
 
 # Class: BridgeTokenAuth
 
+## Implements
+
+- [`TokenAuth`](../../token-auth/interfaces/TokenAuth.md)
+
 ## Constructors
 
 ### new BridgeTokenAuth()
@@ -36,9 +40,9 @@
 
 ## Methods
 
-### authorizeBridgeToken()
+### authorize()
 
-> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **authorize**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 #### Parameters
 
@@ -48,11 +52,15 @@
 
 `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
+#### Implementation of
+
+[`TokenAuth`](../../token-auth/interfaces/TokenAuth.md).[`authorize`](../../token-auth/interfaces/TokenAuth.md#authorize)
+
 ***
 
-### generateBridgeToken()
+### generate()
 
-> **generateBridgeToken**(): `string`
+> **generate**(): `string`
 
 #### Returns
 

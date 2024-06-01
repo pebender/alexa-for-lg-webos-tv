@@ -10,15 +10,11 @@
 
 ### new LinkManager()
 
-> `private` **new LinkManager**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_links`, `_server`): [`LinkManager`](LinkManager.md)
+> `private` **new LinkManager**(`_links`, `_server`): [`LinkManager`](LinkManager.md)
 
 The constructor is private. To instantiate a LinkManager, use [LinkManager.build](LinkManager.md#build)().
 
 #### Parameters
-
-• **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
-
-• **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
 
 • **\_links**: `Record`\<`string`, [`LinkDescription`](../interfaces/LinkDescription.md)\>
 
@@ -30,21 +26,9 @@ The constructor is private. To instantiate a LinkManager, use [LinkManager.build
 
 ## Properties
 
-### \_bridgeTokenAuth
-
-> `private` `readonly` **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
-
-***
-
 ### \_links
 
 > `private` `readonly` **\_links**: `Record`\<`string`, [`LinkDescription`](../interfaces/LinkDescription.md)\>
-
-***
-
-### \_loginTokenAuth
-
-> `private` `readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
 
 ***
 
@@ -72,7 +56,7 @@ The constructor is private. To instantiate a LinkManager, use [LinkManager.build
 
 • **configurationDirectory**: `string`
 
-• **serviceApplications**: `Record`\<`string`, [`Application`](../application/classes/Application.md)\>
+• **serviceApplications**: `Record`\<`string`, [`Application`](../application/interfaces/Application.md)\>
 
 #### Returns
 

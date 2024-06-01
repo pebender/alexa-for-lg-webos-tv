@@ -8,6 +8,6 @@
 
 ## Index
 
-### Classes
+### Interfaces
 
-- [Application](classes/Application.md)
+- [Application](interfaces/Application.md)

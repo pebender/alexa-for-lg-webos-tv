@@ -4,23 +4,13 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/link/application](../README.md) / Application
 
-# Class: `abstract` Application
+# Interface: Application
 
-## Constructors
-
-### new Application()
-
-> **new Application**(): [`Application`](Application.md)
-
-#### Returns
-
-[`Application`](Application.md)
-
-## Methods
+## Properties
 
 ### getRequestSkillToken()
 
-> `abstract` **getRequestSkillToken**(`request`): `string`
+> **getRequestSkillToken**: (`request`) => `string`
 
 #### Parameters
 
@@ -34,7 +24,7 @@
 
 ### handleRequest()
 
-> `abstract` **handleRequest**(`request`, `credentials`): `Promise`\<`object`\>
+> **handleRequest**: (`request`, `credentials`) => `Promise`\<`object`\>
 
 #### Parameters
 
@@ -50,7 +40,7 @@
 
 ### start()
 
-> `abstract` **start**(): `Promise`\<`void`\>
+> **start**: () => `Promise`\<`void`\>
 
 #### Returns
 

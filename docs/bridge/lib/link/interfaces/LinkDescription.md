@@ -10,22 +10,10 @@
 
 ### application
 
-> **application**: [`Application`](../application/classes/Application.md)
+> **application**: [`Application`](../application/interfaces/Application.md)
 
 ***
 
-### bearerTokenType
+### tokenAuth
 
-> **bearerTokenType**: `"bridgeToken"` \| `"loginToken"`
-
-***
-
-### linkType
-
-> **linkType**: `"login"` \| `"test"` \| `"service"`
-
-***
-
-### path
-
-> **path**: `string`
+> **tokenAuth**: [`TokenAuth`](../token-auth/interfaces/TokenAuth.md)
