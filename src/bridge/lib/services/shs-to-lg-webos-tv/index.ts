@@ -27,7 +27,7 @@ class ShsToLgWebOsTvService extends Application {
       Common.Debug.debugError(error);
     });
 
-    const middle = new ShsToLgWebOsTvService(_authorization, _tvManager);
+    const service = new ShsToLgWebOsTvService(_authorization, _tvManager);
 
     const uriList: string[] = [
       "ssap://audio/getStatus",
@@ -40,7 +40,7 @@ class ShsToLgWebOsTvService extends Application {
       "ssap://tv/getExternalInputList",
     ];
     for (const uri of uriList) {
-      middle._tvManager.on(
+      service._tvManager.on(
         uri,
         (error: Common.CommonError, response: LGTV.Response, udn: string) => {
           SHS.callback(
@@ -48,14 +48,14 @@ class ShsToLgWebOsTvService extends Application {
             error,
             response,
             udn,
-            middle._authorization,
-            middle._tvManager,
+            service._authorization,
+            service._tvManager,
           );
         },
       );
     }
 
-    return middle;
+    return service;
   }
 
   public async start(): Promise<void> {

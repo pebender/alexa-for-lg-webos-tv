@@ -10,7 +10,7 @@
 
 ### Classes
 
-- [Frontend](classes/Frontend.md)
+- [LinkManager](classes/LinkManager.md)
 
 ### Interfaces
 

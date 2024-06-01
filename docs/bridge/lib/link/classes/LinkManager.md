@@ -2,17 +2,17 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/link](../README.md) / Frontend
+[alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/lib/link](../README.md) / LinkManager
 
-# Class: Frontend
+# Class: LinkManager
 
 ## Constructors
 
-### new Frontend()
+### new LinkManager()
 
-> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_links`, `_server`): [`Frontend`](Frontend.md)
+> `private` **new LinkManager**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_links`, `_server`): [`LinkManager`](LinkManager.md)
 
-The constructor is private. To instantiate a Frontend, use [Frontend.build](Frontend.md#build)().
+The constructor is private. To instantiate a LinkManager, use [LinkManager.build](LinkManager.md#build)().
 
 #### Parameters
 
@@ -26,7 +26,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 #### Returns
 
-[`Frontend`](Frontend.md)
+[`LinkManager`](LinkManager.md)
 
 ## Properties
 
@@ -66,7 +66,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ### build()
 
-> `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<[`Frontend`](Frontend.md)\>
+> `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<[`LinkManager`](LinkManager.md)\>
 
 #### Parameters
 
@@ -76,4 +76,4 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 #### Returns
 
-`Promise`\<[`Frontend`](Frontend.md)\>
+`Promise`\<[`LinkManager`](LinkManager.md)\>

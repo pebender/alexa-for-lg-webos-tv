@@ -65,7 +65,7 @@ The login token's `"aud"` field identifies the service. It's a URL that identifi
 
 The login token's `"exp"` field specifies when the login token will expire. It's recommended that the login token have a short lifetime in order to reduce the chance of replay. In the skill implementation, the login token is set to expire one minute after it was generated.
 
-In the skill implementation and bridge implementation, the JWT is signed using EdDSA (Ed25519). The keys are generated using the shell script [src/common/x509/x509-generate.sh](../../../src/common/x509/x509-generate.sh). The private key is placed in [src/skill/lib/link/](../../../src/skill/lib/link/). The public key is placed in [src/bridge/lib/frontend](../../../src/bridge/lib/frontend/).
+In the skill implementation and bridge implementation, the JWT is signed using EdDSA (Ed25519). The keys are generated using the shell script [src/common/x509/x509-generate.sh](../../../src/common/x509/x509-generate.sh). The private key is placed in [src/skill/lib/link/](../../../src/skill/lib/link/). The public key is placed in [src/bridge/lib/link](../../../src/bridge/lib/link/).
 
 #### The Login Token Authorization
 

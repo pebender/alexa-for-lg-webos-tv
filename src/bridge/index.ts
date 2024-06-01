@@ -1,11 +1,11 @@
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import * as Common from "../common";
-import { Frontend, type Application } from "./lib/link";
+import { LinkManager, type Application } from "./lib/link";
 import * as ShsToLgWeboOsTv from "./lib/services/shs-to-lg-webos-tv";
 
 export { TvManager, type TvRecord } from "./lib/services/shs-to-lg-webos-tv";
-export { Frontend } from "./lib/link";
+export { LinkManager } from "./lib/link";
 
 /**
  * A class to build and start a bridge.
@@ -21,16 +21,16 @@ export { Frontend } from "./lib/link";
  * ```
  */
 export class Bridge {
-  private readonly _frontend: Frontend;
+  private readonly _link: LinkManager;
   private readonly _services: Record<string, Application>;
   /**
    * The constructor is private. To create a Bridge, call {@link Bridge.build}().
    */
   private constructor(
-    _frontend: Frontend,
+    _link: LinkManager,
     _services: Record<string, Application>,
   ) {
-    this._frontend = _frontend;
+    this._link = _link;
     this._services = _services;
   }
 
@@ -39,11 +39,10 @@ export class Bridge {
    *
    * - ensures the Configuration directory exists,
    * - retrieves the Configuration,
-   * - builds a Backend using the retrieved Configuration,
-   * - builds a Middle using the retrieved Configuration and the built Backend,
-   * - builds a Frontend using the retrieved Configuration and the built Middle,
-   * - builds a Bridge containing the retrieved Configuration, the built
-   *   Backend, the built Middle and the built Frontend, and
+   * - builds the services using the retrieved Configuration,
+   * - builds a link using the retrieved Configuration and the built services,
+   * - builds a bridge containing the retrieved Configuration, the built
+   *   services, the built link, and
    * - returns the built bridge.
    *
    * @returns the Bridge built
@@ -88,9 +87,9 @@ export class Bridge {
       _services[Common.constants.bridge.path.service] = _service;
     }
 
-    const _frontend = await Frontend.build(configurationDirectory, _services);
+    const _link = await LinkManager.build(configurationDirectory, _services);
 
-    const bridge = new Bridge(_frontend, _services);
+    const bridge = new Bridge(_link, _services);
 
     return bridge;
   }
@@ -98,11 +97,11 @@ export class Bridge {
   /**
    * Starts the Bridge. When called, it
    *
-   * - starts the Frontend, and
+   * - starts the LinkManager, and
    * - starts each Service.
    */
   public async start(): Promise<void> {
-    this._frontend.start();
+    this._link.start();
     for (const [, value] of Object.entries(this._services)) {
       await value.start();
     }

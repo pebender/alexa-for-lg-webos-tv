@@ -23,13 +23,13 @@ await bridge.start();
 
 ### new Bridge()
 
-> `private` **new Bridge**(`_frontend`, `_services`): [`Bridge`](Bridge.md)
+> `private` **new Bridge**(`_link`, `_services`): [`Bridge`](Bridge.md)
 
 The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#build)().
 
 #### Parameters
 
-• **\_frontend**: [`Frontend`](../lib/link/classes/Frontend.md)
+• **\_link**: [`LinkManager`](../lib/link/classes/LinkManager.md)
 
 • **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/classes/Application.md)\>
 
@@ -39,9 +39,9 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 ## Properties
 
-### \_frontend
+### \_link
 
-> `private` `readonly` **\_frontend**: [`Frontend`](../lib/link/classes/Frontend.md)
+> `private` `readonly` **\_link**: [`LinkManager`](../lib/link/classes/LinkManager.md)
 
 ***
 
@@ -57,7 +57,7 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 Starts the Bridge. When called, it
 
-- starts the Frontend, and
+- starts the LinkManager, and
 - starts each Service.
 
 #### Returns
@@ -74,11 +74,10 @@ Builds the Bridge. When called, it
 
 - ensures the Configuration directory exists,
 - retrieves the Configuration,
-- builds a Backend using the retrieved Configuration,
-- builds a Middle using the retrieved Configuration and the built Backend,
-- builds a Frontend using the retrieved Configuration and the built Middle,
-- builds a Bridge containing the retrieved Configuration, the built
-  Backend, the built Middle and the built Frontend, and
+- builds the services using the retrieved Configuration,
+- builds a link using the retrieved Configuration and the built services,
+- builds a bridge containing the retrieved Configuration, the built
+  services, the built link, and
 - returns the built bridge.
 
 #### Returns

@@ -17,7 +17,7 @@ import { BridgeTokenAuth } from "./bridge-token-auth";
 export type { Credentials } from "./credentials";
 export { Application } from "./application";
 
-type FrontendCommonErrorCode =
+type LinkManagerCommonErrorCode =
   | "bodyFormatInvalid"
   | "contentTypeValueInvalid"
   | "contentTypeNotFound"
@@ -36,27 +36,27 @@ const errorCodeToStatusCode: Record<string, number> = {
   unauthorized: 401,
 };
 
-class FrontendCommonError extends Common.CommonError {
-  public readonly code: FrontendCommonErrorCode;
+class LinkManagerCommonError extends Common.CommonError {
+  public readonly code: LinkManagerCommonErrorCode;
   public readonly statusCode: number;
 
   constructor(options: {
-    code: FrontendCommonErrorCode;
+    code: LinkManagerCommonErrorCode;
     message?: string;
     cause?: unknown;
   }) {
     super(options);
-    this.name = "FrontendCommonError";
+    this.name = "LinkManagerCommonError";
     this.code = options.code;
     this.statusCode = errorCodeToStatusCode[options.code];
   }
 }
 
 function createError(
-  code: FrontendCommonErrorCode,
+  code: LinkManagerCommonErrorCode,
   cause?: unknown,
-): FrontendCommonError {
-  return new FrontendCommonError({ code, cause });
+): LinkManagerCommonError {
+  return new LinkManagerCommonError({ code, cause });
 }
 
 class LoginApplication extends Application {
@@ -129,13 +129,13 @@ export interface LinkDescription {
   application: Application;
 }
 
-export class Frontend {
+export class LinkManager {
   private readonly _loginTokenAuth: LoginTokenAuth;
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
   private readonly _links: Record<string, LinkDescription>;
   private readonly _server: express.Express;
   /**
-   * The constructor is private. To instantiate a Frontend, use {@link Frontend.build}().
+   * The constructor is private. To instantiate a LinkManager, use {@link LinkManager.build}().
    */
   private constructor(
     _loginTokenAuth: LoginTokenAuth,
@@ -152,7 +152,7 @@ export class Frontend {
   public static async build(
     configurationDirectory: string,
     serviceApplications: Record<string, Application>,
-  ): Promise<Frontend> {
+  ): Promise<LinkManager> {
     const _userAuth = await UserAuth.build(configurationDirectory);
     const _loginTokenAuth = LoginTokenAuth.build(_userAuth);
     const _bridgeTokenAuth = await BridgeTokenAuth.build(
@@ -184,7 +184,7 @@ export class Frontend {
 
     const _server = express();
 
-    const frontend = new Frontend(
+    const linkManager = new LinkManager(
       _loginTokenAuth,
       _bridgeTokenAuth,
       _links,
@@ -206,7 +206,7 @@ export class Frontend {
           Common.Debug.debug(`method: ${request.method}`);
           Common.Debug.debugJSON(request.headers);
 
-          const link = frontend._links[request.path];
+          const link = linkManager._links[request.path];
           if (link === undefined) {
             throw createError("notFound");
           }
@@ -238,8 +238,8 @@ export class Frontend {
           let credentials: Credentials | null = null;
           try {
             credentials = await (link.bearerTokenType === "loginToken"
-              ? frontend._loginTokenAuth.authorizeLoginToken(bearerToken)
-              : frontend._bridgeTokenAuth.authorizeBridgeToken(bearerToken));
+              ? linkManager._loginTokenAuth.authorizeLoginToken(bearerToken)
+              : linkManager._bridgeTokenAuth.authorizeBridgeToken(bearerToken));
           } catch (error) {
             throw createError("internalServerError", error);
           }
@@ -297,7 +297,7 @@ export class Frontend {
           response.status(200).json(responseBody);
         } catch (error) {
           Common.Debug.debugError(error);
-          if (error instanceof FrontendCommonError) {
+          if (error instanceof LinkManagerCommonError) {
             switch (error.statusCode) {
               case 401: {
                 const body = {
@@ -326,9 +326,9 @@ export class Frontend {
       );
     }
 
-    frontend._server.use(linkHandler);
+    linkManager._server.use(linkHandler);
 
-    return frontend;
+    return linkManager;
   }
 
   public start(): void {

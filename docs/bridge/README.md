@@ -18,9 +18,9 @@
 
 ## References
 
-### Frontend
+### LinkManager
 
-Re-exports [Frontend](lib/link/classes/Frontend.md)
+Re-exports [LinkManager](lib/link/classes/LinkManager.md)
 
 ***
 
