@@ -89,10 +89,7 @@ class LoginApplication extends Application {
   ): Promise<object> {
     const bridgeToken = this._bridgeTokenAuth.generateBridgeToken();
     try {
-      await this._bridgeTokenAuth.setBridgeToken({
-        bridgeToken,
-        ...credentials,
-      });
+      await this._bridgeTokenAuth.setCredentials(bridgeToken, credentials);
     } catch (error) {
       throw createError("internalServerError", error);
     }

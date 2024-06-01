@@ -2,14 +2,8 @@ import * as fs from "node:fs";
 import path from "node:path";
 import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
+import type { Credentials } from "./credentials";
 import type { UserAuth } from "./user-auth";
-
-export interface LoginTokenAuthRecord {
-  bridgeHostname: string;
-  email: string;
-  userId: string;
-  skillToken: string;
-}
 
 export class LoginTokenAuth {
   private readonly _userAuth: UserAuth;
@@ -32,7 +26,7 @@ export class LoginTokenAuth {
 
   public async authorizeLoginToken(
     loginToken: string,
-  ): Promise<LoginTokenAuthRecord | null> {
+  ): Promise<Credentials | null> {
     let publicKey: jose.KeyLike;
     try {
       publicKey = await jose.importX509(this._x509PublicCert, "EdDSA");

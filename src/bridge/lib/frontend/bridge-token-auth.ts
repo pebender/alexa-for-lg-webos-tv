@@ -1,11 +1,12 @@
 import * as crypto from "node:crypto";
 import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
+import type { Credentials } from "./credentials";
 import type { UserAuth } from "./user-auth";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type BridgeTokenAuthRecord = {
+type BridgeTokenAuthRecord = {
   bridgeToken: string;
   bridgeHostname: string;
   email: string;
@@ -43,15 +44,19 @@ export class BridgeTokenAuth {
     let bridgeToken: string | undefined;
     while (bridgeToken === undefined) {
       bridgeToken = crypto.randomBytes(192).toString("base64url").slice(0, 256);
-      if (this.getBridgeToken(bridgeToken) === null) {
+      if (this.getCredentials(bridgeToken) === null) {
         bridgeToken = undefined;
       }
     }
     return bridgeToken;
   }
 
-  public async setBridgeToken(record: BridgeTokenAuthRecord): Promise<void> {
+  public async setCredentials(
+    bridgeToken: string,
+    credentials: Credentials,
+  ): Promise<void> {
     Common.Debug.debug("setBridgeToken");
+    const record: BridgeTokenAuthRecord = { bridgeToken, ...credentials };
     Common.Debug.debugJSON(record);
     await this._database.updateOrInsertRecord(
       [{ bridgeHostname: record.bridgeHostname }, { email: record.email }],
@@ -59,9 +64,9 @@ export class BridgeTokenAuth {
     );
   }
 
-  public async getBridgeToken(
+  public async getCredentials(
     bridgeToken: string,
-  ): Promise<BridgeTokenAuthRecord | null> {
+  ): Promise<Credentials | null> {
     // get bridgeToken record.
     const record = await this._database.getRecord({ bridgeToken });
     if (record === null) {
@@ -83,7 +88,6 @@ export class BridgeTokenAuth {
     }
 
     return {
-      bridgeToken: record.bridgeToken,
       bridgeHostname: record.bridgeHostname,
       email: record.email,
       userId: record.userId,
@@ -93,8 +97,8 @@ export class BridgeTokenAuth {
 
   public async authorizeBridgeToken(
     bridgeToken: string,
-  ): Promise<BridgeTokenAuthRecord | null> {
-    const record = await this.getBridgeToken(bridgeToken);
+  ): Promise<Credentials | null> {
+    const record = await this.getCredentials(bridgeToken);
     if (record === null) {
       return null;
     }
