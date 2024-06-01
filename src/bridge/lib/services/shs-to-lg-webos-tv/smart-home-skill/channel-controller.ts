@@ -1,17 +1,15 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../../common";
-import { type BackendControl, TvCommonError } from "../../backend";
+import * as Common from "../../../../../common";
+import { type TvControl, TvCommonError } from "../tv-manager";
 
 interface Channel {
   channelNumber: string;
   channelName: string;
 }
 
-async function getChannel(
-  backendControl: BackendControl,
-): Promise<Channel | null> {
+async function getChannel(tvControl: TvControl): Promise<Channel | null> {
   try {
-    const lgtvResponse = await backendControl.lgtvCommand({
+    const lgtvResponse = await tvControl.lgtvCommand({
       uri: "ssap://tv/getCurrentChannel",
     });
     const channel = lgtvResponse;
@@ -28,9 +26,9 @@ async function getChannel(
   }
 }
 
-async function getChannels(backendControl: BackendControl): Promise<Channel[]> {
+async function getChannels(tvControl: TvControl): Promise<Channel[]> {
   try {
-    const lgtvResponse = await backendControl.lgtvCommand({
+    const lgtvResponse = await tvControl.lgtvCommand({
       uri: "ssap://tv/getChannelList",
     });
     if (lgtvResponse.channelList === undefined) {
@@ -159,14 +157,14 @@ function getChannelNameToNumberMap(
 
 async function activateLiveTv(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<void> {
   let isLiveTv = false;
   let lgtvRequest: LGTV.Request = {
     uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
   };
   try {
-    const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+    const lgtvResponse = await tvControl.lgtvCommand(lgtvRequest);
     isLiveTv = lgtvResponse.appId === "com.webos.app.livetv";
   } catch {
     isLiveTv = false;
@@ -177,7 +175,7 @@ async function activateLiveTv(
       payload: { id: "com.webos.app.livetv" },
     };
     try {
-      await backendControl.lgtvCommand(lgtvRequest);
+      await tvControl.lgtvCommand(lgtvRequest);
     } catch (error) {
       Common.Debug.debugError(error);
     }
@@ -186,7 +184,7 @@ async function activateLiveTv(
 
 async function setChannel(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
   channelNumber: string | null,
 ): Promise<Common.SHS.Response> {
   if (channelNumber === null) {
@@ -199,7 +197,7 @@ async function setChannel(
     payload: { channelNumber },
   };
   try {
-    await backendControl.lgtvCommand(lgtvRequest);
+    await tvControl.lgtvCommand(lgtvRequest);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -212,7 +210,7 @@ async function setChannel(
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -223,9 +221,9 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return [];
   }
 
@@ -240,12 +238,12 @@ function states(
         uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
       };
       const lgtvResponse: LGTV.Response =
-        await backendControl.lgtvCommand(lgtvRequest);
+        await tvControl.lgtvCommand(lgtvRequest);
       if (typeof lgtvResponse.appId !== "string") {
         throw new TvCommonError({
           code: "responseInvalid",
           message: "TV response was invalid",
-          tv: backendControl.tv,
+          tv: tvControl.tv,
           lgtvRequest,
           lgtvResponse,
         });
@@ -254,7 +252,7 @@ function states(
         throw new TvCommonError({
           code: "requestInvalidInCurrentState",
           message: "TV channel requested when TV was not tuned to a channel",
-          tv: backendControl.tv,
+          tv: tvControl.tv,
           lgtvRequest,
           lgtvResponse,
         });
@@ -267,7 +265,7 @@ function states(
         uri: "ssap://tv/getCurrentChannel",
       };
       const lgtvResponse: LGTV.Response =
-        await backendControl.lgtvCommand(lgtvRequest);
+        await tvControl.lgtvCommand(lgtvRequest);
 
       const channel: {
         number?: string;
@@ -297,19 +295,19 @@ function states(
 
 async function skipChannelsHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  await activateLiveTv(alexaRequest, backendControl);
-  const currentChannel = await getChannel(backendControl);
+  await activateLiveTv(alexaRequest, tvControl);
+  const currentChannel = await getChannel(tvControl);
   if (currentChannel === null) {
     return Common.SHS.Response.buildAlexaErrorResponseNotSupportedInCurrentMode(
       alexaRequest,
-      `${backendControl.tv.name} (${backendControl.tv.udn}) is not currently watching a TV channel.`,
+      `${tvControl.tv.name} (${tvControl.tv.udn}) is not currently watching a TV channel.`,
     );
   }
   let channels: Channel[];
   try {
-    channels = await getChannels(backendControl);
+    channels = await getChannels(tvControl);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -331,7 +329,7 @@ async function skipChannelsHandler(
     channelNumbers.length;
   const targetChannel = channelNumbers[targetChannelIndex];
   try {
-    return await setChannel(alexaRequest, backendControl, targetChannel);
+    return await setChannel(alexaRequest, tvControl, targetChannel);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -342,11 +340,11 @@ async function skipChannelsHandler(
 
 async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   let channels: Channel[];
   try {
-    channels = await getChannels(backendControl);
+    channels = await getChannels(tvControl);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -399,9 +397,9 @@ async function changeChannelHandler(
       alexaRequest,
     );
   }
-  await activateLiveTv(alexaRequest, backendControl);
+  await activateLiveTv(alexaRequest, tvControl);
   try {
-    return await setChannel(alexaRequest, backendControl, channelNumber);
+    return await setChannel(alexaRequest, tvControl, channelNumber);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -412,19 +410,19 @@ async function changeChannelHandler(
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "ChangeChannel": {
-      return await changeChannelHandler(alexaRequest, backendControl);
+      return await changeChannelHandler(alexaRequest, tvControl);
     }
     case "SkipChannels": {
-      return await skipChannelsHandler(alexaRequest, backendControl);
+      return await skipChannelsHandler(alexaRequest, tvControl);
     }
     default: {
       return await Promise.resolve(

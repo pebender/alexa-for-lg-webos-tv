@@ -1,11 +1,11 @@
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import * as Common from "../common";
-import { Frontend, type Application } from "./lib/frontend";
-import * as ShsToLgtvService from "./lib/middle";
+import { Frontend, type Application } from "./lib/link";
+import * as ShsToLgWeboOsTv from "./lib/services/shs-to-lg-webos-tv";
 
-export { Backend, type TV } from "./lib/backend";
-export { Frontend } from "./lib/frontend";
+export { TvManager, type TvRecord } from "./lib/services/shs-to-lg-webos-tv";
+export { Frontend } from "./lib/link";
 
 /**
  * A class to build and start a bridge.
@@ -71,10 +71,22 @@ export class Bridge {
 
     const _services: Record<string, Application> = {};
 
-    const _shsToLgtvService = await ShsToLgtvService.getApplication(
-      configurationDirectory,
-    );
-    _services[Common.constants.bridge.path.service] = _shsToLgtvService;
+    {
+      const service = "shs-to-lg-webos-tv";
+      const serviceConfigurationDirectory = `${configurationDirectory}/services/${service}`;
+      try {
+        await fs.mkdir(serviceConfigurationDirectory, { recursive: true });
+      } catch (error) {
+        const commonError: Common.CommonError = new Common.GeneralCommonError({
+          cause: error,
+        });
+        throw commonError;
+      }
+      const _service = await ShsToLgWeboOsTv.getApplication(
+        serviceConfigurationDirectory,
+      );
+      _services[Common.constants.bridge.path.service] = _service;
+    }
 
     const _frontend = await Frontend.build(configurationDirectory, _services);
 

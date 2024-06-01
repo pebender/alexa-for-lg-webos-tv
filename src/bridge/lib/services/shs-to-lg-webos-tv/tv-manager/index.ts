@@ -8,26 +8,26 @@
 
 import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
-import * as Common from "../../../common";
-import type { TV, UDN } from "./tv";
-import type { BackendControl } from "./backend-control";
-import { BackendController } from "./backend-controller";
-import { BackendSearcher } from "./backend-searcher";
+import * as Common from "../../../../../common";
+import type { TvRecord, UDN } from "./tv-record";
+import type { TvControl } from "./tv-control";
+import { TvController } from "./tv-controller";
+import { TvSearcher } from "./tv-searcher";
 
-export { BackendControl } from "./backend-control";
-export { BackendController } from "./backend-controller";
-export { BackendSearcher } from "./backend-searcher";
-export * as TV from "./tv";
+export { TvControl } from "./tv-control";
+export { TvController } from "./tv-controller";
+export { TvSearcher } from "./tv-searcher";
+export * as TvRecord from "./tv-record";
 export { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
-export class Backend extends EventEmitter {
+export class TvManager extends EventEmitter {
   private readonly _configurationDirectory: string;
-  private readonly _controller: BackendController;
-  private readonly _searcher: BackendSearcher;
+  private readonly _controller: TvController;
+  private readonly _searcher: TvSearcher;
   private constructor(
     _configurationDirectory: string,
-    _controller: BackendController,
-    _searcher: BackendSearcher,
+    _controller: TvController,
+    _searcher: TvSearcher,
   ) {
     super();
 
@@ -36,20 +36,22 @@ export class Backend extends EventEmitter {
     this._searcher = _searcher;
   }
 
-  public static async build(_configurationDirectory: string): Promise<Backend> {
-    const _controller = await BackendController.build(_configurationDirectory);
-    const _searcher = BackendSearcher.build();
+  public static async build(
+    _configurationDirectory: string,
+  ): Promise<TvManager> {
+    const _controller = await TvController.build(_configurationDirectory);
+    const _searcher = TvSearcher.build();
 
-    const backend = new Backend(
+    const tvManager = new TvManager(
       _configurationDirectory,
       _controller,
       _searcher,
     );
 
-    backend._controller.on(
+    tvManager._controller.on(
       "error",
       (id: string, error: Common.CommonError): void => {
-        backend.emit("error", error, `BackendController.${id}`);
+        tvManager.emit("error", error, `TvController.${id}`);
       },
     );
 
@@ -64,26 +66,26 @@ export class Backend extends EventEmitter {
       "ssap://tv/getExternalInputList",
     ];
     for (const uri of uriList) {
-      backend._controller.on(
+      tvManager._controller.on(
         uri,
         (
           error: Common.CommonError | null,
           response: LGTV.Response | null,
           udn: string,
         ) => {
-          backend.emit(uri, error, response, udn);
+          tvManager.emit(uri, error, response, udn);
         },
       );
     }
 
-    backend._searcher.on("error", (error: Common.CommonError): void => {
-      backend.emit("error", error, "BackendSearcher");
+    tvManager._searcher.on("error", (error: Common.CommonError): void => {
+      tvManager.emit("error", error, "TvSearcher");
     });
-    backend._searcher.on("found", (tv: TV) => {
-      void backend._controller.tvUpsert(tv).catch(Common.Debug.debugError);
+    tvManager._searcher.on("found", (tv: TvRecord) => {
+      void tvManager._controller.tvUpsert(tv).catch(Common.Debug.debugError);
     });
 
-    return backend;
+    return tvManager;
   }
 
   public async start(): Promise<void> {
@@ -91,11 +93,11 @@ export class Backend extends EventEmitter {
     await this._searcher.start();
   }
 
-  public control(udn: UDN): BackendControl {
+  public control(udn: UDN): TvControl {
     return this._controller.control(udn);
   }
 
-  public controls(): BackendControl[] {
+  public controls(): TvControl[] {
     return this._controller.controls();
   }
 }

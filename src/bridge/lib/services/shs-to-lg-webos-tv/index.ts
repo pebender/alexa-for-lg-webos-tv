@@ -1,31 +1,33 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../common";
-import { type Credentials, Application } from "../frontend";
-import { Backend } from "../backend";
+import * as Common from "../../../../common";
+import { type Credentials, Application } from "../../link";
+import { TvManager } from "./tv-manager";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
-class ShsToLgtvService extends Application {
+export { TvManager, type TvRecord } from "./tv-manager";
+
+class ShsToLgWebOsTvService extends Application {
   private readonly _authorization: Authorization;
-  private readonly _backend: Backend;
-  private constructor(_authorization: Authorization, _backend: Backend) {
+  private readonly _tvManager: TvManager;
+  private constructor(_authorization: Authorization, _tvManager: TvManager) {
     super();
     this._authorization = _authorization;
-    this._backend = _backend;
+    this._tvManager = _tvManager;
   }
 
   public static async build(
     configurationDirectory: string,
-  ): Promise<ShsToLgtvService> {
+  ): Promise<ShsToLgWebOsTvService> {
     const _authorization = await Authorization.build(configurationDirectory);
 
-    const _backend = await Backend.build(configurationDirectory);
-    _backend.on("error", (error: Error, id: string): void => {
+    const _tvManager = await TvManager.build(configurationDirectory);
+    _tvManager.on("error", (error: Error, id: string): void => {
       Common.Debug.debug(id);
       Common.Debug.debugError(error);
     });
 
-    const middle = new ShsToLgtvService(_authorization, _backend);
+    const middle = new ShsToLgWebOsTvService(_authorization, _tvManager);
 
     const uriList: string[] = [
       "ssap://audio/getStatus",
@@ -38,7 +40,7 @@ class ShsToLgtvService extends Application {
       "ssap://tv/getExternalInputList",
     ];
     for (const uri of uriList) {
-      middle._backend.on(
+      middle._tvManager.on(
         uri,
         (error: Common.CommonError, response: LGTV.Response, udn: string) => {
           SHS.callback(
@@ -47,7 +49,7 @@ class ShsToLgtvService extends Application {
             response,
             udn,
             middle._authorization,
-            middle._backend,
+            middle._tvManager,
           );
         },
       );
@@ -57,7 +59,7 @@ class ShsToLgtvService extends Application {
   }
 
   public async start(): Promise<void> {
-    await this._backend.start();
+    await this._tvManager.start();
   }
 
   public getRequestSkillToken(rawRequest: object): string {
@@ -103,7 +105,7 @@ class ShsToLgtvService extends Application {
       shsResponse = await SHS.handler(
         shsRequest,
         this._authorization,
-        this._backend,
+        this._tvManager,
       );
     } catch (error) {
       shsResponse = Common.SHS.Response.buildAlexaErrorResponseForInternalError(
@@ -119,5 +121,5 @@ class ShsToLgtvService extends Application {
 export async function getApplication(
   configurationDirectory: string,
 ): Promise<Application> {
-  return await ShsToLgtvService.build(configurationDirectory);
+  return await ShsToLgWebOsTvService.build(configurationDirectory);
 }

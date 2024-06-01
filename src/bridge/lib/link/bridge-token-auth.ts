@@ -6,7 +6,7 @@ import type { UserAuth } from "./user-auth";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type BridgeTokenAuthRecord = {
+export type BridgeTokenAuthRecord = {
   bridgeToken: string;
   bridgeHostname: string;
   email: string;
@@ -31,7 +31,7 @@ export class BridgeTokenAuth {
   ): Promise<BridgeTokenAuth> {
     const _database = await DatabaseTable.build<BridgeTokenAuthRecord>(
       configurationDirectory,
-      "frontend",
+      "link",
       ["bridgeToken", "userId", "skillToken"],
     );
 

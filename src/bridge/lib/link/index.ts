@@ -122,7 +122,7 @@ class TestApplication extends Application {
   }
 }
 
-interface LinkDescription {
+export interface LinkDescription {
   path: string;
   bearerTokenType: "loginToken" | "bridgeToken";
   linkType: "login" | "test" | "service";

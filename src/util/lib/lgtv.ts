@@ -2,9 +2,9 @@ import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
 import * as Common from "../../common";
-import { Backend, type TV } from "../../bridge";
+import { TvManager, type TvRecord } from "../../bridge";
 
-export async function getBackend(): Promise<Backend> {
+export async function getTvManager(): Promise<TvManager> {
   const configurationDirectory = persistPath(
     Common.constants.application.name.safe,
   );
@@ -18,34 +18,32 @@ export async function getBackend(): Promise<Backend> {
   }
 
   //
-  // I keep long term information needed to connect to each TV in a database.
-  // The long term information is the TV's unique device name (udn), friendly name
+  // I keep long term information needed to connect to each TvRecord in a database.
+  // The long term information is the TvRecord's unique device name (udn), friendly name
   // (name), Internet Protocol address (ip), media access control address (mac)
   // and client key (key).
   //
 
-  const backend = await Backend.build(configurationDirectory);
-  backend.on("error", (error: Error, id: string): void => {
+  const tvManager = await TvManager.build(configurationDirectory);
+  tvManager.on("error", (error: Error, id: string): void => {
     Common.Debug.debug(id);
     Common.Debug.debugError(error);
   });
-  await backend.start();
+  await tvManager.start();
 
-  return backend;
+  return tvManager;
 }
 
-function getSortedTVList(backend: Backend): TV.TV[] {
-  const backendControls = backend.controls();
-  const udnList = backendControls
-    .map((backendControl) => backendControl.tv.udn)
-    .sort();
-  const tvList = udnList.map((udn) => backend.control(udn).tv);
+function getSortedTVList(tvManager: TvManager): TvRecord.TvRecord[] {
+  const tvControls = tvManager.controls();
+  const udnList = tvControls.map((tvControl) => tvControl.tv.udn).sort();
+  const tvList = udnList.map((udn) => tvManager.control(udn).tv);
   return tvList;
 }
 
 function lgtvCmdsCommand(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backend: Backend,
+  tvManager: TvManager,
 ): void {
   console.log("Known Commands");
   const cmds: Record<string, object | null> = {
@@ -103,25 +101,25 @@ function lgtvCmdsCommand(
   }
   console.log('"???" means the payload is unknown.');
   console.log(
-    "Some commands return values on my TV, so I do whether they work.",
+    "Some commands return values on my TvRecord, so I do whether they work.",
   );
 }
 
-function lgtvUdnsCommand(backend: Backend): void {
-  const tvList = getSortedTVList(backend);
+function lgtvUdnsCommand(tvManager: TvManager): void {
+  const tvList = getSortedTVList(tvManager);
   for (const [index, element] of tvList.entries()) {
     console.log(`${index.toString()}: ${element.udn}: ${element.name}`);
   }
 }
 
-function lgtvRunCommand(backend: Backend): void {
+function lgtvRunCommand(tvManager: TvManager): void {
   const argv: string[] = process.argv;
   if (argv.length === 5 || argv.length === 6) {
-    const tvList = getSortedTVList(backend);
+    const tvList = getSortedTVList(tvManager);
     const tv = tvList[Number.parseInt(argv[3])];
     console.log(`udn: ${tv.udn}`);
-    const backendControl = backend.control(tv.udn);
-    backendControl.on("connect", () => {
+    const tvControl = tvManager.control(tv.udn);
+    tvControl.on("connect", () => {
       const asyncConnect = async (): Promise<void> => {
         const uri = `ssap://${argv[4]}`;
         if (argv.length === 5) {
@@ -130,7 +128,7 @@ function lgtvRunCommand(backend: Backend): void {
           };
           console.log(JSON.stringify(lgtvRequest, null, 2));
           try {
-            const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+            const lgtvResponse = await tvControl.lgtvCommand(lgtvRequest);
             console.log(JSON.stringify(lgtvResponse, null, 2));
           } catch (error) {
             if (error instanceof Error) {
@@ -147,7 +145,7 @@ function lgtvRunCommand(backend: Backend): void {
           };
           console.log(JSON.stringify(lgtvRequest, null, 2));
           try {
-            const lgtvResponse = await backendControl.lgtvCommand(lgtvRequest);
+            const lgtvResponse = await tvControl.lgtvCommand(lgtvRequest);
             console.log(JSON.stringify(lgtvResponse, null, 2));
           } catch (error) {
             if (error instanceof Error) {
@@ -176,7 +174,7 @@ function lgtvRunCommand(backend: Backend): void {
 async function lgtvCommand(): Promise<void> {
   const argv: string[] = process.argv;
 
-  const backend = await getBackend();
+  const tvManager = await getTvManager();
   if (argv.length === 2) {
     console.log("usage:");
     console.log("  lgtv udns|cmds|run [..]");
@@ -187,15 +185,15 @@ async function lgtvCommand(): Promise<void> {
 
   switch (argv[2]) {
     case "cmds": {
-      lgtvCmdsCommand(backend);
+      lgtvCmdsCommand(tvManager);
       break;
     }
     case "udns": {
-      lgtvUdnsCommand(backend);
+      lgtvUdnsCommand(tvManager);
       break;
     }
     case "run": {
-      lgtvRunCommand(backend);
+      lgtvRunCommand(tvManager);
       break;
     }
     default: {

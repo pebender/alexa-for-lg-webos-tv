@@ -1,8 +1,8 @@
 import type dgram from "node:dgram";
 import type LGTV from "lgtv2";
 import type { SsdpHeaders } from "node-ssdp";
-import { CommonError } from "../../../common";
-import type { TV } from "./tv";
+import { CommonError } from "../../../../../common";
+import type { TvRecord } from "./tv-record";
 
 export type TvCommonErrorCode =
   | "unknown"
@@ -29,7 +29,7 @@ export type TvCommonErrorCode =
 export class TvCommonError extends CommonError {
   public readonly code: TvCommonErrorCode;
 
-  public readonly tv?: Partial<TV>;
+  public readonly tv?: Partial<TvRecord>;
 
   public readonly lgtvRequest?: LGTV.Request;
 
@@ -46,7 +46,7 @@ export class TvCommonError extends CommonError {
   constructor(options: {
     code?: TvCommonErrorCode;
     message?: string;
-    tv?: Partial<TV>;
+    tv?: Partial<TvRecord>;
     lgtvRequest?: LGTV.Request;
     lgtvResponse?: LGTV.Response;
     ssdpResponse?: {

@@ -1,10 +1,10 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../../common";
-import { type BackendControl, TvCommonError } from "../../backend";
+import * as Common from "../../../../../common";
+import { type TvControl, TvCommonError } from "../tv-manager";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -15,20 +15,21 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
   async function getVolumeState(): Promise<Common.SHS.ContextProperty | null> {
     async function value(): Promise<number> {
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://audio/getVolume",
       };
-      const lgtvResponse: LGTV.ResponseVolume =
-        (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
+      const lgtvResponse: LGTV.ResponseVolume = (await tvControl.lgtvCommand(
+        lgtvRequest,
+      )) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.volume !== "number") {
         throw new TvCommonError({
           code: "responseInvalid",
           message: "invalid response from the TV",
-          tv: backendControl.tv,
+          tv: tvControl.tv,
           lgtvRequest,
         });
       }
@@ -48,13 +49,14 @@ function states(
       const lgtvRequest: LGTV.Request = {
         uri: "ssap://audio/getVolume",
       };
-      const lgtvResponse: LGTV.ResponseVolume =
-        (await backendControl.lgtvCommand(lgtvRequest)) as LGTV.ResponseVolume;
+      const lgtvResponse: LGTV.ResponseVolume = (await tvControl.lgtvCommand(
+        lgtvRequest,
+      )) as LGTV.ResponseVolume;
       if (typeof lgtvResponse.muted !== "boolean") {
         throw new TvCommonError({
           code: "responseInvalid",
           message: "invalid response from the TV",
-          tv: backendControl.tv,
+          tv: tvControl.tv,
           lgtvRequest,
           lgtvResponse,
         });
@@ -70,7 +72,7 @@ function states(
     return await mutedState;
   }
 
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return [];
   }
 
@@ -79,7 +81,7 @@ function states(
 
 async function setVolumeHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   /* get volume */
   const { volume } = alexaRequest.directive.payload;
@@ -101,7 +103,7 @@ async function setVolumeHandler(
     payload: { volume },
   };
   try {
-    await backendControl.lgtvCommand(lgtvRequest);
+    await tvControl.lgtvCommand(lgtvRequest);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -113,20 +115,20 @@ async function setVolumeHandler(
 
 async function adjustVolumeHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   async function getVolume(): Promise<number> {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://audio/getVolume",
     };
-    const lgtvResponse: LGTV.ResponseVolume = (await backendControl.lgtvCommand(
+    const lgtvResponse: LGTV.ResponseVolume = (await tvControl.lgtvCommand(
       lgtvRequest,
     )) as LGTV.ResponseVolume;
     if (lgtvResponse.volume === undefined) {
       throw new TvCommonError({
         code: "responseInvalid",
         message: "the T.V. did not return it's volume",
-        tv: backendControl.tv,
+        tv: tvControl.tv,
         lgtvRequest,
         lgtvResponse,
       });
@@ -158,7 +160,7 @@ async function adjustVolumeHandler(
       payload: { volume },
     };
     try {
-      await backendControl.lgtvCommand(lgtvRequest);
+      await tvControl.lgtvCommand(lgtvRequest);
     } catch (error) {
       return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
         alexaRequest,
@@ -183,14 +185,14 @@ async function adjustVolumeHandler(
 
 async function setMuteHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   async function setMute(): Promise<Common.SHS.Response> {
     const lgtvRequest: LGTV.Request = {
       uri: "ssap://audio/setMute",
       payload: { mute: alexaRequest.directive.payload.mute as boolean },
     };
-    await backendControl.lgtvCommand(lgtvRequest);
+    await tvControl.lgtvCommand(lgtvRequest);
     return Common.SHS.Response.buildAlexaResponse(alexaRequest);
   }
 
@@ -199,22 +201,22 @@ async function setMuteHandler(
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "SetVolume": {
-      return await setVolumeHandler(alexaRequest, backendControl);
+      return await setVolumeHandler(alexaRequest, tvControl);
     }
     case "AdjustVolume": {
-      return await adjustVolumeHandler(alexaRequest, backendControl);
+      return await adjustVolumeHandler(alexaRequest, tvControl);
     }
     case "SetMute": {
-      return await setMuteHandler(alexaRequest, backendControl);
+      return await setMuteHandler(alexaRequest, tvControl);
     }
     default: {
       return await Promise.resolve(

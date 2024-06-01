@@ -1,16 +1,16 @@
-import * as Common from "../../../../common";
-import type { Backend } from "../../backend";
+import * as Common from "../../../../../common";
+import type { TvManager } from "../tv-manager";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backend: Backend,
+  tvManager: TvManager,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [];
 }
 
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backend: Backend,
+  tvManager: TvManager,
 ): Array<Promise<Common.SHS.ContextProperty>> {
   return [];
 }
@@ -18,7 +18,7 @@ function states(
 function handler(
   alexaRequest: Common.SHS.Request,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backend: Backend,
+  tvManager: TvManager,
 ): Common.SHS.Response {
   return Common.SHS.Response.buildAlexaErrorResponseForInvalidDirectiveNamespace(
     alexaRequest,

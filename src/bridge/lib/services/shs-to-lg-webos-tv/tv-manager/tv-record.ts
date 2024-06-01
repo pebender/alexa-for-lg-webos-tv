@@ -7,7 +7,7 @@ export type MAC = string;
 
 /* This is a type because we are using it as a type for DatabaseTable. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type TV = {
+export type TvRecord = {
   udn: UDN;
   name: string;
   ip: IP;

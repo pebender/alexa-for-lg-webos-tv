@@ -8,22 +8,22 @@ import {
   type SsdpHeaders,
 } from "node-ssdp";
 import LGTV from "lgtv2";
-import * as Common from "../../../common";
-import type { DatabaseTable } from "../database";
-import type { TV } from "./tv";
+import * as Common from "../../../../../common";
+import type { DatabaseTable } from "../../../database";
+import type { TvRecord } from "./tv-record";
 import { TvCommonError } from "./tv-common-error";
 
-export class BackendControl extends EventEmitter {
+export class TvControl extends EventEmitter {
   private _poweredOn: boolean;
   private _connecting: boolean;
-  private readonly _database: DatabaseTable<TV>;
-  private readonly _tv: TV;
+  private readonly _database: DatabaseTable<TvRecord>;
+  private readonly _tv: TvRecord;
   private readonly _connection: LGTV;
   private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
   private constructor(
-    _database: DatabaseTable<TV>,
-    _tv: TV,
+    _database: DatabaseTable<TvRecord>,
+    _tv: TvRecord,
     _connection: LGTV,
     _ssdpNotify: SsdpServer,
     _ssdpResponse: SsdpClient,
@@ -39,8 +39,11 @@ export class BackendControl extends EventEmitter {
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static build(database: DatabaseTable<TV>, tv: TV): BackendControl {
-    const _tv: TV = {
+  public static build(
+    database: DatabaseTable<TvRecord>,
+    tv: TvRecord,
+  ): TvControl {
+    const _tv: TvRecord = {
       udn: tv.udn,
       name: tv.name,
       ip: tv.ip,
@@ -82,7 +85,7 @@ export class BackendControl extends EventEmitter {
     const _ssdpNotify = new SsdpServer();
     const _ssdpResponse = new SsdpClient();
 
-    const backendControl = new BackendControl(
+    const tvControl = new TvControl(
       database,
       _tv,
       _connection,
@@ -91,69 +94,69 @@ export class BackendControl extends EventEmitter {
     );
 
     // Added event handlers.
-    backendControl._connection.on(
+    tvControl._connection.on(
       "error",
       (error: NodeJS.ErrnoException | null): void => {
-        backendControl._connecting = false;
+        tvControl._connecting = false;
         if (error !== null && error.code !== "EHOSTUNREACH") {
           const commonError = new TvCommonError({
-            tv: backendControl._tv,
+            tv: tvControl._tv,
             cause: error,
           });
-          backendControl.emit("error", commonError);
+          tvControl.emit("error", commonError);
         }
       },
     );
-    backendControl._connection.on("connecting", (): void => {
-      backendControl._connecting = true;
+    tvControl._connection.on("connecting", (): void => {
+      tvControl._connecting = true;
     });
-    backendControl._connection.on("connect", (): void => {
-      backendControl.emit("connect");
-      backendControl._connecting = false;
-      backendControl._poweredOn = true;
-      backendControl.addSubscriptionEvents();
+    tvControl._connection.on("connect", (): void => {
+      tvControl.emit("connect");
+      tvControl._connecting = false;
+      tvControl._poweredOn = true;
+      tvControl.addSubscriptionEvents();
     });
-    backendControl._connection.on("close", (): void => {
-      backendControl._connecting = false;
+    tvControl._connection.on("close", (): void => {
+      tvControl._connecting = false;
     });
 
     function ssdpConnectHandler(headers: SsdpHeaders): void {
       if (
         headers.USN !==
-        `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
+        `${tvControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
         return;
       }
 
-      if (!backendControl._connecting) {
-        backendControl._connection.connect(backendControl._tv.url);
+      if (!tvControl._connecting) {
+        tvControl._connection.connect(tvControl._tv.url);
       }
     }
 
     function ssdpDisconnectHandler(headers: SsdpHeaders): void {
       if (
         headers.USN ===
-        `${backendControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
+        `${tvControl._tv.udn}::urn:lge-com:service:webos-second-screen:1`
       ) {
         return;
       }
 
-      backendControl._poweredOn = false;
-      backendControl._connection.disconnect();
+      tvControl._poweredOn = false;
+      tvControl._connection.disconnect();
     }
 
-    backendControl._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
-    backendControl._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
-    backendControl._ssdpResponse.on("response", ssdpConnectHandler);
+    tvControl._ssdpNotify.on("advertise-alive", ssdpConnectHandler);
+    tvControl._ssdpNotify.on("advertise-bye", ssdpDisconnectHandler);
+    tvControl._ssdpResponse.on("response", ssdpConnectHandler);
 
-    return backendControl;
+    return tvControl;
   }
 
   public async start(): Promise<void> {
     await this._ssdpNotify.start();
   }
 
-  public get tv(): TV {
+  public get tv(): TvRecord {
     return Object.assign({}, this._tv);
   }
 
@@ -167,11 +170,11 @@ export class BackendControl extends EventEmitter {
   }
 
   /*
-    // The method turns on the TV. It forces the BackendControl instance to
-    // assume the TV is off and to disconnect from the TV. Then, it periodically
-    // kicks the TV using Wake On Lan, periodically searches for the TV using
-    // UPnP Discovery and waits for the BackendControl instance to detect that
-    // the TV is on and connected. Before it does any of this, it sets a timeout
+    // The method turns on the TvRecord. It forces the TvControl instance to
+    // assume the TvRecord is off and to disconnect from the TvRecord. Then, it periodically
+    // kicks the TvRecord using Wake On Lan, periodically searches for the TvRecord using
+    // UPnP Discovery and waits for the TvControl instance to detect that
+    // the TvRecord is on and connected. Before it does any of this, it sets a timeout
     // of 7 seconds in an attempt to ensure that Alexa has the chance for a
     // response before its 8 second timeout.
      */
@@ -267,10 +270,10 @@ export class BackendControl extends EventEmitter {
   }
 
   /**
-   * Sends a request to the TV and returns the response.
+   * Sends a request to the TvRecord and returns the response.
    *
-   * @param lgtvRequest - The LGTV request to send to the TV.
-   * @returns The LGTV response from the TV.
+   * @param lgtvRequest - The LGTV request to send to the TvRecord.
+   * @returns The LGTV response from the TvRecord.
    *
    * @throws
    * a {@link Common.CommonError | CommonError} with
@@ -293,7 +296,7 @@ export class BackendControl extends EventEmitter {
               reject(
                 new TvCommonError({
                   code: "connectionRequestError",
-                  message: "TV connection request error",
+                  message: "TvRecord connection request error",
                   tv: this.tv,
                   lgtvRequest,
                   cause: error,
@@ -327,7 +330,7 @@ export class BackendControl extends EventEmitter {
               reject(
                 new TvCommonError({
                   code: "connectionRequestError",
-                  message: "TV connection request error",
+                  message: "TvRecord connection request error",
                   tv: this._tv,
                   lgtvRequest,
                   cause: error,
@@ -354,7 +357,7 @@ export class BackendControl extends EventEmitter {
     if (lgtvResponse.returnValue === undefined) {
       throw new TvCommonError({
         code: "connectionResponseInvalidFormat",
-        message: "TV connection response missing return value",
+        message: "TvRecord connection response missing return value",
         tv: this._tv,
         lgtvRequest,
         lgtvResponse,
@@ -377,7 +380,7 @@ export class BackendControl extends EventEmitter {
       }
       throw new TvCommonError({
         code: "connectionResponseError",
-        message: `TV connection response returned the error: ${errorText} (${errorCode}`,
+        message: `TvRecord connection response returned the error: ${errorText} (${errorCode}`,
         tv: this._tv,
         lgtvRequest,
         lgtvResponse,
@@ -387,8 +390,8 @@ export class BackendControl extends EventEmitter {
   }
 
   /**
-   * Adds subscriptions to TV state change events. State changes communicated
-   * from the TV are shared using an {@link EventEmitter | EventEmitter}
+   * Adds subscriptions to TvRecord state change events. State changes communicated
+   * from the TvRecord are shared using an {@link EventEmitter | EventEmitter}
    * emitting an event containing the subscription identifier, any error and any
    * response. The error is a {@link Common.CommonError | CommonError}
    * with
@@ -407,7 +410,7 @@ export class BackendControl extends EventEmitter {
           if (error !== null) {
             const commonError = new TvCommonError({
               code: "subscriptionError",
-              message: `TV error from subscription "${uri}"`,
+              message: `TvRecord error from subscription "${uri}"`,
               tv: this._tv,
               cause: error,
             });

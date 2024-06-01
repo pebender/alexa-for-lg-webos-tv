@@ -1,10 +1,10 @@
-import * as Common from "../../../../common";
-import type { Backend, BackendControl } from "../../backend";
+import * as Common from "../../../../../common";
+import type { TvManager, TvControl } from "../tv-manager";
 import { capabilities as alexaSmartHomeCapabilities } from "./index";
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backend: Backend,
+  tvManager: TvManager,
 ): Promise<Common.SHS.Response> {
   //
   // This looks strange at first. However, once it is explained, this
@@ -37,21 +37,19 @@ async function handler(
   // use 'await' to ensure we have the values from the resolved promises.
   //
   async function buildEndpoint(
-    backendControl: BackendControl,
+    tvControl: TvControl,
   ): Promise<Common.SHS.EventPayloadEndpoint> {
     let capabilities: Common.SHS.EventPayloadEndpointCapability[] = [];
     try {
       // Determine capabilities in parallel.
-      capabilities = await Promise.all(
-        alexaSmartHomeCapabilities(backendControl),
-      );
+      capabilities = await Promise.all(alexaSmartHomeCapabilities(tvControl));
     } catch (error) {
       Common.Debug.debugError(error);
       capabilities = [];
     }
     const endpoint: Common.SHS.EventPayloadEndpoint = {
-      endpointId: backendControl.tv.udn,
-      friendlyName: backendControl.tv.name,
+      endpointId: tvControl.tv.udn,
+      friendlyName: tvControl.tv.name,
       description: Common.constants.application.name.pretty,
       manufacturerName: Common.constants.application.vendor,
       displayCategories: ["TV"],
@@ -64,12 +62,11 @@ async function handler(
   }
 
   async function buildEndpoints(
-    backendControls: BackendControl[],
+    tvControls: TvControl[],
   ): Promise<Common.SHS.EventPayloadEndpoint[]> {
     return await Promise.all(
-      backendControls.map(
-        async (backendControl: BackendControl) =>
-          await buildEndpoint(backendControl),
+      tvControls.map(
+        async (tvControl: TvControl) => await buildEndpoint(tvControl),
       ),
     );
   }
@@ -87,8 +84,8 @@ async function handler(
     return alexaResponse;
   }
 
-  const backendControls = backend.controls();
-  const endpoints = await buildEndpoints(backendControls);
+  const tvControls = tvManager.controls();
+  const endpoints = await buildEndpoints(tvControls);
   const response = buildResponse(endpoints);
   return response;
 }

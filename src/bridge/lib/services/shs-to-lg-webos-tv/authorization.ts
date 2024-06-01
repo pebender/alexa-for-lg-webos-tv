@@ -1,5 +1,5 @@
-import { DatabaseTable } from "../database";
-import * as Common from "../../../common";
+import { DatabaseTable } from "../../database";
+import * as Common from "../../../../common";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -26,7 +26,7 @@ export class Authorization {
   ): Promise<Authorization> {
     const _database = await DatabaseTable.build<AuthorizationRecord>(
       configurationDirectory,
-      "middle",
+      "user",
       ["skillToken", "userId"],
     );
 

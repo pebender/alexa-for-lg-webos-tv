@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../../common";
-import type { Backend, BackendControl } from "../../backend";
+import * as Common from "../../../../../common";
+import type { TvManager, TvControl } from "../tv-manager";
 import type { Authorization as DirectiveAuthorization } from "../authorization";
 import * as alexa from "./alexa";
 import * as alexaAuthorization from "./authorization";
@@ -14,7 +14,7 @@ import * as alexaSpeaker from "./speaker";
 
 type HandlerFunction = (
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ) => Promise<Common.SHS.Response>;
 
 const handlers: Record<string, HandlerFunction> = {
@@ -28,39 +28,39 @@ const handlers: Record<string, HandlerFunction> = {
 };
 
 function capabilities(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
-    ...alexa.capabilities(backendControl),
-    ...alexaPowerController.capabilities(backendControl),
-    ...alexaSpeaker.capabilities(backendControl),
-    ...alexaChannelController.capabilities(backendControl),
-    ...alexaInputController.capabilities(backendControl),
-    ...alexaLauncher.capabilities(backendControl),
-    ...alexaPlaybackController.capabilities(backendControl),
+    ...alexa.capabilities(tvControl),
+    ...alexaPowerController.capabilities(tvControl),
+    ...alexaSpeaker.capabilities(tvControl),
+    ...alexaChannelController.capabilities(tvControl),
+    ...alexaInputController.capabilities(tvControl),
+    ...alexaLauncher.capabilities(tvControl),
+    ...alexaPlaybackController.capabilities(tvControl),
   ];
 }
 
 function states(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
   return [
-    ...alexa.states(backendControl),
-    ...alexaPowerController.states(backendControl),
-    ...alexaSpeaker.states(backendControl),
-    ...alexaChannelController.states(backendControl),
-    ...alexaInputController.states(backendControl),
-    ...alexaLauncher.states(backendControl),
-    ...alexaPlaybackController.states(backendControl),
+    ...alexa.states(tvControl),
+    ...alexaPowerController.states(tvControl),
+    ...alexaSpeaker.states(tvControl),
+    ...alexaChannelController.states(tvControl),
+    ...alexaInputController.states(tvControl),
+    ...alexaLauncher.states(tvControl),
+    ...alexaPlaybackController.states(tvControl),
   ];
 }
 
 async function addStates(
   alexaResponse: Common.SHS.Response,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   try {
-    for (const state of await Promise.all(states(backendControl))) {
+    for (const state of await Promise.all(states(tvControl))) {
       if (state === null) {
         continue;
       }
@@ -76,16 +76,16 @@ async function addStates(
 async function handler(
   event: Common.SHS.Request,
   authorization: DirectiveAuthorization,
-  backend: Backend,
+  tvManager: TvManager,
 ): Promise<Common.SHS.Response> {
   const alexaRequest = new Common.SHS.Request(event);
 
   switch (alexaRequest.directive.header.namespace) {
     case "Alexa.Authorization": {
-      return alexaAuthorization.handler(alexaRequest, backend);
+      return alexaAuthorization.handler(alexaRequest, tvManager);
     }
     case "Alexa.Discovery": {
-      return await alexaDiscovery.handler(alexaRequest, backend);
+      return await alexaDiscovery.handler(alexaRequest, tvManager);
     }
     default: {
       const udn = alexaRequest.getEndpointId();
@@ -97,8 +97,8 @@ async function handler(
         );
       }
 
-      const backendControl = backend.control(udn);
-      if (backendControl === undefined) {
+      const tvControl = tvManager.control(udn);
+      if (tvControl === undefined) {
         return Common.SHS.Response.buildAlexaErrorResponse(
           alexaRequest,
           "NO_SUCH_ENDPOINT",
@@ -116,7 +116,7 @@ async function handler(
         handlers[alexaRequest.directive.header.namespace];
       let handlerResponse: Common.SHS.Response;
       try {
-        handlerResponse = await controllerHandler(alexaRequest, backendControl);
+        handlerResponse = await controllerHandler(alexaRequest, tvControl);
       } catch (error) {
         handlerResponse =
           error instanceof Common.SHS.Response
@@ -133,7 +133,7 @@ async function handler(
         )
       ) {
         try {
-          return await addStates(handlerResponse, backendControl);
+          return await addStates(handlerResponse, tvControl);
         } catch (error) {
           handlerResponse =
             error instanceof Common.SHS.Response
@@ -157,7 +157,7 @@ function callback(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   authorization: DirectiveAuthorization,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backend: Backend,
+  tvManager: TvManager,
 ): void {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);
 

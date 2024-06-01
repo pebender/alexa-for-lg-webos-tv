@@ -1,9 +1,9 @@
-import * as Common from "../../../../common";
-import { type BackendControl, TvCommonError } from "../../backend";
+import * as Common from "../../../../../common";
+import { type TvControl, TvCommonError } from "../tv-manager";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -14,10 +14,10 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
   async function value(): Promise<string> {
-    return await Promise.resolve(backendControl.getPowerState() as string);
+    return await Promise.resolve(tvControl.getPowerState() as string);
   }
 
   const powerStateState = Common.SHS.Response.buildContextProperty({
@@ -30,13 +30,13 @@ function states(
 
 function turnOffHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Common.SHS.Response {
-  const poweredOff = backendControl.turnOff();
+  const poweredOff = tvControl.turnOff();
   if (!poweredOff) {
     const error = new TvCommonError({
       message: "TV power off failed.",
-      tv: backendControl.tv,
+      tv: tvControl.tv,
     });
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -48,13 +48,13 @@ function turnOffHandler(
 
 async function turnOnHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  const poweredOn = await backendControl.turnOn();
+  const poweredOn = await tvControl.turnOn();
   if (!poweredOn) {
     const error = new TvCommonError({
       message: "TV power on failed.",
-      tv: backendControl.tv,
+      tv: tvControl.tv,
     });
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -66,16 +66,14 @@ async function turnOnHandler(
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   switch (alexaRequest.directive.header.name) {
     case "TurnOff": {
-      return await Promise.resolve(
-        turnOffHandler(alexaRequest, backendControl),
-      );
+      return await Promise.resolve(turnOffHandler(alexaRequest, tvControl));
     }
     case "TurnOn": {
-      return await turnOnHandler(alexaRequest, backendControl);
+      return await turnOnHandler(alexaRequest, tvControl);
     }
     default: {
       return await Promise.resolve(

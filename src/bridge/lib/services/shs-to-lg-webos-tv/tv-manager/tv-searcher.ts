@@ -8,11 +8,11 @@ import {
   type SsdpHeaders,
 } from "node-ssdp";
 import { parseStringPromise as xml2js } from "xml2js";
-import * as Common from "../../../common";
-import type { TV } from "./tv";
+import * as Common from "../../../../../common";
+import type { TvRecord } from "./tv-record";
 import { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
-export class BackendSearcher extends EventEmitter {
+export class TvSearcher extends EventEmitter {
   private readonly _ssdpNotify: SsdpServer;
   private readonly _ssdpResponse: SsdpClient;
   public constructor(_ssdpNotify: SsdpServer, _ssdpResponse: SsdpClient) {
@@ -22,11 +22,11 @@ export class BackendSearcher extends EventEmitter {
     this._ssdpResponse = _ssdpResponse;
   }
 
-  public static build(): BackendSearcher {
+  public static build(): TvSearcher {
     const _ssdpNotify = new SsdpServer();
     const _ssdpResponse = new SsdpClient();
 
-    const backendSearcher = new BackendSearcher(_ssdpNotify, _ssdpResponse);
+    const tvSearcher = new TvSearcher(_ssdpNotify, _ssdpResponse);
 
     /*
      * A version of node-arp's getMAC with its callback adjusted to match the
@@ -45,23 +45,26 @@ export class BackendSearcher extends EventEmitter {
       });
     }
 
-    function ssdpProcessCallback(error: Error | null, tv: TV | null): void {
+    function ssdpProcessCallback(
+      error: Error | null,
+      tv: TvRecord | null,
+    ): void {
       if (error !== null) {
-        backendSearcher.emit("error", error);
+        tvSearcher.emit("error", error);
         return;
       }
       if (tv === null) {
         return;
       }
-      backendSearcher.emit("found", tv);
+      tvSearcher.emit("found", tv);
     }
 
     async function ssdpProcessAsync(
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-    ): Promise<TV | null> {
-      const tv: Partial<TV> = {};
+    ): Promise<TvRecord | null> {
+      const tv: Partial<TvRecord> = {};
       let descriptionXml: string;
 
       function createTvCommonError(options: {
@@ -122,7 +125,7 @@ export class BackendSearcher extends EventEmitter {
       ) {
         return null;
       }
-      // Get the IP address associated with the TV.
+      // Get the IP address associated with the TvRecord.
       if (rinfo.address === undefined) {
         return null;
       }
@@ -132,7 +135,7 @@ export class BackendSearcher extends EventEmitter {
 
       //
       // Get the device description. I use this to make sure that this is an
-      // LG Electronics webOS TV as well as to obtain the TV's friendly name
+      // LG Electronics webOS TvRecord as well as to obtain the TvRecord's friendly name
       // and Unique Device Name (UDN).
       //
       if (headers.LOCATION === undefined) {
@@ -148,7 +151,7 @@ export class BackendSearcher extends EventEmitter {
       if (!response.ok) {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
         });
       }
 
@@ -156,7 +159,7 @@ export class BackendSearcher extends EventEmitter {
       if (contentType === null) {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
         });
       }
       const mimeType: string = contentType
@@ -166,7 +169,7 @@ export class BackendSearcher extends EventEmitter {
       if (mimeType !== "text/xml") {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
         });
       }
 
@@ -175,7 +178,7 @@ export class BackendSearcher extends EventEmitter {
       } catch (error) {
         throw createTvCommonError({
           code: "descriptionXmlFetchError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
           cause: error,
         });
       }
@@ -194,7 +197,7 @@ export class BackendSearcher extends EventEmitter {
       } catch (error) {
         throw createTvCommonError({
           code: "descriptionXmlParseError",
-          message: "Could not parse descriptionXML from the TV",
+          message: "Could not parse descriptionXML from the TvRecord",
           cause: error,
         });
       }
@@ -202,7 +205,7 @@ export class BackendSearcher extends EventEmitter {
       if (description === undefined || description === null) {
         throw createTvCommonError({
           code: "descriptionXmlParseError",
-          message: "Could not parse descriptionXML from the TV",
+          message: "Could not parse descriptionXML from the TvRecord",
         });
       }
 
@@ -222,7 +225,7 @@ export class BackendSearcher extends EventEmitter {
       ) {
         throw createTvCommonError({
           code: "descriptionXmlFormatError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
         });
       }
 
@@ -239,14 +242,14 @@ export class BackendSearcher extends EventEmitter {
       ) {
         throw createTvCommonError({
           code: "descriptionXmlFormatError",
-          message: "Could not fetch descriptionXML from the TV",
+          message: "Could not fetch descriptionXML from the TvRecord",
         });
       }
       [tv.name] = description.root.device[0].friendlyName;
       [tv.udn] = description.root.device[0].UDN;
 
       //
-      // Get the mac address needed to turn on the TV using wake on
+      // Get the mac address needed to turn on the TvRecord using wake on
       // lan.
       //
       try {
@@ -255,7 +258,7 @@ export class BackendSearcher extends EventEmitter {
       } catch (error) {
         throw createTvCommonError({
           code: "macAddressError",
-          message: "Could not get TV's MAC address",
+          message: "Could not get TvRecord's MAC address",
           cause: error,
         });
       }
@@ -273,10 +276,10 @@ export class BackendSearcher extends EventEmitter {
       messageName: string,
       headers: SsdpHeaders,
       rinfo: dgram.RemoteInfo,
-      callback: (error: Common.CommonError | null, tv: TV | null) => void,
+      callback: (error: Common.CommonError | null, tv: TvRecord | null) => void,
     ): void {
       ssdpProcessAsync(messageName, headers, rinfo)
-        .then((tv: TV | null) =>
+        .then((tv: TvRecord | null) =>
           setImmediate((): void => {
             // eslint-disable-next-line promise/no-callback-in-promise
             callback(null, tv);
@@ -289,7 +292,7 @@ export class BackendSearcher extends EventEmitter {
                 ? error
                 : new TvCommonError({
                     code: "searchError",
-                    message: "TV search error",
+                    message: "TvRecord search error",
                     cause: error,
                   });
             // eslint-disable-next-line promise/no-callback-in-promise
@@ -298,13 +301,13 @@ export class BackendSearcher extends EventEmitter {
         );
     }
 
-    backendSearcher._ssdpNotify.on(
+    tvSearcher._ssdpNotify.on(
       "advertise-alive",
       (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
         ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
       },
     );
-    backendSearcher._ssdpResponse.on(
+    tvSearcher._ssdpResponse.on(
       "response",
       (headers: SsdpHeaders, statusCode: number, rinfo): void => {
         if (statusCode !== 200) {
@@ -314,7 +317,7 @@ export class BackendSearcher extends EventEmitter {
       },
     );
 
-    return backendSearcher;
+    return tvSearcher;
   }
 
   public async start(): Promise<void> {
@@ -324,7 +327,7 @@ export class BackendSearcher extends EventEmitter {
     } catch (error) {
       throw new TvCommonError({
         code: "searchError",
-        message: "TV search error",
+        message: "TvRecord search error",
         cause: error,
       });
     }
@@ -340,7 +343,7 @@ export class BackendSearcher extends EventEmitter {
         search.catch((error) => {
           const commonError: Common.CommonError = new TvCommonError({
             code: "searchError",
-            message: "TV search error",
+            message: "TvRecord search error",
             cause: error,
           });
           Common.Debug.debugError(commonError);
@@ -358,7 +361,7 @@ export class BackendSearcher extends EventEmitter {
       search.catch((error: unknown) => {
         const commonError: Common.CommonError = new TvCommonError({
           code: "searchError",
-          message: "TV search error",
+          message: "TvRecord search error",
           cause: error,
         });
         Common.Debug.debugError(commonError);
@@ -374,7 +377,7 @@ export class BackendSearcher extends EventEmitter {
       search.catch((error: unknown) => {
         const commonError: Common.CommonError = new TvCommonError({
           code: "searchError",
-          message: "TV search error",
+          message: "TvRecord search error",
           cause: error,
         });
         Common.Debug.debugError(commonError);

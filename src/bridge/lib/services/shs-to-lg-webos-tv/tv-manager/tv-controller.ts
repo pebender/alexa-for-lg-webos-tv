@@ -1,17 +1,17 @@
 import { EventEmitter } from "node:events";
 import type LGTV from "lgtv2";
-import * as Common from "../../../common";
-import { DatabaseTable } from "../database";
-import type { TV, UDN } from "./tv";
+import * as Common from "../../../../../common";
+import { DatabaseTable } from "../../../database";
+import type { TvRecord, UDN } from "./tv-record";
 import { TvCommonError } from "./tv-common-error";
-import { BackendControl } from "./backend-control";
+import { TvControl } from "./tv-control";
 
-export class BackendController extends EventEmitter {
-  private readonly _database: DatabaseTable<TV>;
-  private readonly _controls: Record<string, BackendControl>;
+export class TvController extends EventEmitter {
+  private readonly _database: DatabaseTable<TvRecord>;
+  private readonly _controls: Record<string, TvControl>;
   private constructor(
-    _database: DatabaseTable<TV>,
-    _controls: Record<string, BackendControl>,
+    _database: DatabaseTable<TvRecord>,
+    _controls: Record<string, TvControl>,
   ) {
     super();
 
@@ -21,25 +21,25 @@ export class BackendController extends EventEmitter {
 
   public static async build(
     _configurationDirectory: string,
-  ): Promise<BackendController> {
-    const _database = await DatabaseTable.build<TV>(
+  ): Promise<TvController> {
+    const _database = await DatabaseTable.build<TvRecord>(
       _configurationDirectory,
-      "backend",
+      "tv",
       ["udn"],
     );
     const _controls = {};
 
-    const backendController = new BackendController(_database, _controls);
+    const tvController = new TvController(_database, _controls);
 
-    async function tvsInitialize(tvs: TV[]): Promise<void> {
-      async function tvInitialize(tv: TV): Promise<void> {
-        if (backendController._controls[tv.udn] === undefined) {
-          backendController._controls[tv.udn] = BackendControl.build(
-            backendController._database,
+    async function tvsInitialize(tvs: TvRecord[]): Promise<void> {
+      async function tvInitialize(tv: TvRecord): Promise<void> {
+        if (tvController._controls[tv.udn] === undefined) {
+          tvController._controls[tv.udn] = TvControl.build(
+            tvController._database,
             tv,
           );
-          backendController.eventsAdd(tv.udn);
-          await backendController._controls[tv.udn].start();
+          tvController.eventsAdd(tv.udn);
+          await tvController._controls[tv.udn].start();
         }
       }
 
@@ -50,10 +50,10 @@ export class BackendController extends EventEmitter {
       await Promise.all(tvInitializers);
     }
 
-    const records = await backendController._database.getRecords();
+    const records = await tvController._database.getRecords();
     await tvsInitialize(records);
 
-    return backendController;
+    return tvController;
   }
 
   public start(): void {
@@ -87,7 +87,7 @@ export class BackendController extends EventEmitter {
     });
   }
 
-  public async tvUpsert(tv: TV): Promise<void> {
+  public async tvUpsert(tv: TvRecord): Promise<void> {
     try {
       const record = await this._database.getRecord([
         { udn: tv.udn },
@@ -113,7 +113,7 @@ export class BackendController extends EventEmitter {
         );
       }
       if (this._controls[tv.udn] === undefined) {
-        this._controls[tv.udn] = BackendControl.build(this._database, tv);
+        this._controls[tv.udn] = TvControl.build(this._database, tv);
         this.eventsAdd(tv.udn);
         await this._controls[tv.udn].start();
       }
@@ -122,7 +122,7 @@ export class BackendController extends EventEmitter {
     }
   }
 
-  public control(udn: UDN): BackendControl {
+  public control(udn: UDN): TvControl {
     if (this._controls[udn] === undefined) {
       throw new TvCommonError({
         code: "tvUnknown",
@@ -133,7 +133,7 @@ export class BackendController extends EventEmitter {
     return this._controls[udn];
   }
 
-  public controls(): BackendControl[] {
+  public controls(): TvControl[] {
     return Object.values(this._controls);
   }
 }

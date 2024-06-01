@@ -1,6 +1,6 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../../common";
-import { type BackendControl, TvCommonError } from "../../backend";
+import * as Common from "../../../../../common";
+import { type TvControl, TvCommonError } from "../tv-manager";
 //
 // "launcher.json" contains a mapping between Smart Home Skill Alexa.Launcher
 // launch target identifiers and LG webOS TV application ids. The list of Alexa
@@ -60,7 +60,7 @@ const lgtvToAlexa: LGTVToAlexa = createLGTVToAlexa();
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Common.SHS.Response.buildPayloadEndpointCapability({
@@ -71,9 +71,9 @@ function capabilities(
 }
 
 function states(
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty | null>> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return [];
   }
 
@@ -82,12 +82,12 @@ function states(
       uri: "ssap://com.webos.applicationManager/getForegroundAppInfo",
     };
     const lgtvResponse: LGTV.Response =
-      await backendControl.lgtvCommand(lgtvRequest);
+      await tvControl.lgtvCommand(lgtvRequest);
     if (typeof lgtvResponse.appId !== "string") {
       throw new TvCommonError({
         code: "responseInvalid",
         message: "TV response was invalid",
-        tv: backendControl.tv,
+        tv: tvControl.tv,
         lgtvRequest,
         lgtvResponse,
       });
@@ -96,7 +96,7 @@ function states(
       throw new TvCommonError({
         code: "responseValueUnknown",
         message: `TV unknown foreground application '${lgtvResponse.appId}'`,
-        tv: backendControl.tv,
+        tv: tvControl.tv,
         lgtvRequest,
         lgtvResponse,
       });
@@ -114,7 +114,7 @@ function states(
 
 async function launchTargetHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
   if (
     typeof alexaRequest.directive.payload.identifier !== "string" ||
@@ -130,7 +130,7 @@ async function launchTargetHandler(
     payload: requestedApp,
   };
   try {
-    await backendControl.lgtvCommand(lgtvRequest);
+    await tvControl.lgtvCommand(lgtvRequest);
   } catch (launchError) {
     // Check whether or not the application failed to launch because the
     // application does not exist (is not installed).
@@ -138,9 +138,10 @@ async function launchTargetHandler(
       uri: "ssap://com.webos.applicationManager/listApps",
     };
     try {
-      const response = (await backendControl.lgtvCommand(
-        lgtvRequest,
-      )) as Record<string, unknown>;
+      const response = (await tvControl.lgtvCommand(lgtvRequest)) as Record<
+        string,
+        unknown
+      >;
       const apps = response.apps as Array<{
         id: string;
         [key: string]: unknown;
@@ -167,16 +168,16 @@ async function launchTargetHandler(
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
   }
   switch (alexaRequest.directive.header.name) {
     case "LaunchTarget": {
-      return await launchTargetHandler(alexaRequest, backendControl);
+      return await launchTargetHandler(alexaRequest, tvControl);
     }
     default: {
       return await Promise.resolve(

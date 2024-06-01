@@ -1,10 +1,10 @@
 import type LGTV from "lgtv2";
-import * as Common from "../../../../common";
-import type { BackendControl } from "../../backend";
+import * as Common from "../../../../../common";
+import type { TvControl } from "../tv-manager";
 
 function capabilities(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
     Promise.resolve({
@@ -18,21 +18,21 @@ function capabilities(
 
 function states(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty>> {
   return [];
 }
 
 async function genericHandler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
   lgtvRequestURI: string,
 ): Promise<Common.SHS.Response> {
   const lgtvRequest: LGTV.Request = {
     uri: lgtvRequestURI,
   };
   try {
-    await backendControl.lgtvCommand(lgtvRequest);
+    await tvControl.lgtvCommand(lgtvRequest);
   } catch (error) {
     return Common.SHS.Response.buildAlexaErrorResponseForInternalError(
       alexaRequest,
@@ -44,9 +44,9 @@ async function genericHandler(
 
 async function handler(
   alexaRequest: Common.SHS.Request,
-  backendControl: BackendControl,
+  tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  if (backendControl.getPowerState() === "OFF") {
+  if (tvControl.getPowerState() === "OFF") {
     return await Promise.resolve(
       Common.SHS.Response.buildAlexaErrorResponseForPowerOff(alexaRequest),
     );
@@ -55,35 +55,35 @@ async function handler(
     case "Play": {
       return await genericHandler(
         alexaRequest,
-        backendControl,
+        tvControl,
         "ssap://media.controls/play",
       );
     }
     case "Pause": {
       return await genericHandler(
         alexaRequest,
-        backendControl,
+        tvControl,
         "ssap://media.controls/pause",
       );
     }
     case "Stop": {
       return await genericHandler(
         alexaRequest,
-        backendControl,
+        tvControl,
         "ssap://media.controls/stop",
       );
     }
     case "Rewind": {
       return await genericHandler(
         alexaRequest,
-        backendControl,
+        tvControl,
         "ssap://media.controls/rewind",
       );
     }
     case "FastForward": {
       return await genericHandler(
         alexaRequest,
-        backendControl,
+        tvControl,
         "ssap://media.controls/fastForward",
       );
     }
