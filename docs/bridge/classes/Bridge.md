@@ -29,9 +29,9 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 #### Parameters
 
-• **\_frontend**: [`Frontend`](../lib/frontend/classes/Frontend.md)
+• **\_frontend**: [`Frontend`](../lib/link/classes/Frontend.md)
 
-• **\_services**: `Record`\<`string`, [`Application`](../lib/frontend/application/classes/Application.md)\>
+• **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/classes/Application.md)\>
 
 #### Returns
 
@@ -41,13 +41,13 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 ### \_frontend
 
-> `private` `readonly` **\_frontend**: [`Frontend`](../lib/frontend/classes/Frontend.md)
+> `private` `readonly` **\_frontend**: [`Frontend`](../lib/link/classes/Frontend.md)
 
 ***
 
 ### \_services
 
-> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/frontend/application/classes/Application.md)\>
+> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/classes/Application.md)\>
 
 ## Methods
 

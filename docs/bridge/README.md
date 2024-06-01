@@ -18,18 +18,18 @@
 
 ## References
 
-### Backend
-
-Re-exports [Backend](lib/backend/classes/Backend.md)
-
-***
-
 ### Frontend
 
-Re-exports [Frontend](lib/frontend/classes/Frontend.md)
+Re-exports [Frontend](lib/link/classes/Frontend.md)
 
 ***
 
-### TV
+### TvManager
 
-Renames and re-exports [bridge/lib/backend/tv](lib/backend/tv/README.md)
+Re-exports [TvManager](lib/services/shs-to-lg-webos-tv/tv-manager/classes/TvManager.md)
+
+***
+
+### TvRecord
+
+Renames and re-exports [bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record](lib/services/shs-to-lg-webos-tv/tv-manager/tv-record/README.md)
