@@ -8,9 +8,9 @@
 
 import express from "express";
 import * as Common from "../../../common";
-import { Configuration } from "./configuration";
 import type { Credentials } from "./credentials";
 import { Application } from "./application";
+import { UserAuth } from "./user-auth";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
 
@@ -156,10 +156,10 @@ export class Frontend {
     configurationDirectory: string,
     serviceApplications: Record<string, Application>,
   ): Promise<Frontend> {
-    const configuration = await Configuration.build();
-    const _loginTokenAuth = LoginTokenAuth.build(configuration);
+    const _userAuth = await UserAuth.build(configurationDirectory);
+    const _loginTokenAuth = LoginTokenAuth.build(_userAuth);
     const _bridgeTokenAuth = await BridgeTokenAuth.build(
-      configuration,
+      _userAuth,
       configurationDirectory,
     );
 

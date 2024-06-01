@@ -1,8 +1,7 @@
 import * as crypto from "node:crypto";
 import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
-import type { Configuration } from "./configuration";
-import { authorizeUser } from "./authorize-user";
+import type { UserAuth } from "./user-auth";
 
 /* This is a type because DatabaseTable needs it to be a type. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -15,18 +14,18 @@ export type BridgeTokenAuthRecord = {
 };
 
 export class BridgeTokenAuth {
-  private readonly _configuration: Configuration;
+  private readonly _userAuth: UserAuth;
   private readonly _database: DatabaseTable<BridgeTokenAuthRecord>;
   private constructor(
-    _configuration: Configuration,
+    _userAuth: UserAuth,
     _database: DatabaseTable<BridgeTokenAuthRecord>,
   ) {
-    this._configuration = _configuration;
+    this._userAuth = _userAuth;
     this._database = _database;
   }
 
   public static async build(
-    configuration: Configuration,
+    userAuth: UserAuth,
     configurationDirectory: string,
   ): Promise<BridgeTokenAuth> {
     const _database = await DatabaseTable.build<BridgeTokenAuthRecord>(
@@ -35,7 +34,7 @@ export class BridgeTokenAuth {
       ["bridgeToken", "userId", "skillToken"],
     );
 
-    const bridgeTokenAuth = new BridgeTokenAuth(configuration, _database);
+    const bridgeTokenAuth = new BridgeTokenAuth(userAuth, _database);
 
     return bridgeTokenAuth;
   }
@@ -100,8 +99,7 @@ export class BridgeTokenAuth {
       return null;
     }
 
-    const authorized = authorizeUser(
-      this._configuration,
+    const authorized = this._userAuth.authorizeUser(
       record.bridgeHostname,
       record.email,
     );
