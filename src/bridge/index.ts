@@ -2,13 +2,12 @@ import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import * as Common from "../common";
 import { Configuration } from "./lib/configuration";
-import { Frontend } from "./lib/frontend";
-import { Middle } from "./lib/middle";
+import { Frontend, type Application } from "./lib/frontend";
+import * as ShsToLgtvService from "./lib/middle";
 
 export { Configuration } from "./lib/configuration";
 export { Backend, type TV } from "./lib/backend";
 export { Frontend } from "./lib/frontend";
-export { Middle } from "./lib/middle";
 
 /**
  * A class to build and start a bridge.
@@ -25,19 +24,19 @@ export { Middle } from "./lib/middle";
  */
 export class Bridge {
   private readonly _configuration: Configuration;
-  private readonly _middle: Middle;
   private readonly _frontend: Frontend;
+  private readonly _services: Record<string, Application>;
   /**
    * The constructor is private. To create a Bridge, call {@link Bridge.build}().
    */
   private constructor(
     _configuration: Configuration,
-    _middle: Middle,
     _frontend: Frontend,
+    _services: Record<string, Application>,
   ) {
     this._configuration = _configuration;
-    this._middle = _middle;
     this._frontend = _frontend;
+    this._services = _services;
   }
 
   /**
@@ -77,14 +76,20 @@ export class Bridge {
     // and client key (key).
     //
 
-    const _middle = await Middle.build(configurationDirectory);
+    const _services: Record<string, Application> = {};
+
+    const _shsToLgtvService = await ShsToLgtvService.getApplication(
+      configurationDirectory,
+    );
+    _services[Common.constants.bridge.path.service] = _shsToLgtvService;
+
     const _frontend = await Frontend.build(
       configurationDirectory,
       _configuration,
-      _middle,
+      _services,
     );
 
-    const bridge = new Bridge(_configuration, _middle, _frontend);
+    const bridge = new Bridge(_configuration, _frontend, _services);
 
     return bridge;
   }
@@ -93,11 +98,13 @@ export class Bridge {
    * Starts the Bridge. When called, it
    *
    * - starts the Frontend, and
-   * - starts the Backend.
+   * - starts each Service.
    */
   public async start(): Promise<void> {
     this._frontend.start();
-    await this._middle.start();
+    for (const [, value] of Object.entries(this._services)) {
+      await value.start();
+    }
   }
 }
 

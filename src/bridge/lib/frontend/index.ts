@@ -9,16 +9,13 @@
 import express from "express";
 import * as Common from "../../../common";
 import type { Configuration } from "../configuration";
-import type { Middle } from "../middle";
+import type { Credentials } from "./credentials";
+import { Application } from "./application";
 import { LoginTokenAuth } from "./login-token-auth";
 import { BridgeTokenAuth } from "./bridge-token-auth";
 
-interface Credentials {
-  bridgeHostname: string;
-  email: string;
-  userId: string;
-  skillToken: string;
-}
+export type { Credentials } from "./credentials";
+export { Application } from "./application";
 
 type FrontendCommonErrorCode =
   | "bodyFormatInvalid"
@@ -62,10 +59,83 @@ function createError(
   return new FrontendCommonError({ code, cause });
 }
 
+class LoginApplication extends Application {
+  private readonly _bridgeTokenAuth: BridgeTokenAuth;
+
+  public constructor(_bridgeTokenAuth: BridgeTokenAuth) {
+    super();
+    this._bridgeTokenAuth = _bridgeTokenAuth;
+  }
+
+  public async start(): Promise<void> {
+    await new Promise<void>((resolve) => {
+      resolve();
+    });
+  }
+
+  public getRequestSkillToken(request: object): string {
+    const testRequest = request as {
+      skillToken?: string;
+    };
+    if (typeof testRequest.skillToken !== "string") {
+      throw createError("bodyFormatInvalid");
+    }
+    return testRequest.skillToken;
+  }
+
+  public async handleRequest(
+    request: object,
+    credentials: Credentials,
+  ): Promise<object> {
+    const bridgeToken = this._bridgeTokenAuth.generateBridgeToken();
+    try {
+      await this._bridgeTokenAuth.setBridgeToken({
+        bridgeToken,
+        ...credentials,
+      });
+    } catch (error) {
+      throw createError("internalServerError", error);
+    }
+    return { token: bridgeToken };
+  }
+}
+
+class TestApplication extends Application {
+  public async start(): Promise<void> {
+    await new Promise<void>((resolve) => {
+      resolve();
+    });
+  }
+
+  public getRequestSkillToken(request: object): string {
+    const testRequest = request as {
+      skillToken?: string;
+    };
+    if (typeof testRequest.skillToken !== "string") {
+      throw createError("bodyFormatInvalid");
+    }
+    return testRequest.skillToken;
+  }
+
+  public async handleRequest(
+    request: object,
+    credentials: Credentials,
+  ): Promise<object> {
+    return {};
+  }
+}
+
+interface LinkDescription {
+  path: string;
+  bearerTokenType: "loginToken" | "bridgeToken";
+  linkType: "login" | "test" | "service";
+  application: Application;
+}
+
 export class Frontend {
   private readonly _loginTokenAuth: LoginTokenAuth;
   private readonly _bridgeTokenAuth: BridgeTokenAuth;
-  private readonly _middle: Middle;
+  private readonly _links: Record<string, LinkDescription>;
   private readonly _server: express.Express;
   /**
    * The constructor is private. To instantiate a Frontend, use {@link Frontend.build}().
@@ -73,29 +143,56 @@ export class Frontend {
   private constructor(
     _loginTokenAuth: LoginTokenAuth,
     _bridgeTokenAuth: BridgeTokenAuth,
-    _middle: Middle,
+    _links: Record<string, LinkDescription>,
     _server: express.Express,
   ) {
     this._loginTokenAuth = _loginTokenAuth;
     this._bridgeTokenAuth = _bridgeTokenAuth;
-    this._middle = _middle;
+    this._links = _links;
     this._server = _server;
   }
 
   public static async build(
     configurationDirectory: string,
     configuration: Configuration,
-    middle: Middle,
+    serviceApplications: Record<string, Application>,
   ): Promise<Frontend> {
-    const _loginToken = LoginTokenAuth.build(configuration);
-    const _bridgeToken = await BridgeTokenAuth.build(
+    const _loginTokenAuth = LoginTokenAuth.build(configuration);
+    const _bridgeTokenAuth = await BridgeTokenAuth.build(
       configuration,
       configurationDirectory,
     );
 
+    const _links: Record<string, LinkDescription> = {};
+    _links[Common.constants.bridge.path.login] = {
+      path: Common.constants.bridge.path.login,
+      bearerTokenType: "loginToken",
+      linkType: "login",
+      application: new LoginApplication(_bridgeTokenAuth),
+    };
+    _links[Common.constants.bridge.path.test] = {
+      path: Common.constants.bridge.path.test,
+      bearerTokenType: "bridgeToken",
+      linkType: "test",
+      application: new TestApplication(),
+    };
+    for (const [path, application] of Object.entries(serviceApplications)) {
+      _links[path] = {
+        path,
+        bearerTokenType: "bridgeToken",
+        linkType: "service",
+        application,
+      };
+    }
+
     const _server = express();
 
-    const frontend = new Frontend(_loginToken, _bridgeToken, middle, _server);
+    const frontend = new Frontend(
+      _loginTokenAuth,
+      _bridgeTokenAuth,
+      _links,
+      _server,
+    );
 
     /*
      * Function to handle the links.
@@ -112,23 +209,9 @@ export class Frontend {
           Common.Debug.debug(`method: ${request.method}`);
           Common.Debug.debugJSON(request.headers);
 
-          let linkType: "login" | "test" | "service";
-          switch (request.path) {
-            case Common.constants.bridge.path.login: {
-              linkType = "login";
-              break;
-            }
-            case Common.constants.bridge.path.test: {
-              linkType = "test";
-              break;
-            }
-            case Common.constants.bridge.path.service: {
-              linkType = "service";
-              break;
-            }
-            default: {
-              throw createError("notFound");
-            }
+          const link = frontend._links[request.path];
+          if (link === undefined) {
+            throw createError("notFound");
           }
 
           if (request.method !== "POST") {
@@ -136,16 +219,8 @@ export class Frontend {
           }
 
           /*
-           * Authorize the link token and return the link user's credentials.
-           *
-           * Extract bridgeToken from "authorization" header. RFC-6750 allows
-           * for the Bearer token to be included in the "authorization"
-           * header, as part part of the URL or in the body. Since we put it
-           * in the header, we know that is were it will be. Per RFC-6750,
-           * failure to find the Bearer token results 401 response that
-           * includes a "WWW-Authenticate" header.
+           * Get the bearerToken from the 'authorization' header.
            */
-          let credentials: Credentials | null = null;
           if (request.headers.authorization === undefined) {
             throw createError("unauthorized");
           }
@@ -158,11 +233,16 @@ export class Frontend {
           if (authorization[0].toLowerCase() !== "bearer") {
             throw createError("unauthorized");
           }
-          const token: string = authorization[1];
+          const bearerToken: string = authorization[1];
+
+          /*
+           * Use bearerToken to authorize and return the credentials.
+           */
+          let credentials: Credentials | null = null;
           try {
-            credentials = await (linkType === "login"
-              ? frontend._loginTokenAuth.authorizeLoginToken(token)
-              : frontend._bridgeTokenAuth.authorizeBridgeToken(token));
+            credentials = await (link.bearerTokenType === "loginToken"
+              ? frontend._loginTokenAuth.authorizeLoginToken(bearerToken)
+              : frontend._bridgeTokenAuth.authorizeBridgeToken(bearerToken));
           } catch (error) {
             throw createError("internalServerError", error);
           }
@@ -171,7 +251,7 @@ export class Frontend {
           }
 
           /*
-           * Verify that 'content-type' is 'application/json'
+           * Verify that 'content-type' is 'application/json'.
            */
           const contentType = request.headers["content-type"];
           if (contentType === undefined) {
@@ -187,7 +267,7 @@ export class Frontend {
           }
 
           /*
-           * Parse the raw request body to a json request body
+           * Parse the raw request body to a JSON request body.
            */
           await new Promise<void>((resolve, reject) => {
             express.json()(request, response, (error: unknown): void => {
@@ -203,67 +283,20 @@ export class Frontend {
            * Verify the link and the request carried by the link are bound to the
            * same skillToken.
            */
-          let authorized: boolean = false;
-          switch (linkType) {
-            case "login": {
-              authorized = true;
-              break;
-            }
-            case "test": {
-              const testRequest = requestBody as {
-                skillToken?: string;
-              };
-              if (typeof testRequest.skillToken !== "string") {
-                throw createError("bodyFormatInvalid");
-              }
-              const skillToken: string = testRequest.skillToken;
-              authorized = skillToken === credentials.skillToken;
-              break;
-            }
-            case "service": {
-              const skillToken: string =
-                frontend._middle.getSkillToken(requestBody);
-              authorized = skillToken === credentials.skillToken;
-              break;
-            }
-          }
-          if (!authorized) {
+          if (
+            link.application.getRequestSkillToken(requestBody) !==
+            credentials.skillToken
+          ) {
             throw createError("unauthorized");
           }
 
           /*
            * Do application level processing.
            */
-          let responseBody: object | undefined;
-          switch (linkType) {
-            case "login": {
-              const bridgeToken =
-                frontend._bridgeTokenAuth.generateBridgeToken();
-              try {
-                await frontend._bridgeTokenAuth.setBridgeToken({
-                  bridgeToken,
-                  ...credentials,
-                });
-              } catch (error) {
-                throw createError("internalServerError", error);
-              }
-              responseBody = { token: bridgeToken };
-              break;
-            }
-            case "test": {
-              responseBody = {};
-              break;
-            }
-            case "service": {
-              responseBody = await frontend._middle.handler(
-                requestBody as Record<string, unknown>,
-              );
-              break;
-            }
-          }
-          if (responseBody === undefined) {
-            throw createError("internalServerError");
-          }
+          const responseBody: object = await link.application.handleRequest(
+            requestBody,
+            credentials,
+          );
           response.status(200).json(responseBody);
         } catch (error) {
           Common.Debug.debugError(error);

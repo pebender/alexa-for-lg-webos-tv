@@ -1,18 +1,22 @@
 import type LGTV from "lgtv2";
 import * as Common from "../../../common";
+import { type Credentials, Application } from "../frontend";
 import { Backend } from "../backend";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
-export class Middle {
+class ShsToLgtvService extends Application {
   private readonly _authorization: Authorization;
   private readonly _backend: Backend;
   private constructor(_authorization: Authorization, _backend: Backend) {
+    super();
     this._authorization = _authorization;
     this._backend = _backend;
   }
 
-  public static async build(configurationDirectory: string): Promise<Middle> {
+  public static async build(
+    configurationDirectory: string,
+  ): Promise<ShsToLgtvService> {
     const _authorization = await Authorization.build(configurationDirectory);
 
     const _backend = await Backend.build(configurationDirectory);
@@ -21,7 +25,7 @@ export class Middle {
       Common.Debug.debugError(error);
     });
 
-    const middle = new Middle(_authorization, _backend);
+    const middle = new ShsToLgtvService(_authorization, _backend);
 
     const uriList: string[] = [
       "ssap://audio/getStatus",
@@ -56,12 +60,15 @@ export class Middle {
     await this._backend.start();
   }
 
-  public getSkillToken(rawRequest: object): string {
+  public getRequestSkillToken(rawRequest: object): string {
     const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
     return shsRequest.getAccessToken();
   }
 
-  public async handler(rawRequest: object): Promise<Common.SHS.Response> {
+  public async handleRequest(
+    rawRequest: object,
+    _credentials: Credentials,
+  ): Promise<object> {
     const shsRequest = new Common.SHS.Request(rawRequest as Common.SHS.Request);
 
     let authorized = false;
@@ -107,4 +114,10 @@ export class Middle {
 
     return shsResponse;
   }
+}
+
+export async function getApplication(
+  configurationDirectory: string,
+): Promise<Application> {
+  return await ShsToLgtvService.build(configurationDirectory);
 }
