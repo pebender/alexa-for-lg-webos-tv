@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import path from "node:path";
 import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
+import type { Configuration } from "./configuration";
 import { authorizeUser } from "./authorize-user";
 
 export interface LoginTokenAuthRecord {

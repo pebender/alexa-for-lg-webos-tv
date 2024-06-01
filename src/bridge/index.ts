@@ -1,11 +1,9 @@
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import * as Common from "../common";
-import { Configuration } from "./lib/configuration";
 import { Frontend, type Application } from "./lib/frontend";
 import * as ShsToLgtvService from "./lib/middle";
 
-export { Configuration } from "./lib/configuration";
 export { Backend, type TV } from "./lib/backend";
 export { Frontend } from "./lib/frontend";
 
@@ -23,18 +21,15 @@ export { Frontend } from "./lib/frontend";
  * ```
  */
 export class Bridge {
-  private readonly _configuration: Configuration;
   private readonly _frontend: Frontend;
   private readonly _services: Record<string, Application>;
   /**
    * The constructor is private. To create a Bridge, call {@link Bridge.build}().
    */
   private constructor(
-    _configuration: Configuration,
     _frontend: Frontend,
     _services: Record<string, Application>,
   ) {
-    this._configuration = _configuration;
     this._frontend = _frontend;
     this._services = _services;
   }
@@ -67,8 +62,6 @@ export class Bridge {
       throw commonError;
     }
 
-    const _configuration = await Configuration.build();
-
     //
     // I keep long term information needed to connect to each TV in a database.
     // The long term information is the TV's unique device name (udn), friendly name
@@ -83,13 +76,9 @@ export class Bridge {
     );
     _services[Common.constants.bridge.path.service] = _shsToLgtvService;
 
-    const _frontend = await Frontend.build(
-      configurationDirectory,
-      _configuration,
-      _services,
-    );
+    const _frontend = await Frontend.build(configurationDirectory, _services);
 
-    const bridge = new Bridge(_configuration, _frontend, _services);
+    const bridge = new Bridge(_frontend, _services);
 
     return bridge;
   }

@@ -8,7 +8,7 @@
 
 import express from "express";
 import * as Common from "../../../common";
-import type { Configuration } from "../configuration";
+import { Configuration } from "./configuration";
 import type { Credentials } from "./credentials";
 import { Application } from "./application";
 import { LoginTokenAuth } from "./login-token-auth";
@@ -154,9 +154,9 @@ export class Frontend {
 
   public static async build(
     configurationDirectory: string,
-    configuration: Configuration,
     serviceApplications: Record<string, Application>,
   ): Promise<Frontend> {
+    const configuration = await Configuration.build();
     const _loginTokenAuth = LoginTokenAuth.build(configuration);
     const _bridgeTokenAuth = await BridgeTokenAuth.build(
       configuration,

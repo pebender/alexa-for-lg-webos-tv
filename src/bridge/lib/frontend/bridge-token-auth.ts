@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import * as Common from "../../../common";
 import { DatabaseTable } from "../database";
-import type { Configuration } from "../configuration";
+import type { Configuration } from "./configuration";
 import { authorizeUser } from "./authorize-user";
 
 /* This is a type because DatabaseTable needs it to be a type. */

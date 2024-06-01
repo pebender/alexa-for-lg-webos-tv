@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
-import * as Common from "../../common";
+import * as Common from "../../../common";
 
 export class Configuration {
   private readonly _configuration: {
