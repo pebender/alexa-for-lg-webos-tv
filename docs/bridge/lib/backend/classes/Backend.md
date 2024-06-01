@@ -14,11 +14,11 @@
 
 ### new Backend()
 
-> `private` **new Backend**(`_configuration`, `_controller`, `_searcher`): [`Backend`](Backend.md)
+> `private` **new Backend**(`_configurationDirectory`, `_controller`, `_searcher`): [`Backend`](Backend.md)
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../configuration/classes/Configuration.md)
+• **\_configurationDirectory**: `string`
 
 • **\_controller**: [`BackendController`](../backend-controller/classes/BackendController.md)
 
@@ -34,9 +34,9 @@
 
 ## Properties
 
-### \_configuration
+### \_configurationDirectory
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_configurationDirectory**: `string`
 
 ***
 
@@ -88,11 +88,11 @@
 
 ### build()
 
-> `static` **build**(`configuration`): `Promise`\<[`Backend`](Backend.md)\>
+> `static` **build**(`_configurationDirectory`): `Promise`\<[`Backend`](Backend.md)\>
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../configuration/classes/Configuration.md)
+• **\_configurationDirectory**: `string`
 
 #### Returns
 

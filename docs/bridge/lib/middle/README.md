@@ -8,6 +8,6 @@
 
 ## Index
 
-### Classes
+### Functions
 
-- [Middle](classes/Middle.md)
+- [getApplication](functions/getApplication.md)

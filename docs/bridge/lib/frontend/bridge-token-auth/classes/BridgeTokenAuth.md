@@ -10,13 +10,13 @@
 
 ### new BridgeTokenAuth()
 
-> `private` **new BridgeTokenAuth**(`_configuration`, `_database`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
+> `private` **new BridgeTokenAuth**(`_userAuth`, `_database`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
 
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<`BridgeTokenAuthRecord`\>
 
 #### Returns
 
@@ -24,21 +24,21 @@
 
 ## Properties
 
-### \_configuration
+### \_database
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<`BridgeTokenAuthRecord`\>
 
 ***
 
-### \_database
+### \_userAuth
 
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+> `private` `readonly` **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
 
 ## Methods
 
 ### authorizeBridgeToken()
 
-> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+> **authorizeBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 #### Parameters
 
@@ -46,7 +46,7 @@
 
 #### Returns
 
-`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 ***
 
@@ -60,9 +60,9 @@
 
 ***
 
-### getBridgeToken()
+### getCredentials()
 
-> **getBridgeToken**(`bridgeToken`): `Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+> **getCredentials**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 #### Parameters
 
@@ -70,17 +70,19 @@
 
 #### Returns
 
-`Promise`\<`null` \| [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 ***
 
-### setBridgeToken()
+### setCredentials()
 
-> **setBridgeToken**(`record`): `Promise`\<`void`\>
+> **setCredentials**(`bridgeToken`, `credentials`): `Promise`\<`void`\>
 
 #### Parameters
 
-• **record**: [`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)
+• **bridgeToken**: `string`
+
+• **credentials**: [`Credentials`](../../credentials/interfaces/Credentials.md)
 
 #### Returns
 
@@ -90,11 +92,13 @@
 
 ### build()
 
-> `static` **build**(`configuration`): `Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
+> `static` **build**(`userAuth`, `configurationDirectory`): `Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
+
+• **configurationDirectory**: `string`
 
 #### Returns
 

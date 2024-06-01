@@ -11,3 +11,15 @@
 ### Classes
 
 - [Frontend](classes/Frontend.md)
+
+## References
+
+### Application
+
+Re-exports [Application](application/classes/Application.md)
+
+***
+
+### Credentials
+
+Re-exports [Credentials](credentials/interfaces/Credentials.md)

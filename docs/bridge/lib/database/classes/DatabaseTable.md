@@ -124,13 +124,15 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### build()
 
-> `static` **build**\<`DatabaseRecord`\>(`name`, `indexes`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
+> `static` **build**\<`DatabaseRecord`\>(`configurationDirectory`, `name`, `indexes`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
 
 #### Type parameters
 
 • **DatabaseRecord** *extends* `Record`\<`string`, `null` \| `string` \| `number` \| `boolean` \| `Date`\>
 
 #### Parameters
+
+• **configurationDirectory**: `string`
 
 • **name**: `string`
 

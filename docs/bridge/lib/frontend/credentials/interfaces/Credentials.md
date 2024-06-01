@@ -2,9 +2,9 @@
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/login-token-auth](../README.md) / LoginTokenAuthRecord
+[alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/frontend/credentials](../README.md) / Credentials
 
-# Interface: LoginTokenAuthRecord
+# Interface: Credentials
 
 ## Properties
 

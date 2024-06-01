@@ -10,11 +10,11 @@
 
 ### new LoginTokenAuth()
 
-> `private` **new LoginTokenAuth**(`_configuration`, `_x509PublicCert`): [`LoginTokenAuth`](LoginTokenAuth.md)
+> `private` **new LoginTokenAuth**(`_userAuth`, `_x509PublicCert`): [`LoginTokenAuth`](LoginTokenAuth.md)
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
 
 • **\_x509PublicCert**: `string`
 
@@ -24,9 +24,9 @@
 
 ## Properties
 
-### \_configuration
+### \_userAuth
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
 
 ***
 
@@ -38,7 +38,7 @@
 
 ### authorizeLoginToken()
 
-> **authorizeLoginToken**(`loginToken`): `Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
+> **authorizeLoginToken**(`loginToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 #### Parameters
 
@@ -46,17 +46,17 @@
 
 #### Returns
 
-`Promise`\<`null` \| [`LoginTokenAuthRecord`](../interfaces/LoginTokenAuthRecord.md)\>
+`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
 
 ***
 
 ### build()
 
-> `static` **build**(`configuration`): [`LoginTokenAuth`](LoginTokenAuth.md)
+> `static` **build**(`userAuth`): [`LoginTokenAuth`](LoginTokenAuth.md)
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
 
 #### Returns
 

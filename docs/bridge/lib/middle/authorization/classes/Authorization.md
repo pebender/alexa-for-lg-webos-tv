@@ -10,11 +10,11 @@
 
 ### new Authorization()
 
-> `private` **new Authorization**(`_configuration`, `_database`): [`Authorization`](Authorization.md)
+> `private` **new Authorization**(`_configurationDirectory`, `_database`): [`Authorization`](Authorization.md)
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **\_configurationDirectory**: `string`
 
 • **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`AuthorizationRecord`](../type-aliases/AuthorizationRecord.md)\>
 
@@ -24,9 +24,9 @@
 
 ## Properties
 
-### \_configuration
+### \_configurationDirectory
 
-> `private` `readonly` **\_configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+> `private` `readonly` **\_configurationDirectory**: `string`
 
 ***
 
@@ -52,11 +52,11 @@
 
 ### build()
 
-> `static` **build**(`configuration`): `Promise`\<[`Authorization`](Authorization.md)\>
+> `static` **build**(`configurationDirectory`): `Promise`\<[`Authorization`](Authorization.md)\>
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../../configuration/classes/Configuration.md)
+• **configurationDirectory**: `string`
 
 #### Returns
 

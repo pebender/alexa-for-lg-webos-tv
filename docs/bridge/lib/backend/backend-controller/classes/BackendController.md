@@ -108,7 +108,11 @@
 
 ### build()
 
-> `static` **build**(): `Promise`\<[`BackendController`](BackendController.md)\>
+> `static` **build**(`_configurationDirectory`): `Promise`\<[`BackendController`](BackendController.md)\>
+
+#### Parameters
+
+• **\_configurationDirectory**: `string`
 
 #### Returns
 

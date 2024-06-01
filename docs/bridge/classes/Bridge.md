@@ -23,19 +23,15 @@ await bridge.start();
 
 ### new Bridge()
 
-> `private` **new Bridge**(`_configuration`, `_backend`, `_middle`, `_frontend`): [`Bridge`](Bridge.md)
+> `private` **new Bridge**(`_frontend`, `_services`): [`Bridge`](Bridge.md)
 
 The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#build)().
 
 #### Parameters
 
-• **\_configuration**: [`Configuration`](../lib/configuration/classes/Configuration.md)
-
-• **\_backend**: [`Backend`](../lib/backend/classes/Backend.md)
-
-• **\_middle**: [`Middle`](../lib/middle/classes/Middle.md)
-
 • **\_frontend**: [`Frontend`](../lib/frontend/classes/Frontend.md)
+
+• **\_services**: `Record`\<`string`, [`Application`](../lib/frontend/application/classes/Application.md)\>
 
 #### Returns
 
@@ -43,27 +39,15 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 
 ## Properties
 
-### \_backend
-
-> `private` `readonly` **\_backend**: [`Backend`](../lib/backend/classes/Backend.md)
-
-***
-
-### \_configuration
-
-> `private` `readonly` **\_configuration**: [`Configuration`](../lib/configuration/classes/Configuration.md)
-
-***
-
 ### \_frontend
 
 > `private` `readonly` **\_frontend**: [`Frontend`](../lib/frontend/classes/Frontend.md)
 
 ***
 
-### \_middle
+### \_services
 
-> `private` `readonly` **\_middle**: [`Middle`](../lib/middle/classes/Middle.md)
+> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/frontend/application/classes/Application.md)\>
 
 ## Methods
 
@@ -74,7 +58,7 @@ The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#bu
 Starts the Bridge. When called, it
 
 - starts the Frontend, and
-- starts the Backend.
+- starts each Service.
 
 #### Returns
 

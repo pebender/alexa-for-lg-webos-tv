@@ -10,7 +10,7 @@
 
 ### new Frontend()
 
-> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_middle`, `_server`): [`Frontend`](Frontend.md)
+> `private` **new Frontend**(`_loginTokenAuth`, `_bridgeTokenAuth`, `_links`, `_server`): [`Frontend`](Frontend.md)
 
 The constructor is private. To instantiate a Frontend, use [Frontend.build](Frontend.md#build)().
 
@@ -20,7 +20,7 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 • **\_bridgeTokenAuth**: [`BridgeTokenAuth`](../bridge-token-auth/classes/BridgeTokenAuth.md)
 
-• **\_middle**: [`Middle`](../../middle/classes/Middle.md)
+• **\_links**: `Record`\<`string`, `LinkDescription`\>
 
 • **\_server**: `Express`
 
@@ -36,15 +36,15 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ***
 
-### \_loginTokenAuth
+### \_links
 
-> `private` `readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
+> `private` `readonly` **\_links**: `Record`\<`string`, `LinkDescription`\>
 
 ***
 
-### \_middle
+### \_loginTokenAuth
 
-> `private` `readonly` **\_middle**: [`Middle`](../../middle/classes/Middle.md)
+> `private` `readonly` **\_loginTokenAuth**: [`LoginTokenAuth`](../login-token-auth/classes/LoginTokenAuth.md)
 
 ***
 
@@ -66,13 +66,13 @@ The constructor is private. To instantiate a Frontend, use [Frontend.build](Fron
 
 ### build()
 
-> `static` **build**(`configuration`, `middle`): `Promise`\<[`Frontend`](Frontend.md)\>
+> `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<[`Frontend`](Frontend.md)\>
 
 #### Parameters
 
-• **configuration**: [`Configuration`](../../configuration/classes/Configuration.md)
+• **configurationDirectory**: `string`
 
-• **middle**: [`Middle`](../../middle/classes/Middle.md)
+• **serviceApplications**: `Record`\<`string`, [`Application`](../application/classes/Application.md)\>
 
 #### Returns
 
