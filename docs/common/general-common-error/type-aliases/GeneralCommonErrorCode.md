@@ -4,6 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../modules.md) / [common/general-common-error](../README.md) / GeneralCommonErrorCode
 
-# Type alias: GeneralCommonErrorCode
+# Type Alias: GeneralCommonErrorCode
 
 > **GeneralCommonErrorCode**: `"unknown"` \| `"unauthorized"`

@@ -6,26 +6,6 @@
 
 # Class: UserAuth
 
-## Constructors
-
-### new UserAuth()
-
-> `private` **new UserAuth**(`_authorizedUsers`): [`UserAuth`](UserAuth.md)
-
-#### Parameters
-
-• **\_authorizedUsers**: `Record`\<`string`, `string`[]\>
-
-#### Returns
-
-[`UserAuth`](UserAuth.md)
-
-## Properties
-
-### \_authorizedUsers
-
-> `private` `readonly` **\_authorizedUsers**: `Record`\<`string`, `string`[]\>
-
 ## Methods
 
 ### authorizeUser()

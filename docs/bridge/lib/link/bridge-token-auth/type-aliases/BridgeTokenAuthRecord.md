@@ -4,7 +4,7 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/lib/link/bridge-token-auth](../README.md) / BridgeTokenAuthRecord
 
-# Type alias: BridgeTokenAuthRecord
+# Type Alias: BridgeTokenAuthRecord
 
 > **BridgeTokenAuthRecord**: `object`
 

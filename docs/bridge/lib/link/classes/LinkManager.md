@@ -6,36 +6,6 @@
 
 # Class: LinkManager
 
-## Constructors
-
-### new LinkManager()
-
-> `private` **new LinkManager**(`_links`, `_server`): [`LinkManager`](LinkManager.md)
-
-The constructor is private. To instantiate a LinkManager, use [LinkManager.build](LinkManager.md#build)().
-
-#### Parameters
-
-• **\_links**: `Record`\<`string`, [`LinkDescription`](../interfaces/LinkDescription.md)\>
-
-• **\_server**: `Express`
-
-#### Returns
-
-[`LinkManager`](LinkManager.md)
-
-## Properties
-
-### \_links
-
-> `private` `readonly` **\_links**: `Record`\<`string`, [`LinkDescription`](../interfaces/LinkDescription.md)\>
-
-***
-
-### \_server
-
-> `private` `readonly` **\_server**: `Express`
-
 ## Methods
 
 ### start()

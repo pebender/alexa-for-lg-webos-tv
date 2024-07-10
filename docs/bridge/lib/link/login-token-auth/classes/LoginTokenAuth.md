@@ -10,34 +10,6 @@
 
 - [`TokenAuth`](../../token-auth/interfaces/TokenAuth.md)
 
-## Constructors
-
-### new LoginTokenAuth()
-
-> `private` **new LoginTokenAuth**(`_userAuth`, `_x509PublicCert`): [`LoginTokenAuth`](LoginTokenAuth.md)
-
-#### Parameters
-
-• **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
-
-• **\_x509PublicCert**: `string`
-
-#### Returns
-
-[`LoginTokenAuth`](LoginTokenAuth.md)
-
-## Properties
-
-### \_userAuth
-
-> `private` `readonly` **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
-
-***
-
-### \_x509PublicCert
-
-> `private` `readonly` **\_x509PublicCert**: `string`
-
 ## Methods
 
 ### authorize()

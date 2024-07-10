@@ -4,7 +4,7 @@
 
 [alexa-for-lg-webos-tv](../../../../../../../modules.md) / [bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record](../README.md) / TvRecord
 
-# Type alias: TvRecord
+# Type Alias: TvRecord
 
 > **TvRecord**: `object`
 

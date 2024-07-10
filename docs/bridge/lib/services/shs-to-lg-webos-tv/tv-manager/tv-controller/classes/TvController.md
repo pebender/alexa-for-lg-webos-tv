@@ -10,38 +10,6 @@
 
 - `EventEmitter`
 
-## Constructors
-
-### new TvController()
-
-> `private` **new TvController**(`_database`, `_controls`): [`TvController`](TvController.md)
-
-#### Parameters
-
-• **\_database**: [`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
-
-• **\_controls**: `Record`\<`string`, [`TvControl`](../../tv-control/classes/TvControl.md)\>
-
-#### Returns
-
-[`TvController`](TvController.md)
-
-#### Overrides
-
-`EventEmitter.constructor`
-
-## Properties
-
-### \_controls
-
-> `private` `readonly` **\_controls**: `Record`\<`string`, [`TvControl`](../../tv-control/classes/TvControl.md)\>
-
-***
-
-### \_database
-
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
-
 ## Methods
 
 ### control()
@@ -65,20 +33,6 @@
 #### Returns
 
 [`TvControl`](../../tv-control/classes/TvControl.md)[]
-
-***
-
-### eventsAdd()
-
-> `private` **eventsAdd**(`udn`): `void`
-
-#### Parameters
-
-• **udn**: `string`
-
-#### Returns
-
-`void`
 
 ***
 

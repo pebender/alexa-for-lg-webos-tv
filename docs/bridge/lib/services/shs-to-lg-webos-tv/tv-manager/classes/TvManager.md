@@ -10,46 +10,6 @@
 
 - `EventEmitter`
 
-## Constructors
-
-### new TvManager()
-
-> `private` **new TvManager**(`_configurationDirectory`, `_controller`, `_searcher`): [`TvManager`](TvManager.md)
-
-#### Parameters
-
-• **\_configurationDirectory**: `string`
-
-• **\_controller**: [`TvController`](../tv-controller/classes/TvController.md)
-
-• **\_searcher**: [`TvSearcher`](../tv-searcher/classes/TvSearcher.md)
-
-#### Returns
-
-[`TvManager`](TvManager.md)
-
-#### Overrides
-
-`EventEmitter.constructor`
-
-## Properties
-
-### \_configurationDirectory
-
-> `private` `readonly` **\_configurationDirectory**: `string`
-
-***
-
-### \_controller
-
-> `private` `readonly` **\_controller**: [`TvController`](../tv-controller/classes/TvController.md)
-
-***
-
-### \_searcher
-
-> `private` `readonly` **\_searcher**: [`TvSearcher`](../tv-searcher/classes/TvSearcher.md)
-
 ## Methods
 
 ### control()

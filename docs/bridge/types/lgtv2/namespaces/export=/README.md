@@ -4,7 +4,7 @@
 
 [alexa-for-lg-webos-tv](../../../../../modules.md) / [bridge/types/lgtv2](../../README.md) / export=
 
-# Namespace: export=
+# export=
 
 ## Index
 

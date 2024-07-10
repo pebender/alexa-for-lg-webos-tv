@@ -30,18 +30,6 @@
 
 `EventEmitter.constructor`
 
-## Properties
-
-### \_ssdpNotify
-
-> `private` `readonly` **\_ssdpNotify**: [`Server`](../../../../../../types/node-ssdp/classes/Server.md)
-
-***
-
-### \_ssdpResponse
-
-> `private` `readonly` **\_ssdpResponse**: [`Client`](../../../../../../types/node-ssdp/classes/Client.md)
-
 ## Methods
 
 ### now()

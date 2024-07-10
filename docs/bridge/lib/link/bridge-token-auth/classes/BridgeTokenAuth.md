@@ -10,34 +10,6 @@
 
 - [`TokenAuth`](../../token-auth/interfaces/TokenAuth.md)
 
-## Constructors
-
-### new BridgeTokenAuth()
-
-> `private` **new BridgeTokenAuth**(`_userAuth`, `_database`): [`BridgeTokenAuth`](BridgeTokenAuth.md)
-
-#### Parameters
-
-• **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
-
-• **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
-
-#### Returns
-
-[`BridgeTokenAuth`](BridgeTokenAuth.md)
-
-## Properties
-
-### \_database
-
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../database/classes/DatabaseTable.md)\<[`BridgeTokenAuthRecord`](../type-aliases/BridgeTokenAuthRecord.md)\>
-
-***
-
-### \_userAuth
-
-> `private` `readonly` **\_userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
-
 ## Methods
 
 ### authorize()

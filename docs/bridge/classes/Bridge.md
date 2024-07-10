@@ -19,36 +19,6 @@ const bridge = await Bridge.build();
 await bridge.start();
 ```
 
-## Constructors
-
-### new Bridge()
-
-> `private` **new Bridge**(`_link`, `_services`): [`Bridge`](Bridge.md)
-
-The constructor is private. To create a Bridge, call [Bridge.build](Bridge.md#build)().
-
-#### Parameters
-
-• **\_link**: [`LinkManager`](../lib/link/classes/LinkManager.md)
-
-• **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/interfaces/Application.md)\>
-
-#### Returns
-
-[`Bridge`](Bridge.md)
-
-## Properties
-
-### \_link
-
-> `private` `readonly` **\_link**: [`LinkManager`](../lib/link/classes/LinkManager.md)
-
-***
-
-### \_services
-
-> `private` `readonly` **\_services**: `Record`\<`string`, [`Application`](../lib/link/application/interfaces/Application.md)\>
-
 ## Methods
 
 ### start()

@@ -14,37 +14,9 @@ limit it using `extends`.  You can learn more about this difference between a
 'type' and an 'interface' at
 [https://github.com/microsoft/TypeScript/issues/15300](https://github.com/microsoft/TypeScript/issues/15300).
 
-## Type parameters
+## Type Parameters
 
 • **DatabaseRecord** *extends* `Record`\<`string`, `string` \| `number` \| `boolean` \| `Date` \| `null`\>
-
-## Constructors
-
-### new DatabaseTable()
-
-> `private` **new DatabaseTable**\<`DatabaseRecord`\>(`indexes`, `database`): [`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
-
-#### Parameters
-
-• **indexes**: keyof `DatabaseRecord`[]
-
-• **database**: `Nedb`\<`Record`\<`string`, `any`\>\>
-
-#### Returns
-
-[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>
-
-## Properties
-
-### \_database
-
-> `private` `readonly` **\_database**: `Nedb`\<`DatabaseRecord`\>
-
-***
-
-### \_indexes
-
-> `private` `readonly` **\_indexes**: keyof `DatabaseRecord`[]
 
 ## Methods
 
@@ -126,7 +98,7 @@ limit it using `extends`.  You can learn more about this difference between a
 
 > `static` **build**\<`DatabaseRecord`\>(`configurationDirectory`, `name`, `indexes`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
 
-#### Type parameters
+#### Type Parameters
 
 • **DatabaseRecord** *extends* `Record`\<`string`, `null` \| `string` \| `number` \| `boolean` \| `Date`\>
 

@@ -65,40 +65,40 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ### requestBody?
 
-> `optional` `readonly` **requestBody**: `object`
+> `readonly` `optional` **requestBody**: `object`
 
 ***
 
 ### requestHeaders?
 
-> `optional` `readonly` **requestHeaders**: `Record`\<`string`, `string`\>
+> `readonly` `optional` **requestHeaders**: `Record`\<`string`, `string`\>
 
 ***
 
 ### requestMethod?
 
-> `optional` `readonly` **requestMethod**: `"POST"` \| `"GET"`
+> `readonly` `optional` **requestMethod**: `"POST"` \| `"GET"`
 
 ***
 
 ### requestUrl?
 
-> `optional` `readonly` **requestUrl**: `string`
+> `readonly` `optional` **requestUrl**: `string`
 
 ***
 
 ### responseBody?
 
-> `optional` `readonly` **responseBody**: `string` \| `object`
+> `readonly` `optional` **responseBody**: `string` \| `object`
 
 ***
 
 ### responseHeaders?
 
-> `optional` `readonly` **responseHeaders**: `Headers`
+> `readonly` `optional` **responseHeaders**: `Headers`
 
 ***
 
 ### responseStatusCode?
 
-> `optional` `readonly` **responseStatusCode**: `number`
+> `readonly` `optional` **responseStatusCode**: `number`

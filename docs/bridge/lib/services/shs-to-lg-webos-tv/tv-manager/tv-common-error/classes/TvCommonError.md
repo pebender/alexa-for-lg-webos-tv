@@ -67,25 +67,25 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### lgtvRequest?
 
-> `optional` `readonly` **lgtvRequest**: [`Request`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+> `readonly` `optional` **lgtvRequest**: [`Request`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
 
 ***
 
 ### lgtvResponse?
 
-> `optional` `readonly` **lgtvResponse**: [`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+> `readonly` `optional` **lgtvResponse**: [`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
 
 ***
 
 ### ssdpDescription?
 
-> `optional` `readonly` **ssdpDescription**: `string`
+> `readonly` `optional` **ssdpDescription**: `string`
 
 ***
 
 ### ssdpResponse?
 
-> `optional` `readonly` **ssdpResponse**: `object`
+> `readonly` `optional` **ssdpResponse**: `object`
 
 #### headers
 
@@ -103,4 +103,4 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### tv?
 
-> `optional` `readonly` **tv**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
+> `readonly` `optional` **tv**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>

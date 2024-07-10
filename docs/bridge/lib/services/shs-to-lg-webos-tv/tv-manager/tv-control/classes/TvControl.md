@@ -10,74 +10,6 @@
 
 - `EventEmitter`
 
-## Constructors
-
-### new TvControl()
-
-> `private` **new TvControl**(`_database`, `_tv`, `_connection`, `_ssdpNotify`, `_ssdpResponse`): [`TvControl`](TvControl.md)
-
-#### Parameters
-
-• **\_database**: [`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
-
-• **\_tv**: [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
-
-• **\_connection**: [`export=`](../../../../../../types/lgtv2/classes/export=.md)
-
-• **\_ssdpNotify**: [`Server`](../../../../../../types/node-ssdp/classes/Server.md)
-
-• **\_ssdpResponse**: [`Client`](../../../../../../types/node-ssdp/classes/Client.md)
-
-#### Returns
-
-[`TvControl`](TvControl.md)
-
-#### Overrides
-
-`EventEmitter.constructor`
-
-## Properties
-
-### \_connecting
-
-> `private` **\_connecting**: `boolean`
-
-***
-
-### \_connection
-
-> `private` `readonly` **\_connection**: [`export=`](../../../../../../types/lgtv2/classes/export=.md)
-
-***
-
-### \_database
-
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
-
-***
-
-### \_poweredOn
-
-> `private` **\_poweredOn**: `boolean`
-
-***
-
-### \_ssdpNotify
-
-> `private` `readonly` **\_ssdpNotify**: [`Server`](../../../../../../types/node-ssdp/classes/Server.md)
-
-***
-
-### \_ssdpResponse
-
-> `private` `readonly` **\_ssdpResponse**: [`Client`](../../../../../../types/node-ssdp/classes/Client.md)
-
-***
-
-### \_tv
-
-> `private` `readonly` **\_tv**: [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
-
 ## Accessors
 
 ### tv
@@ -89,25 +21,6 @@
 [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
 
 ## Methods
-
-### addSubscriptionEvents()
-
-> `private` **addSubscriptionEvents**(): `void`
-
-Adds subscriptions to TvRecord state change events. State changes communicated
-from the TvRecord are shared using an EventEmitter | EventEmitter
-emitting an event containing the subscription identifier, any error and any
-response. The error is a [CommonError](../../../../../../../common/common-error/classes/CommonError.md)
-with
-
-- general: "tv", specific "subscriptionError",
-- general: "tv", specific "lgtvApiViolation",
-
-#### Returns
-
-`void`
-
-***
 
 ### getPowerState()
 

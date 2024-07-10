@@ -28,7 +28,7 @@
 
 > `optional` **scope**: `object`
 
-#### Index signature
+#### Index Signature
 
  \[`x`: `string`\]: `string`
 

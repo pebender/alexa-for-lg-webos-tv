@@ -24,7 +24,7 @@
 
 ### definitions.common.model.Context
 
-> **definitions.common.model.Context**: `object`
+> **Context**: `object`
 
 ### definitions.common.model.Context.additionalProperties
 
@@ -48,7 +48,7 @@
 
 ### definitions.common.model.CorrelationToken
 
-> **definitions.common.model.CorrelationToken**: `object`
+> **CorrelationToken**: `object`
 
 ### definitions.common.model.CorrelationToken.minLength
 
@@ -60,7 +60,7 @@
 
 ### definitions.common.model.Endpoint
 
-> **definitions.common.model.Endpoint**: `object`
+> **Endpoint**: `object`
 
 ### definitions.common.model.Endpoint.properties
 
@@ -92,7 +92,7 @@
 
 ### definitions.common.model.EndpointId
 
-> **definitions.common.model.EndpointId**: `object`
+> **EndpointId**: `object`
 
 ### definitions.common.model.EndpointId.maxLength
 
@@ -112,7 +112,7 @@
 
 ### definitions.common.model.MessageId
 
-> **definitions.common.model.MessageId**: `object`
+> **MessageId**: `object`
 
 ### definitions.common.model.MessageId.maxLength
 
@@ -132,7 +132,7 @@
 
 ### definitions.common.model.PayloadVersion
 
-> **definitions.common.model.PayloadVersion**: `object`
+> **PayloadVersion**: `object`
 
 ### definitions.common.model.PayloadVersion.enum
 
@@ -144,7 +144,7 @@
 
 ### definitions.common.model.Scope
 
-> **definitions.common.model.Scope**: `object`
+> **Scope**: `object`
 
 ### definitions.common.model.Scope.properties
 
@@ -180,7 +180,7 @@
 
 ### definitions.common.model.StatePropertyBase.TimeOfSample
 
-> **definitions.common.model.StatePropertyBase.TimeOfSample**: `object`
+> **TimeOfSample**: `object`
 
 ### definitions.common.model.StatePropertyBase.TimeOfSample.pattern
 
@@ -192,7 +192,7 @@
 
 ### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds
 
-> **definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds**: `object`
+> **UncertaintyInMilliseconds**: `object`
 
 ### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds.minimum
 
@@ -204,7 +204,7 @@
 
 ### definitions.endpoint.capabilities
 
-> **definitions.endpoint.capabilities**: `object`
+> **capabilities**: `object`
 
 ### definitions.endpoint.capabilities.items
 
@@ -228,7 +228,7 @@
 
 ### definitions.state.properties
 
-> **definitions.state.properties**: `object`
+> **properties**: `object`
 
 ### definitions.state.properties.items
 

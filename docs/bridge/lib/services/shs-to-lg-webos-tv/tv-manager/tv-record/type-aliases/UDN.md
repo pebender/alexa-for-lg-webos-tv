@@ -4,6 +4,6 @@
 
 [alexa-for-lg-webos-tv](../../../../../../../modules.md) / [bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record](../README.md) / UDN
 
-# Type alias: UDN
+# Type Alias: UDN
 
 > **UDN**: `string`

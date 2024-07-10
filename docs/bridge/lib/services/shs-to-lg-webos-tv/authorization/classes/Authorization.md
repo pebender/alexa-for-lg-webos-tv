@@ -6,34 +6,6 @@
 
 # Class: Authorization
 
-## Constructors
-
-### new Authorization()
-
-> `private` **new Authorization**(`_configurationDirectory`, `_database`): [`Authorization`](Authorization.md)
-
-#### Parameters
-
-• **\_configurationDirectory**: `string`
-
-• **\_database**: [`DatabaseTable`](../../../../database/classes/DatabaseTable.md)\<[`AuthorizationRecord`](../type-aliases/AuthorizationRecord.md)\>
-
-#### Returns
-
-[`Authorization`](Authorization.md)
-
-## Properties
-
-### \_configurationDirectory
-
-> `private` `readonly` **\_configurationDirectory**: `string`
-
-***
-
-### \_database
-
-> `private` `readonly` **\_database**: [`DatabaseTable`](../../../../database/classes/DatabaseTable.md)\<[`AuthorizationRecord`](../type-aliases/AuthorizationRecord.md)\>
-
 ## Methods
 
 ### authorizeSkillToken()
