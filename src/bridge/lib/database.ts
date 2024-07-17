@@ -129,7 +129,7 @@ export class DatabaseTable<
     let records: Array<DatabaseRecord & { _id?: unknown }>;
     try {
       records = await this._database
-        .findAsync(Array.isArray(query) ? { $and: query } : query ?? {})
+        .findAsync(Array.isArray(query) ? { $and: query } : (query ?? {}))
         .execAsync();
     } catch (error) {
       throw new Common.DatabaseCommonError({ cause: error });
