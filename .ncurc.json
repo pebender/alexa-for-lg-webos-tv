@@ -2,6 +2,7 @@
   "reject": [
     "@types/node",
     "eslint",
-    "eslint-config-love"
+    "eslint-config-love",
+    "eslint-plugin-promise"
   ]
 }
