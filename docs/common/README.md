@@ -14,6 +14,12 @@ Re-exports [CommonError](common-error/classes/CommonError.md)
 
 ***
 
+### constants
+
+Re-exports [constants](constants/variables/constants.md)
+
+***
+
 ### DatabaseCommonError
 
 Re-exports [DatabaseCommonError](database-common-error/classes/DatabaseCommonError.md)
@@ -53,9 +59,3 @@ Renames and re-exports [common/user-profile](user-profile/README.md)
 ### SHS
 
 Renames and re-exports [common/smart-home-skill](smart-home-skill/README.md)
-
-***
-
-### constants
-
-Re-exports [constants](constants/variables/constants.md)

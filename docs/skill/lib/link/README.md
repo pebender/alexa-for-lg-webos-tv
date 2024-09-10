@@ -41,12 +41,12 @@ Re-exports [LinkCommonErrorCode](link-common-error/type-aliases/LinkCommonErrorC
 
 ***
 
-### RequestOptions
-
-Re-exports [RequestOptions](request/interfaces/RequestOptions.md)
-
-***
-
 ### request
 
 Re-exports [request](request/functions/request.md)
+
+***
+
+### RequestOptions
+
+Re-exports [RequestOptions](request/interfaces/RequestOptions.md)
