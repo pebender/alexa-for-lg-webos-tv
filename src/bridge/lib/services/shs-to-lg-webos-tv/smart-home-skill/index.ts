@@ -154,9 +154,7 @@ function callback(
   error: Error | null,
   response: LGTV.Response | null,
   udn: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   authorization: DirectiveAuthorization,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvManager: TvManager,
 ): void {
   Common.Debug.debug(`udn='${udn}', ${uri}:`);

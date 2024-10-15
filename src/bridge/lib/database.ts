@@ -106,7 +106,7 @@ export class DatabaseTable<
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord | null> {
-    let record: Record<string, unknown> | null;
+    let record: Record<string, unknown> | null = null;
     try {
       record = await this._database
         .findOneAsync(Array.isArray(query) ? { $and: query } : query)
@@ -126,7 +126,7 @@ export class DatabaseTable<
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord[]> {
-    let records: Array<DatabaseRecord & { _id?: unknown }>;
+    let records: Array<DatabaseRecord & { _id?: unknown }> = [];
     try {
       records = await this._database
         .findAsync(Array.isArray(query) ? { $and: query } : (query ?? {}))

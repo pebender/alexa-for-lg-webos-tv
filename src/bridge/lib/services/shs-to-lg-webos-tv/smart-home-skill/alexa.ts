@@ -2,7 +2,6 @@ import * as Common from "../../../../../common";
 import type { TvControl } from "../tv-manager";
 
 function capabilities(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
@@ -13,7 +12,6 @@ function capabilities(
 }
 
 function states(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty>> {
   return [];
@@ -21,7 +19,6 @@ function states(
 
 function reportStateHandler(
   alexaRequest: Common.SHS.Request,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Common.SHS.Response {
   const response = new Common.SHS.Response({

@@ -59,7 +59,6 @@ const alexaToLGTV: AlexaToLGTV = createAlexaToLGTV();
 const lgtvToAlexa: LGTVToAlexa = createLGTVToAlexa();
 
 function capabilities(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
@@ -147,7 +146,7 @@ async function launchTargetHandler(
         [key: string]: unknown;
       }>;
       const index = apps.findIndex((app) => app.id === requestedApp.id);
-      if (index < 0) {
+      if (index === -1) {
         return Common.SHS.Response.buildAlexaErrorResponseForInvalidValue(
           alexaRequest,
         );

@@ -3,7 +3,6 @@ import * as Common from "../../../../../common";
 import type { TvControl } from "../tv-manager";
 
 function capabilities(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [
@@ -17,7 +16,6 @@ function capabilities(
 }
 
 function states(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.ContextProperty>> {
   return [];

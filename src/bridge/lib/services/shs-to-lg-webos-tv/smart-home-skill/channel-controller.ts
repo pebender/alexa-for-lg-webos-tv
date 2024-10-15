@@ -209,7 +209,6 @@ async function setChannel(
 }
 
 function capabilities(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tvControl: TvControl,
 ): Array<Promise<Common.SHS.EventPayloadEndpointCapability>> {
   return [

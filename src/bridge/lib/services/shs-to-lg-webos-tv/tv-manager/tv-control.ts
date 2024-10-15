@@ -64,10 +64,8 @@ export class TvControl extends EventEmitter {
         .catch((error: unknown) =>
           setImmediate((): void => {
             if (error instanceof Error) {
-              // eslint-disable-next-line promise/no-callback-in-promise
               callback(error);
             } else {
-              // eslint-disable-next-line promise/no-callback-in-promise
               callback(new TvCommonError({ tv, cause: error }));
             }
           }),

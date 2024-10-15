@@ -41,10 +41,7 @@ function getSortedTVList(tvManager: TvManager): TvRecord.TvRecord[] {
   return tvList;
 }
 
-function lgtvCmdsCommand(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tvManager: TvManager,
-): void {
+function lgtvCmdsCommand(tvManager: TvManager): void {
   console.log("Known Commands");
   const cmds: Record<string, object | null> = {
     "api/getServiceList": null,

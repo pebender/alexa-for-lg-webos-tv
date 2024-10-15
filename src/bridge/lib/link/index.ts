@@ -115,8 +115,8 @@ class TestApplication implements Application {
   }
 
   public async handleRequest(
-    request: object,
-    credentials: Credentials,
+    _request: object,
+    _credentials: Credentials,
   ): Promise<object> {
     return {};
   }

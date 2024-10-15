@@ -281,7 +281,6 @@ export class TvSearcher extends EventEmitter {
       ssdpProcessAsync(messageName, headers, rinfo)
         .then((tv: TvRecord | null) =>
           setImmediate((): void => {
-            // eslint-disable-next-line promise/no-callback-in-promise
             callback(null, tv);
           }),
         )
@@ -295,7 +294,6 @@ export class TvSearcher extends EventEmitter {
                     message: "TvRecord search error",
                     cause: error,
                   });
-            // eslint-disable-next-line promise/no-callback-in-promise
             callback(commonError, null);
           }),
         );
