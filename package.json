@@ -18,7 +18,7 @@
     "@tsconfig/node20": "20.1.4",
     "copyfiles": "2.4.1",
     "eslint": "9.13.0",
-    "eslint-config-love": "89.0.0",
+    "eslint-config-love": "89.0.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-prettier": "5.2.1",
@@ -32,7 +32,7 @@
     "typedoc": "0.26.10",
     "typedoc-plugin-markdown": "4.2.9",
     "typescript": "5.6.3",
-    "typescript-eslint": "8.10.0"
+    "typescript-eslint": "8.11.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json && (cd pkg/alexa-for-lg-webos-tv-skill && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-util && npm run clean)",
