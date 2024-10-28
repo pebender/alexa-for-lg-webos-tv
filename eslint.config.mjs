@@ -38,6 +38,7 @@ export default [
       "@typescript-eslint/no-unnecessary-qualifier": "off",
       "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/prefer-destructuring": "off",
+      "@typescript-eslint/prefer-regexp-exec": "off",
       "unicorn/consistent-function-scoping": "off",
       // Using CommonJS not ESM.
       "unicorn/prefer-module": "off",
