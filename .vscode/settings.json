@@ -1,0 +1,64 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.formatOnSave": true
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.formatOnSave": true
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.formatOnSave": true
+    },
+    "cSpell.words": [
+        "Alexa",
+        "amazonalexa",
+        "appstatus",
+        "Atza",
+        "backinthirty",
+        "BLURAY",
+        "callsign",
+        "certnames",
+        "cmds",
+        "Datafile",
+        "esbenp",
+        "expressjwt",
+        "FORLGTVWEBOSTV",
+        "ForLGwebOSTV",
+        "ForLGWebOSTVController",
+        "ForLGwebOSTVGateway",
+        "hostnames",
+        "ipaddress",
+        "IPADDRESS_VALID",
+        "isnumeric",
+        "lamba",
+        "LGTV",
+        "LGTVWEBOSTV",
+        "livetv",
+        "noip",
+        "outofsync",
+        "reprompt",
+        "seald",
+        "SMARTCAST",
+        "ssap",
+        "ssdp",
+        "Trewin",
+        "tsdoc",
+        "tvmap",
+        "udns",
+        "upnp",
+        "Upsert",
+        "Vudu",
+        "webOS"
+    ],
+    "cSpell.ignorePaths" : [
+        "*.json",
+    ],
+    "eslint.validate": [
+        "javascript",
+        "typescript"
+    ]
+}
