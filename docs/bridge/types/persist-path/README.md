@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # bridge/types/persist-path
 
-## Index
-
-### Functions
+## Functions
 
 - [default](functions/default.md)

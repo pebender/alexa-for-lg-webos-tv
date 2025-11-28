@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -18,7 +18,9 @@
 
 #### Parameters
 
-• **udn**: `string`
+##### udn
+
+`string`
 
 #### Returns
 
@@ -52,7 +54,9 @@
 
 #### Parameters
 
-• **tv**: [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
+##### tv
+
+[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
 
 #### Returns
 
@@ -62,12 +66,14 @@
 
 ### build()
 
-> `static` **build**(`_configurationDirectory`): `Promise`\<[`TvController`](TvController.md)\>
+> `static` **build**(`_configurationDirectory`): `Promise`\<`TvController`\>
 
 #### Parameters
 
-• **\_configurationDirectory**: `string`
+##### \_configurationDirectory
+
+`string`
 
 #### Returns
 
-`Promise`\<[`TvController`](TvController.md)\>
+`Promise`\<`TvController`\>

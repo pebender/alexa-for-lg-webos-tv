@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # skill/lib/link
 
-## Index
-
-### Functions
+## Functions
 
 - [getCredentials](functions/getCredentials.md)
 - [getHostnames](functions/getHostnames.md)

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,13 +6,11 @@
 
 # bridge/lib/database
 
-## Index
-
-### Classes
+## Classes
 
 - [DatabaseTable](classes/DatabaseTable.md)
 
-### Type Aliases
+## Type Aliases
 
 - [AllowOnly](type-aliases/AllowOnly.md)
 - [OneOf](type-aliases/OneOf.md)

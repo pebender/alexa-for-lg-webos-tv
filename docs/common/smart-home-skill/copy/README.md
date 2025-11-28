@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # common/smart-home-skill/copy
 
-## Index
-
-### Type Aliases
+## Type Aliases
 
 - [copyElementType](type-aliases/copyElementType.md)
 
-### Functions
+## Functions
 
 - [copyElement](functions/copyElement.md)

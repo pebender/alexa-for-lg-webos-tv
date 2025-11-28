@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,13 +6,11 @@
 
 # common/smart-home-skill/request
 
-## Index
-
-### Classes
+## Classes
 
 - [Request](classes/Request.md)
 
-### Interfaces
+## Interfaces
 
 - [Directive](interfaces/Directive.md)
 - [DirectivePayload](interfaces/DirectivePayload.md)

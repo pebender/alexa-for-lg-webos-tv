@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -10,7 +10,9 @@
 
 ## Parameters
 
-• **tvManager**: [`TvManager`](../../../tv-manager/classes/TvManager.md)
+### tvManager
+
+[`TvManager`](../../../tv-manager/classes/TvManager.md)
 
 ## Returns
 

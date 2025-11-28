@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # bridge/lib/services/shs-to-lg-webos-tv/smart-home-skill/launcher
 
-## Index
-
-### Functions
+## Functions
 
 - [capabilities](functions/capabilities.md)
 - [handler](functions/handler.md)

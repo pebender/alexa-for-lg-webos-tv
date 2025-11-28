@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -15,41 +15,61 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ## Constructors
 
-### new HttpCommonError()
+### Constructor
 
-> **new HttpCommonError**(`options`): [`HttpCommonError`](HttpCommonError.md)
+> **new HttpCommonError**(`options`): `HttpCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
+`unknown`
 
-• **options.message?**: `string`
+###### code
 
-• **options.requestBody?**: `object`
+[`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
 
-• **options.requestHeaders?**: `Record`\<`string`, `string`\>
+###### message?
 
-• **options.requestMethod?**: `"POST"` \| `"GET"`
+`string`
 
-• **options.requestUrl?**: `string`
+###### requestBody?
 
-• **options.responseBody?**: `string` \| `object`
+`object`
 
-• **options.responseHeaders?**: `Headers`
+###### requestHeaders?
 
-• **options.responseStatusCode?**: `number`
+`Record`\<`string`, `string`\>
+
+###### requestMethod?
+
+`"POST"` \| `"GET"`
+
+###### requestUrl?
+
+`string`
+
+###### responseBody?
+
+`string` \| `object`
+
+###### responseHeaders?
+
+`Headers`
+
+###### responseStatusCode?
+
+`number`
 
 #### Returns
 
-[`HttpCommonError`](HttpCommonError.md)
+`HttpCommonError`
 
 #### Overrides
 
-[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../common/common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../common/common-error/classes/CommonError.md#constructor)
 
 ## Properties
 

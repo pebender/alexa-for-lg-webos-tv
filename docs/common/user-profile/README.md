@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,20 +6,18 @@
 
 # common/user-profile
 
-## Index
-
-### Classes
+## Classes
 
 - [UserProfileCommonError](classes/UserProfileCommonError.md)
 
-### Interfaces
+## Interfaces
 
 - [UserProfile](interfaces/UserProfile.md)
 
-### Type Aliases
+## Type Aliases
 
 - [UserProfileCommonErrorCode](type-aliases/UserProfileCommonErrorCode.md)
 
-### Functions
+## Functions
 
 - [getUserProfile](functions/getUserProfile.md)

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # bridge/types/node-arp
 
-## Index
-
-### Functions
+## Functions
 
 - [getMAC](functions/getMAC.md)
 - [getMACLinux](functions/getMACLinux.md)

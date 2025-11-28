@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -8,25 +8,25 @@
 
 > `const` **constants**: `object`
 
-## Type declaration
+## Type Declaration
 
 ### application
 
 > **application**: `object`
 
-### application.name
+#### application.name
 
 > **name**: `object`
 
-### application.name.pretty
+#### application.name.pretty
 
 > **pretty**: `string` = `applicationNamePretty`
 
-### application.name.safe
+#### application.name.safe
 
 > **safe**: `string` = `applicationNameSafe`
 
-### application.vendor
+#### application.vendor
 
 > **vendor**: `string` = `"Back in Thirty"`
 
@@ -34,19 +34,19 @@
 
 > **aws**: `object`
 
-### aws.dynamoDB
+#### aws.dynamoDB
 
 > **dynamoDB**: `object`
 
-### aws.dynamoDB.indexName
+#### aws.dynamoDB.indexName
 
 > **indexName**: `string` = `"skillToken_index"`
 
-### aws.dynamoDB.tableName
+#### aws.dynamoDB.tableName
 
 > **tableName**: `string` = `applicationNameSafe`
 
-### aws.region
+#### aws.region
 
 > **region**: `string` = `"us-east-1"`
 
@@ -54,50 +54,50 @@
 
 > **bridge**: `object`
 
-### bridge.host
+#### bridge.host
 
 > **host**: `string` = `"0.0.0.0"`
 
-### bridge.jwt
+#### bridge.jwt
 
 > **jwt**: `object`
 
-### bridge.jwt.iss
+#### bridge.jwt.iss
 
 > **iss**: `string` = `applicationNamePretty`
 
-### bridge.jwt.x509PrivateKeyFile
+#### bridge.jwt.x509PrivateKeyFile
 
 > **x509PrivateKeyFile**: `string`
 
-### bridge.jwt.x509PublicCertFile
+#### bridge.jwt.x509PublicCertFile
 
 > **x509PublicCertFile**: `string`
 
-### bridge.path
+#### bridge.path
 
 > **path**: `object`
 
-### bridge.path.login
+#### bridge.path.login
 
 > **login**: `string` = `"/login"`
 
-### bridge.path.service
+#### bridge.path.service
 
 > **service**: `string`
 
-### bridge.path.test
+#### bridge.path.test
 
 > **test**: `string` = `"/test"`
 
-### bridge.port
+#### bridge.port
 
 > **port**: `object`
 
-### bridge.port.http
+#### bridge.port.http
 
 > **http**: `number` = `25_391`
 
-### bridge.port.https
+#### bridge.port.https
 
 > **https**: `number` = `25_392`

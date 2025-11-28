@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -12,19 +12,23 @@
 
 ## Constructors
 
-### new TvSearcher()
+### Constructor
 
-> **new TvSearcher**(`_ssdpNotify`, `_ssdpResponse`): [`TvSearcher`](TvSearcher.md)
+> **new TvSearcher**(`_ssdpNotify`, `_ssdpResponse`): `TvSearcher`
 
 #### Parameters
 
-• **\_ssdpNotify**: [`Server`](../../../../../../types/node-ssdp/classes/Server.md)
+##### \_ssdpNotify
 
-• **\_ssdpResponse**: [`Client`](../../../../../../types/node-ssdp/classes/Client.md)
+[`Server`](../../../../../../types/node-ssdp/classes/Server.md)
+
+##### \_ssdpResponse
+
+[`Client`](../../../../../../types/node-ssdp/classes/Client.md)
 
 #### Returns
 
-[`TvSearcher`](TvSearcher.md)
+`TvSearcher`
 
 #### Overrides
 
@@ -54,8 +58,8 @@
 
 ### build()
 
-> `static` **build**(): [`TvSearcher`](TvSearcher.md)
+> `static` **build**(): `TvSearcher`
 
 #### Returns
 
-[`TvSearcher`](TvSearcher.md)
+`TvSearcher`

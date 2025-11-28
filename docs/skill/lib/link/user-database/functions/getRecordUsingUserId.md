@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,17 +6,23 @@
 
 # Function: getRecordUsingUserId()
 
-> **getRecordUsingUserId**(`userId`, `options`?): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
+> **getRecordUsingUserId**(`userId`, `options?`): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
 
 ## Parameters
 
-• **userId**: `string`
+### userId
 
-• **options?**
+`string`
 
-• **options.required?**: `boolean`
+### options?
 
-• **options.requiredFields?**: [`Field`](../type-aliases/Field.md)[]
+#### required?
+
+`boolean`
+
+#### requiredFields?
+
+[`Field`](../type-aliases/Field.md)[]
 
 ## Returns
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # common/database-common-error
 
-## Index
-
-### Classes
+## Classes
 
 - [DatabaseCommonError](classes/DatabaseCommonError.md)
 
-### Type Aliases
+## Type Aliases
 
 - [DatabaseCommonErrorCode](type-aliases/DatabaseCommonErrorCode.md)

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 A class to build and start a bridge.
 
-A new instance of Bridge is created/built by calling [Bridge.build](Bridge.md#build)().
+A new instance of Bridge is created/built by calling [Bridge.build](#build)().
 
 ## Example
 
@@ -38,7 +38,7 @@ Starts the Bridge. When called, it
 
 ### build()
 
-> `static` **build**(): `Promise`\<[`Bridge`](Bridge.md)\>
+> `static` **build**(): `Promise`\<`Bridge`\>
 
 Builds the Bridge. When called, it
 
@@ -52,6 +52,6 @@ Builds the Bridge. When called, it
 
 #### Returns
 
-`Promise`\<[`Bridge`](Bridge.md)\>
+`Promise`\<`Bridge`\>
 
 the Bridge built

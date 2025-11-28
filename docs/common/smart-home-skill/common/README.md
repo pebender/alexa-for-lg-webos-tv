@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,13 +6,11 @@
 
 # common/smart-home-skill/common
 
-## Index
-
-### Interfaces
+## Interfaces
 
 - [Endpoint](interfaces/Endpoint.md)
 - [Header](interfaces/Header.md)
 
-### Type Aliases
+## Type Aliases
 
 - [Namespace](type-aliases/Namespace.md)

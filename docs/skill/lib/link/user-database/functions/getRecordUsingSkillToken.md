@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,17 +6,23 @@
 
 # Function: getRecordUsingSkillToken()
 
-> **getRecordUsingSkillToken**(`skillToken`, `options`?): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
+> **getRecordUsingSkillToken**(`skillToken`, `options?`): `Promise`\<[`Record`](../interfaces/Record.md) \| `null`\>
 
 ## Parameters
 
-• **skillToken**: `string`
+### skillToken
 
-• **options?**
+`string`
 
-• **options.required?**: `boolean`
+### options?
 
-• **options.requiredFields?**: [`Field`](../type-aliases/Field.md)[]
+#### required?
+
+`boolean`
+
+#### requiredFields?
+
+[`Field`](../type-aliases/Field.md)[]
 
 ## Returns
 

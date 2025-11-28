@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,14 +6,18 @@
 
 # Function: handler()
 
-> **handler**(`request`, `context`): `Promise`\<`ASKModel.ResponseEnvelope` \| [`Response`](../../common/smart-home-skill/response/classes/Response.md)\>
+> **handler**(`request`, `context`): `Promise`\<[`Response`](../../common/smart-home-skill/response/classes/Response.md) \| `ResponseEnvelope`\>
 
 ## Parameters
 
-• **request**: [`Request`](../../common/smart-home-skill/request/classes/Request.md) \| `RequestEnvelope`
+### request
 
-• **context**: `Context` \| `Context`
+[`Request`](../../common/smart-home-skill/request/classes/Request.md) | `RequestEnvelope`
+
+### context
+
+`Context` | `Context`
 
 ## Returns
 
-`Promise`\<`ASKModel.ResponseEnvelope` \| [`Response`](../../common/smart-home-skill/response/classes/Response.md)\>
+`Promise`\<[`Response`](../../common/smart-home-skill/response/classes/Response.md) \| `ResponseEnvelope`\>

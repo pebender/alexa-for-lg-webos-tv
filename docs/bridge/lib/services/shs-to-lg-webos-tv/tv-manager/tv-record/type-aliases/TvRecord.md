@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -6,29 +6,39 @@
 
 # Type Alias: TvRecord
 
-> **TvRecord**: `object`
+> **TvRecord** = `object`
 
-## Type declaration
+## Properties
 
 ### ip
 
 > **ip**: [`IP`](IP.md)
 
+***
+
 ### key?
 
 > `optional` **key**: `string`
+
+***
 
 ### mac
 
 > **mac**: [`MAC`](MAC.md)
 
+***
+
 ### name
 
 > **name**: `string`
 
+***
+
 ### udn
 
 > **udn**: [`UDN`](UDN.md)
+
+***
 
 ### url
 

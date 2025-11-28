@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -12,21 +12,23 @@
 
 ## Constructors
 
-### new Server()
+### Constructor
 
-> **new Server**(`opts`?): [`Server`](Server.md)
+> **new Server**(`opts?`): `Server`
 
 #### Parameters
 
-• **opts?**: [`ServerOptions`](../interfaces/ServerOptions.md)
+##### opts?
+
+[`ServerOptions`](../interfaces/ServerOptions.md)
 
 #### Returns
 
-[`Server`](Server.md)
+`Server`
 
 #### Overrides
 
-[`Base`](Base.md).[`constructor`](Base.md#constructors)
+[`Base`](Base.md).[`constructor`](Base.md#constructor)
 
 ## Methods
 
@@ -36,7 +38,9 @@
 
 #### Parameters
 
-• **device**: `string`
+##### device
+
+`string`
 
 #### Returns
 
@@ -50,11 +54,13 @@
 
 ### advertise()
 
-> **advertise**(`alive`?): `void`
+> **advertise**(`alive?`): `void`
 
 #### Parameters
 
-• **alive?**: `boolean`
+##### alive?
+
+`boolean`
 
 #### Returns
 
@@ -106,11 +112,17 @@ myEmitter.emit('event', 1, 2, 3, 4, 5);
 
 #### Parameters
 
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
+##### event
 
-• **headers**: [`SsdpHeaders`](../interfaces/SsdpHeaders.md)
+`"advertise-alive"` | `"advertise-bye"`
 
-• **rinfo**: `RemoteInfo`
+##### headers
+
+[`SsdpHeaders`](../interfaces/SsdpHeaders.md)
+
+##### rinfo
+
+`RemoteInfo`
 
 #### Returns
 
@@ -159,9 +171,13 @@ myEE.emit('foo');
 
 #### Parameters
 
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
+##### event
 
-• **listener**
+`"advertise-alive"` | `"advertise-bye"`
+
+##### listener
+
+(`headers`, `rinfo`) => `void`
 
 The callback function
 
@@ -210,9 +226,13 @@ myEE.emit('foo');
 
 #### Parameters
 
-• **event**: `"advertise-alive"` \| `"advertise-bye"`
+##### event
 
-• **listener**
+`"advertise-alive"` | `"advertise-bye"`
+
+##### listener
+
+(`headers`, `rinfo`) => `void`
 
 The callback function
 
@@ -232,13 +252,15 @@ v0.3.0
 
 ### start()
 
-> **start**(`cb`?): `void` \| `Promise`\<`void`\>
+> **start**(`cb?`): `void` \| `Promise`\<`void`\>
 
 Binds UDP socket to an interface/port and starts advertising.
 
 #### Parameters
 
-• **cb?**
+##### cb?
+
+(`error`) => `void`
 
 callback to socket.bind
 

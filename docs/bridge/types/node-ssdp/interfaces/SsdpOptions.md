@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -21,9 +21,13 @@ function can contain a format string.
 
 #### Parameters
 
-• **format**: `string`
+##### format
 
-• ...**args**: `unknown`[]
+`string`
+
+##### args
+
+...`unknown`[]
 
 #### Returns
 

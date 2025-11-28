@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -14,7 +14,9 @@
 
 #### Parameters
 
-• **request**: `object`
+##### request
+
+`object`
 
 #### Returns
 
@@ -28,9 +30,13 @@
 
 #### Parameters
 
-• **request**: `object`
+##### request
 
-• **credentials**: [`Credentials`](../../credentials/interfaces/Credentials.md)
+`object`
+
+##### credentials
+
+[`Credentials`](../../credentials/interfaces/Credentials.md)
 
 #### Returns
 

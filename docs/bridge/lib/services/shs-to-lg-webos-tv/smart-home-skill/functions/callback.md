@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -10,17 +10,29 @@
 
 ## Parameters
 
-• **uri**: `string`
+### uri
 
-• **error**: `null` \| `Error`
+`string`
 
-• **response**: `null` \| [`Response`](../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+### error
 
-• **udn**: `string`
+`Error` | `null`
 
-• **authorization**: [`Authorization`](../../authorization/classes/Authorization.md)
+### response
 
-• **tvManager**: [`TvManager`](../../tv-manager/classes/TvManager.md)
+[`Response`](../../../../../types/lgtv2/interfaces/Response.md) | `null`
+
+### udn
+
+`string`
+
+### authorization
+
+[`Authorization`](../../authorization/classes/Authorization.md)
+
+### tvManager
+
+[`TvManager`](../../tv-manager/classes/TvManager.md)
 
 ## Returns
 

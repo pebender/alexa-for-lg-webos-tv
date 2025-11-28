@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -20,14 +20,18 @@
 
 ### build()
 
-> `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<[`LinkManager`](LinkManager.md)\>
+> `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<`LinkManager`\>
 
 #### Parameters
 
-• **configurationDirectory**: `string`
+##### configurationDirectory
 
-• **serviceApplications**: `Record`\<`string`, [`Application`](../application/interfaces/Application.md)\>
+`string`
+
+##### serviceApplications
+
+`Record`\<`string`, [`Application`](../application/interfaces/Application.md)\>
 
 #### Returns
 
-`Promise`\<[`LinkManager`](LinkManager.md)\>
+`Promise`\<`LinkManager`\>

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -16,27 +16,33 @@ interface link related errors. The supported errors are given by
 
 ## Constructors
 
-### new LinkCommonError()
+### Constructor
 
-> **new LinkCommonError**(`options`): [`LinkCommonError`](LinkCommonError.md)
+> **new LinkCommonError**(`options`): `LinkCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code?**: [`LinkCommonErrorCode`](../type-aliases/LinkCommonErrorCode.md)
+`unknown`
 
-• **options.message?**: `string`
+###### code?
+
+[`LinkCommonErrorCode`](../type-aliases/LinkCommonErrorCode.md)
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`LinkCommonError`](LinkCommonError.md)
+`LinkCommonError`
 
 #### Overrides
 
-[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../common/common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../common/common-error/classes/CommonError.md#constructor)
 
 ## Properties
 

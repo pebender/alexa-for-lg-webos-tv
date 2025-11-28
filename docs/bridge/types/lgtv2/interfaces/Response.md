@@ -1,8 +1,8 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/types/lgtv2](../../../README.md) / [export=](../README.md) / Response
+[alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/types/lgtv2](../README.md) / Response
 
 # Interface: Response
 
@@ -15,7 +15,7 @@
 
 ## Indexable
 
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| `object` \| `undefined`
+\[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| `undefined`
 
 ## Properties
 

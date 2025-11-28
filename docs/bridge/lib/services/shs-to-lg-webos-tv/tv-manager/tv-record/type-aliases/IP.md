@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: IP
 
-> **IP**: [`IPv4`](IPv4.md) \| [`IPv6`](IPv6.md)
+> **IP** = [`IPv4`](IPv4.md) \| [`IPv6`](IPv6.md)

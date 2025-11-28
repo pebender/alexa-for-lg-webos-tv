@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # skill/lib/link/http-common-error
 
-## Index
-
-### Classes
+## Classes
 
 - [HttpCommonError](classes/HttpCommonError.md)
 
-### Type Aliases
+## Type Aliases
 
 - [HttpCommonErrorCode](type-aliases/HttpCommonErrorCode.md)

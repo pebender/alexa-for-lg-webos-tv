@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -14,15 +14,17 @@
 
 ### authorize()
 
-> **authorize**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **authorize**(`bridgeToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Parameters
 
-• **bridgeToken**: `string`
+##### bridgeToken
+
+`string`
 
 #### Returns
 
-`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+`Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Implementation of
 
@@ -42,15 +44,17 @@
 
 ### getCredentials()
 
-> **getCredentials**(`bridgeToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **getCredentials**(`bridgeToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Parameters
 
-• **bridgeToken**: `string`
+##### bridgeToken
+
+`string`
 
 #### Returns
 
-`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+`Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 ***
 
@@ -60,9 +64,13 @@
 
 #### Parameters
 
-• **bridgeToken**: `string`
+##### bridgeToken
 
-• **credentials**: [`Credentials`](../../credentials/interfaces/Credentials.md)
+`string`
+
+##### credentials
+
+[`Credentials`](../../credentials/interfaces/Credentials.md)
 
 #### Returns
 
@@ -72,14 +80,18 @@
 
 ### build()
 
-> `static` **build**(`userAuth`, `configurationDirectory`): `Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
+> `static` **build**(`userAuth`, `configurationDirectory`): `Promise`\<`BridgeTokenAuth`\>
 
 #### Parameters
 
-• **userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
+##### userAuth
 
-• **configurationDirectory**: `string`
+[`UserAuth`](../../user-auth/classes/UserAuth.md)
+
+##### configurationDirectory
+
+`string`
 
 #### Returns
 
-`Promise`\<[`BridgeTokenAuth`](BridgeTokenAuth.md)\>
+`Promise`\<`BridgeTokenAuth`\>

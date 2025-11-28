@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -15,27 +15,33 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 ## Constructors
 
-### new DatabaseCommonError()
+### Constructor
 
-> **new DatabaseCommonError**(`options`): [`DatabaseCommonError`](DatabaseCommonError.md)
+> **new DatabaseCommonError**(`options`): `DatabaseCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code?**: [`DatabaseCommonErrorCode`](../type-aliases/DatabaseCommonErrorCode.md)
+`unknown`
 
-• **options.message?**: `string`
+###### code?
+
+[`DatabaseCommonErrorCode`](../type-aliases/DatabaseCommonErrorCode.md)
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`DatabaseCommonError`](DatabaseCommonError.md)
+`DatabaseCommonError`
 
 #### Overrides
 
-[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructor)
 
 ## Properties
 

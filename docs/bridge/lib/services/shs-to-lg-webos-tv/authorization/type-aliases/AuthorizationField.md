@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: AuthorizationField
 
-> **AuthorizationField**: `"skillToken"` \| `"userId"`
+> **AuthorizationField** = `"skillToken"` \| `"userId"`

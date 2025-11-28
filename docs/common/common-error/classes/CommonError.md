@@ -1,10 +1,10 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
 [alexa-for-lg-webos-tv](../../../modules.md) / [common/common-error](../README.md) / CommonError
 
-# Class: `abstract` CommonError
+# Abstract Class: CommonError
 
 The class from which all errors are derived. Deriving all errors from this
 class ensures that all errors will have an error code (`code`) and will be
@@ -33,23 +33,29 @@ codes.
 
 ## Constructors
 
-### new CommonError()
+### Constructor
 
-> `protected` **new CommonError**(`options`): [`CommonError`](CommonError.md)
+> `protected` **new CommonError**(`options`): `CommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code?**: `string`
+`unknown`
 
-• **options.message?**: `string`
+###### code?
+
+`string`
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`CommonError`](CommonError.md)
+`CommonError`
 
 #### Overrides
 

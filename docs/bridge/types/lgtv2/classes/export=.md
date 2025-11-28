@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -12,29 +12,41 @@
 
 ## Constructors
 
-### new export=()
+### Constructor
 
-> **new export=**(`opts`?): [`export=`](export=.md)
+> **new export=**(`opts?`): `LGTV`
 
 #### Parameters
 
-• **opts?**
+##### opts?
 
-• **opts.clientKey?**: `string`
+###### clientKey?
 
-• **opts.keyFile?**: `string`
+`string`
 
-• **opts.reconnect?**: `number`
+###### keyFile?
 
-• **opts.saveKey?**
+`string`
 
-• **opts.timeout?**: `number`
+###### reconnect?
 
-• **opts.url?**: `string`
+`number`
+
+###### saveKey?
+
+(`key`, `callback`) => `void`
+
+###### timeout?
+
+`number`
+
+###### url?
+
+`string`
 
 #### Returns
 
-[`export=`](export=.md)
+`LGTV`
 
 #### Overrides
 
@@ -54,7 +66,9 @@
 
 #### Parameters
 
-• **host**: `string`
+##### host
+
+`string`
 
 #### Returns
 
@@ -74,13 +88,17 @@
 
 ### getSocket()
 
-> **getSocket**(`url`, `callback`?): `void`
+> **getSocket**(`url`, `callback?`): `void`
 
 #### Parameters
 
-• **url**: `string`
+##### url
 
-• **callback?**
+`string`
+
+##### callback?
+
+(`error`, `response?`) => `void`
 
 #### Returns
 
@@ -90,7 +108,7 @@
 
 ### on()
 
-#### on(event, listener)
+#### Call Signature
 
 > **on**(`event`, `listener`): `this`
 
@@ -123,9 +141,13 @@ myEE.emit('foo');
 
 ##### Parameters
 
-• **event**: `"error"` \| `"close"`
+###### event
 
-• **listener**
+`"error"` | `"close"`
+
+###### listener
+
+(`error`) => `void`
 
 The callback function
 
@@ -141,103 +163,45 @@ v0.1.101
 
 `EventEmitter.on`
 
-#### on(event, listener)
+#### Call Signature
 
 > **on**(`event`, `listener`): `this`
 
-Adds the `listener` function to the end of the listeners array for the event
-named `eventName`. No checks are made to see if the `listener` has already
-been added. Multiple calls passing the same combination of `eventName` and
-`listener` will result in the `listener` being added, and called, multiple times.
-
-```js
-server.on('connection', (stream) => {
-  console.log('someone connected!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-By default, event listeners are invoked in the order they are added. The `emitter.prependListener()` method can be used as an alternative to add the
-event listener to the beginning of the listeners array.
-
-```js
-import { EventEmitter } from 'node:events';
-const myEE = new EventEmitter();
-myEE.on('foo', () => console.log('a'));
-myEE.prependListener('foo', () => console.log('b'));
-myEE.emit('foo');
-// Prints:
-//   b
-//   a
-```
-
 ##### Parameters
 
-• **event**: `"connect"` \| `"prompt"`
+###### event
 
-• **listener**
+`"connect"` | `"prompt"`
 
-The callback function
+###### listener
+
+() => `void`
 
 ##### Returns
 
 `this`
-
-##### Since
-
-v0.1.101
 
 ##### Overrides
 
 `EventEmitter.on`
 
-#### on(event, listener)
+#### Call Signature
 
 > **on**(`event`, `listener`): `this`
 
-Adds the `listener` function to the end of the listeners array for the event
-named `eventName`. No checks are made to see if the `listener` has already
-been added. Multiple calls passing the same combination of `eventName` and
-`listener` will result in the `listener` being added, and called, multiple times.
-
-```js
-server.on('connection', (stream) => {
-  console.log('someone connected!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-By default, event listeners are invoked in the order they are added. The `emitter.prependListener()` method can be used as an alternative to add the
-event listener to the beginning of the listeners array.
-
-```js
-import { EventEmitter } from 'node:events';
-const myEE = new EventEmitter();
-myEE.on('foo', () => console.log('a'));
-myEE.prependListener('foo', () => console.log('b'));
-myEE.emit('foo');
-// Prints:
-//   b
-//   a
-```
-
 ##### Parameters
 
-• **event**: `"connecting"`
+###### event
 
-• **listener**
+`"connecting"`
 
-The callback function
+###### listener
+
+(`host`) => `void`
 
 ##### Returns
 
 `this`
-
-##### Since
-
-v0.1.101
 
 ##### Overrides
 
@@ -257,31 +221,41 @@ v0.1.101
 
 ### request()
 
-#### request(uri, callback)
+#### Call Signature
 
-> **request**(`uri`, `callback`?): `void`
+> **request**(`uri`, `callback?`): `void`
 
 ##### Parameters
 
-• **uri**: `string`
+###### uri
 
-• **callback?**
+`string`
+
+###### callback?
+
+(`error`, `response?`) => `void`
 
 ##### Returns
 
 `void`
 
-#### request(uri, payload, callback)
+#### Call Signature
 
 > **request**(`uri`, `payload`, `callback`): `void`
 
 ##### Parameters
 
-• **uri**: `string`
+###### uri
 
-• **payload**: [`RequestPayload`](../namespaces/export=/type-aliases/RequestPayload.md)
+`string`
 
-• **callback**
+###### payload
+
+[`RequestPayload`](../type-aliases/RequestPayload.md)
+
+###### callback
+
+(`error`, `response?`) => `void`
 
 ##### Returns
 
@@ -291,31 +265,41 @@ v0.1.101
 
 ### subscribe()
 
-#### subscribe(uri, callback)
+#### Call Signature
 
 > **subscribe**(`uri`, `callback`): `void`
 
 ##### Parameters
 
-• **uri**: `string`
+###### uri
 
-• **callback**
+`string`
+
+###### callback
+
+(`error`, `response?`) => `void`
 
 ##### Returns
 
 `void`
 
-#### subscribe(uri, payload, callback)
+#### Call Signature
 
 > **subscribe**(`uri`, `payload`, `callback`): `void`
 
 ##### Parameters
 
-• **uri**: `string`
+###### uri
 
-• **payload**: [`RequestPayload`](../namespaces/export=/type-aliases/RequestPayload.md)
+`string`
 
-• **callback**
+###### payload
+
+[`RequestPayload`](../type-aliases/RequestPayload.md)
+
+###### callback
+
+(`error`, `response?`) => `void`
 
 ##### Returns
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,25 +6,33 @@
 
 # Type Alias: BridgeTokenAuthRecord
 
-> **BridgeTokenAuthRecord**: `object`
+> **BridgeTokenAuthRecord** = `object`
 
-## Type declaration
+## Properties
 
 ### bridgeHostname
 
 > **bridgeHostname**: `string`
 
+***
+
 ### bridgeToken
 
 > **bridgeToken**: `string`
+
+***
 
 ### email
 
 > **email**: `string`
 
+***
+
 ### skillToken
 
 > **skillToken**: `string`
+
+***
 
 ### userId
 

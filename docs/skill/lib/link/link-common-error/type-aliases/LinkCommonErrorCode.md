@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: LinkCommonErrorCode
 
-> **LinkCommonErrorCode**: `"unknown"` \| `"authorizationFailed"` \| `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"httpConnectionFailed"` \| `"tcpConnectionFailed"` \| `"tlsCertificateValidationFailed"` \| `"tlsCertificateHostnameValidationFailed"` \| `"tlsConnectionFailed"` \| `"userProfileFetchFailed"`
+> **LinkCommonErrorCode** = `"unknown"` \| `"authorizationFailed"` \| `"bridgeHostnameNotFound"` \| `"bridgeTokenNotFound"` \| `"httpConnectionFailed"` \| `"tcpConnectionFailed"` \| `"tlsCertificateValidationFailed"` \| `"tlsCertificateHostnameValidationFailed"` \| `"tlsConnectionFailed"` \| `"userProfileFetchFailed"`

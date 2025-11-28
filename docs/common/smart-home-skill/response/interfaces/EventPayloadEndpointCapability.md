@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -8,13 +8,33 @@
 
 ## Indexable
 
- \[`x`: `string`\]: `string` \| `object` \| `undefined`
+\[`x`: `string`\]: `string` \| `object` \| `undefined`
 
 ## Properties
 
 ### capabilityResources?
 
 > `optional` **capabilityResources**: `object`[]
+
+#### friendlyNames
+
+> **friendlyNames**: `object`
+
+##### friendlyNames.@type
+
+> **@type**: `"text"`
+
+##### friendlyNames.value
+
+> **value**: `object`
+
+##### friendlyNames.value.locale
+
+> **locale**: `"en-US"`
+
+##### friendlyNames.value.text
+
+> **text**: `string`
 
 ***
 

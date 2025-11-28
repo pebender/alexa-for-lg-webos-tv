@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../README.md)
 
 ***
 
@@ -6,13 +6,11 @@
 
 # bridge
 
-## Index
-
-### Classes
+## Classes
 
 - [Bridge](classes/Bridge.md)
 
-### Functions
+## Functions
 
 - [startBridge](functions/startBridge.md)
 

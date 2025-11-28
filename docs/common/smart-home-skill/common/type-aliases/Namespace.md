@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: Namespace
 
-> **Namespace**: `"Alexa"` \| `"Alexa.Authorization"` \| `"Alexa.Discovery"` \| `"Alexa.ChannelController"` \| `"Alexa.InputController"` \| `"Alexa.Launcher"` \| `"Alexa.PlaybackController"` \| `"Alexa.PowerController"` \| `"Alexa.Speaker"`
+> **Namespace** = `"Alexa"` \| `"Alexa.Authorization"` \| `"Alexa.Discovery"` \| `"Alexa.ChannelController"` \| `"Alexa.InputController"` \| `"Alexa.Launcher"` \| `"Alexa.PlaybackController"` \| `"Alexa.PowerController"` \| `"Alexa.Speaker"`

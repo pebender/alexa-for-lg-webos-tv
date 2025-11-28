@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **schema**: `object`
 
-## Type declaration
+## Type Declaration
 
 ### $schema
 
@@ -18,231 +18,231 @@
 
 > **definitions**: `object`
 
-### definitions.common
+#### definitions.common
 
 > **common**: `object`
 
-### definitions.common.model.Context
+#### definitions.common.model.Context
 
-> **Context**: `object`
+> **model.Context**: `object`
 
-### definitions.common.model.Context.additionalProperties
+#### definitions.common.model.Context.additionalProperties
 
 > **additionalProperties**: `boolean` = `false`
 
-### definitions.common.model.Context.properties
+#### definitions.common.model.Context.properties
 
 > **properties**: `object`
 
-### definitions.common.model.Context.properties.properties
+#### definitions.common.model.Context.properties.properties
 
 > **properties**: `object`
 
-### definitions.common.model.Context.properties.properties.$ref
+#### definitions.common.model.Context.properties.properties.$ref
 
 > **$ref**: `string` = `"#/definitions/state.properties"`
 
-### definitions.common.model.Context.type
+#### definitions.common.model.Context.type
 
 > **type**: `string` = `"object"`
 
-### definitions.common.model.CorrelationToken
+#### definitions.common.model.CorrelationToken
 
-> **CorrelationToken**: `object`
+> **model.CorrelationToken**: `object`
 
-### definitions.common.model.CorrelationToken.minLength
+#### definitions.common.model.CorrelationToken.minLength
 
 > **minLength**: `number` = `1`
 
-### definitions.common.model.CorrelationToken.type
+#### definitions.common.model.CorrelationToken.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.Endpoint
+#### definitions.common.model.Endpoint
 
-> **Endpoint**: `object`
+> **model.Endpoint**: `object`
 
-### definitions.common.model.Endpoint.properties
+#### definitions.common.model.Endpoint.properties
 
 > **properties**: `object`
 
-### definitions.common.model.Endpoint.properties.endpointId
+#### definitions.common.model.Endpoint.properties.endpointId
 
 > **endpointId**: `object`
 
-### definitions.common.model.Endpoint.properties.endpointId.$ref
+#### definitions.common.model.Endpoint.properties.endpointId.$ref
 
 > **$ref**: `string` = `"#/definitions/common/model.EndpointId"`
 
-### definitions.common.model.Endpoint.properties.scope
+#### definitions.common.model.Endpoint.properties.scope
 
 > **scope**: `object`
 
-### definitions.common.model.Endpoint.properties.scope.$ref
+#### definitions.common.model.Endpoint.properties.scope.$ref
 
 > **$ref**: `string` = `"#/definitions/common/model.Scope"`
 
-### definitions.common.model.Endpoint.required
+#### definitions.common.model.Endpoint.required
 
 > **required**: `string`[]
 
-### definitions.common.model.Endpoint.type
+#### definitions.common.model.Endpoint.type
 
 > **type**: `string` = `"object"`
 
-### definitions.common.model.EndpointId
+#### definitions.common.model.EndpointId
 
-> **EndpointId**: `object`
+> **model.EndpointId**: `object`
 
-### definitions.common.model.EndpointId.maxLength
+#### definitions.common.model.EndpointId.maxLength
 
 > **maxLength**: `number` = `256`
 
-### definitions.common.model.EndpointId.minLength
+#### definitions.common.model.EndpointId.minLength
 
 > **minLength**: `number` = `1`
 
-### definitions.common.model.EndpointId.pattern
+#### definitions.common.model.EndpointId.pattern
 
 > **pattern**: `string` = `"^[a-zA-Z0-9_\\-=#;:?@&]*$"`
 
-### definitions.common.model.EndpointId.type
+#### definitions.common.model.EndpointId.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.MessageId
+#### definitions.common.model.MessageId
 
-> **MessageId**: `object`
+> **model.MessageId**: `object`
 
-### definitions.common.model.MessageId.maxLength
+#### definitions.common.model.MessageId.maxLength
 
 > **maxLength**: `number` = `127`
 
-### definitions.common.model.MessageId.minLength
+#### definitions.common.model.MessageId.minLength
 
 > **minLength**: `number` = `1`
 
-### definitions.common.model.MessageId.pattern
+#### definitions.common.model.MessageId.pattern
 
 > **pattern**: `string` = `"^[a-zA-Z0-9\\-]*$"`
 
-### definitions.common.model.MessageId.type
+#### definitions.common.model.MessageId.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.PayloadVersion
+#### definitions.common.model.PayloadVersion
 
-> **PayloadVersion**: `object`
+> **model.PayloadVersion**: `object`
 
-### definitions.common.model.PayloadVersion.enum
+#### definitions.common.model.PayloadVersion.enum
 
 > **enum**: `string`[]
 
-### definitions.common.model.PayloadVersion.type
+#### definitions.common.model.PayloadVersion.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.Scope
+#### definitions.common.model.Scope
 
-> **Scope**: `object`
+> **model.Scope**: `object`
 
-### definitions.common.model.Scope.properties
+#### definitions.common.model.Scope.properties
 
 > **properties**: `object`
 
-### definitions.common.model.Scope.properties.token
+#### definitions.common.model.Scope.properties.token
 
 > **token**: `object`
 
-### definitions.common.model.Scope.properties.token.minLength
+#### definitions.common.model.Scope.properties.token.minLength
 
 > **minLength**: `number` = `1`
 
-### definitions.common.model.Scope.properties.token.type
+#### definitions.common.model.Scope.properties.token.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.Scope.properties.type
+#### definitions.common.model.Scope.properties.type
 
 > **type**: `object`
 
-### definitions.common.model.Scope.properties.type.enum
+#### definitions.common.model.Scope.properties.type.enum
 
 > **enum**: `string`[]
 
-### definitions.common.model.Scope.required
+#### definitions.common.model.Scope.required
 
 > **required**: `string`[]
 
-### definitions.common.model.Scope.type
+#### definitions.common.model.Scope.type
 
 > **type**: `string` = `"object"`
 
-### definitions.common.model.StatePropertyBase.TimeOfSample
+#### definitions.common.model.StatePropertyBase.TimeOfSample
 
-> **TimeOfSample**: `object`
+> **model.StatePropertyBase.TimeOfSample**: `object`
 
-### definitions.common.model.StatePropertyBase.TimeOfSample.pattern
+#### definitions.common.model.StatePropertyBase.TimeOfSample.pattern
 
 > **pattern**: `string` = `"^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:.\\d{1,3}|)Z$"`
 
-### definitions.common.model.StatePropertyBase.TimeOfSample.type
+#### definitions.common.model.StatePropertyBase.TimeOfSample.type
 
 > **type**: `string` = `"string"`
 
-### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds
+#### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds
 
-> **UncertaintyInMilliseconds**: `object`
+> **model.StatePropertyBase.UncertaintyInMilliseconds**: `object`
 
-### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds.minimum
+#### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds.minimum
 
 > **minimum**: `number` = `0`
 
-### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds.type
+#### definitions.common.model.StatePropertyBase.UncertaintyInMilliseconds.type
 
 > **type**: `string` = `"number"`
 
-### definitions.endpoint.capabilities
+#### definitions.endpoint.capabilities
 
-> **capabilities**: `object`
+> **endpoint.capabilities**: `object`
 
-### definitions.endpoint.capabilities.items
+#### definitions.endpoint.capabilities.items
 
 > **items**: `object`
 
-### definitions.endpoint.capabilities.items.anyOf
+#### definitions.endpoint.capabilities.items.anyOf
 
-> **anyOf**: (`object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object`)[]
+> **anyOf**: (\{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `directiveConfigurations`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `directiveConfigurations?`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `supportsDeactivation?`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `supportsDeactivation`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `proactivelyReported?`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `proactivelyReported`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `directiveConfigurations`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `directiveConfigurations?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configurations?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configurations`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `inputs?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `inputs`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `directiveConfigurations`: ...; `instance?`: ...; `interface`: ...; `properties`: ...; `semantics?`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `directiveConfigurations?`: ...; `instance`: ...; `interface`: ...; `properties?`: ...; `semantics`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `directiveConfigurations`: ...; `instance?`: ...; `interface`: ...; `properties`: ...; `semantics?`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `directiveConfigurations?`: ...; `instance`: ...; `interface`: ...; `properties`: ...; `semantics`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `directiveConfigurations`: ...; `instance?`: ...; `interface`: ...; `properties`: ...; `semantics?`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `directiveConfigurations?`: ...; `instance`: ...; `interface`: ...; `properties?`: ...; `semantics`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `supportedOperations?`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `supportedOperations`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `configuration?`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `configuration`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `directiveConfigurations`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `directiveConfigurations?`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `interface`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `interface`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `instance`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `instance?`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `instance`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `instance?`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `cameraStreamConfigurations`: ...; `capabilityResources`: ...; `instance`: ...; `interface`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `cameraStreamConfigurations?`: ...; `capabilityResources?`: ...; `instance?`: ...; `interface`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \} \| \{ `allOf`: (\{ `properties`: \{ `capabilityResources`: ...; `configuration`: ...; `instance`: ...; `interface`: ...; `properties`: ...; `type`: ...; `version`: ...; \}; `required`: ...[]; `type`: `string`; \} \| \{ `properties`: \{ `capabilityResources?`: ...; `configuration?`: ...; `instance?`: ...; `interface`: ...; `properties?`: ...; `type`: ...; `version`: ...; \}; `required?`: `undefined`; `type`: `string`; \})[]; `type`: `string`; \})[]
 
-### definitions.endpoint.capabilities.minItems
+#### definitions.endpoint.capabilities.minItems
 
 > **minItems**: `number` = `1`
 
-### definitions.endpoint.capabilities.type
+#### definitions.endpoint.capabilities.type
 
 > **type**: `string` = `"array"`
 
-### definitions.endpoint.capabilities.uniqueItems
+#### definitions.endpoint.capabilities.uniqueItems
 
 > **uniqueItems**: `boolean` = `true`
 
-### definitions.state.properties
+#### definitions.state.properties
 
-> **properties**: `object`
+> **state.properties**: `object`
 
-### definitions.state.properties.items
+#### definitions.state.properties.items
 
 > **items**: `object`
 
-### definitions.state.properties.items.anyOf
+#### definitions.state.properties.items.anyOf
 
-> **anyOf**: (`object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object`)[]
+> **anyOf**: (\{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness`: \{ `format`: ...; `maximum`: ...; `minimum`: ...; `type`: ...; \}; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue`: \{ `format`: ...; `maximum`: ...; `minimum`: ...; `type`: ...; \}; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation`: \{ `format`: ...; `maximum`: ...; `minimum`: ...; `type`: ...; \}; `scale?`: `undefined`; `start?`: `undefined`; `value?`: `undefined`; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum`: `string`[]; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale`: \{ `enum`: ...; `type`: ...; \}; `start?`: `undefined`; `value`: \{ `enum?`: ...; `format`: ...; `maximum`: ...; `minimum`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf`: (... \| ...)[]; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format`: `string`; `items?`: `undefined`; `maximum`: `number`; `minimum`: `number`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale?`: `undefined`; `start?`: `undefined`; `value`: \{ `enum`: ...; `format?`: ...; `maximum?`: ...; `minimum?`: ...; `type`: ...; \}; \}; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale`: \{ `enum`: ...; `type`: ...; \}; `start?`: `undefined`; `value`: \{ `enum?`: ...; `format`: ...; `maximum?`: ...; `minimum?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods`: \{ `items`: ...; `type`: ...; \}; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `name?`: `undefined`; `saturation?`: `undefined`; `scale?`: `undefined`; `start?`: `undefined`; `value`: \{ `enum`: ...; `format?`: ...; `maximum?`: ...; `minimum?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: \{ `additionalProperties`: `boolean`; `properties`: \{ `cloudVerificationMode`: ...; `enablementMode`: ...; \}; `type`: `string`; \}; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items`: \{ `oneOf`: ...[]; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; \}; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems`: `boolean`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format`: `string`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale?`: `undefined`; `start?`: `undefined`; `value`: \{ `enum`: ...; `format?`: ...; `maximum?`: ...; `minimum?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience`: \{ `anyOf`: ...; \}; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier`: \{ `type`: ...; \}; `media?`: `undefined`; `name`: \{ `type`: ...; \}; `saturation?`: `undefined`; `scale?`: `undefined`; `start?`: `undefined`; `value?`: `undefined`; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items`: \{ `oneOf?`: `undefined`; `properties`: \{ `capability`: ...; `instance`: ...; `status`: ...; \}; `required`: ...[]; `type`: `string`; \}; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern`: `string`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf`: (... \| ...)[]; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf`: (... \| ... \| ...)[]; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration`: \{ `type`: ...; \}; `end`: \{ `type`: ...; \}; `experience?`: `undefined`; `foodCategory?`: `undefined`; `foodName?`: `undefined`; `foodQuantity?`: `undefined`; `foodState?`: `undefined`; `foodThickness?`: `undefined`; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale?`: `undefined`; `start`: \{ `type`: ...; \}; `value?`: `undefined`; \}; `required?`: `undefined`; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf`: (... \| ...)[]; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties`: `boolean`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf?`: `undefined`; `pattern?`: `undefined`; `properties`: \{ `brightness?`: `undefined`; `detectionMethods?`: `undefined`; `duration?`: `undefined`; `end?`: `undefined`; `experience?`: `undefined`; `foodCategory`: \{ `enum`: ...; `type`: ...; \}; `foodName`: \{ `type`: ...; \}; `foodQuantity`: \{ `type`: ...; \}; `foodState`: \{ `enum`: ...; `type`: ...; \}; `foodThickness`: \{ `properties`: ...; `type`: ...; \}; `hue?`: `undefined`; `identifier?`: `undefined`; `media?`: `undefined`; `name?`: `undefined`; `saturation?`: `undefined`; `scale?`: `undefined`; `start?`: `undefined`; `value?`: `undefined`; \}; `required`: `string`[]; `type`: `string`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `properties`: \{ `instance`: \{ `type`: `string`; \}; `name`: \{ `enum`: `string`[]; \}; `namespace`: \{ `enum`: `string`[]; \}; `timeOfSample`: \{ `$ref`: `string`; \}; `uncertaintyInMilliseconds`: \{ `$ref`: `string`; \}; `value`: \{ `additionalProperties?`: `undefined`; `allOf?`: `undefined`; `enum?`: `undefined`; `format?`: `undefined`; `items?`: `undefined`; `maximum?`: `undefined`; `minimum?`: `undefined`; `oneOf`: (... \| ...)[]; `pattern?`: `undefined`; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; `uniqueItems?`: `undefined`; \}; \}; `required`: `string`[]; `type`: `string`; \})[]
 
-### definitions.state.properties.type
+#### definitions.state.properties.type
 
 > **type**: `string` = `"array"`
 
-### definitions.state.properties.uniqueItems
+#### definitions.state.properties.uniqueItems
 
 > **uniqueItems**: `boolean` = `true`
 
@@ -252,7 +252,7 @@
 
 ### oneOf
 
-> **oneOf**: (`object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object` \| `object`)[]
+> **oneOf**: (\{ `additionalProperties?`: `undefined`; `description?`: `undefined`; `oneOf`: (\{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `allOf`: ...; `maxProperties?`: ...; `properties?`: ...; `required?`: ...; `type?`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `allOf?`: ...; `maxProperties`: ...; `properties`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \})[]; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `oneOf?`: `undefined`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: `string`; \}; `header`: \{ `additionalProperties`: `boolean`; `properties`: \{ `correlationToken`: \{ `$ref`: `string`; \}; `messageId`: \{ `$ref`: `string`; \}; `name`: \{ `enum`: ...[]; `type`: `string`; \}; `namespace`: \{ `enum`: ...[]; `type`: `string`; \}; `payloadVersion`: \{ `$ref`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; `payload`: \{ `additionalProperties`: `boolean`; `properties?`: `undefined`; `required?`: `undefined`; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties?`: `undefined`; `description?`: `undefined`; `oneOf`: (\{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `oneOf`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `oneOf`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `oneOf`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `oneOf?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `oneOf`: ...; `properties?`: ...; `required?`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \})[]; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `oneOf?`: `undefined`; `properties`: \{ `context`: \{ `$ref`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: `string`; \}; `header`: \{ `additionalProperties`: `boolean`; `properties`: \{ `correlationToken`: \{ `$ref`: `string`; \}; `messageId`: \{ `$ref`: `string`; \}; `name`: \{ `enum`: ...[]; `type`: `string`; \}; `namespace`: \{ `enum`: ...[]; `type`: `string`; \}; `payloadVersion`: \{ `$ref`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; `payload`: \{ `additionalProperties`: `boolean`; `properties`: \{ `change`: \{ `additionalProperties`: `boolean`; `properties`: \{ `cause`: ...; `properties`: ...; \}; `required`: ...[]; `type`: `string`; \}; `endpoints?`: `undefined`; `estimatedDeferralInSeconds?`: `undefined`; `scope?`: `undefined`; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `oneOf?`: `undefined`; `properties`: \{ `context?`: `undefined`; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint?`: `undefined`; `header`: \{ `additionalProperties`: `boolean`; `properties`: \{ `correlationToken`: \{ `$ref`: `string`; \}; `messageId`: \{ `$ref`: `string`; \}; `name`: \{ `enum`: ...[]; `type`: `string`; \}; `namespace`: \{ `enum`: ...[]; `type`: `string`; \}; `payloadVersion`: \{ `$ref`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; `payload`: \{ `additionalProperties?`: `undefined`; `properties`: \{ `change?`: `undefined`; `endpoints?`: `undefined`; `estimatedDeferralInSeconds`: \{ `format`: `string`; `type`: `string`; \}; `scope?`: `undefined`; \}; `required?`: `undefined`; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties?`: `undefined`; `description?`: `undefined`; `oneOf`: (\{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `type`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `type`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties?`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `type`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `properties`: \{ `context`: \{ `type`: `string`; \}; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint`: \{ `$ref`: ...; \}; `header`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; `payload`: \{ `additionalProperties`: ...; `properties`: ...; `required`: ...; `type`: ...; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \})[]; `properties?`: `undefined`; `required?`: `undefined`; `type?`: `undefined`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `oneOf?`: `undefined`; `properties`: \{ `context?`: `undefined`; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint?`: `undefined`; `header`: \{ `additionalProperties`: `boolean`; `properties`: \{ `correlationToken`: \{ `$ref`: `string`; \}; `messageId`: \{ `$ref`: `string`; \}; `name`: \{ `enum`: ...[]; `type`: `string`; \}; `namespace`: \{ `enum`: ...[]; `type`: `string`; \}; `payloadVersion`: \{ `$ref`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; `payload`: \{ `additionalProperties`: `boolean`; `properties`: \{ `change?`: `undefined`; `endpoints`: \{ `items`: \{ `properties`: ...; `required`: ...; `type`: ...; \}; `maxItems`: `number`; `type`: `string`; `uniqueItems`: `boolean`; \}; `estimatedDeferralInSeconds?`: `undefined`; `scope?`: `undefined`; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \} \| \{ `additionalProperties`: `boolean`; `description`: `string`; `oneOf?`: `undefined`; `properties`: \{ `context?`: `undefined`; `event`: \{ `additionalProperties`: `boolean`; `properties`: \{ `endpoint?`: `undefined`; `header`: \{ `additionalProperties`: `boolean`; `properties`: \{ `correlationToken`: \{ `$ref`: `string`; \}; `messageId`: \{ `$ref`: `string`; \}; `name`: \{ `enum`: ...[]; `type`: `string`; \}; `namespace`: \{ `enum`: ...[]; `type`: `string`; \}; `payloadVersion`: \{ `$ref`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; `payload`: \{ `additionalProperties`: `boolean`; `properties`: \{ `change?`: `undefined`; `endpoints`: \{ `items`: \{ `properties`: ...; `required`: ...; `type`: ...; \}; `maxItems`: `number`; `type`: `string`; `uniqueItems`: `boolean`; \}; `estimatedDeferralInSeconds?`: `undefined`; `scope`: \{ `properties`: \{ `token`: ...; `type`: ...; \}; `required`: ...[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \}; \}; `required`: `string`[]; `type`: `string`; \})[]
 
 ### title
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,13 +6,15 @@
 
 # Type Alias: AuthorizationRecord
 
-> **AuthorizationRecord**: `object`
+> **AuthorizationRecord** = `object`
 
-## Type declaration
+## Properties
 
 ### skillToken
 
 > **skillToken**: `string`
+
+***
 
 ### userId
 

@@ -1,14 +1,18 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
-[alexa-for-lg-webos-tv](../../../../../../modules.md) / [bridge/types/lgtv2](../../../README.md) / [export=](../README.md) / ResponseExternalInputListDevice
+[alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/types/lgtv2](../README.md) / ResponseExternalInputListDevice
 
 # Interface: ResponseExternalInputListDevice
 
 ## Extends
 
 - [`Response`](Response.md)
+
+## Indexable
+
+\[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| `undefined`
 
 ## Properties
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -20,27 +20,33 @@ codes.
 
 ## Constructors
 
-### new UserProfileCommonError()
+### Constructor
 
-> **new UserProfileCommonError**(`options`): [`UserProfileCommonError`](UserProfileCommonError.md)
+> **new UserProfileCommonError**(`options`): `UserProfileCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code**: [`UserProfileCommonErrorCode`](../type-aliases/UserProfileCommonErrorCode.md)
+`unknown`
 
-• **options.message?**: `string`
+###### code
+
+[`UserProfileCommonErrorCode`](../type-aliases/UserProfileCommonErrorCode.md)
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`UserProfileCommonError`](UserProfileCommonError.md)
+`UserProfileCommonError`
 
 #### Overrides
 
-[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructor)
 
 ## Properties
 

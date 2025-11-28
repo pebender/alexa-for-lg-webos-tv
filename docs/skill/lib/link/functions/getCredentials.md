@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,26 +6,24 @@
 
 # Function: getCredentials()
 
-> **getCredentials**(`skillToken`, `options`?): `Promise`\<`object`\>
+> **getCredentials**(`skillToken`, `options?`): `Promise`\<\{ `bridgeHostname`: `string` \| `null`; `bridgeToken`: `string` \| `null`; \}\>
 
 ## Parameters
 
-• **skillToken**: `string`
+### skillToken
 
-• **options?**
+`string`
 
-• **options.bridgeHostname?**: `string`
+### options?
 
-• **options.updateBridgeToken?**: `boolean`
+#### bridgeHostname?
+
+`string`
+
+#### updateBridgeToken?
+
+`boolean`
 
 ## Returns
 
-`Promise`\<`object`\>
-
-### bridgeHostname
-
-> **bridgeHostname**: `string` \| `null`
-
-### bridgeToken
-
-> **bridgeToken**: `string` \| `null`
+`Promise`\<\{ `bridgeHostname`: `string` \| `null`; `bridgeToken`: `string` \| `null`; \}\>

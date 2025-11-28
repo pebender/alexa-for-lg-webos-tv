@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,17 +6,44 @@
 
 # export=
 
-## Index
+## References
 
-### Interfaces
+### Request
 
-- [Request](interfaces/Request.md)
-- [Response](interfaces/Response.md)
-- [ResponseExternalInputList](interfaces/ResponseExternalInputList.md)
-- [ResponseExternalInputListDevice](interfaces/ResponseExternalInputListDevice.md)
-- [ResponseForegroundAppInfo](interfaces/ResponseForegroundAppInfo.md)
-- [ResponseVolume](interfaces/ResponseVolume.md)
+Re-exports [Request](../../interfaces/Request.md)
 
-### Type Aliases
+***
 
-- [RequestPayload](type-aliases/RequestPayload.md)
+### RequestPayload
+
+Re-exports [RequestPayload](../../type-aliases/RequestPayload.md)
+
+***
+
+### Response
+
+Re-exports [Response](../../interfaces/Response.md)
+
+***
+
+### ResponseExternalInputList
+
+Re-exports [ResponseExternalInputList](../../interfaces/ResponseExternalInputList.md)
+
+***
+
+### ResponseExternalInputListDevice
+
+Re-exports [ResponseExternalInputListDevice](../../interfaces/ResponseExternalInputListDevice.md)
+
+***
+
+### ResponseForegroundAppInfo
+
+Re-exports [ResponseForegroundAppInfo](../../interfaces/ResponseForegroundAppInfo.md)
+
+***
+
+### ResponseVolume
+
+Re-exports [ResponseVolume](../../interfaces/ResponseVolume.md)

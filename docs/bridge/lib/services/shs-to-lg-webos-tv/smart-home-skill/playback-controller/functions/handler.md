@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -10,9 +10,13 @@
 
 ## Parameters
 
-• **alexaRequest**: [`Request`](../../../../../../../common/smart-home-skill/request/classes/Request.md)
+### alexaRequest
 
-• **tvControl**: [`TvControl`](../../../tv-manager/tv-control/classes/TvControl.md)
+[`Request`](../../../../../../../common/smart-home-skill/request/classes/Request.md)
+
+### tvControl
+
+[`TvControl`](../../../tv-manager/tv-control/classes/TvControl.md)
 
 ## Returns
 

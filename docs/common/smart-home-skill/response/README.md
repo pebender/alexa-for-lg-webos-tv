@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,13 +6,11 @@
 
 # common/smart-home-skill/response
 
-## Index
-
-### Classes
+## Classes
 
 - [Response](classes/Response.md)
 
-### Interfaces
+## Interfaces
 
 - [Context](interfaces/Context.md)
 - [ContextProperty](interfaces/ContextProperty.md)

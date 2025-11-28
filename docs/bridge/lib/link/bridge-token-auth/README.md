@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # bridge/lib/link/bridge-token-auth
 
-## Index
-
-### Classes
+## Classes
 
 - [BridgeTokenAuth](classes/BridgeTokenAuth.md)
 
-### Type Aliases
+## Type Aliases
 
 - [BridgeTokenAuthRecord](type-aliases/BridgeTokenAuthRecord.md)

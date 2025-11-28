@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -14,7 +14,9 @@
 
 #### Parameters
 
-• **skillToken**: `string`
+##### skillToken
+
+`string`
 
 #### Returns
 
@@ -24,12 +26,14 @@
 
 ### build()
 
-> `static` **build**(`configurationDirectory`): `Promise`\<[`Authorization`](Authorization.md)\>
+> `static` **build**(`configurationDirectory`): `Promise`\<`Authorization`\>
 
 #### Parameters
 
-• **configurationDirectory**: `string`
+##### configurationDirectory
+
+`string`
 
 #### Returns
 
-`Promise`\<[`Authorization`](Authorization.md)\>
+`Promise`\<`Authorization`\>

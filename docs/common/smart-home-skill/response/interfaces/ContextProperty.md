@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 ## Indexable
 
- \[`x`: `string`\]: `boolean` \| `number` \| `string` \| [] \| `object` \| `undefined`
+\[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| \[\] \| `undefined`
 
 ## Properties
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -14,9 +14,13 @@
 
 #### Parameters
 
-• **bridgeHostname**: `null` \| `string`
+##### bridgeHostname
 
-• **email**: `null` \| `string`
+`string` | `null`
+
+##### email
+
+`string` | `null`
 
 #### Returns
 
@@ -26,12 +30,14 @@
 
 ### build()
 
-> `static` **build**(`configurationDirectory`): `Promise`\<[`UserAuth`](UserAuth.md)\>
+> `static` **build**(`configurationDirectory`): `Promise`\<`UserAuth`\>
 
 #### Parameters
 
-• **configurationDirectory**: `string`
+##### configurationDirectory
+
+`string`
 
 #### Returns
 
-`Promise`\<[`UserAuth`](UserAuth.md)\>
+`Promise`\<`UserAuth`\>

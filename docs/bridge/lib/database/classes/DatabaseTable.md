@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -16,7 +16,9 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ## Type Parameters
 
-• **DatabaseRecord** *extends* `Record`\<`string`, `string` \| `number` \| `boolean` \| `Date` \| `null`\>
+### DatabaseRecord
+
+`DatabaseRecord` *extends* `Record`\<`string`, `string` \| `number` \| `boolean` \| `Date` \| `null`\>
 
 ## Methods
 
@@ -26,7 +28,9 @@ limit it using `extends`.  You can learn more about this difference between a
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
+##### query
+
+[`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`DatabaseRecord`, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -36,25 +40,29 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### getRecord()
 
-> **getRecord**(`query`): `Promise`\<`null` \| `DatabaseRecord`\>
+> **getRecord**(`query`): `Promise`\<`DatabaseRecord` \| `null`\>
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+##### query
+
+[`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
-`Promise`\<`null` \| `DatabaseRecord`\>
+`Promise`\<`DatabaseRecord` \| `null`\>
 
 ***
 
 ### getRecords()
 
-> **getRecords**(`query`?): `Promise`\<`DatabaseRecord`[]\>
+> **getRecords**(`query?`): `Promise`\<`DatabaseRecord`[]\>
 
 #### Parameters
 
-• **query?**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+##### query?
+
+[`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -68,9 +76,13 @@ limit it using `extends`.  You can learn more about this difference between a
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+##### query
 
-• **fields**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+[`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+
+##### fields
+
+[`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
 
 #### Returns
 
@@ -84,9 +96,13 @@ limit it using `extends`.  You can learn more about this difference between a
 
 #### Parameters
 
-• **query**: [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> \| [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+##### query
 
-• **record**: `DatabaseRecord`
+[`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\> | [`OneOf`](../type-aliases/OneOf.md)\<`Required`\<`DatabaseRecord`\>, keyof `DatabaseRecord`\>[]
+
+##### record
+
+`DatabaseRecord`
 
 #### Returns
 
@@ -96,20 +112,28 @@ limit it using `extends`.  You can learn more about this difference between a
 
 ### build()
 
-> `static` **build**\<`DatabaseRecord`\>(`configurationDirectory`, `name`, `indexes`): `Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
+> `static` **build**\<`DatabaseRecord`\>(`configurationDirectory`, `name`, `indexes`): `Promise`\<`DatabaseTable`\<`DatabaseRecord`\>\>
 
 #### Type Parameters
 
-• **DatabaseRecord** *extends* `Record`\<`string`, `null` \| `string` \| `number` \| `boolean` \| `Date`\>
+##### DatabaseRecord
+
+`DatabaseRecord` *extends* `Record`\<`string`, `string` \| `number` \| `boolean` \| `Date` \| `null`\>
 
 #### Parameters
 
-• **configurationDirectory**: `string`
+##### configurationDirectory
 
-• **name**: `string`
+`string`
 
-• **indexes**: keyof `DatabaseRecord`[]
+##### name
+
+`string`
+
+##### indexes
+
+keyof `DatabaseRecord`[]
 
 #### Returns
 
-`Promise`\<[`DatabaseTable`](DatabaseTable.md)\<`DatabaseRecord`\>\>
+`Promise`\<`DatabaseTable`\<`DatabaseRecord`\>\>

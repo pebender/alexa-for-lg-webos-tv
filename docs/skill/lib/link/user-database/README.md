@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,17 +6,15 @@
 
 # skill/lib/link/user-database
 
-## Index
-
-### Interfaces
+## Interfaces
 
 - [Record](interfaces/Record.md)
 
-### Type Aliases
+## Type Aliases
 
 - [Field](type-aliases/Field.md)
 
-### Functions
+## Functions
 
 - [getRecordUsingSkillToken](functions/getRecordUsingSkillToken.md)
 - [getRecordUsingUserId](functions/getRecordUsingUserId.md)

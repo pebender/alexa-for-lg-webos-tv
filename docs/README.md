@@ -1,4 +1,4 @@
-**alexa-for-lg-webos-tv** • [**Docs**](modules.md)
+**alexa-for-lg-webos-tv**
 
 ***
 
@@ -23,15 +23,15 @@ However, there are many things left to do
 
 ## Table of Contents
 
-- [Installation](./pages/installation.md#installation)
-  - [Development Environment](./pages/installation.md#development-environment)
-  - [Compilation](./pages/installation.md#compilation)
-  - [Skill Installation](./pages/installation.md#skill-installation)
-  - [Bridge Installation](./pages/installation.md#bridge-installation)
-- [Operation](./pages/operation.md#operation)
-- [Design](./pages/design/README.md#design)
-  - [The Skill to Bridge Interface](./pages/design/skill-to-bridge-interface.md#the-skill-to-bridge-interface)
-  - [The Skill](./pages/design/skill.md#the-skill)
-  - [The Bridge](./pages/design/bridge.md#the-bridge)
+- [Installation](_media/installation.md#installation)
+  - [Development Environment](_media/installation.md#development-environment)
+  - [Compilation](_media/installation.md#compilation)
+  - [Skill Installation](_media/installation.md#skill-installation)
+  - [Bridge Installation](_media/installation.md#bridge-installation)
+- [Operation](_media/operation.md#operation)
+- [Design](_media/README.md#design)
+  - [The Skill to Bridge Interface](_media/skill-to-bridge-interface.md#the-skill-to-bridge-interface)
+  - [The Skill](_media/skill.md#the-skill)
+  - [The Bridge](_media/bridge.md#the-bridge)
   - [Software Modules](../docs/modules.md)
-- [LG WebOS TV Commands](./pages/lg-webos-tv-commands.md#lg-webos-tv-commands)
+- [LG WebOS TV Commands](_media/lg-webos-tv-commands.md#lg-webos-tv-commands)

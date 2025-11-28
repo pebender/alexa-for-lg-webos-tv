@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # common/general-common-error
 
-## Index
-
-### Classes
+## Classes
 
 - [GeneralCommonError](classes/GeneralCommonError.md)
 
-### Type Aliases
+## Type Aliases
 
 - [GeneralCommonErrorCode](type-aliases/GeneralCommonErrorCode.md)

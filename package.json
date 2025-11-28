@@ -13,7 +13,7 @@
     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "devDependencies": {
-    "@eslint/js":"9.13.0",
+    "@eslint/js": "9.13.0",
     "@microsoft/tsdoc": "0.15.0",
     "@tsconfig/node20": "20.1.4",
     "copyfiles": "2.4.1",
@@ -29,16 +29,16 @@
     "markdownlint-cli2": "0.14.0",
     "npm-pack-zip": "1.3.0",
     "prettier": "3.3.3",
-    "typedoc": "0.26.10",
-    "typedoc-plugin-markdown": "4.2.9",
-    "typescript": "5.6.3",
+    "typedoc": "0.28.14",
+    "typedoc-plugin-markdown": "4.9.0",
+    "typescript": "5.9.3",
     "typescript-eslint": "8.12.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json && (cd pkg/alexa-for-lg-webos-tv-skill && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-util && npm run clean)",
     "install_modules": "npm install && (cd pkg/alexa-for-lg-webos-tv-skill && npm install) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm install) && (cd pkg/alexa-for-lg-webos-tv-util && npm install)",
     "lint": "npx eslint `find src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'docs.in/**/*.md'",
-    "build_doc": "rm -rf docs && mkdir docs && npx typedoc && cp -r docs.in/pages docs/pages",
+    "build_doc": "rm -rf docs && mkdir docs && npx typedoc",
     "build": "(cd pkg/alexa-for-lg-webos-tv-skill && npm run build) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run build) && (cd pkg/alexa-for-lg-webos-tv-util && npm run build)",
     "pack": "(cd pkg/alexa-for-lg-webos-tv-skill && npm run pack) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run pack) && (cd pkg/alexa-for-lg-webos-tv-util && npm run pack)",
     "all": "npm run clean && npm run install_modules && npm run lint && npm run build_doc && npm run build && npm run pack"

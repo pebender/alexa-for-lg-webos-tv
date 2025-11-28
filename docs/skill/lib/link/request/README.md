@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # skill/lib/link/request
 
-## Index
-
-### Interfaces
+## Interfaces
 
 - [RequestOptions](interfaces/RequestOptions.md)
 
-### Functions
+## Functions
 
 - [request](functions/request.md)

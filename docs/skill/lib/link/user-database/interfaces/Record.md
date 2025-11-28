@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -10,22 +10,22 @@
 
 ### bridgeHostname
 
-> **bridgeHostname**: `null` \| `string`
+> **bridgeHostname**: `string` \| `null`
 
 ***
 
 ### bridgeToken
 
-> **bridgeToken**: `null` \| `string`
+> **bridgeToken**: `string` \| `null`
 
 ***
 
 ### skillToken
 
-> **skillToken**: `null` \| `string`
+> **skillToken**: `string` \| `null`
 
 ***
 
 ### userId
 
-> **userId**: `null` \| `string`
+> **userId**: `string` \| `null`

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # common/constants
 
-## Index
-
-### Variables
+## Variables
 
 - [constants](variables/constants.md)

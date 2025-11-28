@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -14,15 +14,17 @@
 
 ### authorize()
 
-> **authorize**(`loginToken`): `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **authorize**(`loginToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Parameters
 
-• **loginToken**: `string`
+##### loginToken
+
+`string`
 
 #### Returns
 
-`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+`Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Implementation of
 
@@ -32,12 +34,14 @@
 
 ### build()
 
-> `static` **build**(`userAuth`): [`LoginTokenAuth`](LoginTokenAuth.md)
+> `static` **build**(`userAuth`): `LoginTokenAuth`
 
 #### Parameters
 
-• **userAuth**: [`UserAuth`](../../user-auth/classes/UserAuth.md)
+##### userAuth
+
+[`UserAuth`](../../user-auth/classes/UserAuth.md)
 
 #### Returns
 
-[`LoginTokenAuth`](LoginTokenAuth.md)
+`LoginTokenAuth`

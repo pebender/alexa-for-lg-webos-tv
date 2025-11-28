@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -18,7 +18,9 @@
 
 #### Parameters
 
-• **udn**: `string`
+##### udn
+
+`string`
 
 #### Returns
 
@@ -48,12 +50,14 @@
 
 ### build()
 
-> `static` **build**(`_configurationDirectory`): `Promise`\<[`TvManager`](TvManager.md)\>
+> `static` **build**(`_configurationDirectory`): `Promise`\<`TvManager`\>
 
 #### Parameters
 
-• **\_configurationDirectory**: `string`
+##### \_configurationDirectory
+
+`string`
 
 #### Returns
 
-`Promise`\<[`TvManager`](TvManager.md)\>
+`Promise`\<`TvManager`\>

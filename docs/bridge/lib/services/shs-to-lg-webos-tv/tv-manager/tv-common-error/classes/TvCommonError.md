@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -15,43 +15,65 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ## Constructors
 
-### new TvCommonError()
+### Constructor
 
-> **new TvCommonError**(`options`): [`TvCommonError`](TvCommonError.md)
+> **new TvCommonError**(`options`): `TvCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code?**: [`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
+`unknown`
 
-• **options.lgtvRequest?**: [`Request`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+###### code?
 
-• **options.lgtvResponse?**: [`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+[`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
 
-• **options.message?**: `string`
+###### lgtvRequest?
 
-• **options.ssdpDescription?**: `string`
+[`Request`](../../../../../../types/lgtv2/interfaces/Request.md)
 
-• **options.ssdpResponse?**
+###### lgtvResponse?
 
-• **options.ssdpResponse.headers**: [`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+[`Response`](../../../../../../types/lgtv2/interfaces/Response.md)
 
-• **options.ssdpResponse.messageName**: `string`
+###### message?
 
-• **options.ssdpResponse.rinfo**: `RemoteInfo`
+`string`
 
-• **options.tv?**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
+###### ssdpDescription?
+
+`string`
+
+###### ssdpResponse?
+
+\{ `headers`: [`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md); `messageName`: `string`; `rinfo`: `RemoteInfo`; \}
+
+###### ssdpResponse.headers
+
+[`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+
+###### ssdpResponse.messageName
+
+`string`
+
+###### ssdpResponse.rinfo
+
+`RemoteInfo`
+
+###### tv?
+
+`Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
 
 #### Returns
 
-[`TvCommonError`](TvCommonError.md)
+`TvCommonError`
 
 #### Overrides
 
-[`CommonError`](../../../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../../../common/common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../../../../../../common/common-error/classes/CommonError.md).[`constructor`](../../../../../../../common/common-error/classes/CommonError.md#constructor)
 
 ## Properties
 
@@ -67,13 +89,13 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### lgtvRequest?
 
-> `readonly` `optional` **lgtvRequest**: [`Request`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+> `readonly` `optional` **lgtvRequest**: [`Request`](../../../../../../types/lgtv2/interfaces/Request.md)
 
 ***
 
 ### lgtvResponse?
 
-> `readonly` `optional` **lgtvResponse**: [`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)
+> `readonly` `optional` **lgtvResponse**: [`Response`](../../../../../../types/lgtv2/interfaces/Response.md)
 
 ***
 

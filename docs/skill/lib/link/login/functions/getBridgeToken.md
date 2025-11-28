@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -10,9 +10,13 @@
 
 ## Parameters
 
-• **skillToken**: `string`
+### skillToken
 
-• **bridgeHostname**: `string`
+`string`
+
+### bridgeHostname
+
+`string`
 
 ## Returns
 

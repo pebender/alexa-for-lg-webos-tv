@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,12 +6,10 @@
 
 # bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error
 
-## Index
-
-### Classes
+## Classes
 
 - [TvCommonError](classes/TvCommonError.md)
 
-### Type Aliases
+## Type Aliases
 
 - [TvCommonErrorCode](type-aliases/TvCommonErrorCode.md)

@@ -1,10 +1,10 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
 [alexa-for-lg-webos-tv](../../../../modules.md) / [bridge/types/node-ssdp](../README.md) / Base
 
-# Class: `abstract` Base
+# Abstract Class: Base
 
 ## Extends
 
@@ -17,17 +17,19 @@
 
 ## Constructors
 
-### new Base()
+### Constructor
 
-> **new Base**(`opts`?): [`Base`](Base.md)
+> **new Base**(`opts?`): `Base`
 
 #### Parameters
 
-• **opts?**: [`SsdpOptions`](../interfaces/SsdpOptions.md)
+##### opts?
+
+[`SsdpOptions`](../interfaces/SsdpOptions.md)
 
 #### Returns
 
-[`Base`](Base.md)
+`Base`
 
 #### Overrides
 
@@ -41,7 +43,9 @@
 
 #### Parameters
 
-• **device**: `string`
+##### device
+
+`string`
 
 #### Returns
 

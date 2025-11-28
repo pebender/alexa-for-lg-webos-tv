@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record
 
-## Index
-
-### Type Aliases
+## Type Aliases
 
 - [IP](type-aliases/IP.md)
 - [IPv4](type-aliases/IPv4.md)

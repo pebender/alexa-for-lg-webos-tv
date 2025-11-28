@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: UserProfileCommonErrorCode
 
-> **UserProfileCommonErrorCode**: `"httpError"` \| `"httpResponseInvalidBodyMissing"` \| `"httpResponseInvalidBodyParseError"` \| `"httpResponseInvalidContentTypeInvalid"` \| `"httpResponseInvalidStatusCodeMissing"` \| `"httpResponseStatus400InvalidToken"` \| `"httpResponseStatus401"` \| `"httpResponseStatus401InsufficientScope"` \| `"userProfileEmailNotFound"` \| `"userProfileUserIdNotFound"`
+> **UserProfileCommonErrorCode** = `"httpError"` \| `"httpResponseInvalidBodyMissing"` \| `"httpResponseInvalidBodyParseError"` \| `"httpResponseInvalidContentTypeInvalid"` \| `"httpResponseInvalidStatusCodeMissing"` \| `"httpResponseStatus400InvalidToken"` \| `"httpResponseStatus401"` \| `"httpResponseStatus401InsufficientScope"` \| `"userProfileEmailNotFound"` \| `"userProfileUserIdNotFound"`

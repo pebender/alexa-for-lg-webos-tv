@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -10,12 +10,14 @@
 
 ### authorize()
 
-> **authorize**: (`loginToken`) => `Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+> **authorize**: (`loginToken`) => `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
 #### Parameters
 
-• **loginToken**: `string`
+##### loginToken
+
+`string`
 
 #### Returns
 
-`Promise`\<`null` \| [`Credentials`](../../credentials/interfaces/Credentials.md)\>
+`Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>

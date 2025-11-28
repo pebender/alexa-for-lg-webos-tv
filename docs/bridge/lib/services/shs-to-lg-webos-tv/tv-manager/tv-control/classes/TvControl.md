@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../../README.md)
 
 ***
 
@@ -14,9 +14,11 @@
 
 ### tv
 
-> `get` **tv**(): [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
+#### Get Signature
 
-#### Returns
+> **get** **tv**(): [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
+
+##### Returns
 
 [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
 
@@ -34,19 +36,21 @@
 
 ### lgtvCommand()
 
-> **lgtvCommand**(`lgtvRequest`): `Promise`\<[`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)\>
+> **lgtvCommand**(`lgtvRequest`): `Promise`\<[`Response`](../../../../../../types/lgtv2/interfaces/Response.md)\>
 
 Sends a request to the TvRecord and returns the response.
 
 #### Parameters
 
-• **lgtvRequest**: [`Request`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Request.md)
+##### lgtvRequest
+
+[`Request`](../../../../../../types/lgtv2/interfaces/Request.md)
 
 The LGTV request to send to the TvRecord.
 
 #### Returns
 
-`Promise`\<[`Response`](../../../../../../types/lgtv2/namespaces/export=/interfaces/Response.md)\>
+`Promise`\<[`Response`](../../../../../../types/lgtv2/interfaces/Response.md)\>
 
 The LGTV response from the TvRecord.
 
@@ -93,14 +97,18 @@ a [CommonError](../../../../../../../common/common-error/classes/CommonError.md)
 
 ### build()
 
-> `static` **build**(`database`, `tv`): [`TvControl`](TvControl.md)
+> `static` **build**(`database`, `tv`): `TvControl`
 
 #### Parameters
 
-• **database**: [`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
+##### database
 
-• **tv**: [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
+[`DatabaseTable`](../../../../../database/classes/DatabaseTable.md)\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
+
+##### tv
+
+[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
 
 #### Returns
 
-[`TvControl`](TvControl.md)
+`TvControl`

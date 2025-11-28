@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: DatabaseCommonErrorCode
 
-> **DatabaseCommonErrorCode**: `"unknown"` \| `"fieldInvalid"` \| `"fieldNotFound"` \| `"fieldValueNotFound"` \| `"fieldValueNotUnique"` \| `"recordNotFound"` \| `"recordNotUnique"`
+> **DatabaseCommonErrorCode** = `"unknown"` \| `"fieldInvalid"` \| `"fieldNotFound"` \| `"fieldValueNotFound"` \| `"fieldValueNotUnique"` \| `"recordNotFound"` \| `"recordNotUnique"`

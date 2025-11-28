@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher
 
-## Index
-
-### Classes
+## Classes
 
 - [TvSearcher](classes/TvSearcher.md)

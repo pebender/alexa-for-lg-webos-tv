@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -6,4 +6,4 @@
 
 # Type Alias: HttpCommonErrorCode
 
-> **HttpCommonErrorCode**: `"badGateway"` \| `"badRequest"` \| `"bodyFormatInvalid"` \| `"bodyNotFound"` \| `"connectionInterrupted"` \| `"contentTypeNotFound"` \| `"contentTypeValueInvalid"` \| `"forbidden"` \| `"internalServerError"` \| `"statusCodeNotFound"` \| `"unauthorized"` \| `"unknown"`
+> **HttpCommonErrorCode** = `"badGateway"` \| `"badRequest"` \| `"bodyFormatInvalid"` \| `"bodyNotFound"` \| `"connectionInterrupted"` \| `"contentTypeNotFound"` \| `"contentTypeValueInvalid"` \| `"forbidden"` \| `"internalServerError"` \| `"statusCodeNotFound"` \| `"unauthorized"` \| `"unknown"`

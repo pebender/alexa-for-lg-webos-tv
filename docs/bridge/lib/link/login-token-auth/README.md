@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,8 +6,6 @@
 
 # bridge/lib/link/login-token-auth
 
-## Index
-
-### Classes
+## Classes
 
 - [LoginTokenAuth](classes/LoginTokenAuth.md)

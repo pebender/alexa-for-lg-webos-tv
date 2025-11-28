@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -6,15 +6,13 @@
 
 # bridge/types/node-ssdp
 
-## Index
-
-### Classes
+## Classes
 
 - [Base](classes/Base.md)
 - [Client](classes/Client.md)
 - [Server](classes/Server.md)
 
-### Interfaces
+## Interfaces
 
 - [ClientOptions](interfaces/ClientOptions.md)
 - [ServerOptions](interfaces/ServerOptions.md)

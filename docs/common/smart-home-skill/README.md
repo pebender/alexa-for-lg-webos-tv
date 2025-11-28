@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../README.md)
 
 ***
 
@@ -6,9 +6,7 @@
 
 # common/smart-home-skill
 
-## Index
-
-### Variables
+## Variables
 
 - [schema](variables/schema.md)
 

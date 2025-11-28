@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -12,21 +12,23 @@
 
 ## Constructors
 
-### new Client()
+### Constructor
 
-> **new Client**(`opts`?): [`Client`](Client.md)
+> **new Client**(`opts?`): `Client`
 
 #### Parameters
 
-• **opts?**: [`ClientOptions`](../interfaces/ClientOptions.md)
+##### opts?
+
+[`ClientOptions`](../interfaces/ClientOptions.md)
 
 #### Returns
 
-[`Client`](Client.md)
+`Client`
 
 #### Overrides
 
-[`Base`](Base.md).[`constructor`](Base.md#constructors)
+[`Base`](Base.md).[`constructor`](Base.md#constructor)
 
 ## Methods
 
@@ -36,7 +38,9 @@
 
 #### Parameters
 
-• **device**: `string`
+##### device
+
+`string`
 
 #### Returns
 
@@ -92,13 +96,21 @@ myEmitter.emit('event', 1, 2, 3, 4, 5);
 
 #### Parameters
 
-• **event**: `"response"`
+##### event
 
-• **headers**: [`SsdpHeaders`](../interfaces/SsdpHeaders.md)
+`"response"`
 
-• **statusCode**: `number`
+##### headers
 
-• **rinfo**: `RemoteInfo`
+[`SsdpHeaders`](../interfaces/SsdpHeaders.md)
+
+##### statusCode
+
+`number`
+
+##### rinfo
+
+`RemoteInfo`
 
 #### Returns
 
@@ -147,9 +159,13 @@ myEE.emit('foo');
 
 #### Parameters
 
-• **event**: `"response"`
+##### event
 
-• **listener**
+`"response"`
+
+##### listener
+
+(`headers`, `statusCode`, `rinfo`) => `void`
 
 The callback function
 
@@ -198,9 +214,13 @@ myEE.emit('foo');
 
 #### Parameters
 
-• **event**: `"response"`
+##### event
 
-• **listener**
+`"response"`
+
+##### listener
+
+(`headers`, `statusCode`, `rinfo`) => `void`
 
 The callback function
 
@@ -224,7 +244,9 @@ v0.3.0
 
 #### Parameters
 
-• **serviceType**: `string`
+##### serviceType
+
+`string`
 
 #### Returns
 
@@ -234,13 +256,15 @@ v0.3.0
 
 ### start()
 
-> **start**(`cb`?): `Promise`\<`void`\>
+> **start**(`cb?`): `Promise`\<`void`\>
 
 Start the listener for multicast notifications from SSDP devices
 
 #### Parameters
 
-• **cb?**
+##### cb?
+
+(`error`) => `void`
 
 callback to socket.bind
 

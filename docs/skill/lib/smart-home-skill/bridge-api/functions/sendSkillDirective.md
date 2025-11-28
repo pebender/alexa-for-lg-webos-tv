@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../README.md)
 
 ***
 
@@ -10,7 +10,9 @@
 
 ## Parameters
 
-• **request**: [`Request`](../../../../../common/smart-home-skill/request/classes/Request.md)
+### request
+
+[`Request`](../../../../../common/smart-home-skill/request/classes/Request.md)
 
 ## Returns
 

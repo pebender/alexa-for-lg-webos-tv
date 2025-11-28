@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -6,13 +6,17 @@
 
 # Function: getCommonNames()
 
-> **getCommonNames**(`cert`, `encoding`?): `string`[]
+> **getCommonNames**(`cert`, `encoding?`): `string`[]
 
 ## Parameters
 
-• **cert**: `string` \| `Buffer`
+### cert
 
-• **encoding?**: `"der"` \| `"pem"`
+`string` | `Buffer`\<`ArrayBufferLike`\>
+
+### encoding?
+
+`"der"` | `"pem"`
 
 ## Returns
 

@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -10,9 +10,13 @@
 
 ## Parameters
 
-• **ipaddress**: `string`
+### ipaddress
 
-• **cb**
+`string`
+
+### cb
+
+(`found`, `result`) => `void`
 
 ## Returns
 

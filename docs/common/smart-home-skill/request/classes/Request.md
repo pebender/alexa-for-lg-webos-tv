@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../README.md)
 
 ***
 
@@ -8,37 +8,57 @@
 
 ## Constructors
 
-### new Request()
+### Constructor
 
-> **new Request**(`options`): [`Request`](Request.md)
+> **new Request**(`options`): `Request`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.directive**
+###### directive
 
-• **options.directive.endpoint?**: `object`
+\{ `endpoint?`: `object`; `header`: \{ `correlationToken?`: `string`; `instance?`: `string`; `messageId?`: `string`; `name?`: `string`; `namespace?`: [`Namespace`](../../common/type-aliases/Namespace.md); `payloadVersion?`: `"3"`; \}; `payload`: [`DirectivePayload`](../interfaces/DirectivePayload.md); \}
 
-• **options.directive.header**
+###### directive.endpoint?
 
-• **options.directive.header.correlationToken?**: `string`
+`object`
 
-• **options.directive.header.instance?**: `string`
+###### directive.header
 
-• **options.directive.header.messageId?**: `string`
+\{ `correlationToken?`: `string`; `instance?`: `string`; `messageId?`: `string`; `name?`: `string`; `namespace?`: [`Namespace`](../../common/type-aliases/Namespace.md); `payloadVersion?`: `"3"`; \}
 
-• **options.directive.header.name?**: `string`
+###### directive.header.correlationToken?
 
-• **options.directive.header.namespace?**: [`Namespace`](../../common/type-aliases/Namespace.md)
+`string`
 
-• **options.directive.header.payloadVersion?**: `"3"`
+###### directive.header.instance?
 
-• **options.directive.payload**: [`DirectivePayload`](../interfaces/DirectivePayload.md)
+`string`
+
+###### directive.header.messageId?
+
+`string`
+
+###### directive.header.name?
+
+`string`
+
+###### directive.header.namespace?
+
+[`Namespace`](../../common/type-aliases/Namespace.md)
+
+###### directive.header.payloadVersion?
+
+`"3"`
+
+###### directive.payload
+
+[`DirectivePayload`](../interfaces/DirectivePayload.md)
 
 #### Returns
 
-[`Request`](Request.md)
+`Request`
 
 ## Properties
 
@@ -60,18 +80,18 @@
 
 ### getCorrelationToken()
 
-> **getCorrelationToken**(): `undefined` \| `string`
+> **getCorrelationToken**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`
 
 ***
 
 ### getEndpointId()
 
-> **getEndpointId**(): `undefined` \| `string`
+> **getEndpointId**(): `string` \| `undefined`
 
 #### Returns
 
-`undefined` \| `string`
+`string` \| `undefined`

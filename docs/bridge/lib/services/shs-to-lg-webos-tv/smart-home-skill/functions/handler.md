@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../../../../README.md)
 
 ***
 
@@ -10,11 +10,17 @@
 
 ## Parameters
 
-• **event**: [`Request`](../../../../../../common/smart-home-skill/request/classes/Request.md)
+### event
 
-• **authorization**: [`Authorization`](../../authorization/classes/Authorization.md)
+[`Request`](../../../../../../common/smart-home-skill/request/classes/Request.md)
 
-• **tvManager**: [`TvManager`](../../tv-manager/classes/TvManager.md)
+### authorization
+
+[`Authorization`](../../authorization/classes/Authorization.md)
+
+### tvManager
+
+[`TvManager`](../../tv-manager/classes/TvManager.md)
 
 ## Returns
 

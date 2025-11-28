@@ -1,4 +1,4 @@
-[**alexa-for-lg-webos-tv**](../../../README.md) • **Docs**
+[**alexa-for-lg-webos-tv**](../../../README.md)
 
 ***
 
@@ -16,27 +16,33 @@ other error classes. The supported errors codes are given by
 
 ## Constructors
 
-### new GeneralCommonError()
+### Constructor
 
-> **new GeneralCommonError**(`options`): [`GeneralCommonError`](GeneralCommonError.md)
+> **new GeneralCommonError**(`options`): `GeneralCommonError`
 
 #### Parameters
 
-• **options**
+##### options
 
-• **options.cause?**: `unknown`
+###### cause?
 
-• **options.code?**: [`GeneralCommonErrorCode`](../type-aliases/GeneralCommonErrorCode.md)
+`unknown`
 
-• **options.message?**: `string`
+###### code?
+
+[`GeneralCommonErrorCode`](../type-aliases/GeneralCommonErrorCode.md)
+
+###### message?
+
+`string`
 
 #### Returns
 
-[`GeneralCommonError`](GeneralCommonError.md)
+`GeneralCommonError`
 
 #### Overrides
 
-[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructors)
+[`CommonError`](../../common-error/classes/CommonError.md).[`constructor`](../../common-error/classes/CommonError.md#constructor)
 
 ## Properties
 
