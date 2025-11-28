@@ -160,12 +160,12 @@ async function getAlexaToLGTV(tvControl: TvControl): Promise<ExternalInputMap> {
   for (const key of Object.keys(alexaInputMap)) {
     const id = alexaInputMap[key].id;
     if (externalInputIdlMap[id] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- It is save because 'id' exists.
       delete externalInputIdlMap[id];
     }
     const idRenamed = lgtvExternalInputRenameList[id];
     if (externalInputIdlMap[idRenamed] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- It is save because 'idRenamed' exists.
       delete externalInputIdlMap[idRenamed];
     }
   }
@@ -192,24 +192,21 @@ function capabilities(
     const inputs: Array<{ name: string; friendlyNames: string[] }> = [];
     const alexaToLGTV = await getAlexaToLGTV(tvControl);
     for (const alexaInput of Object.keys(alexaToLGTV)) {
-      // Add friendly names as long as they are no too close to the actual names.
+      // Add friendly names as long as they are not too close to the actual names.
       const friendlyNames: string[] = [];
-      if (alexaInput === alexaToLGTV[alexaInput].label) {
-        if (
-          alexaInput !== alexaToLGTV[alexaInput].id &&
-          alexaInput.replaceAll(" ", "") !==
-          alexaToLGTV[alexaInput].id.replaceAll(" ", "")
-        ) {
-          friendlyNames.push(alexaToLGTV[alexaInput].id);
-        }
-      } else {
-        if (
-          alexaInput !== alexaToLGTV[alexaInput].label &&
-          alexaInput.replaceAll(" ", "") !==
-          alexaToLGTV[alexaInput].label.replaceAll(" ", "")
-        ) {
-          friendlyNames.push(alexaToLGTV[alexaInput].label);
-        }
+      if (
+        alexaInput === alexaToLGTV[alexaInput].label &&
+        alexaInput !== alexaToLGTV[alexaInput].id &&
+        alexaInput.replaceAll(" ", "") !==
+        alexaToLGTV[alexaInput].id.replaceAll(" ", "")
+      ) {
+        friendlyNames.push(alexaToLGTV[alexaInput].id);
+      } else if (
+        alexaInput !== alexaToLGTV[alexaInput].label &&
+        alexaInput.replaceAll(" ", "") !==
+        alexaToLGTV[alexaInput].label.replaceAll(" ", "")
+      ) {
+        friendlyNames.push(alexaToLGTV[alexaInput].label);
       }
       inputs.push({
         name: alexaInput,

@@ -27,6 +27,13 @@ function mapErrorToAlexaResponse(
           "Failed to retrieve user profile.",
         );
       }
+      case "unknown": {
+        return Common.SHS.Response.buildAlexaErrorResponse(
+          alexaRequest,
+          "INTERNAL_ERROR",
+          "Unknown error.",
+        );
+      }
     }
   }
   if (

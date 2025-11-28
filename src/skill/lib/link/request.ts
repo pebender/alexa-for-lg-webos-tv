@@ -77,10 +77,15 @@ export async function request(
       responseBody,
       cause,
     });
-    let linkCommonErrorCode: LinkCommonErrorCode = "unknown";
+    let linkCommonErrorCode: LinkCommonErrorCode;
     switch (code) {
       case "unauthorized": {
         linkCommonErrorCode = "authorizationFailed";
+        break;
+      }
+      default: {
+        linkCommonErrorCode = "unknown";
+        break;
       }
     }
     return new LinkCommonError({

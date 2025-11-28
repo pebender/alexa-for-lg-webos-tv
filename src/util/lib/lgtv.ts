@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- This is a command line utility */
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
@@ -113,7 +114,7 @@ function lgtvRunCommand(tvManager: TvManager): void {
   const argv: string[] = process.argv;
   if (argv.length === 5 || argv.length === 6) {
     const tvList = getSortedTVList(tvManager);
-    const tv = tvList[Number.parseInt(argv[3])];
+    const tv = tvList[Number.parseInt(argv[3], 10)];
     console.log(`udn: ${tv.udn}`);
     const tvControl = tvManager.control(tv.udn);
     tvControl.on("connect", () => {

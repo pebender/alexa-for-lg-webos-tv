@@ -14,11 +14,11 @@
 
 ### Constructor
 
-> **new export=**(`opts?`): `LGTV`
+> **new export=**(`config?`): `LGTV`
 
 #### Parameters
 
-##### opts?
+##### config?
 
 ###### clientKey?
 

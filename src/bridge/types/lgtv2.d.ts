@@ -1,6 +1,4 @@
-/* eslint-disable unicorn/prevent-abbreviations */
-
-// Type definitions for lgtv2 1.4.1
+// Type definitions for lgtv2 1.6.3
 // Definitions by: Paul Bender
 
 import { EventEmitter } from "node:events";
@@ -36,7 +34,7 @@ import { EventEmitter } from "node:events";
 
 /* ~ Write your module's methods and properties in this class */
 declare class LGTV extends EventEmitter {
-  public constructor(opts?: {
+  public constructor(config?: {
     url?: string;
     timeout?: number;
     reconnect?: number;

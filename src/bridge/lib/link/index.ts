@@ -118,7 +118,7 @@ class TestApplication implements Application {
     _request: object,
     _credentials: Credentials,
   ): Promise<object> {
-    return {};
+    return await Promise.resolve({});
   }
 }
 

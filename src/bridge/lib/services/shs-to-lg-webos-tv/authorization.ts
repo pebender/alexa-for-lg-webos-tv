@@ -1,8 +1,7 @@
 import { DatabaseTable } from "../../database";
 import * as Common from "../../../../common";
 
-/* This is a type because DatabaseTable needs it to be a type. */
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- This is a type because DatabaseTable needs it to be a type.
 export type AuthorizationRecord = {
   skillToken: string;
   userId: string;

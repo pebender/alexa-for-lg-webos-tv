@@ -72,7 +72,7 @@ export class DatabaseTable<
     async function index(fieldName: keyof DatabaseRecord): Promise<void> {
       await database
         .ensureIndexAsync({ fieldName: fieldName as string, unique: true })
-        .catch((error) => {
+        .catch((error: unknown) => {
           throw new Common.DatabaseCommonError({
             cause: error,
           });

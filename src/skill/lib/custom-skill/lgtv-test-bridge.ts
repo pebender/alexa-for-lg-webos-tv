@@ -30,7 +30,8 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
     }
     if (error instanceof Common.DatabaseCommonError) {
       const speechOutput =
-        "There was a problem access the database. " + "Test your bridge again.";
+        "There was a problem access the database. " +
+        "Test your bridge again.";
       return speechOutput;
     }
     if (error instanceof Link.LinkCommonError) {
@@ -79,6 +80,14 @@ async function test(handlerInput: ASKHandlerInput): Promise<string> {
             `Be sure your bridge allows your bridge hostname and user email to connect. " + After that, reconfigure your bridge.`;
           return speechOutput;
         }
+        case "userProfileFetchFailed": {
+          const speechOutput = "Could not fetch your user profile."
+          return speechOutput;
+        }
+        case "unknown": {
+          const speechOutput = "Unknown error."
+          return speechOutput;
+        }
       }
     }
 
@@ -95,9 +104,9 @@ const TestBridgeIntentHandler = {
   canHandle(handlerInput: ASKHandlerInput): boolean {
     return (
       ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) ===
-        "IntentRequest" &&
+      "IntentRequest" &&
       ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) ===
-        "LGTV_TestBridgeIntent"
+      "LGTV_TestBridgeIntent"
     );
   },
   async handle(handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {

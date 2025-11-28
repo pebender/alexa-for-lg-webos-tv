@@ -102,9 +102,11 @@ export class Bridge {
    */
   public async start(): Promise<void> {
     this._link.start();
+    const services = []
     for (const [, value] of Object.entries(this._services)) {
-      await value.start();
+      services.push(value.start());
     }
+    await Promise.all(services);
   }
 }
 

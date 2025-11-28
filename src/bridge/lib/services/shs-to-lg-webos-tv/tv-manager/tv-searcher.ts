@@ -334,7 +334,7 @@ export class TvSearcher extends EventEmitter {
       );
       Common.Debug.debug("periodicSearch");
       if (search instanceof Promise) {
-        search.catch((error) => {
+        search.catch((error: unknown) => {
           const commonError: Common.CommonError = new TvCommonError({
             code: "searchError",
             message: "TvRecord search error",

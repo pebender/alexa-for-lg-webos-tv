@@ -301,6 +301,12 @@ export async function testConnection(skillToken: string): Promise<void> {
               cause: error,
             });
           }
+          default: {
+            throw new LinkCommonError({
+              code: "unknown",
+              cause: error,
+            });
+          }
         }
       }
       throw error;

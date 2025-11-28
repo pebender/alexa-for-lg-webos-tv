@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- These are development debug routines that output to console. */
 import { inspect } from "node:util";
 import { CommonError } from "./common-error";
 import { GeneralCommonError } from "./general-common-error";
@@ -25,13 +26,13 @@ export function debugError(error: unknown): void {
       error instanceof CommonError
         ? error
         : new GeneralCommonError({
-            message: "debugError: 'error' was not of type 'CommonError'",
-            cause: error,
-          });
+          message: "debugError: 'error' was not of type 'CommonError'",
+          cause: error,
+        });
     console.debug(
       "error util.inspect:" +
-        "\n" +
-        inspect(commonError, { depth: 8, getters: true }),
+      "\n" +
+      inspect(commonError, { depth: 8, getters: true }),
     );
   }
 }

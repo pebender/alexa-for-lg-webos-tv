@@ -1,6 +1,6 @@
 import schema from "./alexa_smart_home_message_schema.json";
 
-// eslint-disable-next-line unicorn/prefer-export-from
+// eslint-disable-next-line unicorn/prefer-export-from -- export from does not work with JSON files.
 export { schema };
 
 export type { Namespace, Header, Endpoint } from "./common";

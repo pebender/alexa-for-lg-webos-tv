@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/prevent-abbreviations */
+/* eslint-disable unicorn/prevent-abbreviations -- The function parameters are defined by node-ssdp */
 /*
  * This @types/node-ssdp 4.0.4 but patched to
  * - expose rinfo on the Client event interface, and

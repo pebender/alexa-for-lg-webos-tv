@@ -45,7 +45,7 @@ async function createHostnamesSimpleCardContent(
   Common.Debug.debug(
     `LGTV_ConfigureBridgeIntent: bridge FQDNs: ${hostnames.toString()}`,
   );
-  const hostnameCount = Number(hostnames.length);
+  const hostnameCount = hostnames.length;
   let cardContent = "";
   let index = 0;
   while (index < hostnameCount) {
@@ -114,9 +114,9 @@ const ConfigureBridgeIntentHandler = {
   canHandle(handlerInput: ASKHandlerInput): boolean {
     return (
       ASKRequestEnvelope.getRequestType(handlerInput.requestEnvelope) ===
-        "IntentRequest" &&
+      "IntentRequest" &&
       ASKRequestEnvelope.getIntentName(handlerInput.requestEnvelope) ===
-        "LGTV_ConfigureBridgeIntent"
+      "LGTV_ConfigureBridgeIntent"
     );
   },
   async handle(handlerInput: ASKHandlerInput): Promise<ASKModel.Response> {
@@ -314,8 +314,7 @@ const ConfigureBridgeIntentHandler = {
           } catch (error) {
             return handlerInput.responseBuilder
               .speak(
-                `${
-                  (error as Error).message
+                `${(error as Error).message
                 } Please check your bridge installation and start over.`,
               )
               .withShouldEndSession(true)
@@ -420,14 +419,6 @@ const ConfigureBridgeIntentHandler = {
         return handlerInput.responseBuilder
           .speak(
             "Not CONFIRMED or DENIED. How did I get here? I will start over.",
-          )
-          .withShouldEndSession(true)
-          .getResponse();
-      }
-      default: {
-        return handlerInput.responseBuilder
-          .speak(
-            "Not STARTED, IN_PROGRESS or COMPLETED. How did I get here? I will start over.",
           )
           .withShouldEndSession(true)
           .getResponse();

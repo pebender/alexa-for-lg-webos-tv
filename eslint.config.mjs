@@ -13,7 +13,7 @@ export default [
   ...tseslint.configs.strict,
   configLove,
   // This enables the unicorn plugin so no need to enable it in plugins.
-  pluginUnicorn.configs["flat/all"],
+  pluginUnicorn.configs["all"],
   {
     languageOptions: {
       globals: globals.browser,
@@ -31,6 +31,7 @@ export default [
       "@typescript-eslint/no-magic-numbers": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unnecessary-qualifier": "off",
+      "@typescript-eslint/no-unsafe-type-assertion": "off",
       "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/prefer-destructuring": "off",
       "@typescript-eslint/prefer-regexp-exec": "off",
@@ -47,6 +48,10 @@ export default [
       "unicorn/prefer-top-level-await": "off",
       //
       "unicorn/no-null": "off",
+      //
+      "complexity": "off",
+      "no-useless-assignment": "off",
+      "promise/avoid-new": "off",
     },
   },
 ];
