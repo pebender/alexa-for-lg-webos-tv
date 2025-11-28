@@ -63,7 +63,7 @@ This database has a table named ForLGwebOSTV. This table uses the user's linked 
 
 Using userId as the table's key makes it easy to associate bridgeHostname and bridgeToken with the user even when skillToken changes. Having a GSI with skillToken as its index makes it efficient to map a CS/SHS message to the correct bridge.
 
-The link user database functions are found [here](../../src/skill/lib/link/user-db.ts).
+The link user database functions are found in [user-db.ts](../../src/skill/lib/link/user-db.ts).
 
 ### Database Performance
 
