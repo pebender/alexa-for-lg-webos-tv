@@ -35,6 +35,8 @@ export default [
       "@typescript-eslint/prefer-destructuring": "off",
       "@typescript-eslint/prefer-regexp-exec": "off",
       "unicorn/consistent-function-scoping": "off",
+      "unicorn/no-array-sort": "off",
+      "unicorn/no-immediate-mutation": "off",
       // Using CommonJS not ESM.
       "unicorn/prefer-module": "off",
       // lgtv2 and node-ssdp modules uses EventEmitter.

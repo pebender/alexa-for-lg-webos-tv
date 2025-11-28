@@ -121,7 +121,7 @@ export class TvSearcher extends EventEmitter {
       if (
         headers.SERVER === undefined ||
         (headers.SERVER as string).match(/^webos\/[\d.]+ upnp\/1\.[01]$/i) ===
-          null
+        null
       ) {
         return null;
       }
@@ -214,14 +214,10 @@ export class TvSearcher extends EventEmitter {
       // check anyway.
       //
       if (
-        description.root?.device === undefined ||
-        description.root.device.length !== 1 ||
-        description.root.device[0].manufacturer === undefined ||
-        description.root.device[0].manufacturer.length !== 1 ||
-        description.root.device[0].friendlyName === undefined ||
-        description.root.device[0].friendlyName.length !== 1 ||
-        description.root.device[0].UDN === undefined ||
-        description.root.device[0].UDN.length !== 1
+        description.root?.device?.length !== 1 ||
+        description.root.device[0].manufacturer?.length !== 1 ||
+        description.root.device[0].friendlyName?.length !== 1 ||
+        description.root.device[0].UDN?.length !== 1
       ) {
         throw createTvCommonError({
           code: "descriptionXmlFormatError",
@@ -290,10 +286,10 @@ export class TvSearcher extends EventEmitter {
               error instanceof Common.CommonError
                 ? error
                 : new TvCommonError({
-                    code: "searchError",
-                    message: "TvRecord search error",
-                    cause: error,
-                  });
+                  code: "searchError",
+                  message: "TvRecord search error",
+                  cause: error,
+                });
             callback(commonError, null);
           }),
         );

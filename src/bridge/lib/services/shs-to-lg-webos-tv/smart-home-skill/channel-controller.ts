@@ -16,9 +16,9 @@ async function getChannel(tvControl: TvControl): Promise<Channel | null> {
     return channel.channelNumber !== undefined &&
       channel.channelName !== undefined
       ? {
-          channelNumber: channel.channelNumber as string,
-          channelName: channel.channelName as string,
-        }
+        channelNumber: channel.channelNumber as string,
+        channelName: channel.channelName as string,
+      }
       : null;
   } catch (error) {
     Common.Debug.debugError(error);
@@ -112,9 +112,7 @@ function getChannelNumberToNumberMap(
     channelNumberToNumber[channelNumber] = channelNumber;
     if (channelNumber.endsWith("-1")) {
       const altChannelName = channelNumber.replace(/-1$/, "");
-      if (channelNumberToNumber[altChannelName] === undefined) {
-        channelNumberToNumber[altChannelName] = channelNumber;
-      }
+      channelNumberToNumber[altChannelName] ??= channelNumber;
     }
   }
   return channelNumberToNumber;
@@ -135,21 +133,15 @@ function getChannelNameToNumberMap(
     channelNameToNumber[channelName] = channelNumber;
     if (channelName.endsWith("-DT")) {
       const altChannelName = channelName.replace(/-DT$/, "");
-      if (channelNameToNumber[altChannelName] === undefined) {
-        channelNameToNumber[altChannelName] = channelNumber;
-      }
+      channelNameToNumber[altChannelName] ??= channelNumber;
     }
     if (channelName.endsWith("-HD")) {
       const altChannelName = channelName.replace(/-HD$/, "");
-      if (channelNameToNumber[altChannelName] === undefined) {
-        channelNameToNumber[altChannelName] = channelNumber;
-      }
+      channelNameToNumber[altChannelName] ??= channelNumber;
     }
     if (channelName.endsWith("HD")) {
       const altChannelName = channelName.replace(/HD$/, "");
-      if (channelNameToNumber[altChannelName] === undefined) {
-        channelNameToNumber[altChannelName] = channelNumber;
-      }
+      channelNameToNumber[altChannelName] ??= channelNumber;
     }
   }
   return channelNameToNumber;

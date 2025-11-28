@@ -126,7 +126,7 @@ export class DatabaseTable<
       | OneOf<Required<DatabaseRecord>>
       | Array<OneOf<Required<DatabaseRecord>>>,
   ): Promise<DatabaseRecord[]> {
-    let records: Array<DatabaseRecord & { _id?: unknown }> = [];
+    let records: DatabaseRecord[] = [];
     try {
       records = await this._database
         .findAsync(Array.isArray(query) ? { $and: query } : (query ?? {}))
@@ -137,7 +137,7 @@ export class DatabaseTable<
     for (const record of records) {
       delete record._id;
     }
-    return records as DatabaseRecord[];
+    return records;
   }
 
   public async updateOrInsertRecord(

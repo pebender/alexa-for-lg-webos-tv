@@ -127,9 +127,7 @@ async function getAlexaToLGTV(tvControl: TvControl): Promise<ExternalInputMap> {
   const externalInputLabelMap: ExternalInputMap = {};
   // Create an external input map using the label as the key.
   for (const input of externalInputList) {
-    if (externalInputLabelMap[input.label] === undefined) {
-      externalInputLabelMap[input.label] = input;
-    }
+    externalInputLabelMap[input.label] ??= input;
   }
   //
   for (const input of alexaInputList) {
@@ -145,9 +143,7 @@ async function getAlexaToLGTV(tvControl: TvControl): Promise<ExternalInputMap> {
   const externalInputIdlMap: ExternalInputMap = {};
   // Create an external input map using the id as the key.
   for (const input of externalInputList) {
-    if (externalInputIdlMap[input.id] === undefined) {
-      externalInputIdlMap[input.id] = input;
-    }
+    externalInputIdlMap[input.id] ??= input;
   }
   // Add to the external input map using the renamed id as the key.
   for (const input of externalInputList) {
@@ -202,7 +198,7 @@ function capabilities(
         if (
           alexaInput !== alexaToLGTV[alexaInput].id &&
           alexaInput.replaceAll(" ", "") !==
-            alexaToLGTV[alexaInput].id.replaceAll(" ", "")
+          alexaToLGTV[alexaInput].id.replaceAll(" ", "")
         ) {
           friendlyNames.push(alexaToLGTV[alexaInput].id);
         }
@@ -210,7 +206,7 @@ function capabilities(
         if (
           alexaInput !== alexaToLGTV[alexaInput].label &&
           alexaInput.replaceAll(" ", "") !==
-            alexaToLGTV[alexaInput].label.replaceAll(" ", "")
+          alexaToLGTV[alexaInput].label.replaceAll(" ", "")
         ) {
           friendlyNames.push(alexaToLGTV[alexaInput].label);
         }

@@ -80,18 +80,18 @@ export class Response {
   public constructor(
     options:
       | {
-          event: Event;
-          context?: Context;
-        }
+        event: Event;
+        context?: Context;
+      }
       | {
-          namespace: Namespace;
-          name: string;
-          instance?: string;
-          correlationToken?: string;
-          endpointId?: string;
-          token?: string;
-          payload?: EventPayload;
-        },
+        namespace: Namespace;
+        name: string;
+        instance?: string;
+        correlationToken?: string;
+        endpointId?: string;
+        token?: string;
+        payload?: EventPayload;
+      },
   ) {
     const optionsA = options as {
       event: Event;
@@ -153,20 +153,14 @@ export class Response {
   }
 
   public addContextProperty(contextProperty: ContextProperty): void {
-    if (this.context === undefined) {
-      this.context = {};
-    }
-    if (this.context.properties === undefined) {
-      this.context.properties = [];
-    }
+    this.context ??= {};
+    this.context.properties ??= [];
 
     this.context.properties.push(contextProperty);
   }
 
   public addPayloadEndpoint(payloadEndpoint: EventPayloadEndpoint): void {
-    if (this.event.payload.endpoints === undefined) {
-      this.event.payload.endpoints = [];
-    }
+    this.event.payload.endpoints ??= [];
 
     this.event.payload.endpoints.push(payloadEndpoint);
   }
