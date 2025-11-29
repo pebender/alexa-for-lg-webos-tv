@@ -45,6 +45,6 @@
     "pack": "npx npm-pack-zip",
     "test": "echo \"Error: no test specified\" && exit 1",
     "all": "npm run clean && npm run install_modules && npm run build && npm run pack",
-    "copy_files": "(cd ../../src && npx copyfiles \"skill/lib/link/*.key\" \"../pkg/alexa-for-lg-webos-tv-skill/lib/\")"
+    "copy_files": "(cd ../../src && npx copyfiles -V \"skill/lib/link/*.key\" \"../pkg/alexa-for-lg-webos-tv-skill/lib/\")"
   }
 }
