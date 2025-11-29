@@ -35,7 +35,6 @@
 - [bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher](bridge/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher/README.md)
 - [bridge/types/lgtv2](bridge/types/lgtv2/README.md)
 - [bridge/types/node-arp](bridge/types/node-arp/README.md)
-- [bridge/types/node-ssdp](bridge/types/node-ssdp/README.md)
 - [bridge/types/persist-path](bridge/types/persist-path/README.md)
 - [common](common/README.md)
 - [common/common-error](common/common-error/README.md)

@@ -20,11 +20,11 @@
 
 ##### \_ssdpNotify
 
-[`Server`](../../../../../../types/node-ssdp/classes/Server.md)
+`Server`
 
 ##### \_ssdpResponse
 
-[`Client`](../../../../../../types/node-ssdp/classes/Client.md)
+`Client`
 
 #### Returns
 

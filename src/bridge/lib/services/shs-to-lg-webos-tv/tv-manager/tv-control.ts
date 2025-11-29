@@ -6,7 +6,7 @@ import {
   Client as SsdpClient,
   Server as SsdpServer,
   type SsdpHeaders,
-} from "node-ssdp";
+} from "@lvcabral/node-ssdp";
 import LGTV from "lgtv2";
 import * as Common from "../../../../../common";
 import type { DatabaseTable } from "../../../database";

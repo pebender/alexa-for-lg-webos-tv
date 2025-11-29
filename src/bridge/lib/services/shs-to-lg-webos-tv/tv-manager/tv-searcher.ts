@@ -1,4 +1,3 @@
-import type * as dgram from "node:dgram";
 import { EventEmitter } from "node:events";
 import { promisify } from "node:util";
 import * as arp from "node-arp";
@@ -6,7 +5,7 @@ import {
   Client as SsdpClient,
   Server as SsdpServer,
   type SsdpHeaders,
-} from "node-ssdp";
+} from "@lvcabral/node-ssdp";
 import { parseStringPromise as xml2js } from "xml2js";
 import * as Common from "../../../../../common";
 import type { TvRecord } from "./tv-record";
@@ -62,7 +61,6 @@ export class TvSearcher extends EventEmitter {
     async function ssdpProcessAsync(
       messageName: string,
       headers: SsdpHeaders,
-      rinfo: dgram.RemoteInfo,
     ): Promise<TvRecord | null> {
       const tv: Partial<TvRecord> = {};
       let descriptionXml: string;
@@ -78,7 +76,6 @@ export class TvSearcher extends EventEmitter {
           ssdpResponse: {
             messageName,
             headers,
-            rinfo,
           },
           ssdpDescription: descriptionXml,
         });
@@ -125,23 +122,20 @@ export class TvSearcher extends EventEmitter {
       ) {
         return null;
       }
+
       // Get the IP address associated with the TvRecord.
-      if (rinfo.address === undefined) {
+      if (headers.LOCATION === undefined) {
         return null;
       }
-
-      tv.ip = rinfo.address;
-      tv.url = `ws://${rinfo.address}:3000`;
+      const location = new URL(headers.LOCATION);
+      tv.ip = location.hostname;
+      tv.url = `ws://${location.hostname}:3000`;
 
       //
       // Get the device description. I use this to make sure that this is an
       // LG Electronics webOS TvRecord as well as to obtain the TvRecord's friendly name
       // and Unique Device Name (UDN).
       //
-      if (headers.LOCATION === undefined) {
-        return null;
-      }
-
       let response;
       try {
         response = await fetch(headers.LOCATION);
@@ -271,10 +265,9 @@ export class TvSearcher extends EventEmitter {
     function ssdpProcess(
       messageName: string,
       headers: SsdpHeaders,
-      rinfo: dgram.RemoteInfo,
       callback: (error: Common.CommonError | null, tv: TvRecord | null) => void,
     ): void {
-      ssdpProcessAsync(messageName, headers, rinfo)
+      ssdpProcessAsync(messageName, headers)
         .then((tv: TvRecord | null) =>
           setImmediate((): void => {
             callback(null, tv);
@@ -297,8 +290,8 @@ export class TvSearcher extends EventEmitter {
 
     tvSearcher._ssdpNotify.on(
       "advertise-alive",
-      (headers: SsdpHeaders, rinfo: dgram.RemoteInfo): void => {
-        ssdpProcess("advertise-alive", headers, rinfo, ssdpProcessCallback);
+      (headers: SsdpHeaders): void => {
+        ssdpProcess("advertise-alive", headers, ssdpProcessCallback);
       },
     );
     tvSearcher._ssdpResponse.on(
@@ -307,7 +300,7 @@ export class TvSearcher extends EventEmitter {
         if (statusCode !== 200) {
           return;
         }
-        ssdpProcess("response", headers, rinfo, ssdpProcessCallback);
+        ssdpProcess("response", headers, ssdpProcessCallback);
       },
     );
 

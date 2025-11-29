@@ -1,6 +1,5 @@
-import type dgram from "node:dgram";
 import type LGTV from "lgtv2";
-import type { SsdpHeaders } from "node-ssdp";
+import type { SsdpHeaders } from "@lvcabral/node-ssdp";
 import { CommonError } from "../../../../../common";
 import type { TvRecord } from "./tv-record";
 
@@ -38,7 +37,6 @@ export class TvCommonError extends CommonError {
   public readonly ssdpResponse?: {
     messageName: string;
     headers: SsdpHeaders;
-    rinfo: dgram.RemoteInfo;
   };
 
   public readonly ssdpDescription?: string;
@@ -52,7 +50,6 @@ export class TvCommonError extends CommonError {
     ssdpResponse?: {
       messageName: string;
       headers: SsdpHeaders;
-      rinfo: dgram.RemoteInfo;
     };
     ssdpDescription?: string;
     cause?: unknown;

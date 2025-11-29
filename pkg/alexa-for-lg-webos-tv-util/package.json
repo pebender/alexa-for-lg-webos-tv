@@ -25,7 +25,7 @@
     "lgtv2": "1.6.3",
     "@seald-io/nedb": "4.1.2",
     "node-arp": "1.0.6",
-    "node-ssdp": "4.0.1",
+    "@lvcabral/node-ssdp": "4.0.4",
     "persist-path": "1.0.2",
     "wake_on_lan": "1.0.0",
     "xml2js": "0.6.2"
@@ -43,7 +43,7 @@
     "lgtv2",
     "@seald-io/nedb",
     "node-arp",
-    "node-ssdp",
+    "@lvcabral/node-ssdp",
     "persist-path",
     "wake_on_lan",
     "xml2js"

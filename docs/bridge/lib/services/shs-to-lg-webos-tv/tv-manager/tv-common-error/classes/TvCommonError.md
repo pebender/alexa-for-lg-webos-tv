@@ -49,19 +49,15 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ###### ssdpResponse?
 
-\{ `headers`: [`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md); `messageName`: `string`; `rinfo`: `RemoteInfo`; \}
+\{ `headers`: `SsdpHeaders`; `messageName`: `string`; \}
 
 ###### ssdpResponse.headers
 
-[`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+`SsdpHeaders`
 
 ###### ssdpResponse.messageName
 
 `string`
-
-###### ssdpResponse.rinfo
-
-`RemoteInfo`
 
 ###### tv?
 
@@ -111,15 +107,11 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 #### headers
 
-> **headers**: [`SsdpHeaders`](../../../../../../types/node-ssdp/interfaces/SsdpHeaders.md)
+> **headers**: `SsdpHeaders`
 
 #### messageName
 
 > **messageName**: `string`
-
-#### rinfo
-
-> **rinfo**: `RemoteInfo`
 
 ***
 
