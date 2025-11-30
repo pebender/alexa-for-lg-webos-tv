@@ -26,8 +26,9 @@
 
   "typedocOptions": {
     "entryPoints": [
-      "src/skill/**/*.ts",
       "src/bridge/**/*.ts",
+      "src/skill/**/*.ts",
+      "src/util/**/*.ts",
       "src/common/**/*.ts"
     ],
     "out": "docs",

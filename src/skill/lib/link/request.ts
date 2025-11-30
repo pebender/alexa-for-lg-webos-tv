@@ -10,15 +10,14 @@ export interface RequestOptions {
 }
 
 /**
- *
- * This function makes the HTTPS request specified by {@link requestOptions}.
- * The HTTPS request authenticates itself to the receiver by including
- * {@link bearerToken} as the bearer token in the HTTP authorization header. If
- * {@link requestBody} is provided, then the request is made using the HTTP
- * request method "POST" and includes requestBody as "application/json".
- * Otherwise, the request is made using the HTTP request method "GET". If the
- * request is successful, this function returns the JSON formatted response
- * received. Otherwise, this function throws a {@link HttpCommonError}.
+ * This function makes the HTTPS request specified by `requestOptions`. The
+ * HTTPS request authenticates itself to the receiver by including `bearerToken`
+ * as the bearer token in the HTTP authorization header. If `requestBody` is
+ * provided, then the request is made using the HTTP request method "POST" and
+ * includes requestBody as "application/json". Otherwise, the request is made
+ * using the HTTP request method "GET". If the request is successful, this
+ * function returns the JSON formatted response received. Otherwise, this
+ * function throws a {@link HttpCommonError}.
  *
  * @param requestOptions - basic HTTP options.
  * @param bearerToken - the bearer token for authorizing the request with the
