@@ -13,10 +13,10 @@
         "src/skill/types/*",
         "src/bridge/types/*",
         "src/common/types/*",
-        "pkg/alexa-for-lg-webos-tv-skill/node_modules/@types/*",
-        "pkg/alexa-for-lg-webos-tv-bridge/node_modules/@types/*",
-        "pkg/alexa-for-lg-webos-tv-skill/node_modules/*",
-        "pkg/alexa-for-lg-webos-tv-bridge/node_modules/*"
+        "pkg/skill/node_modules/@types/*",
+        "pkg/bridge/node_modules/@types/*",
+        "pkg/skill/node_modules/*",
+        "pkg/bridge/node_modules/*"
       ]
     }
   },

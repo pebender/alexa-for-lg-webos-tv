@@ -32,12 +32,12 @@
     "typescript-eslint": "8.48.0"
   },
   "scripts": {
-    "clean": "rm -rf node_modules package-lock.json && (cd pkg/alexa-for-lg-webos-tv-skill && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run clean) && (cd pkg/alexa-for-lg-webos-tv-util && npm run clean)",
-    "install_modules": "npm install && (cd pkg/alexa-for-lg-webos-tv-skill && npm install) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm install) && (cd pkg/alexa-for-lg-webos-tv-util && npm install)",
+    "clean": "rm -rf node_modules package-lock.json && (cd pkg/skill && npm run clean) && (cd pkg/bridge && npm run clean) && (cd pkg/util && npm run clean)",
+    "install_modules": "npm install && (cd pkg/skill && npm install) && (cd pkg/bridge && npm install) && (cd pkg/util && npm install)",
     "lint": "npx eslint `find src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'docs.in/**/*.md'",
     "build_doc": "rm -rf docs && mkdir docs && npx typedoc",
-    "build": "(cd pkg/alexa-for-lg-webos-tv-skill && npm run build) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run build) && (cd pkg/alexa-for-lg-webos-tv-util && npm run build)",
-    "pack": "(cd pkg/alexa-for-lg-webos-tv-skill && npm run pack) && (cd pkg/alexa-for-lg-webos-tv-bridge && npm run pack) && (cd pkg/alexa-for-lg-webos-tv-util && npm run pack)",
+    "build": "(cd pkg/skill && npm run build) && (cd pkg/bridge && npm run build) && (cd pkg/util && npm run build)",
+    "pack": "(cd pkg/skill && npm run pack) && (cd pkg/bridge && npm run pack) && (cd pkg/util && npm run pack)",
     "all": "npm run clean && npm run install_modules && npm run lint && npm run build_doc && npm run build && npm run pack"
   }
 }
