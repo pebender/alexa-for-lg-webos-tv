@@ -15,13 +15,13 @@ async function getLoginToken(
   skillToken: string,
   bridgeHostname: string,
 ): Promise<string> {
-  let loginToken: string;
-  let privateKey: jose.KeyLike;
+  let privateKey: jose.KeyLike | undefined = undefined;
   try {
     privateKey = await jose.importPKCS8(x509PrivateKey, "EdDSA");
   } catch (error) {
     throw new LinkCommonError({ cause: error });
   }
+  let loginToken: string | undefined = undefined;
   try {
     loginToken = await new jose.SignJWT()
       .setProtectedHeader({
@@ -56,7 +56,7 @@ export async function getBridgeToken(
     bridgeHostname,
   );
 
-  const response: { token?: string; [key: string]: unknown } = (await request(
+  const response: { token?: string;[key: string]: unknown } = (await request(
     requestOptions,
     loginToken,
     { skillToken },

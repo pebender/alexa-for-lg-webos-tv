@@ -114,7 +114,7 @@ async function handler(
 
       const controllerHandler =
         handlers[alexaRequest.directive.header.namespace];
-      let handlerResponse: Common.SHS.Response;
+      let handlerResponse: Common.SHS.Response | undefined = undefined;
       try {
         handlerResponse = await controllerHandler(alexaRequest, tvControl);
       } catch (error) {
@@ -122,9 +122,9 @@ async function handler(
           error instanceof Common.SHS.Response
             ? error
             : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-                alexaRequest,
-                error,
-              );
+              alexaRequest,
+              error,
+            );
       }
       if (
         !(
@@ -139,9 +139,9 @@ async function handler(
             error instanceof Common.SHS.Response
               ? error
               : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-                  alexaRequest,
-                  error,
-                );
+                alexaRequest,
+                error,
+              );
         }
       }
       return handlerResponse;

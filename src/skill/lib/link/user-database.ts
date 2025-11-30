@@ -3,6 +3,7 @@ import {
   DynamoDBDocumentClient,
   QueryCommand,
   type QueryCommandInput,
+  type QueryCommandOutput,
   UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import * as Common from "../../../common";
@@ -33,7 +34,7 @@ async function getRecords(
   const requiredFields = options?.requiredFields ?? [];
 
   const records: Record[] = [];
-  let data;
+  let data: QueryCommandOutput | undefined = undefined;
   try {
     data = await dynamoDBDocumentClient.send(queryCommand);
   } catch (error) {

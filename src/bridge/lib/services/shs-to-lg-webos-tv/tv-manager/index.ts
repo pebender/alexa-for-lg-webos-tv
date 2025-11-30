@@ -17,7 +17,7 @@ import { TvSearcher } from "./tv-searcher";
 export { TvControl } from "./tv-control";
 export { TvController } from "./tv-controller";
 export { TvSearcher } from "./tv-searcher";
-export * as TvRecord from "./tv-record";
+export type * as TvRecord from "./tv-record";
 export { TvCommonError, type TvCommonErrorCode } from "./tv-common-error";
 
 export class TvManager extends EventEmitter {

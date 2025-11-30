@@ -36,7 +36,7 @@ async function handler(
   Common.Debug.debug("smart home skill request message");
   Common.Debug.debugJSON(alexaRequest);
 
-  let alexaResponse: Common.SHS.Response;
+  let alexaResponse: Common.SHS.Response | undefined = undefined;
   try {
     alexaResponse = await handlerWithErrors(alexaRequest, context);
   } catch (error) {
@@ -44,9 +44,9 @@ async function handler(
       error instanceof Common.SHS.Response
         ? error
         : Common.SHS.Response.buildAlexaErrorResponseForInternalError(
-            alexaRequest,
-            error,
-          );
+          alexaRequest,
+          error,
+        );
   }
 
   Common.Debug.debug("smart home skill response message");

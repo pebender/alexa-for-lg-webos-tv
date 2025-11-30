@@ -104,7 +104,7 @@ declare namespace LGTV {
 
   export interface Request {
     uri: string;
-    payload?: LGTV.RequestPayload;
+    payload?: RequestPayload;
   }
 
   /*

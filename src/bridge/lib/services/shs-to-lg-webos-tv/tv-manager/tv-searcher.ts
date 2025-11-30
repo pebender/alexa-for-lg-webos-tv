@@ -63,7 +63,7 @@ export class TvSearcher extends EventEmitter {
       headers: SsdpHeaders,
     ): Promise<TvRecord | null> {
       const tv: Partial<TvRecord> = {};
-      let descriptionXml: string;
+      let descriptionXml: string | undefined = undefined;
 
       function createTvCommonError(options: {
         code: TvCommonErrorCode;
@@ -136,7 +136,7 @@ export class TvSearcher extends EventEmitter {
       // LG Electronics webOS TvRecord as well as to obtain the TvRecord's friendly name
       // and Unique Device Name (UDN).
       //
-      let response;
+      let response: Response | undefined = undefined;
       try {
         response = await fetch(headers.LOCATION);
       } catch (error) {
@@ -177,7 +177,7 @@ export class TvSearcher extends EventEmitter {
         });
       }
 
-      let description;
+      let description = undefined;
       try {
         description = (await xml2js(descriptionXml)) as {
           root?: {

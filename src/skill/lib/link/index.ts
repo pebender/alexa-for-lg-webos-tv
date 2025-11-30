@@ -41,8 +41,7 @@ export async function getCredentials(
   const bridgeHostname: string | null = options?.bridgeHostname ?? null;
   let updateBridgeToken: boolean = options?.updateBridgeToken ?? false;
 
-  let record: Database.Record | null;
-  record = await Database.getRecordUsingSkillToken(skillToken, {
+  let record: Database.Record | null = await Database.getRecordUsingSkillToken(skillToken, {
     requiredFields: ["userId"],
   });
   if (record === null) {
@@ -50,7 +49,7 @@ export async function getCredentials(
     bridgeHostname is known) */
     updateBridgeToken = true;
 
-    let userId: string;
+    let userId: string | undefined = undefined;
     try {
       const profile = await Common.Profile.getUserProfile(skillToken);
       userId = profile.userId;
@@ -143,7 +142,7 @@ export async function sendMessageUsingBridgeToken(
     headers: {},
   };
 
-  let response: object;
+  let response: object | undefined = undefined;
   try {
     response = await request(requestOptions, bridgeToken, message);
   } catch (error) {

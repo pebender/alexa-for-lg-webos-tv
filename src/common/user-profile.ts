@@ -59,7 +59,7 @@ export async function getUserProfile(
       "accept-language": "en-US",
     },
   };
-  let response: Response | undefined;
+  let response: Response | undefined = undefined;
 
   function createUserProfileError(
     code: UserProfileCommonErrorCode,
@@ -87,10 +87,10 @@ export async function getUserProfile(
     throw createUserProfileError("httpError", error);
   }
 
-  let responseBody: object | undefined;
+  let responseBody: object | undefined = undefined;
 
   /* Verify body's MIME type */
-  let mimeType: string | undefined;
+  let mimeType: string | undefined = undefined;
   const contentType: string | null = response.headers.get("content-type");
   if (contentType !== null) {
     mimeType = contentType
@@ -104,7 +104,7 @@ export async function getUserProfile(
 
   /* If the body is JSON, then deserialize it */
   if (mimeType === "application/json") {
-    let responseBodyUnknown: unknown;
+    let responseBodyUnknown: unknown = undefined;
     try {
       responseBodyUnknown = await response.json();
     } catch (error) {
@@ -123,8 +123,8 @@ export async function getUserProfile(
     /* The response may contain an additional error code in the body */
     const responseBodyErrorCode =
       responseBody !== undefined &&
-      "error" in responseBody &&
-      typeof responseBody.error === "string"
+        "error" in responseBody &&
+        typeof responseBody.error === "string"
         ? responseBody.error
         : undefined;
     const statusCode: number = response.status;

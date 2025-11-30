@@ -9,8 +9,8 @@ async function skillHandler(
   context: ASKModel.Context | AWSLambda.Context,
 ): Promise<ASKModel.ResponseEnvelope | Common.SHS.Response> {
   Common.Debug.debugJSON(request);
-  let response: ASKModel.ResponseEnvelope | Common.SHS.Response;
   if ("session" in request) {
+    let response: ASKModel.ResponseEnvelope | undefined = undefined;
     try {
       response = await customSkillHandler(request, context as ASKModel.Context);
     } catch (error) {
@@ -24,6 +24,7 @@ async function skillHandler(
   }
 
   if ("directive" in request) {
+    let response: Common.SHS.Response | undefined = undefined;
     try {
       response = await smartHomeSkillHandler(
         request,

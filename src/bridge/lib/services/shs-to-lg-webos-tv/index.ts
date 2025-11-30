@@ -98,7 +98,7 @@ class ShsToLgWebOsTvService implements Application {
       );
     }
 
-    let shsResponse: Common.SHS.Response;
+    let shsResponse: Common.SHS.Response | undefined = undefined;
 
     try {
       shsResponse = await SHS.handler(

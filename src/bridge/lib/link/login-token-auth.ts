@@ -26,7 +26,7 @@ export class LoginTokenAuth implements TokenAuth {
   }
 
   public async authorize(loginToken: string): Promise<Credentials | null> {
-    let publicKey: jose.KeyLike;
+    let publicKey: jose.KeyLike | undefined = undefined;
     try {
       publicKey = await jose.importX509(this._x509PublicCert, "EdDSA");
     } catch (error) {
@@ -34,7 +34,7 @@ export class LoginTokenAuth implements TokenAuth {
       return null;
     }
 
-    let payload: jose.JWTPayload;
+    let payload: jose.JWTPayload | undefined = undefined;
     try {
       const result: jose.JWTVerifyResult = await jose.jwtVerify(
         loginToken,
@@ -65,8 +65,8 @@ export class LoginTokenAuth implements TokenAuth {
     const url = new URL(payload.aud);
     const bridgeHostname: string = url.hostname;
 
-    let userId: string;
-    let email: string;
+    let userId: string | undefined = undefined;
+    let email: string | undefined = undefined;
     try {
       const userProfile: Common.Profile.UserProfile =
         await Common.Profile.getUserProfile(skillToken);

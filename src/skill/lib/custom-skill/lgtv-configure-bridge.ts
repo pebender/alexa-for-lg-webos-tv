@@ -87,7 +87,7 @@ async function setBridgeCredentials(
   let credentials: {
     bridgeHostname: string | null;
     bridgeToken: string | null;
-  };
+  } | undefined = undefined;
   try {
     credentials = await Link.getCredentials(accessToken, { bridgeHostname });
     Common.Debug.debug("LGTV_ConfigureBridgeIntent: getCredentials: success");
@@ -308,7 +308,7 @@ const ConfigureBridgeIntentHandler = {
         }
 
         if (hostnameIndexString === undefined) {
-          let cardContent;
+          let cardContent: string | undefined = undefined;
           try {
             cardContent = await createHostnamesSimpleCardContent(handlerInput);
           } catch (error) {

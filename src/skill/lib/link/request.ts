@@ -34,7 +34,7 @@ export async function request(
   bearerToken: string,
   requestBody?: object,
 ): Promise<object> {
-  const url: string = `https://${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}`;
+  const url = `https://${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}`;
   const options: {
     method: "GET" | "POST";
     body?: string;
@@ -59,8 +59,8 @@ export async function request(
   Common.Debug.debugJSON(url);
   Common.Debug.debugJSON(options);
 
-  let response: Response | undefined;
-  let responseBody: string | object | undefined;
+  let response: Response | undefined = undefined;
+  let responseBody: string | object | undefined = undefined;
 
   function createError(
     code: HttpCommonErrorCode,
@@ -77,7 +77,7 @@ export async function request(
       responseBody,
       cause,
     });
-    let linkCommonErrorCode: LinkCommonErrorCode;
+    let linkCommonErrorCode: LinkCommonErrorCode = "unknown";
     switch (code) {
       case "unauthorized": {
         linkCommonErrorCode = "authorizationFailed";
@@ -142,7 +142,7 @@ export async function request(
   try {
     const responseBodyUnknown: unknown = response.json();
     /*
-     * application/json is either an Array ({}) or an Object ({}) both of which
+     * application/json is either an Array ([]) or an Object ({}) both of which
      * are typeof object.
      */
     if (

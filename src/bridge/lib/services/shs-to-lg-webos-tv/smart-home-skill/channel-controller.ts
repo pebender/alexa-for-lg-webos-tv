@@ -296,7 +296,7 @@ async function skipChannelsHandler(
       `${tvControl.tv.name} (${tvControl.tv.udn}) is not currently watching a TV channel.`,
     );
   }
-  let channels: Channel[];
+  let channels: Channel[] | undefined = undefined;
   try {
     channels = await getChannels(tvControl);
   } catch (error) {
@@ -333,7 +333,7 @@ async function changeChannelHandler(
   alexaRequest: Common.SHS.Request,
   tvControl: TvControl,
 ): Promise<Common.SHS.Response> {
-  let channels: Channel[];
+  let channels: Channel[] | undefined = undefined;
   try {
     channels = await getChannels(tvControl);
   } catch (error) {

@@ -60,7 +60,7 @@ export class BridgeTokenAuth implements TokenAuth {
   }
 
   public generate(): string {
-    let bridgeToken: string | undefined;
+    let bridgeToken: string | undefined = undefined;
     while (bridgeToken === undefined) {
       bridgeToken = crypto.randomBytes(192).toString("base64url").slice(0, 256);
       if (this.getCredentials(bridgeToken) === null) {
