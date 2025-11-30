@@ -25,9 +25,6 @@
   "exclude": [],
 
   "typedocOptions": {
-    "plugin": [
-      "typedoc-plugin-markdown"
-    ],
     "entryPoints": [
       "src/skill/**/*.ts",
       "src/bridge/**/*.ts",
