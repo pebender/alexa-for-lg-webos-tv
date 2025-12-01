@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "async-mutex": "0.5.0",
-    "express": "5.2.0",
+    "express": "5.2.1",
     "jose": "6.1.2",
     "lgtv2": "1.6.3",
     "@seald-io/nedb": "4.1.2",
@@ -30,7 +30,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@types/express": "5.0.5",
+    "@types/express": "5.0.6",
     "@types/node": "24.10.1",
     "@types/wake_on_lan": "0.0.33",
     "@types/xml2js": "0.4.14"
