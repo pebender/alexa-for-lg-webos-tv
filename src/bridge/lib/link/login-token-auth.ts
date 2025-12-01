@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import path from "node:path";
-import * as jose from "jose-node-cjs-runtime";
+import * as jose from "jose";
 import * as Common from "../../../common";
 import type { Credentials } from "./credentials";
 import type { UserAuth } from "./user-auth";
@@ -26,7 +26,7 @@ export class LoginTokenAuth implements TokenAuth {
   }
 
   public async authorize(loginToken: string): Promise<Credentials | null> {
-    let publicKey: jose.KeyLike | undefined = undefined;
+    let publicKey: jose.CryptoKey | undefined = undefined;
     try {
       publicKey = await jose.importX509(this._x509PublicCert, "EdDSA");
     } catch (error) {

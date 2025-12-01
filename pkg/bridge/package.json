@@ -20,7 +20,7 @@
   "dependencies": {
     "async-mutex": "0.5.0",
     "express": "5.2.0",
-    "jose-node-cjs-runtime": "5.10.0",
+    "jose": "6.1.2",
     "lgtv2": "1.6.3",
     "@seald-io/nedb": "4.1.2",
     "node-arp": "1.0.6",
@@ -38,7 +38,7 @@
   "bundledDependencies": [
     "async-mutex",
     "express",
-    "jose-node-cjs-runtime",
+    "jose",
     "lgtv2",
     "@seald-io/nedb",
     "node-arp",
