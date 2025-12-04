@@ -13,9 +13,7 @@
     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "files": [
-    "lib",
-    "src",
-    "TODO.txt"
+    "lib"
   ],
   "dependencies": {
     "async-mutex": "0.5.0",

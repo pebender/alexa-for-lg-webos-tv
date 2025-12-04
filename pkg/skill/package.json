@@ -16,8 +16,7 @@
     "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
   },
   "files": [
-    "lib",
-    "TODO.txt"
+    "lib"
   ],
   "dependencies": {
     "ask-sdk": "2.14.0",

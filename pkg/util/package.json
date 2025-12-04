@@ -14,9 +14,7 @@
   },
   "files": [
     "bin",
-    "lib",
-    "src",
-    "TODO.txt"
+    "lib"
   ],
   "dependencies": {
     "async-mutex": "0.5.0",

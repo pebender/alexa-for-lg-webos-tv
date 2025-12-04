@@ -1,2 +1,0 @@
-+ Make it work.
-+ Migrate to the sync/await support in node.js 8.*.*.
