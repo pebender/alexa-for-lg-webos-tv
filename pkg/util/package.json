@@ -16,6 +16,9 @@
     "bin",
     "lib"
   ],
+  "engines": {
+    "node": ">=24.11.0"
+  },
   "dependencies": {
     "async-mutex": "0.5.0",
     "express": "5.2.1",
