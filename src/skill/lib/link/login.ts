@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import path from "node:path";
-import * as jose from "jose";
+import * as jose from "jose-node-cjs-runtime";
 import * as Common from "../../../common";
 import { request, type RequestOptions } from "./request";
 import { LinkCommonError } from "./link-common-error";
@@ -15,7 +15,7 @@ async function getLoginToken(
   skillToken: string,
   bridgeHostname: string,
 ): Promise<string> {
-  let privateKey: jose.CryptoKey | undefined = undefined;
+  let privateKey: jose.KeyLike | undefined = undefined;
   try {
     privateKey = await jose.importPKCS8(x509PrivateKey, "EdDSA");
   } catch (error) {
