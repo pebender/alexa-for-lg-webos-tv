@@ -2,10 +2,11 @@
 ._.DS_Store
 ._*
 node_modules/
-pkg/*/lib
-src/lib
-pkg/*/*.zip
-pkg/*/*.tgz
-src-bak
+packages/*/dist
+packages/*/types
+packages/*/package
+packages/*/*.zip
+packages/*/*.tgz
+packages/*/*.tsbuildinfo
 *.crt
 *.key

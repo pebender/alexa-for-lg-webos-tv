@@ -1,0 +1,35 @@
+{
+  "name": "@backinthirty/alexa-for-lg-webos-tv-common",
+  "version": "0.0.1",
+  "description": "Libraries in common between the skill and the bridge",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "24.10.1"
+  },
+  "bundledDependencies": [],
+  "scripts": {
+    "clean": "rm -rf node_modules package-lock.json tsconfig.tsbuildinfo dist types package-lock.json *.tgz",
+    "install_modules": "npm install",
+    "build": "npx tsc --build",
+    "watch": "npx tsc --watch",
+    "pack": "npm pack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

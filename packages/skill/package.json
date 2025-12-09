@@ -1,0 +1,56 @@
+{
+  "name": "@backinthirty/alexa-for-lg-webos-tv-skill",
+  "version": "0.0.1",
+  "description": "The code for the For LG webOS TV Alexa Skill.",
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
+  "license": "MIT",
+  "alexa": {
+    "applicationId": "amzn1.ask.skill.0d98c4b6-d485-42d7-b269-c8bcdecff910"
+  },
+  "bugs": {
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "dependencies": {
+    "@backinthirty/alexa-for-lg-webos-tv-common": "*",
+    "ask-sdk-core": "2.14.0",
+    "ask-sdk-model": "1.86.0",
+    "@aws-sdk/client-dynamodb": "3.895.0",
+    "@aws-sdk/lib-dynamodb": "3.895.0",
+    "certnames": "1.0.4",
+    "jose-node-cjs-runtime": "5.10.0"
+  },
+  "devDependencies": {
+    "tar-to-zip": "3.0.0",
+    "@types/aws-lambda": "8.10.159",
+    "@types/node": "24.10.1"
+  },
+  "bundledDependencies": [
+    "@backinthirty/alexa-for-lg-webos-tv-common",
+    "ask-sdk-core",
+    "ask-sdk-model",
+    "certnames",
+    "jose-node-cjs-runtime"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules package-lock.json tsconfig.tsbuildinfo dist types package-lock.json *.zip package *.tgz",
+    "install_modules": "(cd ../common && npm link) && (npm link \"@backinthirty/alexa-for-lg-webos-tv-common\") && npm install && (cp src/types/*.d.ts node_modules/@types/)",
+    "build": "npx tsc --build",
+    "postbuild": "npm run copy_cert",
+    "watch": "npx tsc --watch",
+    "pack": "npm pack && rm -rf package && rm -rf *.zip && tar zxf *.tgz && (cd package && zip -r `ls ../*.tgz | sed -e 's/\\.tgz$/.zip/'` .) && rm -rf package && rm -rf *.tgz",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy_cert": "(cd ./src && npx copyfiles -V \"lib/link/*.key\" \"../dist\")"
+  }
+}

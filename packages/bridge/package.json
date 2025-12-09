@@ -1,0 +1,68 @@
+{
+  "name": "@backinthirty/alexa-for-lg-webos-tv-bridge",
+  "version": "0.0.1",
+  "description": "A daemon/service to bridge the Alexa Smart Home Skill protocol to the LG webOS TV control protocol",
+  "main": "index.js",
+  "bin": {
+    "lgtv": "dist/bin/lgtv.js"
+  },
+  "types": "types/index.d.ts",
+  "author": "Paul E. Bender <pebender@gmail.com> (http://www.backinthirty.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pebender/alexa-for-lg-webos-tv.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "dependencies": {
+    "@backinthirty/alexa-for-lg-webos-tv-common": "*",
+    "async-mutex": "0.5.0",
+    "express": "5.2.1",
+    "jose-node-cjs-runtime": "5.10.0",
+    "lgtv2": "1.6.3",
+    "@seald-io/nedb": "4.1.2",
+    "node-arp": "1.0.6",
+    "@lvcabral/node-ssdp": "4.0.4",
+    "persist-path": "1.0.2",
+    "wake_on_lan": "1.0.0",
+    "xml2js": "0.6.2"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "24.10.1",
+    "@types/wake_on_lan": "0.0.33",
+    "@types/xml2js": "0.4.14"
+  },
+  "bundledDependencies": [
+    "@backinthirty/alexa-for-lg-webos-tv-common",
+    "async-mutex",
+    "express",
+    "jose-node-cjs-runtime",
+    "lgtv2",
+    "@seald-io/nedb",
+    "node-arp",
+    "@lvcabral/node-ssdp",
+    "persist-path",
+    "wake_on_lan",
+    "xml2js"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules package-lock.json tsconfig.tsbuildinfo dist types package-lock.json *.tgz",
+    "install_modules": "(cd ../common && npm link) && (npm link \"@backinthirty/alexa-for-lg-webos-tv-common\") && npm install && (cp src/types/*.d.ts node_modules/@types/)",
+    "build": "npx tsc --build --verbose",
+    "postbuild": "npm run copy_cert",
+    "watch": "npx tsc --watch",
+    "build_doc": "rm -rf docs && mkdir docs && npx typedoc",
+    "pack": "npm pack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy_cert": "(cd ./src && npx copyfiles -V \"lib/link/*.crt\" \"../dist\")"
+  }
+}

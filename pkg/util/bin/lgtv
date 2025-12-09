@@ -1,7 +1,0 @@
-#/bin/sh
-
-dir=$(realpath -s $0)
-dir=$(dirname $dir)
-dir=$(realpath -s $dir/..)
-
-(cd $dir && node lib/util/lib/lgtv.js "$@")

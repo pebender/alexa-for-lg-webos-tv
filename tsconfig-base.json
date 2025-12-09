@@ -5,8 +5,13 @@
   "extends": "./node_modules/@tsconfig/node24/tsconfig.json",
 
   "compilerOptions": {
+    "composite": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strictNullChecks": true
   }
 }

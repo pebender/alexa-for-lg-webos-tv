@@ -4,35 +4,37 @@
 
   "extends": "./tsconfig-base.json",
 
+  "include": [ 
+    "./packages/common/src/**/*",
+    "./packages/bridge/src/**/*",
+    "./packages/skill/src/**/*"
+  ],
+
   "compilerOptions": {
-    "outDir": "./lib",
     "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "src/skill/types/*",
-        "src/bridge/types/*",
-        "src/common/types/*",
-        "pkg/skill/node_modules/@types/*",
-        "pkg/bridge/node_modules/@types/*",
-        "pkg/skill/node_modules/*",
-        "pkg/bridge/node_modules/*"
-      ]
-    }
+    "baseUrl": "."
   },
 
-  "include": ["./src/**/*"],
-  "exclude": [],
+  "references": [
+    {
+      "path": "./packages/common"
+    },
+    {
+      "path": "./packages/bridge"
+    },
+    {
+      "path": "./packages/skill"
+    }
+  ],
 
   "typedocOptions": {
     "entryPoints": [
-      "src/bridge/**/*.ts",
-      "src/skill/**/*.ts",
-      "src/util/**/*.ts",
-      "src/common/**/*.ts"
+      "./packages/common/src/**/*.ts",
+      "./packages/bridge/src/**/*.ts",
+      "./packages/skill/src/**/*.ts"
     ],
-    "out": "docs",
-    "readme": "docs.in/README.md",
+    "out": "./docs",
+    "readme": "./docs.in/README.md",
     "disableSources": true,
     "excludeExternals": true
   }
