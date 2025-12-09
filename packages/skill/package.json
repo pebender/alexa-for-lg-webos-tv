@@ -34,7 +34,7 @@
   "devDependencies": {
     "tar-to-zip": "3.0.0",
     "@types/aws-lambda": "8.10.159",
-    "@types/node": "24.10.1"
+    "@types/node": "24.10.2"
   },
   "bundledDependencies": [
     "@backinthirty/alexa-for-lg-webos-tv-common",

@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/express": "5.0.6",
-    "@types/node": "24.10.1",
+    "@types/node": "24.10.2",
     "@types/wake_on_lan": "0.0.33",
     "@types/xml2js": "0.4.14"
   },
