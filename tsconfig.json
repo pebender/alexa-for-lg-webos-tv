@@ -9,6 +9,11 @@
     "./packages/bridge/src/**/*",
     "./packages/skill/src/**/*"
   ],
+  "exclude": [ 
+    "./packages/common/src/types/**/*",
+    "./packages/bridge/src/types/**/*",
+    "./packages/skill/src/types/**/*"
+  ],
 
   "compilerOptions": {
     "rootDir": ".",
@@ -33,6 +38,7 @@
       "./packages/bridge/src/**/*.ts",
       "./packages/skill/src/**/*.ts"
     ],
+    "exclude": "./packages/*/src/types/**/*",
     "out": "./docs",
     "readme": "./docs.in/README.md",
     "disableSources": true,

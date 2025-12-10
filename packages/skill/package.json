@@ -45,7 +45,7 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json tsconfig.tsbuildinfo dist types package-lock.json *.zip package *.tgz",
-    "install_modules": "(cd ../common && npm link) && (npm link \"@backinthirty/alexa-for-lg-webos-tv-common\") && npm install && (cp src/types/*.d.ts node_modules/@types/)",
+    "install_modules": "(cd ../common && npm link) && (npm link \"@backinthirty/alexa-for-lg-webos-tv-common\") && npm install && (cp -r src/types/* node_modules/@types/)",
     "build": "npx tsc --build",
     "postbuild": "npm run copy_cert",
     "watch": "npx tsc --watch",
