@@ -9,7 +9,7 @@
     "src/**/*.json"
   ],
   "exclude": [
-    "src/types/*.d.ts"
+    "src/types/**/*.d.ts"
   ],
 
   "compilerOptions": {
@@ -17,6 +17,7 @@
     "outDir": "dist",
     "declarationDir": "types"
   },
+
   "references": [
     {
       "path": "../common"

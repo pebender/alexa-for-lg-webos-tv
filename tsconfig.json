@@ -5,14 +5,11 @@
   "extends": "./tsconfig-base.json",
 
   "include": [ 
-    "./packages/common/src/**/*",
-    "./packages/bridge/src/**/*",
-    "./packages/skill/src/**/*"
+    "./packages/*/src/**/*.ts",
+    "./packages/*/src/**/*.json"
   ],
   "exclude": [ 
-    "./packages/common/src/types/**/*",
-    "./packages/bridge/src/types/**/*",
-    "./packages/skill/src/types/**/*"
+    "./packages/*/src/types/**/*.d.ts",
   ],
 
   "compilerOptions": {
@@ -34,11 +31,9 @@
 
   "typedocOptions": {
     "entryPoints": [
-      "./packages/common/src/**/*.ts",
-      "./packages/bridge/src/**/*.ts",
-      "./packages/skill/src/**/*.ts"
+      "./packages/*/src/**/*.ts",
     ],
-    "exclude": "./packages/*/src/types/**/*",
+    "exclude": "./packages/*/src/types/**/*.d.ts",
     "out": "./docs",
     "readme": "./docs.in/README.md",
     "disableSources": true,
