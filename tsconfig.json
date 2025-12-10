@@ -9,7 +9,7 @@
     "./packages/*/src/**/*.json"
   ],
   "exclude": [ 
-    "./packages/*/src/types/**/*.d.ts",
+    "./packages/*/src/types/**/*.d.ts"
   ],
 
   "compilerOptions": {
@@ -17,21 +17,9 @@
     "baseUrl": "."
   },
 
-  "references": [
-    {
-      "path": "./packages/common"
-    },
-    {
-      "path": "./packages/bridge"
-    },
-    {
-      "path": "./packages/skill"
-    }
-  ],
-
   "typedocOptions": {
     "entryPoints": [
-      "./packages/*/src/**/*.ts",
+      "./packages/*/src/**/*.ts"
     ],
     "exclude": "./packages/*/src/types/**/*.d.ts",
     "out": "./docs",
