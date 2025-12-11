@@ -26,15 +26,16 @@
     "markdownlint-cli2": "0.20.0",
     "npm-pack-zip": "1.3.0",
     "typedoc": "0.28.15",
+    "typedoc-plugin-markdown": "4.9.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.49.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json && (cd packages/common && npm run clean) && (cd packages/skill && npm run clean) && (cd packages/bridge && npm run clean)",
     "install_modules": "npm install && (cd packages/common && npm run install_modules) && (cd packages/skill && npm run install_modules) && (cd packages/bridge && npm run install_modules)",
-    "lint": "npx eslint `find packages/*/src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'docs.in/**/*.md'",
+    "lint": "npx eslint `find packages/*/src/ | grep '\\.ts$'` && npx markdownlint-cli2 'README.md' 'doc/**/*.md'",
     "build": "(cd packages/common && npm run build) && (cd packages/skill && npm run build) && (cd packages/bridge && npm run build)",
-    "build_doc": "rm -rf docs && mkdir docs && npx typedoc",
+    "build_doc": "rm -rf doc_generated && mkdir doc_generated && npx typedoc",
     "pack": "(cd packages/skill && npm run pack) && (cd packages/bridge && npm run pack)",
     "all": "npm run clean && npm run install_modules && npm run lint && npm run build && npm run build_doc && npm run pack"
   }

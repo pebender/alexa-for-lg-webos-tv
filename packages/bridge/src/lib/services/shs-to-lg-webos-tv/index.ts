@@ -5,8 +5,6 @@ import { TvManager } from "./tv-manager";
 import { Authorization } from "./authorization";
 import * as SHS from "./smart-home-skill";
 
-export { TvManager, type TvRecord } from "./tv-manager";
-
 class ShsToLgWebOsTvService implements Application {
   private readonly _authorization: Authorization;
   private readonly _tvManager: TvManager;

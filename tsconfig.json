@@ -8,9 +8,6 @@
     "./packages/*/src/**/*.ts",
     "./packages/*/src/**/*.json"
   ],
-  "exclude": [ 
-    "./packages/*/src/types/**/*.d.ts"
-  ],
 
   "compilerOptions": {
     "rootDir": ".",
@@ -18,13 +15,17 @@
   },
 
   "typedocOptions": {
-    "entryPoints": [
-      "./packages/*/src/**/*.ts"
+    "plugin": [
+      "typedoc-plugin-markdown"
     ],
-    "exclude": "./packages/*/src/types/**/*.d.ts",
-    "out": "./docs",
-    "readme": "./docs.in/README.md",
-    "disableSources": true,
-    "excludeExternals": true
+    "entryPointStrategy": "Packages",
+    "entryPoints": ["./packages/*"],
+    "readme": "none",
+    "outputs": [
+      {
+        "name": "markdown",
+        "path": "doc_generated"
+      }
+    ]
   }
 }

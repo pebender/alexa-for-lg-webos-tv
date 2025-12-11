@@ -4,9 +4,6 @@ import * as Common from "@backinthirty/alexa-for-lg-webos-tv-common";
 import { LinkManager, type Application } from "./lib/link";
 import * as ShsToLgWeboOsTv from "./lib/services/shs-to-lg-webos-tv";
 
-export { TvManager, type TvRecord } from "./lib/services/shs-to-lg-webos-tv";
-export { LinkManager } from "./lib/link";
-
 /**
  * A class to build and start a bridge.
  *
@@ -97,8 +94,8 @@ export class Bridge {
   /**
    * Starts the Bridge. When called, it
    *
-   * - starts the LinkManager, and
-   * - starts each Service.
+   * - starts the {@link LinkManager}, and
+   * - starts each Service ({@link ShsToLgWeboOsTv}).
    */
   public async start(): Promise<void> {
     this._link.start();

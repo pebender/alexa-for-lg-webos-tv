@@ -17,7 +17,7 @@ export interface RequestOptions {
  * includes requestBody as "application/json". Otherwise, the request is made
  * using the HTTP request method "GET". If the request is successful, this
  * function returns the JSON formatted response received. Otherwise, this
- * function throws a {@link HttpCommonError:class}.
+ * function throws a {@link HttpCommonError}.
  *
  * @param requestOptions - basic HTTP options.
  * @param bearerToken - the bearer token for authorizing the request with the

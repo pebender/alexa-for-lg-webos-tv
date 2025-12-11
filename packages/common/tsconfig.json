@@ -15,6 +15,14 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "declarationDir": "types",
+    "declarationDir": "types"
+  },
+
+  "typedocOptions": {
+    "plugin": [
+      "typedoc-plugin-markdown"
+    ],
+    "entryPoints": ["./src/**/*.ts"],
+    "exclude": "./src/types/**/*.ts"
   }
 }

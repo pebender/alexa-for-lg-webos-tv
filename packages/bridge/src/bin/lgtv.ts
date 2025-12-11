@@ -5,7 +5,7 @@ import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";
 import * as Common from "@backinthirty/alexa-for-lg-webos-tv-common";
-import { TvManager, type TvRecord } from "../index";
+import { TvManager, type TvRecord } from "../lib/services/shs-to-lg-webos-tv/tv-manager";
 
 export async function getTvManager(): Promise<TvManager> {
   const configurationDirectory = persistPath(
