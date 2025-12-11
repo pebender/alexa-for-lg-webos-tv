@@ -6,7 +6,7 @@
 
 # Interface: DirectivePayload
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L5)
+Defined in: [packages/common/src/smart-home-skill/request.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L5)
 
 ## Indexable
 
@@ -18,7 +18,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:5](https://github.c
 
 > `optional` **grant**: `object`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L10)
+Defined in: [packages/common/src/smart-home-skill/request.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L10)
 
 #### code
 
@@ -34,7 +34,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:10](https://github.
 
 > `optional` **grantee**: `object`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L14)
+Defined in: [packages/common/src/smart-home-skill/request.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L14)
 
 #### token
 
@@ -50,7 +50,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:14](https://github.
 
 > `optional` **scope**: `object`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:6](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L6)
+Defined in: [packages/common/src/smart-home-skill/request.ts:6](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L6)
 
 #### token
 

@@ -6,7 +6,7 @@
 
 # Class: Bridge
 
-Defined in: [packages/bridge/src/index.ts:20](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/index.ts#L20)
+Defined in: [packages/bridge/src/index.ts:20](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/index.ts#L20)
 
 A class to build and start a bridge.
 
@@ -27,7 +27,7 @@ await bridge.start();
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/index.ts:100](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/index.ts#L100)
+Defined in: [packages/bridge/src/index.ts:100](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/index.ts#L100)
 
 Starts the Bridge. When called, it
 
@@ -44,7 +44,7 @@ Starts the Bridge. When called, it
 
 > `static` **build**(): `Promise`\<`Bridge`\>
 
-Defined in: [packages/bridge/src/index.ts:47](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/index.ts#L47)
+Defined in: [packages/bridge/src/index.ts:47](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/index.ts#L47)
 
 Builds the Bridge. When called, it
 

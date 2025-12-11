@@ -6,7 +6,7 @@
 
 # Class: TvControl
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:16](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L16)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:16](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L16)
 
 ## Extends
 
@@ -133,7 +133,7 @@ v13.6.0, v12.17.0
 
 > **get** **tv**(): [`TvRecord`](../../tv-record/type-aliases/TvRecord.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:157](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L157)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:157](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L157)
 
 ##### Returns
 
@@ -353,7 +353,7 @@ v1.0.0
 
 > **getPowerState**(): `"OFF"` \| `"ON"`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:266](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L266)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:266](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L266)
 
 #### Returns
 
@@ -365,7 +365,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > **lgtvCommand**(`lgtvRequest`): `Promise`\<`Response`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:284](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L284)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:284](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L284)
 
 Sends a request to the TvRecord and returns the response.
 
@@ -1001,7 +1001,7 @@ v0.3.5
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:153](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L153)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:153](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L153)
 
 #### Returns
 
@@ -1013,7 +1013,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > **turnOff**(): `boolean`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:161](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L161)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:161](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L161)
 
 #### Returns
 
@@ -1025,7 +1025,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > **turnOn**(): `Promise`\<`boolean`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:179](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L179)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:179](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L179)
 
 #### Returns
 
@@ -1099,7 +1099,7 @@ v20.5.0
 
 > `static` **build**(`database`, `tv`): `TvControl`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L42)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-control.ts#L42)
 
 #### Parameters
 

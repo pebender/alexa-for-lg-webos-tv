@@ -6,7 +6,7 @@
 
 # Class: TvCommonError
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L28)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L28)
 
 A [CommonError](../../../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md) subclass for TV related
 errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/TvCommonErrorCode.md).
@@ -21,7 +21,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 > **new TvCommonError**(`options`): `TvCommonError`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L44)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L44)
 
 #### Parameters
 
@@ -93,7 +93,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`TvCommonErrorCode`](../type-aliases/TvCommonErrorCode.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L29)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L29)
 
 #### Overrides
 
@@ -105,7 +105,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > `readonly` `optional` **lgtvRequest**: `Request`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:33](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L33)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:33](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L33)
 
 ***
 
@@ -113,7 +113,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > `readonly` `optional` **lgtvResponse**: `Response`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:35](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L35)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:35](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L35)
 
 ***
 
@@ -145,7 +145,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > `readonly` `optional` **ssdpDescription**: `string`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L42)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L42)
 
 ***
 
@@ -153,7 +153,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > `readonly` `optional` **ssdpResponse**: `object`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:37](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L37)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:37](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L37)
 
 #### headers
 
@@ -181,7 +181,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > `readonly` `optional` **tv**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L31)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-common-error.ts#L31)
 
 ***
 

@@ -8,4 +8,4 @@
 
 > **DatabaseCommonErrorCode** = `"unknown"` \| `"fieldInvalid"` \| `"fieldNotFound"` \| `"fieldValueNotFound"` \| `"fieldValueNotUnique"` \| `"recordNotFound"` \| `"recordNotUnique"`
 
-Defined in: [packages/common/src/database-common-error.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/database-common-error.ts#L3)
+Defined in: [packages/common/src/database-common-error.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/database-common-error.ts#L3)

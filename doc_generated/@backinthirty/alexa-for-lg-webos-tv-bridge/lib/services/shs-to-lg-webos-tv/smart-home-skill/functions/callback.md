@@ -8,7 +8,7 @@
 
 > **callback**(`uri`, `error`, `response`, `udn`, `authorization`, `tvManager`): `void`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/index.ts:152](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/index.ts#L152)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/index.ts:152](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/index.ts#L152)
 
 ## Parameters
 

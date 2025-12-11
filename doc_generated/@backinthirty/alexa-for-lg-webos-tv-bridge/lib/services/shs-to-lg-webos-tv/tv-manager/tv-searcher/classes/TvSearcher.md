@@ -6,7 +6,7 @@
 
 # Class: TvSearcher
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L14)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L14)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 
 > **new TvSearcher**(`_ssdpNotify`, `_ssdpResponse`): `TvSearcher`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L17)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L17)
 
 #### Parameters
 
@@ -451,7 +451,7 @@ v0.1.26
 
 > **now**(): `void`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:359](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L359)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:359](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L359)
 
 #### Returns
 
@@ -980,7 +980,7 @@ v0.3.5
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:310](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L310)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:310](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L310)
 
 #### Returns
 
@@ -1054,7 +1054,7 @@ v20.5.0
 
 > `static` **build**(): `TvSearcher`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L24)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L24)
 
 #### Returns
 

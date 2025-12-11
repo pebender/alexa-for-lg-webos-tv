@@ -6,7 +6,7 @@
 
 # Interface: Record
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L11)
+Defined in: [packages/skill/src/lib/link/user-database.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L11)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [packages/skill/src/lib/link/user-database.ts:11](https://github.com
 
 > **bridgeHostname**: `string` \| `null`
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L14)
+Defined in: [packages/skill/src/lib/link/user-database.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L14)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [packages/skill/src/lib/link/user-database.ts:14](https://github.com
 
 > **bridgeToken**: `string` \| `null`
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:15](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L15)
+Defined in: [packages/skill/src/lib/link/user-database.ts:15](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L15)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [packages/skill/src/lib/link/user-database.ts:15](https://github.com
 
 > **skillToken**: `string` \| `null`
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L13)
+Defined in: [packages/skill/src/lib/link/user-database.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L13)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [packages/skill/src/lib/link/user-database.ts:13](https://github.com
 
 > **userId**: `string` \| `null`
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:12](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L12)
+Defined in: [packages/skill/src/lib/link/user-database.ts:12](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L12)

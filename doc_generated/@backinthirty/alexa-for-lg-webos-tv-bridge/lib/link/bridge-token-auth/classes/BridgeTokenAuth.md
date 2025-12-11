@@ -6,7 +6,7 @@
 
 # Class: BridgeTokenAuth
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L17)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L17)
 
 ## Implements
 
@@ -18,7 +18,7 @@ Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:17](https://githu
 
 > **authorize**(`bridgeToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L44)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L44)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:44](https://githu
 
 > **generate**(): `string`
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:62](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L62)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:62](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L62)
 
 #### Returns
 
@@ -52,7 +52,7 @@ Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:62](https://githu
 
 > **getCredentials**(`bridgeToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:86](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L86)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:86](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L86)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:86](https://githu
 
 > **setCredentials**(`bridgeToken`, `credentials`): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:73](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L73)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:73](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L73)
 
 #### Parameters
 
@@ -92,7 +92,7 @@ Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:73](https://githu
 
 > `static` **build**(`userAuth`, `configurationDirectory`): `Promise`\<`BridgeTokenAuth`\>
 
-Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/bridge-token-auth.ts#L29)
+Defined in: [packages/bridge/src/lib/link/bridge-token-auth.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/bridge-token-auth.ts#L29)
 
 #### Parameters
 

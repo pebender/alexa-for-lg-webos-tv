@@ -6,7 +6,7 @@
 
 # Class: GeneralCommonError
 
-Defined in: [packages/common/src/general-common-error.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/general-common-error.ts#L10)
+Defined in: [packages/common/src/general-common-error.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/general-common-error.ts#L10)
 
 A [CommonError](../../common-error/classes/CommonError.md) subclass for errors that do not fit into any of the
 other error classes. The supported errors codes are given by
@@ -22,7 +22,7 @@ other error classes. The supported errors codes are given by
 
 > **new GeneralCommonError**(`options`): `GeneralCommonError`
 
-Defined in: [packages/common/src/general-common-error.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/general-common-error.ts#L13)
+Defined in: [packages/common/src/general-common-error.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/general-common-error.ts#L13)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`GeneralCommonErrorCode`](../type-aliases/GeneralCommonErrorCode.md)
 
-Defined in: [packages/common/src/general-common-error.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/general-common-error.ts#L11)
+Defined in: [packages/common/src/general-common-error.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/general-common-error.ts#L11)
 
 #### Overrides
 

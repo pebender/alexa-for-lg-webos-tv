@@ -6,7 +6,7 @@
 
 # Interface: EventPayloadEndpoint
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:37](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L37)
+Defined in: [packages/common/src/smart-home-skill/response.ts:37](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L37)
 
 ## Indexable
 
@@ -18,7 +18,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:37](https://github
 
 > **capabilities**: [`EventPayloadEndpointCapability`](EventPayloadEndpointCapability.md)[]
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L44)
+Defined in: [packages/common/src/smart-home-skill/response.ts:44](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L44)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:44](https://github
 
 > `optional` **cookie**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:43](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L43)
+Defined in: [packages/common/src/smart-home-skill/response.ts:43](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L43)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:43](https://github
 
 > **description**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:38](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L38)
+Defined in: [packages/common/src/smart-home-skill/response.ts:38](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L38)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:38](https://github
 
 > **displayCategories**: `string`[]
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:39](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L39)
+Defined in: [packages/common/src/smart-home-skill/response.ts:39](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L39)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:39](https://github
 
 > **endpointId**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:40](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L40)
+Defined in: [packages/common/src/smart-home-skill/response.ts:40](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L40)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:40](https://github
 
 > **friendlyName**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:41](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L41)
+Defined in: [packages/common/src/smart-home-skill/response.ts:41](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L41)
 
 ***
 
@@ -66,4 +66,4 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:41](https://github
 
 > **manufacturerName**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L42)
+Defined in: [packages/common/src/smart-home-skill/response.ts:42](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L42)

@@ -6,7 +6,7 @@
 
 # Interface: EventPayload
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:48](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L48)
+Defined in: [packages/common/src/smart-home-skill/response.ts:48](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L48)
 
 ## Indexable
 
@@ -18,7 +18,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:48](https://github
 
 > `optional` **endpoints**: [`EventPayloadEndpoint`](EventPayloadEndpoint.md)[]
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:49](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L49)
+Defined in: [packages/common/src/smart-home-skill/response.ts:49](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L49)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:49](https://github
 
 > `optional` **message**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:51](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L51)
+Defined in: [packages/common/src/smart-home-skill/response.ts:51](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L51)
 
 ***
 
@@ -34,4 +34,4 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:51](https://github
 
 > `optional` **type**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:50](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L50)
+Defined in: [packages/common/src/smart-home-skill/response.ts:50](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L50)

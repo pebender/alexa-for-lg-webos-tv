@@ -8,7 +8,7 @@
 
 > **TvRecord** = `object`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L9)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L9)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > **ip**: [`IP`](IP.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:12](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L12)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:12](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L12)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > `optional` **key**: `string`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:15](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L15)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:15](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L15)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > **mac**: [`MAC`](MAC.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L14)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L14)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > **name**: `string`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L11)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L11)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > **udn**: [`UDN`](UDN.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L10)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:10](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L10)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-r
 
 > **url**: `string`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L13)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-record.ts#L13)

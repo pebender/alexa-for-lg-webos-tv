@@ -8,7 +8,7 @@
 
 > **getRequiredRecordUsingSkillToken**(`skillToken`, `options?`): `Promise`\<[`Record`](../interfaces/Record.md)\>
 
-Defined in: [packages/skill/src/lib/link/user-database.ts:165](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/user-database.ts#L165)
+Defined in: [packages/skill/src/lib/link/user-database.ts:165](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/user-database.ts#L165)
 
 ## Parameters
 

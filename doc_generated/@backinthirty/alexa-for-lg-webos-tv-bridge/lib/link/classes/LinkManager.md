@@ -6,7 +6,7 @@
 
 # Class: LinkManager
 
-Defined in: [packages/bridge/src/lib/link/index.ts:130](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L130)
+Defined in: [packages/bridge/src/lib/link/index.ts:130](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L130)
 
 ## Methods
 
@@ -14,7 +14,7 @@ Defined in: [packages/bridge/src/lib/link/index.ts:130](https://github.com/peben
 
 > **start**(): `void`
 
-Defined in: [packages/bridge/src/lib/link/index.ts:313](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L313)
+Defined in: [packages/bridge/src/lib/link/index.ts:313](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L313)
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: [packages/bridge/src/lib/link/index.ts:313](https://github.com/peben
 
 > `static` **build**(`configurationDirectory`, `serviceApplications`): `Promise`\<`LinkManager`\>
 
-Defined in: [packages/bridge/src/lib/link/index.ts:144](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L144)
+Defined in: [packages/bridge/src/lib/link/index.ts:144](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L144)
 
 #### Parameters
 

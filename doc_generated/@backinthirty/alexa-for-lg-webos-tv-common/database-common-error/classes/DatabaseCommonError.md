@@ -6,7 +6,7 @@
 
 # Class: DatabaseCommonError
 
-Defined in: [packages/common/src/database-common-error.ts:16](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/database-common-error.ts#L16)
+Defined in: [packages/common/src/database-common-error.ts:16](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/database-common-error.ts#L16)
 
 A [CommonError](../../common-error/classes/CommonError.md) subclass for database related errors. The supported
 errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseCommonErrorCode.md).
@@ -21,7 +21,7 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 > **new DatabaseCommonError**(`options`): `DatabaseCommonError`
 
-Defined in: [packages/common/src/database-common-error.ts:19](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/database-common-error.ts#L19)
+Defined in: [packages/common/src/database-common-error.ts:19](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/database-common-error.ts#L19)
 
 #### Parameters
 
@@ -65,7 +65,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`DatabaseCommonErrorCode`](../type-aliases/DatabaseCommonErrorCode.md)
 
-Defined in: [packages/common/src/database-common-error.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/database-common-error.ts#L17)
+Defined in: [packages/common/src/database-common-error.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/database-common-error.ts#L17)
 
 #### Overrides
 

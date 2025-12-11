@@ -6,7 +6,7 @@
 
 # Interface: LinkDescription
 
-Defined in: [packages/bridge/src/lib/link/index.ts:125](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L125)
+Defined in: [packages/bridge/src/lib/link/index.ts:125](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L125)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [packages/bridge/src/lib/link/index.ts:125](https://github.com/peben
 
 > **application**: [`Application`](../application/interfaces/Application.md)
 
-Defined in: [packages/bridge/src/lib/link/index.ts:127](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L127)
+Defined in: [packages/bridge/src/lib/link/index.ts:127](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L127)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [packages/bridge/src/lib/link/index.ts:127](https://github.com/peben
 
 > **tokenAuth**: [`TokenAuth`](../token-auth/interfaces/TokenAuth.md)
 
-Defined in: [packages/bridge/src/lib/link/index.ts:126](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/index.ts#L126)
+Defined in: [packages/bridge/src/lib/link/index.ts:126](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/index.ts#L126)

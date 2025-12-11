@@ -8,7 +8,7 @@
 
 > **startBridge**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/index.ts:113](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/index.ts#L113)
+Defined in: [packages/bridge/src/index.ts:113](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/index.ts#L113)
 
 A convenience function to build and start the Bridge.
 

@@ -8,4 +8,4 @@
 
 > **Namespace** = `"Alexa"` \| `"Alexa.Authorization"` \| `"Alexa.Discovery"` \| `"Alexa.ChannelController"` \| `"Alexa.InputController"` \| `"Alexa.Launcher"` \| `"Alexa.PlaybackController"` \| `"Alexa.PowerController"` \| `"Alexa.Speaker"`
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:1](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/common.ts#L1)
+Defined in: [packages/common/src/smart-home-skill/common.ts:1](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L1)

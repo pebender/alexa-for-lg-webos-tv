@@ -6,7 +6,7 @@
 
 # Class: LinkCommonError
 
-Defined in: [packages/skill/src/lib/link/link-common-error.ts:20](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/link-common-error.ts#L20)
+Defined in: [packages/skill/src/lib/link/link-common-error.ts:20](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/link-common-error.ts#L20)
 
 A [CommonError](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md) subclass for skill to bridge
 interface link related errors. The supported errors are given by
@@ -22,7 +22,7 @@ interface link related errors. The supported errors are given by
 
 > **new LinkCommonError**(`options`): `LinkCommonError`
 
-Defined in: [packages/skill/src/lib/link/link-common-error.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/link-common-error.ts#L23)
+Defined in: [packages/skill/src/lib/link/link-common-error.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/link-common-error.ts#L23)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`LinkCommonErrorCode`](../type-aliases/LinkCommonErrorCode.md)
 
-Defined in: [packages/skill/src/lib/link/link-common-error.ts:21](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/link-common-error.ts#L21)
+Defined in: [packages/skill/src/lib/link/link-common-error.ts:21](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/link-common-error.ts#L21)
 
 #### Overrides
 

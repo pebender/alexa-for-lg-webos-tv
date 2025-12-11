@@ -6,7 +6,7 @@
 
 # Class: HttpCommonError
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:21](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L21)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:21](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L21)
 
 A [CommonError](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md) subclass for HTTP related
 errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
@@ -21,7 +21,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 > **new HttpCommonError**(`options`): `HttpCommonError`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L31)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L31)
 
 #### Parameters
 
@@ -93,7 +93,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L22)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L22)
 
 #### Overrides
 
@@ -129,7 +129,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > `readonly` `optional` **requestBody**: `object`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:26](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L26)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:26](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L26)
 
 ***
 
@@ -137,7 +137,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:26](https://github
 
 > `readonly` `optional` **requestHeaders**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:25](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L25)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:25](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L25)
 
 ***
 
@@ -145,7 +145,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:25](https://github
 
 > `readonly` `optional` **requestMethod**: `"GET"` \| `"POST"`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L24)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L24)
 
 ***
 
@@ -153,7 +153,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:24](https://github
 
 > `readonly` `optional` **requestUrl**: `string`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L23)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L23)
 
 ***
 
@@ -161,7 +161,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:23](https://github
 
 > `readonly` `optional` **responseBody**: `string` \| `object`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L29)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L29)
 
 ***
 
@@ -169,7 +169,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:29](https://github
 
 > `readonly` `optional` **responseHeaders**: `Headers`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L28)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L28)
 
 ***
 
@@ -177,7 +177,7 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:28](https://github
 
 > `readonly` `optional` **responseStatusCode**: `number`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:27](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/skill/src/lib/link/http-common-error.ts#L27)
+Defined in: [packages/skill/src/lib/link/http-common-error.ts:27](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L27)
 
 ***
 

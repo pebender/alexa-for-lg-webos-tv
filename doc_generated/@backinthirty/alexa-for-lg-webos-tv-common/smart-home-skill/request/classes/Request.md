@@ -6,7 +6,7 @@
 
 # Class: Request
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L28)
+Defined in: [packages/common/src/smart-home-skill/request.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L28)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:28](https://github.
 
 > **new Request**(`options`): `Request`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:30](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L30)
+Defined in: [packages/common/src/smart-home-skill/request.ts:30](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L30)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:30](https://github.
 
 > **directive**: [`Directive`](../interfaces/Directive.md)
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L29)
+Defined in: [packages/common/src/smart-home-skill/request.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L29)
 
 ## Methods
 
@@ -78,7 +78,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:29](https://github.
 
 > **getAccessToken**(): `string`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:55](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L55)
+Defined in: [packages/common/src/smart-home-skill/request.ts:55](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L55)
 
 #### Returns
 
@@ -90,7 +90,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:55](https://github.
 
 > **getCorrelationToken**(): `string` \| `undefined`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:47](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L47)
+Defined in: [packages/common/src/smart-home-skill/request.ts:47](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L47)
 
 #### Returns
 
@@ -102,7 +102,7 @@ Defined in: [packages/common/src/smart-home-skill/request.ts:47](https://github.
 
 > **getEndpointId**(): `string` \| `undefined`
 
-Defined in: [packages/common/src/smart-home-skill/request.ts:51](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/request.ts#L51)
+Defined in: [packages/common/src/smart-home-skill/request.ts:51](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/request.ts#L51)
 
 #### Returns
 

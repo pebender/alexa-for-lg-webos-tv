@@ -6,7 +6,7 @@
 
 # Interface: Credentials
 
-Defined in: [packages/bridge/src/lib/link/credentials.ts:1](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/credentials.ts#L1)
+Defined in: [packages/bridge/src/lib/link/credentials.ts:1](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/credentials.ts#L1)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [packages/bridge/src/lib/link/credentials.ts:1](https://github.com/p
 
 > **bridgeHostname**: `string`
 
-Defined in: [packages/bridge/src/lib/link/credentials.ts:2](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/credentials.ts#L2)
+Defined in: [packages/bridge/src/lib/link/credentials.ts:2](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/credentials.ts#L2)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [packages/bridge/src/lib/link/credentials.ts:2](https://github.com/p
 
 > **email**: `string`
 
-Defined in: [packages/bridge/src/lib/link/credentials.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/credentials.ts#L3)
+Defined in: [packages/bridge/src/lib/link/credentials.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/credentials.ts#L3)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [packages/bridge/src/lib/link/credentials.ts:3](https://github.com/p
 
 > **skillToken**: `string`
 
-Defined in: [packages/bridge/src/lib/link/credentials.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/credentials.ts#L5)
+Defined in: [packages/bridge/src/lib/link/credentials.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/credentials.ts#L5)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [packages/bridge/src/lib/link/credentials.ts:5](https://github.com/p
 
 > **userId**: `string`
 
-Defined in: [packages/bridge/src/lib/link/credentials.ts:4](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/credentials.ts#L4)
+Defined in: [packages/bridge/src/lib/link/credentials.ts:4](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/credentials.ts#L4)

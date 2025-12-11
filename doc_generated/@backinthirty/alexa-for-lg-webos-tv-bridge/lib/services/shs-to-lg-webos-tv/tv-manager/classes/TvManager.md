@@ -6,7 +6,7 @@
 
 # Class: TvManager
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L23)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L23)
 
 ## Extends
 
@@ -205,7 +205,7 @@ v0.1.26
 
 > **control**(`udn`): [`TvControl`](../tv-control/classes/TvControl.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:96](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L96)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:96](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L96)
 
 #### Parameters
 
@@ -223,7 +223,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/inde
 
 > **controls**(): [`TvControl`](../tv-control/classes/TvControl.md)[]
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:100](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L100)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:100](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L100)
 
 #### Returns
 
@@ -972,7 +972,7 @@ v0.3.5
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:91](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L91)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:91](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L91)
 
 #### Returns
 
@@ -1046,7 +1046,7 @@ v20.5.0
 
 > `static` **build**(`_configurationDirectory`): `Promise`\<`TvManager`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:39](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L39)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts:39](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/index.ts#L39)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Interface: Context
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:72](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L72)
+Defined in: [packages/common/src/smart-home-skill/response.ts:72](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L72)
 
 ## Indexable
 
@@ -18,4 +18,4 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:72](https://github
 
 > `optional` **properties**: [`ContextProperty`](ContextProperty.md)[]
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:73](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/smart-home-skill/response.ts#L73)
+Defined in: [packages/common/src/smart-home-skill/response.ts:73](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L73)

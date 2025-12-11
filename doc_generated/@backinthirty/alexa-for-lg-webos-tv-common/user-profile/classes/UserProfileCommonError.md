@@ -6,7 +6,7 @@
 
 # Class: UserProfileCommonError
 
-Defined in: [packages/common/src/user-profile.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/user-profile.ts#L23)
+Defined in: [packages/common/src/user-profile.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/user-profile.ts#L23)
 
 The class from which all errors are derived. Deriving all errors from this
 class ensures that all errors will have an error code (`code`) and will be
@@ -26,7 +26,7 @@ codes.
 
 > **new UserProfileCommonError**(`options`): `UserProfileCommonError`
 
-Defined in: [packages/common/src/user-profile.ts:26](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/user-profile.ts#L26)
+Defined in: [packages/common/src/user-profile.ts:26](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/user-profile.ts#L26)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: [`UserProfileCommonErrorCode`](../type-aliases/UserProfileCommonErrorCode.md)
 
-Defined in: [packages/common/src/user-profile.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/common/src/user-profile.ts#L24)
+Defined in: [packages/common/src/user-profile.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/user-profile.ts#L24)
 
 #### Overrides
 

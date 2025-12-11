@@ -6,7 +6,7 @@
 
 # Interface: Application
 
-Defined in: [packages/bridge/src/lib/link/application.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/application.ts#L3)
+Defined in: [packages/bridge/src/lib/link/application.ts:3](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/application.ts#L3)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [packages/bridge/src/lib/link/application.ts:3](https://github.com/p
 
 > **getRequestSkillToken**: (`request`) => `string`
 
-Defined in: [packages/bridge/src/lib/link/application.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/application.ts#L5)
+Defined in: [packages/bridge/src/lib/link/application.ts:5](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/application.ts#L5)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [packages/bridge/src/lib/link/application.ts:5](https://github.com/p
 
 > **handleRequest**: (`request`, `credentials`) => `Promise`\<`object`\>
 
-Defined in: [packages/bridge/src/lib/link/application.ts:6](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/application.ts#L6)
+Defined in: [packages/bridge/src/lib/link/application.ts:6](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/application.ts#L6)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [packages/bridge/src/lib/link/application.ts:6](https://github.com/p
 
 > **start**: () => `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/link/application.ts:4](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/application.ts#L4)
+Defined in: [packages/bridge/src/lib/link/application.ts:4](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/application.ts#L4)
 
 #### Returns
 

@@ -6,7 +6,7 @@
 
 # Class: LoginTokenAuth
 
-Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/login-token-auth.ts#L9)
+Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/login-token-auth.ts#L9)
 
 ## Implements
 
@@ -18,7 +18,7 @@ Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:9](https://github.
 
 > **authorize**(`loginToken`): `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 
-Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/login-token-auth.ts#L28)
+Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/login-token-auth.ts#L28)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:28](https://github
 
 > `static` **build**(`userAuth`): `LoginTokenAuth`
 
-Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/link/login-token-auth.ts#L17)
+Defined in: [packages/bridge/src/lib/link/login-token-auth.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/login-token-auth.ts#L17)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Class: TvController
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L9)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:9](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L9)
 
 ## Extends
 
@@ -205,7 +205,7 @@ v0.1.26
 
 > **control**(`udn`): [`TvControl`](../../tv-control/classes/TvControl.md)
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:125](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L125)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:125](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L125)
 
 #### Parameters
 
@@ -223,7 +223,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > **controls**(): [`TvControl`](../../tv-control/classes/TvControl.md)[]
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:136](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L136)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:136](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L136)
 
 #### Returns
 
@@ -972,7 +972,7 @@ v0.3.5
 
 > **start**(): `void`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:59](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L59)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:59](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L59)
 
 #### Returns
 
@@ -984,7 +984,7 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-c
 
 > **tvUpsert**(`tv`): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:90](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L90)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:90](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L90)
 
 #### Parameters
 
@@ -1064,7 +1064,7 @@ v20.5.0
 
 > `static` **build**(`_configurationDirectory`): `Promise`\<`TvController`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/adc71bfbaff03376c48238a820440121c9de3e7e/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L22)
+Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-controller.ts#L22)
 
 #### Parameters
 
