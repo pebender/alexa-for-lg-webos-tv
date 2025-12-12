@@ -6,8 +6,6 @@
 
 # Interface: Endpoint
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L22)
-
 ## Indexable
 
 \[`x`: `string`\]: `string` \| `object` \| `undefined`
@@ -18,23 +16,17 @@ Defined in: [packages/common/src/smart-home-skill/common.ts:22](https://github.c
 
 > `optional` **cookie**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L29)
-
 ***
 
 ### endpointId
 
 > **endpointId**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L23)
-
 ***
 
 ### scope?
 
 > `optional` **scope**: `object`
-
-Defined in: [packages/common/src/smart-home-skill/common.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L24)
 
 #### Index Signature
 

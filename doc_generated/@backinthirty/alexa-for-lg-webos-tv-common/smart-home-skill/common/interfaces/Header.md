@@ -6,8 +6,6 @@
 
 # Interface: Header
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:12](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L12)
-
 ## Indexable
 
 \[`x`: `string`\]: `string` \| `undefined`
@@ -18,15 +16,11 @@ Defined in: [packages/common/src/smart-home-skill/common.ts:12](https://github.c
 
 > `optional` **correlationToken**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L17)
-
 ***
 
 ### instance?
 
 > `optional` **instance**: `string`
-
-Defined in: [packages/common/src/smart-home-skill/common.ts:15](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L15)
 
 ***
 
@@ -34,15 +28,11 @@ Defined in: [packages/common/src/smart-home-skill/common.ts:15](https://github.c
 
 > **messageId**: `string`
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:16](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L16)
-
 ***
 
 ### name
 
 > **name**: `string`
-
-Defined in: [packages/common/src/smart-home-skill/common.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L14)
 
 ***
 
@@ -50,12 +40,8 @@ Defined in: [packages/common/src/smart-home-skill/common.ts:14](https://github.c
 
 > **namespace**: [`Namespace`](../type-aliases/Namespace.md)
 
-Defined in: [packages/common/src/smart-home-skill/common.ts:13](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L13)
-
 ***
 
 ### payloadVersion
 
 > **payloadVersion**: `"3"`
-
-Defined in: [packages/common/src/smart-home-skill/common.ts:18](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/common.ts#L18)

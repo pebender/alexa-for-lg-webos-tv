@@ -8,8 +8,6 @@
 
 > **schema**: `object`
 
-Defined in: [packages/common/src/smart-home-skill/alexa\_smart\_home\_message\_schema.json:1](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/alexa_smart_home_message_schema.json#L1)
-
 ## Type Declaration
 
 ### $schema

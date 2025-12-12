@@ -6,15 +6,11 @@
 
 # Class: UserAuth
 
-Defined in: [packages/bridge/src/lib/link/user-auth.ts:4](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/user-auth.ts#L4)
-
 ## Methods
 
 ### authorizeUser()
 
 > **authorizeUser**(`bridgeHostname`, `email`): `boolean`
-
-Defined in: [packages/bridge/src/lib/link/user-auth.ts:27](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/user-auth.ts#L27)
 
 #### Parameters
 
@@ -35,8 +31,6 @@ Defined in: [packages/bridge/src/lib/link/user-auth.ts:27](https://github.com/pe
 ### build()
 
 > `static` **build**(`configurationDirectory`): `Promise`\<`UserAuth`\>
-
-Defined in: [packages/bridge/src/lib/link/user-auth.ts:11](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/link/user-auth.ts#L11)
 
 #### Parameters
 

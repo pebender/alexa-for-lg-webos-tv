@@ -6,15 +6,11 @@
 
 # Class: Response
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:77](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L77)
-
 ## Constructors
 
 ### Constructor
 
 > **new Response**(`options`): `Response`
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:80](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L80)
 
 #### Parameters
 
@@ -32,23 +28,17 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:80](https://github
 
 > `optional` **context**: [`Context`](../interfaces/Context.md)
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:79](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L79)
-
 ***
 
 ### event
 
 > **event**: [`Event`](../interfaces/Event.md)
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:78](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L78)
-
 ## Methods
 
 ### addContextProperty()
 
 > **addContextProperty**(`contextProperty`): `void`
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:155](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L155)
 
 #### Parameters
 
@@ -66,8 +56,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:155](https://githu
 
 > **addPayloadEndpoint**(`payloadEndpoint`): `void`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:162](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L162)
-
 #### Parameters
 
 ##### payloadEndpoint
@@ -83,8 +71,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:162](https://githu
 ### buildAlexaErrorResponse()
 
 > `static` **buildAlexaErrorResponse**(`request`, `type`, `message?`, `error?`): `Response`
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:224](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L224)
 
 #### Parameters
 
@@ -114,8 +100,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:224](https://githu
 
 > `static` **buildAlexaErrorResponseAddError**(`request`, `type`, `message`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:315](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L315)
-
 #### Parameters
 
 ##### request
@@ -140,8 +124,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:315](https://githu
 
 > `static` **buildAlexaErrorResponseForInternalError**(`request`, `error`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:245](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L245)
-
 #### Parameters
 
 ##### request
@@ -162,8 +144,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:245](https://githu
 
 > `static` **buildAlexaErrorResponseForInvalidDirectiveName**(`request`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:266](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L266)
-
 #### Parameters
 
 ##### request
@@ -179,8 +159,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:266](https://githu
 ### buildAlexaErrorResponseForInvalidDirectiveNamespace()
 
 > `static` **buildAlexaErrorResponseForInvalidDirectiveNamespace**(`request`): `Response`
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:274](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L274)
 
 #### Parameters
 
@@ -198,8 +176,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:274](https://githu
 
 > `static` **buildAlexaErrorResponseForInvalidValue**(`request`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:282](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L282)
-
 #### Parameters
 
 ##### request
@@ -216,8 +192,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:282](https://githu
 
 > `static` **buildAlexaErrorResponseForPowerOff**(`request`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:309](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L309)
-
 #### Parameters
 
 ##### request
@@ -233,8 +207,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:309](https://githu
 ### buildAlexaErrorResponseForValueOutOfRange()
 
 > `static` **buildAlexaErrorResponseForValueOutOfRange**(`request`, `validRange?`): `Response`
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:297](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L297)
 
 #### Parameters
 
@@ -262,8 +234,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:297](https://githu
 
 > `static` **buildAlexaErrorResponseNotSupportedInCurrentMode**(`request`, `message?`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:289](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L289)
-
 #### Parameters
 
 ##### request
@@ -284,8 +254,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:289](https://githu
 
 > `static` **buildAlexaResponse**(`request`): `Response`
 
-Defined in: [packages/common/src/smart-home-skill/response.ts:214](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L214)
-
 #### Parameters
 
 ##### request
@@ -301,8 +269,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:214](https://githu
 ### buildContextProperty()
 
 > `static` **buildContextProperty**(`options`): `Promise`\<[`ContextProperty`](../interfaces/ContextProperty.md) \| `null`\>
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:168](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L168)
 
 #### Parameters
 
@@ -333,8 +299,6 @@ Defined in: [packages/common/src/smart-home-skill/response.ts:168](https://githu
 ### buildPayloadEndpointCapability()
 
 > `static` **buildPayloadEndpointCapability**(`options`): `Promise`\<[`EventPayloadEndpointCapability`](../interfaces/EventPayloadEndpointCapability.md)\>
-
-Defined in: [packages/common/src/smart-home-skill/response.ts:191](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/common/src/smart-home-skill/response.ts#L191)
 
 #### Parameters
 

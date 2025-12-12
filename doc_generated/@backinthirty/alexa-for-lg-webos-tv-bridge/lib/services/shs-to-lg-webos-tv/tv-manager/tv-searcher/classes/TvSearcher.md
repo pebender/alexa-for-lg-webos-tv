@@ -6,8 +6,6 @@
 
 # Class: TvSearcher
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:14](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L14)
-
 ## Extends
 
 - `EventEmitter`
@@ -17,8 +15,6 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 ### Constructor
 
 > **new TvSearcher**(`_ssdpNotify`, `_ssdpResponse`): `TvSearcher`
-
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:17](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L17)
 
 #### Parameters
 
@@ -44,8 +40,6 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 
 > `static` **captureRejections**: `boolean`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:425
-
 Value: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type)
 
 Change the default `captureRejections` option on all new `EventEmitter` objects.
@@ -64,8 +58,6 @@ v13.4.0, v12.16.0
 
 > `readonly` `static` **captureRejectionSymbol**: *typeof* [`captureRejectionSymbol`](../../classes/TvManager.md#capturerejectionsymbol)
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:418
-
 Value: `Symbol.for('nodejs.rejection')`
 
 See how to write a custom `rejection handler`.
@@ -83,8 +75,6 @@ v13.4.0, v12.16.0
 ### defaultMaxListeners
 
 > `static` **defaultMaxListeners**: `number`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:464
 
 By default, a maximum of `10` listeners can be registered for any single
 event. This limit can be changed for individual `EventEmitter` instances
@@ -136,8 +126,6 @@ v0.11.2
 
 > `readonly` `static` **errorMonitor**: *typeof* [`errorMonitor`](../../classes/TvManager.md#errormonitor)
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:411
-
 This symbol shall be used to install a listener for only monitoring `'error'` events. Listeners installed using this symbol are called before the regular `'error'` listeners are called.
 
 Installing a listener using this symbol does not change the behavior once an `'error'` event is emitted. Therefore, the process will still crash if no
@@ -156,8 +144,6 @@ v13.6.0, v12.17.0
 ### \[captureRejectionSymbol\]()?
 
 > `optional` **\[captureRejectionSymbol\]**\<`K`\>(`error`, `event`, ...`args`): `void`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:103
 
 #### Type Parameters
 
@@ -192,8 +178,6 @@ Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:103
 ### addListener()
 
 > **addListener**\<`K`\>(`eventName`, `listener`): `this`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:642
 
 Alias for `emitter.on(eventName, listener)`.
 
@@ -230,8 +214,6 @@ v0.1.26
 ### emit()
 
 > **emit**\<`K`\>(`eventName`, ...`args`): `boolean`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:904
 
 Synchronously calls each of the listeners registered for the event named `eventName`, in the order they were registered, passing the supplied arguments
 to each.
@@ -305,8 +287,6 @@ v0.1.26
 
 > **eventNames**(): (`string` \| `symbol`)[]
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:967
-
 Returns an array listing the events for which the emitter has registered
 listeners. The values in the array are strings or `Symbol`s.
 
@@ -342,8 +322,6 @@ v6.0.0
 
 > **getMaxListeners**(): `number`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:819
-
 Returns the current max listener value for the `EventEmitter` which is either
 set by `emitter.setMaxListeners(n)` or defaults to [EventEmitter.defaultMaxListeners](../../classes/TvManager.md#defaultmaxlisteners).
 
@@ -364,8 +342,6 @@ v1.0.0
 ### listenerCount()
 
 > **listenerCount**\<`K`\>(`eventName`, `listener?`): `number`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:913
 
 Returns the number of listeners listening for the event named `eventName`.
 If `listener` is provided, it will return how many times the listener is found
@@ -409,8 +385,6 @@ v3.2.0
 
 > **listeners**\<`K`\>(`eventName`): `Function`[]
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:832
-
 Returns a copy of the array of listeners for the event named `eventName`.
 
 ```js
@@ -451,8 +425,6 @@ v0.1.26
 
 > **now**(): `void`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:359](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L359)
-
 #### Returns
 
 `void`
@@ -462,8 +434,6 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 ### off()
 
 > **off**\<`K`\>(`eventName`, `listener`): `this`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:792
 
 Alias for `emitter.removeListener()`.
 
@@ -500,8 +470,6 @@ v10.0.0
 ### on()
 
 > **on**\<`K`\>(`eventName`, `listener`): `this`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:674
 
 Adds the `listener` function to the end of the listeners array for the event
 named `eventName`. No checks are made to see if the `listener` has already
@@ -568,8 +536,6 @@ v0.1.101
 
 > **once**\<`K`\>(`eventName`, `listener`): `this`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:704
-
 Adds a **one-time** `listener` function for the event named `eventName`. The
 next time `eventName` is triggered, this listener is removed and then invoked.
 
@@ -633,8 +599,6 @@ v0.3.0
 
 > **prependListener**\<`K`\>(`eventName`, `listener`): `this`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:931
-
 Adds the `listener` function to the _beginning_ of the listeners array for the
 event named `eventName`. No checks are made to see if the `listener` has
 already been added. Multiple calls passing the same combination of `eventName`
@@ -686,8 +650,6 @@ v6.0.0
 
 > **prependOnceListener**\<`K`\>(`eventName`, `listener`): `this`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:947
-
 Adds a **one-time**`listener` function for the event named `eventName` to the _beginning_ of the listeners array. The next time `eventName` is triggered, this
 listener is removed, and then invoked.
 
@@ -736,8 +698,6 @@ v6.0.0
 ### rawListeners()
 
 > **rawListeners**\<`K`\>(`eventName`): `Function`[]
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:863
 
 Returns a copy of the array of listeners for the event named `eventName`,
 including any wrappers (such as those created by `.once()`).
@@ -797,8 +757,6 @@ v9.4.0
 
 > **removeAllListeners**(`eventName?`): `this`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:803
-
 Removes all listeners, or those of the specified `eventName`.
 
 It is bad practice to remove listeners added elsewhere in the code,
@@ -830,8 +788,6 @@ v0.1.26
 ### removeListener()
 
 > **removeListener**\<`K`\>(`eventName`, `listener`): `this`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:787
 
 Removes the specified `listener` from the listener array for the event named `eventName`.
 
@@ -947,8 +903,6 @@ v0.1.26
 
 > **setMaxListeners**(`n`): `this`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:813
-
 By default `EventEmitter`s will print a warning if more than `10` listeners are
 added for a particular event. This is a useful default that helps finding
 memory leaks. The `emitter.setMaxListeners()` method allows the limit to be
@@ -980,8 +934,6 @@ v0.3.5
 
 > **start**(): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:310](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L310)
-
 #### Returns
 
 `Promise`\<`void`\>
@@ -991,8 +943,6 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 ### addAbortListener()
 
 > `static` **addAbortListener**(`signal`, `resource`): `Disposable`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:403
 
 Listens once to the `abort` event on the provided `signal`.
 
@@ -1054,8 +1004,6 @@ v20.5.0
 
 > `static` **build**(): `TvSearcher`
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-searcher.ts#L24)
-
 #### Returns
 
 `TvSearcher`
@@ -1065,8 +1013,6 @@ Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/tv-manager/tv-s
 ### getEventListeners()
 
 > `static` **getEventListeners**(`emitter`, `name`): `Function`[]
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:325
 
 Returns a copy of the array of listeners for the event named `eventName`.
 
@@ -1121,8 +1067,6 @@ v15.2.0, v14.17.0
 
 > `static` **getMaxListeners**(`emitter`): `number`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:354
-
 Returns the currently set max amount of listeners.
 
 For `EventEmitter`s this behaves exactly the same as calling `.getMaxListeners` on
@@ -1173,8 +1117,6 @@ v19.9.0
 
 > `static` **listenerCount**(`emitter`, `eventName`): `number`
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:297
-
 A class method that returns the number of listeners for the given `eventName` registered on the given `emitter`.
 
 ```js
@@ -1224,8 +1166,6 @@ Since v3.2.0 - Use `listenerCount` instead.
 #### Call Signature
 
 > `static` **on**(`emitter`, `eventName`, `options?`): `AsyncIterator`\<`any`[]\>
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:270
 
 ```js
 import { on, EventEmitter } from 'node:events';
@@ -1335,8 +1275,6 @@ v13.6.0, v12.16.0
 #### Call Signature
 
 > `static` **on**(`emitter`, `eventName`, `options?`): `AsyncIterator`\<`any`[]\>
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:275
 
 ```js
 import { on, EventEmitter } from 'node:events';
@@ -1451,8 +1389,6 @@ v13.6.0, v12.16.0
 
 > `static` **once**(`emitter`, `eventName`, `options?`): `Promise`\<`any`[]\>
 
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:184
-
 Creates a `Promise` that is fulfilled when the `EventEmitter` emits the given
 event or that is rejected if the `EventEmitter` emits `'error'` while waiting.
 The `Promise` will resolve with an array of all the arguments emitted to the
@@ -1559,8 +1495,6 @@ v11.13.0, v10.16.0
 #### Call Signature
 
 > `static` **once**(`emitter`, `eventName`, `options?`): `Promise`\<`any`[]\>
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:189
 
 Creates a `Promise` that is fulfilled when the `EventEmitter` emits the given
 event or that is rejected if the `EventEmitter` emits `'error'` while waiting.
@@ -1670,8 +1604,6 @@ v11.13.0, v10.16.0
 ### setMaxListeners()
 
 > `static` **setMaxListeners**(`n?`, ...`eventTargets?`): `void`
-
-Defined in: packages/bridge/node\_modules/@types/node/events.d.ts:369
 
 ```js
 import { setMaxListeners, EventEmitter } from 'node:events';

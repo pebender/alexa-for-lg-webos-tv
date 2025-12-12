@@ -6,8 +6,6 @@
 
 # Class: DatabaseTable\<DatabaseRecord\>
 
-Defined in: [packages/bridge/src/lib/database.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L31)
-
 This generic class provides typed basic access to an
 [@seald-io/nedb](https://www.npmjs.com/package/@seald-io/nedb)
 database. `DatabaseRecord` specifies the fields in a record. It must be a
@@ -28,8 +26,6 @@ limit it using `extends`.  You can learn more about this difference between a
 
 > **deleteRecords**(`query`): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/database.ts:90](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L90)
-
 #### Parameters
 
 ##### query
@@ -45,8 +41,6 @@ Defined in: [packages/bridge/src/lib/database.ts:90](https://github.com/pebender
 ### getRecord()
 
 > **getRecord**(`query`): `Promise`\<`DatabaseRecord` \| `null`\>
-
-Defined in: [packages/bridge/src/lib/database.ts:104](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L104)
 
 #### Parameters
 
@@ -64,8 +58,6 @@ Defined in: [packages/bridge/src/lib/database.ts:104](https://github.com/pebende
 
 > **getRecords**(`query?`): `Promise`\<`DatabaseRecord`[]\>
 
-Defined in: [packages/bridge/src/lib/database.ts:124](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L124)
-
 #### Parameters
 
 ##### query?
@@ -81,8 +73,6 @@ Defined in: [packages/bridge/src/lib/database.ts:124](https://github.com/pebende
 ### updateOrInsertFields()
 
 > **updateOrInsertFields**(`query`, `fields`): `Promise`\<`void`\>
-
-Defined in: [packages/bridge/src/lib/database.ts:163](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L163)
 
 #### Parameters
 
@@ -104,8 +94,6 @@ Defined in: [packages/bridge/src/lib/database.ts:163](https://github.com/pebende
 
 > **updateOrInsertRecord**(`query`, `record`): `Promise`\<`void`\>
 
-Defined in: [packages/bridge/src/lib/database.ts:143](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L143)
-
 #### Parameters
 
 ##### query
@@ -125,8 +113,6 @@ Defined in: [packages/bridge/src/lib/database.ts:143](https://github.com/pebende
 ### build()
 
 > `static` **build**\<`DatabaseRecord`\>(`configurationDirectory`, `name`, `indexes`): `Promise`\<`DatabaseTable`\<`DatabaseRecord`\>\>
-
-Defined in: [packages/bridge/src/lib/database.ts:47](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/database.ts#L47)
 
 #### Type Parameters
 

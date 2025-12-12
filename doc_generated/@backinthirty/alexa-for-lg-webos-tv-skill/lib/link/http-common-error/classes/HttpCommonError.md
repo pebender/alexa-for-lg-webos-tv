@@ -6,8 +6,6 @@
 
 # Class: HttpCommonError
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:21](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L21)
-
 A [CommonError](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md) subclass for HTTP related
 errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/HttpCommonErrorCode.md).
 
@@ -20,8 +18,6 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 ### Constructor
 
 > **new HttpCommonError**(`options`): `HttpCommonError`
-
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:31](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L31)
 
 #### Parameters
 
@@ -81,8 +77,6 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:31](https://github
 
 > `optional` **cause**: `unknown`
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
-
 #### Inherited from
 
 [`CommonError`](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md).[`cause`](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md#cause)
@@ -92,8 +86,6 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 ### code
 
 > `readonly` **code**: [`HttpCommonErrorCode`](../type-aliases/HttpCommonErrorCode.md)
-
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:22](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L22)
 
 #### Overrides
 
@@ -105,8 +97,6 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:22](https://github
 
 > **message**: `string`
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
-
 #### Inherited from
 
 [`CommonError`](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md).[`message`](../../../../../alexa-for-lg-webos-tv-common/common-error/classes/CommonError.md#message)
@@ -116,8 +106,6 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 ### name
 
 > **name**: `string`
-
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Inherited from
 
@@ -129,15 +117,11 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > `readonly` `optional` **requestBody**: `object`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:26](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L26)
-
 ***
 
 ### requestHeaders?
 
 > `readonly` `optional` **requestHeaders**: `Record`\<`string`, `string`\>
-
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:25](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L25)
 
 ***
 
@@ -145,15 +129,11 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:25](https://github
 
 > `readonly` `optional` **requestMethod**: `"GET"` \| `"POST"`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:24](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L24)
-
 ***
 
 ### requestUrl?
 
 > `readonly` `optional` **requestUrl**: `string`
-
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:23](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L23)
 
 ***
 
@@ -161,15 +141,11 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:23](https://github
 
 > `readonly` `optional` **responseBody**: `string` \| `object`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:29](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L29)
-
 ***
 
 ### responseHeaders?
 
 > `readonly` `optional` **responseHeaders**: `Headers`
-
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:28](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L28)
 
 ***
 
@@ -177,15 +153,11 @@ Defined in: [packages/skill/src/lib/link/http-common-error.ts:28](https://github
 
 > `readonly` `optional` **responseStatusCode**: `number`
 
-Defined in: [packages/skill/src/lib/link/http-common-error.ts:27](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/link/http-common-error.ts#L27)
-
 ***
 
 ### stack?
 
 > `optional` **stack**: `string`
-
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Inherited from
 
@@ -196,8 +168,6 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 ### stackTraceLimit
 
 > `static` **stackTraceLimit**: `number`
-
-Defined in: packages/skill/node\_modules/@types/node/globals.d.ts:68
 
 The `Error.stackTraceLimit` property specifies the number of stack frames
 collected by a stack trace (whether generated by `new Error().stack` or
@@ -218,8 +188,6 @@ not capture any frames.
 ### captureStackTrace()
 
 > `static` **captureStackTrace**(`targetObject`, `constructorOpt?`): `void`
-
-Defined in: packages/skill/node\_modules/@types/node/globals.d.ts:52
 
 Creates a `.stack` property on `targetObject`, which when accessed returns
 a string representing the location in the code at which
@@ -288,8 +256,6 @@ a();
 ### prepareStackTrace()
 
 > `static` **prepareStackTrace**(`err`, `stackTraces`): `any`
-
-Defined in: packages/skill/node\_modules/@types/node/globals.d.ts:56
 
 #### Parameters
 

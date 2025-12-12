@@ -8,8 +8,6 @@
 
 > `const` **handlers**: `object`[]
 
-Defined in: [packages/skill/src/lib/custom-skill/lgtv-test-bridge.ts:122](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/skill/src/lib/custom-skill/lgtv-test-bridge.ts#L122)
-
 ## Type Declaration
 
 ### canHandle()

@@ -21,6 +21,7 @@
     "entryPointStrategy": "Packages",
     "entryPoints": ["./packages/*"],
     "readme": "none",
+    "disableSources": true,
     "outputs": [
       {
         "name": "markdown",

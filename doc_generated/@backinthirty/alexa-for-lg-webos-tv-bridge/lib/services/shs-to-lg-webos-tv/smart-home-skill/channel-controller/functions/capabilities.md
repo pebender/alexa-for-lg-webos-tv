@@ -8,8 +8,6 @@
 
 > **capabilities**(`tvControl`): `Promise`\<[`EventPayloadEndpointCapability`](../../../../../../../alexa-for-lg-webos-tv-common/smart-home-skill/response/interfaces/EventPayloadEndpointCapability.md)\>[]
 
-Defined in: [packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/channel-controller.ts:203](https://github.com/pebender/alexa-for-lg-webos-tv/blob/08f09ed88779fc1ad44c84758ae6d1b5fed7b8bb/packages/bridge/src/lib/services/shs-to-lg-webos-tv/smart-home-skill/channel-controller.ts#L203)
-
 ## Parameters
 
 ### tvControl
