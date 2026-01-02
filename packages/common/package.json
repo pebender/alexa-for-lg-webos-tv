@@ -21,7 +21,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "24.10.2"
+    "@types/node": "24.10.4"
   },
   "bundledDependencies": [],
   "scripts": {

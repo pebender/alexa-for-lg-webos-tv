@@ -155,7 +155,7 @@ export class TvControl extends EventEmitter {
   }
 
   public get tv(): TvRecord {
-    return Object.assign({}, this._tv);
+    return ({ ...this._tv });
   }
 
   public turnOff(): boolean {

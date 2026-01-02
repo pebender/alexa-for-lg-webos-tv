@@ -23,7 +23,7 @@ export default [
     },
     rules: {
       "tsdoc/syntax": ["error"],
-      "@typescript-eslint/class-methods-use-this": "off",
+      "@typescript-eslint/class-methods-use-this": ["error", { "ignoreClassesThatImplementAnInterface": true }],
       "@typescript-eslint/max-params": "off",
       "@typescript-eslint/no-magic-numbers": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
