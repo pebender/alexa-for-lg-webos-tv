@@ -28,7 +28,7 @@
     "typedoc": "0.28.15",
     "typedoc-plugin-markdown": "4.9.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.51.0"
+    "typescript-eslint": "8.52.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json && (cd packages/common && npm run clean) && (cd packages/skill && npm run clean) && (cd packages/bridge && npm run clean)",
