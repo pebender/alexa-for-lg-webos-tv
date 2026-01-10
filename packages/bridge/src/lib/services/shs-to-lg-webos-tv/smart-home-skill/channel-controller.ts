@@ -111,7 +111,7 @@ function getChannelNumberToNumberMap(
     const channelNumber: string = channelItem.channelNumber;
     channelNumberToNumber[channelNumber] = channelNumber;
     if (channelNumber.endsWith("-1")) {
-      const altChannelName = channelNumber.replace(/-1$/, "");
+      const altChannelName = channelNumber.replace(/-1$/v, "");
       channelNumberToNumber[altChannelName] ??= channelNumber;
     }
   }
@@ -132,15 +132,15 @@ function getChannelNameToNumberMap(
     const channelName: string = channelItem.channelName.toUpperCase();
     channelNameToNumber[channelName] = channelNumber;
     if (channelName.endsWith("-DT")) {
-      const altChannelName = channelName.replace(/-DT$/, "");
+      const altChannelName = channelName.replace(/-DT$/v, "");
       channelNameToNumber[altChannelName] ??= channelNumber;
     }
     if (channelName.endsWith("-HD")) {
-      const altChannelName = channelName.replace(/-HD$/, "");
+      const altChannelName = channelName.replace(/-HD$/v, "");
       channelNameToNumber[altChannelName] ??= channelNumber;
     }
     if (channelName.endsWith("HD")) {
-      const altChannelName = channelName.replace(/HD$/, "");
+      const altChannelName = channelName.replace(/HD$/v, "");
       channelNameToNumber[altChannelName] ??= channelNumber;
     }
   }

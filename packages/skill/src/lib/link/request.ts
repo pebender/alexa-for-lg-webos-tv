@@ -131,7 +131,7 @@ export async function request(
     throw createError("contentTypeNotFound");
   }
   const mimeType: string = contentType
-    .split(/\s*;\s*/)[0]
+    .split(/\s*;\s*/v)[0]
     .trim()
     .toLowerCase();
   if (mimeType !== "application/json") {

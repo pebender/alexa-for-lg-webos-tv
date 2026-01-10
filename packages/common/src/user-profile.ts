@@ -94,7 +94,7 @@ export async function getUserProfile(
   const contentType: string | null = response.headers.get("content-type");
   if (contentType !== null) {
     mimeType = contentType
-      .split(/\s*;\s*/)[0]
+      .split(/\s*;\s*/v)[0]
       .trim()
       .toLowerCase();
   }

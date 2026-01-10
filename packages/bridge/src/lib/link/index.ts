@@ -203,7 +203,7 @@ export class LinkManager {
             throw createError("unauthorized");
           }
           const authorization =
-            request.headers.authorization.split(/\s+/).map((x) => x.trim()) ??
+            request.headers.authorization.split(/\s+/v).map((x) => x.trim()) ??
             [];
           if (authorization.length !== 2) {
             throw createError("unauthorized");
@@ -235,7 +235,7 @@ export class LinkManager {
           }
           if (
             contentType
-              .split(/\s*;\s*/)[0]
+              .split(/\s*;\s*/v)[0]
               .trim()
               .toLowerCase() !== "application/json"
           ) {

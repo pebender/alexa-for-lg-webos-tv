@@ -117,7 +117,7 @@ export class TvSearcher extends EventEmitter {
       // Make sure it is webOS and UPnP 1.0 or 1.1.
       if (
         headers.SERVER === undefined ||
-        (headers.SERVER as string).match(/^webos\/[\d.]+ upnp\/1\.[01]$/i) ===
+        (headers.SERVER as string).match(/^webos\/[\d.]+ upnp\/1\.[01]$/iv) ===
         null
       ) {
         return null;
@@ -157,7 +157,7 @@ export class TvSearcher extends EventEmitter {
         });
       }
       const mimeType: string = contentType
-        .split(/\s*;\s*/)[0]
+        .split(/\s*;\s*/v)[0]
         .trim()
         .toLowerCase();
       if (mimeType !== "text/xml") {
@@ -225,7 +225,7 @@ export class TvSearcher extends EventEmitter {
       //
       if (
         description.root.device[0].manufacturer[0].match(
-          /^lg electronics$/i,
+          /^lg electronics$/iv,
         ) === null ||
         description.root.device[0].friendlyName[0] === "" ||
         description.root.device[0].UDN[0] === ""
@@ -244,7 +244,7 @@ export class TvSearcher extends EventEmitter {
       //
       try {
         const getMACWithPromise = promisify(getMAC);
-        tv.mac = await getMACWithPromise(tv.ip);
+        [tv.mac] = await getMACWithPromise(tv.ip);
       } catch (error) {
         throw createTvCommonError({
           code: "macAddressError",

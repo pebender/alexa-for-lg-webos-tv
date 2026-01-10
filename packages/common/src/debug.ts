@@ -29,10 +29,10 @@ export function debugError(error: unknown): void {
           message: "debugError: 'error' was not of type 'CommonError'",
           cause: error,
         });
+    const commonErrorString: string = inspect(commonError, { depth: 8, getters: true });
+    const message = `error util.inspect:\n${commonErrorString}`;
     console.debug(
-      "error util.inspect:" +
-      "\n" +
-      inspect(commonError, { depth: 8, getters: true }),
+      message,
     );
   }
 }
