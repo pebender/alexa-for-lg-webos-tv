@@ -28,6 +28,7 @@ export default [
       "@typescript-eslint/no-magic-numbers": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unsafe-type-assertion": "off",
+      "@typescript-eslint/no-unused-private-class-members": "off",
       "@typescript-eslint/prefer-destructuring": "off",
       "@typescript-eslint/prefer-regexp-exec": "off",
       "unicorn/consistent-function-scoping": "off",
