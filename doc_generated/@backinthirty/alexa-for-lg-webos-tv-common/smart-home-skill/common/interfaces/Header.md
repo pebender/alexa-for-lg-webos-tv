@@ -8,19 +8,19 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `undefined`
+> \[`x`: `string`\]: `string` \| `undefined`
 
 ## Properties
 
 ### correlationToken?
 
-> `optional` **correlationToken**: `string`
+> `optional` **correlationToken?**: `string`
 
 ***
 
 ### instance?
 
-> `optional` **instance**: `string`
+> `optional` **instance?**: `string`
 
 ***
 

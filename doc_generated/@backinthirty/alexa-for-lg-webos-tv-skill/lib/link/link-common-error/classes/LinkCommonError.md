@@ -48,7 +48,7 @@ interface link related errors. The supported errors are given by
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ interface link related errors. The supported errors are given by
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Inherited from
 

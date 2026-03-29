@@ -75,7 +75,7 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Inherited from
 
@@ -115,49 +115,49 @@ errors. The supported errors are given by [HttpCommonErrorCode](../type-aliases/
 
 ### requestBody?
 
-> `readonly` `optional` **requestBody**: `object`
+> `readonly` `optional` **requestBody?**: `object`
 
 ***
 
 ### requestHeaders?
 
-> `readonly` `optional` **requestHeaders**: `Record`\<`string`, `string`\>
+> `readonly` `optional` **requestHeaders?**: `Record`\<`string`, `string`\>
 
 ***
 
 ### requestMethod?
 
-> `readonly` `optional` **requestMethod**: `"GET"` \| `"POST"`
+> `readonly` `optional` **requestMethod?**: `"GET"` \| `"POST"`
 
 ***
 
 ### requestUrl?
 
-> `readonly` `optional` **requestUrl**: `string`
+> `readonly` `optional` **requestUrl?**: `string`
 
 ***
 
 ### responseBody?
 
-> `readonly` `optional` **responseBody**: `string` \| `object`
+> `readonly` `optional` **responseBody?**: `string` \| `object`
 
 ***
 
 ### responseHeaders?
 
-> `readonly` `optional` **responseHeaders**: `Headers`
+> `readonly` `optional` **responseHeaders?**: `Headers`
 
 ***
 
 ### responseStatusCode?
 
-> `readonly` `optional` **responseStatusCode**: `number`
+> `readonly` `optional` **responseStatusCode?**: `number`
 
 ***
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Inherited from
 

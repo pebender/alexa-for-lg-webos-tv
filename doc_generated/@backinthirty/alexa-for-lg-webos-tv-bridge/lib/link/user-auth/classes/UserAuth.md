@@ -16,11 +16,11 @@
 
 ##### bridgeHostname
 
-`string` | `null`
+`string` \| `null`
 
 ##### email
 
-`string` | `null`
+`string` \| `null`
 
 #### Returns
 

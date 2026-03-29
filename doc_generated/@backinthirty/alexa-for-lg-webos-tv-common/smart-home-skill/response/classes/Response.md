@@ -16,7 +16,7 @@
 
 ##### options
 
-\{ `context?`: [`Context`](../interfaces/Context.md); `event`: [`Event`](../interfaces/Event.md); \} | \{ `correlationToken?`: `string`; `endpointId?`: `string`; `instance?`: `string`; `name`: `string`; `namespace`: [`Namespace`](../../common/type-aliases/Namespace.md); `payload?`: [`EventPayload`](../interfaces/EventPayload.md); `token?`: `string`; \}
+\{ `context?`: [`Context`](../interfaces/Context.md); `event`: [`Event`](../interfaces/Event.md); \} \| \{ `correlationToken?`: `string`; `endpointId?`: `string`; `instance?`: `string`; `name`: `string`; `namespace`: [`Namespace`](../../common/type-aliases/Namespace.md); `payload?`: [`EventPayload`](../interfaces/EventPayload.md); `token?`: `string`; \}
 
 #### Returns
 
@@ -26,7 +26,7 @@
 
 ### context?
 
-> `optional` **context**: [`Context`](../interfaces/Context.md)
+> `optional` **context?**: [`Context`](../interfaces/Context.md)
 
 ***
 

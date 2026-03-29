@@ -8,13 +8,13 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `object` \| `undefined`
+> \[`x`: `string`\]: `string` \| `object` \| `undefined`
 
 ## Properties
 
 ### cookie?
 
-> `optional` **cookie**: `Record`\<`string`, `string`\>
+> `optional` **cookie?**: `Record`\<`string`, `string`\>
 
 ***
 
@@ -26,7 +26,7 @@
 
 ### scope?
 
-> `optional` **scope**: `object`
+> `optional` **scope?**: `object`
 
 #### Index Signature
 

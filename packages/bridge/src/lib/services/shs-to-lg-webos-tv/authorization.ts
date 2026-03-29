@@ -1,7 +1,6 @@
 import { DatabaseTable } from "../../database";
 import * as Common from "@backinthirty/alexa-for-lg-webos-tv-common";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- This is a type because DatabaseTable needs it to be a type.
 export type AuthorizationRecord = {
   skillToken: string;
   userId: string;

@@ -8,10 +8,10 @@
 
 ## Indexable
 
-\[`x`: `string`\]: [`ContextProperty`](ContextProperty.md)[] \| `undefined`
+> \[`x`: `string`\]: [`ContextProperty`](ContextProperty.md)[] \| `undefined`
 
 ## Properties
 
 ### properties?
 
-> `optional` **properties**: [`ContextProperty`](ContextProperty.md)[]
+> `optional` **properties?**: [`ContextProperty`](ContextProperty.md)[]

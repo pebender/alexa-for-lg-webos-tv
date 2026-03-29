@@ -247,10 +247,11 @@ export class LinkManager {
            */
           await new Promise<void>((resolve, reject) => {
             express.json()(request, response, (error: unknown): void => {
-              if (error !== undefined) {
+              if (error === undefined) {
+                resolve();
+              } else {
                 reject(createError("bodyFormatInvalid", error));
               }
-              resolve();
             });
           });
           const requestBody: object = request.body as object;

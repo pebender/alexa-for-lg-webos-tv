@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console -- This is a command line utility */
 import * as fs from "node:fs/promises";
 import persistPath from "persist-path";
 import type LGTV from "lgtv2";

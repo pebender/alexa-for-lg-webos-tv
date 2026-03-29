@@ -8,13 +8,13 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `object` \| `undefined`
+> \[`x`: `string`\]: `string` \| `object` \| `undefined`
 
 ## Properties
 
 ### capabilityResources?
 
-> `optional` **capabilityResources**: `object`[]
+> `optional` **capabilityResources?**: `object`[]
 
 #### friendlyNames
 
@@ -40,13 +40,13 @@
 
 ### configuration?
 
-> `optional` **configuration**: `object`
+> `optional` **configuration?**: `object`
 
 ***
 
 ### instance?
 
-> `optional` **instance**: `string`
+> `optional` **instance?**: `string`
 
 ***
 
@@ -58,7 +58,7 @@
 
 ### properties?
 
-> `optional` **properties**: `object`
+> `optional` **properties?**: `object`
 
 #### proactivelyReported
 
@@ -76,7 +76,7 @@
 
 ### supportedOperations?
 
-> `optional` **supportedOperations**: `string`[]
+> `optional` **supportedOperations?**: `string`[]
 
 ***
 

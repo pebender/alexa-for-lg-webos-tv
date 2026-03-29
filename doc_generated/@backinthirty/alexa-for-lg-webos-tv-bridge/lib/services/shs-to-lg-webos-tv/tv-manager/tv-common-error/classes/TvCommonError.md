@@ -75,7 +75,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Inherited from
 
@@ -95,13 +95,13 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### lgtvRequest?
 
-> `readonly` `optional` **lgtvRequest**: `Request`
+> `readonly` `optional` **lgtvRequest?**: `Request`
 
 ***
 
 ### lgtvResponse?
 
-> `readonly` `optional` **lgtvResponse**: `Response`
+> `readonly` `optional` **lgtvResponse?**: `Response`
 
 ***
 
@@ -127,13 +127,13 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### ssdpDescription?
 
-> `readonly` `optional` **ssdpDescription**: `string`
+> `readonly` `optional` **ssdpDescription?**: `string`
 
 ***
 
 ### ssdpResponse?
 
-> `readonly` `optional` **ssdpResponse**: `object`
+> `readonly` `optional` **ssdpResponse?**: `object`
 
 #### headers
 
@@ -147,7 +147,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Inherited from
 
@@ -157,7 +157,7 @@ errors. The supported errors are given by [TvCommonErrorCode](../type-aliases/Tv
 
 ### tv?
 
-> `readonly` `optional` **tv**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
+> `readonly` `optional` **tv?**: `Partial`\<[`TvRecord`](../../tv-record/type-aliases/TvRecord.md)\>
 
 ***
 

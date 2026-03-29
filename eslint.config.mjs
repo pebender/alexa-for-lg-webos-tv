@@ -1,5 +1,4 @@
 import globals from "globals";
-import configLove from "eslint-config-love";
 import pluginJs from "@eslint/js";
 import pluginTsdoc from "eslint-plugin-tsdoc";
 import pluginUnicorn from "eslint-plugin-unicorn";
@@ -11,7 +10,6 @@ export default [
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.strict,
-  configLove,
   // This enables the unicorn plugin so no need to enable it in plugins.
   pluginUnicorn.configs["all"],
   {
@@ -29,6 +27,7 @@ export default [
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unsafe-type-assertion": "off",
       "@typescript-eslint/no-unused-private-class-members": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/prefer-destructuring": "off",
       "@typescript-eslint/prefer-regexp-exec": "off",
       "unicorn/consistent-function-scoping": "off",

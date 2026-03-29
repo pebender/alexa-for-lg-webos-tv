@@ -8,13 +8,13 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `object` \| `undefined`
+> \[`x`: `string`\]: `object` \| `undefined`
 
 ## Properties
 
 ### endpoint?
 
-> `optional` **endpoint**: [`Endpoint`](../../common/interfaces/Endpoint.md)
+> `optional` **endpoint?**: [`Endpoint`](../../common/interfaces/Endpoint.md)
 
 ***
 

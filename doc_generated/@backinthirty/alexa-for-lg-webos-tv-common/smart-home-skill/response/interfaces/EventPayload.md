@@ -8,22 +8,22 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `object` \| `undefined`
+> \[`x`: `string`\]: `string` \| `object` \| `undefined`
 
 ## Properties
 
 ### endpoints?
 
-> `optional` **endpoints**: [`EventPayloadEndpoint`](EventPayloadEndpoint.md)[]
+> `optional` **endpoints?**: [`EventPayloadEndpoint`](EventPayloadEndpoint.md)[]
 
 ***
 
 ### message?
 
-> `optional` **message**: `string`
+> `optional` **message?**: `string`
 
 ***
 
 ### type?
 
-> `optional` **type**: `string`
+> `optional` **type?**: `string`

@@ -48,7 +48,7 @@ other error classes. The supported errors codes are given by
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ other error classes. The supported errors codes are given by
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Inherited from
 

@@ -159,7 +159,7 @@ v13.6.0, v12.17.0
 
 ##### event
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ##### args
 
@@ -191,7 +191,7 @@ Alias for `emitter.on(eventName, listener)`.
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ##### listener
 
@@ -263,7 +263,7 @@ myEmitter.emit('event', 1, 2, 3, 4, 5);
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ##### args
 
@@ -357,9 +357,9 @@ in the list of the listeners of the event.
 
 ##### eventName
 
-The name of the event being listened for
+`string` \| `symbol`
 
-`string` | `symbol`
+The name of the event being listened for
 
 ##### listener?
 
@@ -405,7 +405,7 @@ console.log(util.inspect(server.listeners('connection')));
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 #### Returns
 
@@ -447,7 +447,7 @@ Alias for `emitter.removeListener()`.
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ##### listener
 
@@ -508,9 +508,9 @@ myEE.emit('foo');
 
 ##### eventName
 
-The name of the event.
+`string` \| `symbol`
 
-`string` | `symbol`
+The name of the event.
 
 ##### listener
 
@@ -571,9 +571,9 @@ myEE.emit('foo');
 
 ##### eventName
 
-The name of the event.
+`string` \| `symbol`
 
-`string` | `symbol`
+The name of the event.
 
 ##### listener
 
@@ -622,9 +622,9 @@ Returns a reference to the `EventEmitter`, so that calls can be chained.
 
 ##### eventName
 
-The name of the event.
+`string` \| `symbol`
 
-`string` | `symbol`
+The name of the event.
 
 ##### listener
 
@@ -671,9 +671,9 @@ Returns a reference to the `EventEmitter`, so that calls can be chained.
 
 ##### eventName
 
-The name of the event.
+`string` \| `symbol`
 
-`string` | `symbol`
+The name of the event.
 
 ##### listener
 
@@ -737,7 +737,7 @@ emitter.emit('log');
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 #### Returns
 
@@ -769,7 +769,7 @@ Returns a reference to the `EventEmitter`, so that calls can be chained.
 
 ##### eventName?
 
-`string` | `symbol`
+`string` \| `symbol`
 
 #### Returns
 
@@ -879,7 +879,7 @@ Returns a reference to the `EventEmitter`, so that calls can be chained.
 
 ##### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ##### listener
 
@@ -1043,11 +1043,11 @@ import { getEventListeners, EventEmitter } from 'node:events';
 
 ##### emitter
 
-`EventEmitter`\<`DefaultEventMap`\> | `EventTarget`
+`EventEmitter`\<`DefaultEventMap`\> \| `EventTarget`
 
 ##### name
 
-`string` | `symbol`
+`string` \| `symbol`
 
 #### Returns
 
@@ -1097,7 +1097,7 @@ import { getMaxListeners, setMaxListeners, EventEmitter } from 'node:events';
 
 ##### emitter
 
-`EventEmitter`\<`DefaultEventMap`\> | `EventTarget`
+`EventEmitter`\<`DefaultEventMap`\> \| `EventTarget`
 
 #### Returns
 
@@ -1139,9 +1139,9 @@ The emitter to query
 
 ##### eventName
 
-The event name
+`string` \| `symbol`
 
-`string` | `symbol`
+The event name
 
 #### Returns
 
@@ -1252,7 +1252,7 @@ console.log('done'); // prints 'done'
 
 ###### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ###### options?
 
@@ -1474,7 +1474,7 @@ ee.emit('foo'); // Prints: Waiting for the event was canceled!
 
 ###### eventName
 
-`string` | `symbol`
+`string` \| `symbol`
 
 ###### options?
 
@@ -1603,7 +1603,7 @@ v11.13.0, v10.16.0
 
 ### setMaxListeners()
 
-> `static` **setMaxListeners**(`n?`, ...`eventTargets?`): `void`
+> `static` **setMaxListeners**(`n?`, ...`eventTargets`): `void`
 
 ```js
 import { setMaxListeners, EventEmitter } from 'node:events';
@@ -1622,7 +1622,7 @@ setMaxListeners(5, target, emitter);
 
 A non-negative number. The maximum number of listeners per `EventTarget` event.
 
-##### eventTargets?
+##### eventTargets
 
 ...(`EventEmitter`\<`DefaultEventMap`\> \| `EventTarget`)[]
 

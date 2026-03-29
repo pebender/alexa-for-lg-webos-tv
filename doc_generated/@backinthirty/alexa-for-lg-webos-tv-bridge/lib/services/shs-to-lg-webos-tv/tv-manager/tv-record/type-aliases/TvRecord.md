@@ -18,7 +18,7 @@
 
 ### key?
 
-> `optional` **key**: `string`
+> `optional` **key?**: `string`
 
 ***
 

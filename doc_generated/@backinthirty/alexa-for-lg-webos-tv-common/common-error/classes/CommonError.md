@@ -65,7 +65,7 @@ codes.
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Implementation of
 
@@ -117,7 +117,7 @@ codes.
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Implementation of
 

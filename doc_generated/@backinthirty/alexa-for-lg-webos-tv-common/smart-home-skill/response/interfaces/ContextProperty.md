@@ -8,13 +8,13 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| \[\] \| `undefined`
+> \[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| \[\] \| `undefined`
 
 ## Properties
 
 ### instance?
 
-> `optional` **instance**: `string`
+> `optional` **instance?**: `string`
 
 ***
 

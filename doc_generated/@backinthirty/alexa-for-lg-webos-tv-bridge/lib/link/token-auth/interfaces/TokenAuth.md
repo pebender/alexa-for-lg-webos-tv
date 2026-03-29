@@ -8,7 +8,7 @@
 
 ## Properties
 
-### authorize()
+### authorize
 
 > **authorize**: (`loginToken`) => `Promise`\<[`Credentials`](../../credentials/interfaces/Credentials.md) \| `null`\>
 

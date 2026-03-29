@@ -47,7 +47,7 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 ### cause?
 
-> `optional` **cause**: `unknown`
+> `optional` **cause?**: `unknown`
 
 #### Inherited from
 
@@ -87,7 +87,7 @@ errors codes are given by [DatabaseCommonErrorCode](../type-aliases/DatabaseComm
 
 ### stack?
 
-> `optional` **stack**: `string`
+> `optional` **stack?**: `string`
 
 #### Inherited from
 

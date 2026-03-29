@@ -12,11 +12,11 @@
 
 ### request
 
-`RequestEnvelope` | [`Request`](../../../alexa-for-lg-webos-tv-common/smart-home-skill/request/classes/Request.md)
+`RequestEnvelope` \| [`Request`](../../../alexa-for-lg-webos-tv-common/smart-home-skill/request/classes/Request.md)
 
 ### context
 
-`Context` | `Context`
+`Context` \| `Context`
 
 ## Returns
 

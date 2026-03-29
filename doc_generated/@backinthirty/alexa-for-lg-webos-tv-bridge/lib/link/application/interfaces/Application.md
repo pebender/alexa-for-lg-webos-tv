@@ -8,7 +8,7 @@
 
 ## Properties
 
-### getRequestSkillToken()
+### getRequestSkillToken
 
 > **getRequestSkillToken**: (`request`) => `string`
 
@@ -24,7 +24,7 @@
 
 ***
 
-### handleRequest()
+### handleRequest
 
 > **handleRequest**: (`request`, `credentials`) => `Promise`\<`object`\>
 
@@ -44,7 +44,7 @@
 
 ***
 
-### start()
+### start
 
 > **start**: () => `Promise`\<`void`\>
 

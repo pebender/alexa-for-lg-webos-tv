@@ -1,4 +1,3 @@
-/* eslint-disable no-console -- These are development debug routines that output to console. */
 import { inspect } from "node:util";
 import { CommonError } from "./common-error";
 import { GeneralCommonError } from "./general-common-error";

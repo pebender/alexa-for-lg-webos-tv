@@ -8,13 +8,13 @@
 
 ## Indexable
 
-\[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| \[\] \| `undefined`
+> \[`x`: `string`\]: `string` \| `number` \| `boolean` \| `object` \| \[\] \| `undefined`
 
 ## Properties
 
 ### grant?
 
-> `optional` **grant**: `object`
+> `optional` **grant?**: `object`
 
 #### code
 
@@ -28,7 +28,7 @@
 
 ### grantee?
 
-> `optional` **grantee**: `object`
+> `optional` **grantee?**: `object`
 
 #### token
 
@@ -42,7 +42,7 @@
 
 ### scope?
 
-> `optional` **scope**: `object`
+> `optional` **scope?**: `object`
 
 #### token
 

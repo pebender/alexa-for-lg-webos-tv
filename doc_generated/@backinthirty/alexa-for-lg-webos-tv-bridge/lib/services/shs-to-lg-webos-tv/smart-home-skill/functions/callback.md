@@ -16,11 +16,11 @@
 
 ### error
 
-`Error` | `null`
+`Error` \| `null`
 
 ### response
 
-`Response` | `null`
+`Response` \| `null`
 
 ### udn
 

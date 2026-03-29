@@ -20,7 +20,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=24.11.0"
+    "node": ">=24.13.0"
   },
   "dependencies": {
     "@backinthirty/alexa-for-lg-webos-tv-common": "*",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/express": "5.0.6",
-    "@types/node": "24.10.9",
+    "@types/node": "24.12.0",
     "@types/wake_on_lan": "0.0.33",
     "@types/xml2js": "0.4.14"
   },
