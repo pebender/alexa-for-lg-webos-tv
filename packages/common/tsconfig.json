@@ -15,7 +15,8 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "declarationDir": "types"
+    "declarationDir": "types",
+    "types": ["@types/node"]
   },
 
   "typedocOptions": {
