@@ -26,15 +26,15 @@
     "@backinthirty/alexa-for-lg-webos-tv-common": "*",
     "ask-sdk-core": "2.14.0",
     "ask-sdk-model": "1.86.0",
-    "@aws-sdk/client-dynamodb": "3.1027.0",
-    "@aws-sdk/lib-dynamodb": "3.1027.0",
+    "@aws-sdk/client-dynamodb": "3.1045.0",
+    "@aws-sdk/lib-dynamodb": "3.1045.0",
     "certnames": "1.0.4",
     "jose-node-cjs-runtime": "5.10.0"
   },
   "devDependencies": {
     "tar-to-zip": "3.0.0",
     "@types/aws-lambda": "8.10.161",
-    "@types/node": "24.12.2"
+    "@types/node": "24.12.3"
   },
   "bundledDependencies": [
     "@backinthirty/alexa-for-lg-webos-tv-common",
