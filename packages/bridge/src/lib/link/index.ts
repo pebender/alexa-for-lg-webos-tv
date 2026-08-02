@@ -2,7 +2,7 @@
 // I found the 'ssap://*' LG webOS TV commands in
 // <https://github.com/ConnectSDK/Connect-SDK-Android-Core/blob/master/src/com/connectsdk/service/WebOSTVService.java>.
 // These commands may be incomplete/inaccurate as the LG Connect SDK team
-// <http://www.svlconnectsdk.com> has not provided an update to the Connect SDK
+// <https://www.svlconnectsdk.com> has not provided an update to the Connect SDK
 // since the 1.6.0 release on 09 September 2015.
 //
 
@@ -235,7 +235,7 @@ export class LinkManager {
           }
           if (
             contentType
-              .split(/\s*;\s*/v)[0]
+              .split(/\s*;\s*/v, 1)[0]
               .trim()
               .toLowerCase() !== "application/json"
           ) {

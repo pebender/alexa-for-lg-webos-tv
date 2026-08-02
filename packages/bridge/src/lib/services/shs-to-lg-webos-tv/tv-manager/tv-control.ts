@@ -195,11 +195,7 @@ export class TvControl extends EventEmitter {
 
       //
       // The function cleans up and then resolves the function's promise.
-      // It uses a mutex and a uuid to ensure that clean up and the
-      // function's promise resolution is only performed once. The mutex
-      // protects the clean up phase ensures that clean up is called only
-      // once. The uuid, which is set during the clean up phase, ensures
-      // that the function's promise resolution is called only once.
+      // It uses a mutex and a uuid to ensure that clean up and the function's promise resolution is only performed once. The mutex protects the clean up phase ensures that clean up is called only once. The uuid, which is set during the clean up phase, ensures that the function's promise resolution is called only once.
       //
       let finished = false;
       const finishMutex = new Mutex();

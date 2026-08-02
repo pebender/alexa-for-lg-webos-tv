@@ -221,7 +221,7 @@ const ConfigureBridgeIntentHandler = {
         }
 
         if (
-          !Number.isInteger(ipAddressA) ||
+          !Number.isSafeInteger(ipAddressA) ||
           ipAddressA < 0 ||
           ipAddressA > 255
         ) {
@@ -233,7 +233,7 @@ const ConfigureBridgeIntentHandler = {
             .getResponse();
         }
         if (
-          !Number.isInteger(ipAddressB) ||
+          !Number.isSafeInteger(ipAddressB) ||
           ipAddressB < 0 ||
           ipAddressB > 255
         ) {
@@ -245,7 +245,7 @@ const ConfigureBridgeIntentHandler = {
             .getResponse();
         }
         if (
-          !Number.isInteger(ipAddressC) ||
+          !Number.isSafeInteger(ipAddressC) ||
           ipAddressC < 0 ||
           ipAddressC > 255
         ) {
@@ -257,7 +257,7 @@ const ConfigureBridgeIntentHandler = {
             .getResponse();
         }
         if (
-          !Number.isInteger(ipAddressD) ||
+          !Number.isSafeInteger(ipAddressD) ||
           ipAddressD < 0 ||
           ipAddressD > 255
         ) {
@@ -335,7 +335,7 @@ const ConfigureBridgeIntentHandler = {
         const hostnameIndex = Number(hostnameIndexString);
         const hostnameCount = Number(hostnames);
         if (
-          !Number.isInteger(hostnameIndex) ||
+          !Number.isSafeInteger(hostnameIndex) ||
           hostnameIndex >= hostnameCount + 2 ||
           hostnameIndex < 0
         ) {

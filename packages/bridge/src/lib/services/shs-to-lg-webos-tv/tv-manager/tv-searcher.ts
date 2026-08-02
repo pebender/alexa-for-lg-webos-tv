@@ -157,7 +157,7 @@ export class TvSearcher extends EventEmitter {
         });
       }
       const mimeType: string = contentType
-        .split(/\s*;\s*/v)[0]
+        .split(/\s*;\s*/v, 1)[0]
         .trim()
         .toLowerCase();
       if (mimeType !== "text/xml") {

@@ -5,17 +5,12 @@ import { type TvControl, TvCommonError } from "../tv-manager";
 // The list of Alexa.InputController inputs are found at
 // <https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html>.
 // To determine mapping of LG webOS TV external inputs to these Alexa inputs.
-// The software compares the Alexa input with LG webOS TV external input labels
-// and ids. Before comparison, it converts the labels and ids to uppercase and
-// replaces '_' with ' '. It does this because the Alexa inputs are uppercase
-// and use ' ' no '_' to separate words. Therefore, doing this improves the
-// chance of finding a match.
+// The software compares the Alexa input with LG webOS TV external input labels and ids. Before comparison, it converts the labels and ids to uppercase and replaces '_' with ' '. It does this because the Alexa inputs are uppercase and use ' ' no '_' to separate words. Therefore, doing this improves the chance of finding a match.
 //
 // The software starts with an empty map of Alexa inputs to LG webOS TV inputs. If a
 // label of an LG webOS TV input matches an Alexa input, then the software adds it to the
 // map. After the software has finished matching against labels, it does matching against ids.
-// If an id of LG webOS TV input
-// not already in the map matches an Alexa input, then the software adds it to the map.
+// If an id of LG webOS TV input not already in the map matches an Alexa input, then the software adds it to the map.
 // If there are duplicate labels or labels that match ids, the software will ignore some of these inputs in order to ensure the bi-directional mapping is unique.
 const alexaInputList: string[] = [
   "AUX 1",

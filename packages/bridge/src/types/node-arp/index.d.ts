@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prevent-abbreviations -- The function parameters are defined by the node-arp */
 declare module "node-arp" {
   export function getMAC(
     ipaddress: string,

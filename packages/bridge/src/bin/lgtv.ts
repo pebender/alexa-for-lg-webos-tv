@@ -6,7 +6,7 @@ import type LGTV from "lgtv2";
 import * as Common from "@backinthirty/alexa-for-lg-webos-tv-common";
 import { TvManager, type TvRecord } from "../lib/services/shs-to-lg-webos-tv/tv-manager";
 
-export async function getTvManager(): Promise<TvManager> {
+async function getTvManager(): Promise<TvManager> {
   const configurationDirectory = persistPath(
     Common.constants.application.name.safe,
   );
